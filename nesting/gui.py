@@ -6,11 +6,29 @@ from typing import Dict, List, Tuple
 from nicegui import ui, events
 from nesting.path_extractor import PatternPathExtractor
 
+# Maximum canvas size (in pixels) that should be used to display the pattern.
+MAX_CANVAS_PX_WIDTH = 800
+MAX_CANVAS_PX_HEIGHT = 600
+
 class NestingGUI:
-    """Display garment‑pattern JSON files as filled, centred SVG outlines with draggable panels."""
+    """Display garment‑pattern JSON files as filled, centred SVG outlines with draggable panels.
+       The container dimensions and JSON coordinates are in centimeters.
+       The entire canvas is scaled to fit within the predefined maximum pixel size while preserving ratio.
+    """
 
     def __init__(self) -> None:
-        self.container_width, self.container_height = 800, 600
+        # Input dimensions in cm (for the container and JSON pattern).
+        self.container_width_cm = 20.0  # for example, 20 cm
+        self.container_height_cm = 15.0  # for example, 15 cm
+
+        # Compute effective scale so that the canvas fits the maximum allowed size.
+        self.effective_scale = min(
+            MAX_CANVAS_PX_WIDTH / self.container_width_cm,
+            MAX_CANVAS_PX_HEIGHT / self.container_height_cm,
+        )
+        self.container_width = int(self.container_width_cm * self.effective_scale)
+        self.container_height = int(self.container_height_cm * self.effective_scale)
+
         self.pattern_loaded: bool = False
         self.panel_outlines: Dict[str, List[List[float]]] = {}
         # For drag-and-drop:
@@ -18,7 +36,6 @@ class NestingGUI:
         self.panel_transforms: Dict[str, Tuple[float, float]] = {}  # Current translate offsets
         self.drag_data: Dict = {}  # Temporary drag state storage
         self._build_layout()
-
 
     def _build_layout(self) -> None:
         with ui.column().classes("w-full h-screen items-center justify-center"):
@@ -29,11 +46,10 @@ class NestingGUI:
         with ui.element("div").classes("relative").style(
             f"width:{self.container_width}px;height:{self.container_height}px"
         ):
-            # Millimiter paper background
+            # Use a background image (note: if the image is a raster, its scale may not match exactly).
             ui.image("/img/millimiter_paper_1500_900.png").classes(
                 "absolute top-0 left-0 w-full h-full object-contain"
             )
-            # Create the main SVG container
             self.scene = (
                 ui.element("svg")
                 .props(
@@ -43,17 +59,17 @@ class NestingGUI:
                 )
                 .style("position:absolute;top:0;left:0")
             )
-            # Attach global pointer event handlers for smooth drag
+            # Attach global pointer events so dragging isn’t lost if the cursor moves off a path.
             self.scene.on("pointermove", lambda e: self._global_drag_move(e))
             self.scene.on("pointerup", lambda e: self._global_drag_end(e))
 
     def _build_toolbar(self) -> None:
         with ui.row().classes("w-full items-center justify-center gap-4"):
             self.width_input = ui.number(
-                "Width (px)", value=self.container_width, on_change=self._update_dimensions
+                "Width (cm)", value=self.container_width_cm, on_change=self._update_dimensions
             )
             self.height_input = ui.number(
-                "Height (px)", value=self.container_height, on_change=self._update_dimensions
+                "Height (cm)", value=self.container_height_cm, on_change=self._update_dimensions
             )
             ui.button("Reset position", on_click=self._reset_position)
             ui.upload(
@@ -63,8 +79,16 @@ class NestingGUI:
             )
 
     def _update_dimensions(self, _) -> None:
-        self.container_width = int(self.width_input.value or self.container_width)
-        self.container_height = int(self.height_input.value or self.container_height)
+        # Read new container size in cm from inputs.
+        self.container_width_cm = float(self.width_input.value or self.container_width_cm)
+        self.container_height_cm = float(self.height_input.value or self.container_height_cm)
+        # Compute effective scale so that the canvas fits within the maximum dimensions.
+        self.effective_scale = min(
+            MAX_CANVAS_PX_WIDTH / self.container_width_cm,
+            MAX_CANVAS_PX_HEIGHT / self.container_height_cm,
+        )
+        self.container_width = int(self.container_width_cm * self.effective_scale)
+        self.container_height = int(self.container_height_cm * self.effective_scale)
         self.scene.props(
             f'width="{self.container_width}" '
             f'height="{self.container_height}" '
@@ -77,7 +101,6 @@ class NestingGUI:
         self.scene.style("left:0;top:0")
 
     def _load_pattern(self, e: events.UploadEventArguments) -> None:
-        # Clear previous outlines and drag state
         self.panel_outlines = {}
         self.panel_path_refs = {}
         self.panel_transforms = {}
@@ -88,6 +111,7 @@ class NestingGUI:
             tmp_path = tmp.name
         try:
             extractor = PatternPathExtractor(tmp_path)
+            # Assuming PatternPathExtractor returns outlines in centimeters
             self.panel_outlines = extractor.get_all_panel_outlines(samples_per_edge=20)
             self.pattern_loaded = True
             self._draw_outlines()
@@ -97,32 +121,34 @@ class NestingGUI:
 
     def _draw_outlines(self) -> None:
         self.scene.clear()
-        # Compute overall bounding box over all panel outlines.
-        all_points = list(itertools.chain.from_iterable(self.panel_outlines.values()))
+        # Convert all JSON coordinates (in cm) to pixels using the effective scale.
+        all_points = []
+        for outline in self.panel_outlines.values():
+            for x, y in outline:
+                all_points.append((x * self.effective_scale, y * self.effective_scale))
         if not all_points:
             return
         xs, ys = zip(*all_points)
         min_x, max_x = min(xs), max(xs)
         min_y, max_y = min(ys), max(ys)
         pattern_w, pattern_h = max_x - min_x, max_y - min_y
-        # Compute offsets so that the pattern is centered.
+        # Compute offsets to center the pattern in the canvas.
         offset_x = (self.container_width - pattern_w) / 2 - min_x
         offset_y = (self.container_height - pattern_h) / 2 - min_y
 
-        # Optionally, draw the container border.
+        # Optionally draw the container border.
         cw, ch = self.container_width, self.container_height
         for x1, y1, x2, y2 in [(0, 0, cw, 0), (cw, 0, cw, ch),
                                (cw, ch, 0, ch), (0, ch, 0, 0)]:
             self._svg_line(x1, y1, x2, y2, stroke="#8a8a8a")
 
-        # Define a cyclic palette for fillings.
         fills = itertools.cycle(["#c3e6cb", "#bee5eb", "#ffeeba", "#f5c6cb"])
-        self.panel_transforms = {}  # Reset transform state
+        self.panel_transforms = {}
 
-        # For each panel outline, shift by the computed offset and create a draggable path.
         for panel_name, outline in self.panel_outlines.items():
-            shifted = [(x + offset_x, y + offset_y) for x, y in outline]
-            # Create an SVG path string. (Ensure no duplicate starting point is added.)
+            # Scale each coordinate (cm to px) and then shift to center.
+            shifted = [(x * self.effective_scale + offset_x, y * self.effective_scale + offset_y)
+                       for (x, y) in outline]
             d = "M " + " L ".join(f"{x} {y}" for x, y in shifted) + " Z"
             self.panel_transforms[panel_name] = (0, 0)
             path = self._svg_path_draggable(
@@ -189,7 +215,6 @@ class NestingGUI:
     def _on_drag_end(self, e, panel_id: str) -> None:
         self.drag_data = {}
 
-    # Global handlers so dragging does not stop if pointer leaves the element.
     def _global_drag_move(self, e) -> None:
         if self.drag_data:
             panel_id = self.drag_data.get('panel_id')

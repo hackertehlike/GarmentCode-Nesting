@@ -19,11 +19,6 @@ class PatternPathExtractor(BasicPattern):
         super().__init__(pattern_file)
         
     def _flip_y(self, p):
-        """
-        Dummy implementation for _flip_y.
-        If your coordinate system requires flipping the y-axis,
-        modify this function accordingly.
-        """
         return p
 
     def get_panel_outline(self, panel_name, samples_per_edge=10):
