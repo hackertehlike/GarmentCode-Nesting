@@ -20,15 +20,15 @@ def add_seam_allowance(contour, allowance = 1.0, join_type = pyclipper.JT_MITER,
     Offset *contour* outward by *allowance* (in the same units as the input).
     Negative allowance contracts the shape.
     """
-    subj = to_clipper(contour, _SCALE)
+    subj = to_clipper(contour)
     if allowance == 0:
-        return [from_clipper(subj, _SCALE)]
+        return [from_clipper(subj)]
 
     pco   = pyclipper.PyclipperOffset(miter_limit = miter_limit)
     pco.AddPath(subj, join_type, pyclipper.ET_CLOSEDPOLYGON)
     delta = int(round(allowance * _SCALE))
     solution = pco.Execute(delta)
-    return [from_clipper(p, _SCALE) for p in solution]
+    return [from_clipper(p) for p in solution]
 
 
 def polygons_overlap(poly_a, poly_b, area_tol = 1e-12) -> bool:
@@ -36,8 +36,8 @@ def polygons_overlap(poly_a, poly_b, area_tol = 1e-12) -> bool:
     True iff poly_a and poly_b overlap with **positive area**.
     Touching at an edge or point returns False.
     """
-    a = to_clipper(poly_a, _SCALE)
-    b = to_clipper(poly_b, _SCALE)
+    a = to_clipper(poly_a)
+    b = to_clipper(poly_b)
     pc = pyclipper.Pyclipper()
     pc.AddPath(a, pyclipper.PT_SUBJECT, True)
     pc.AddPath(b, pyclipper.PT_CLIP,    True)
@@ -54,11 +54,11 @@ def no_fit_polygon(stationary, moving):
     Compute the No‑Fit Polygon of *moving* about *stationary*.
     Returned coordinates are floats in the original units.
     """
-    A = to_clipper(stationary, _SCALE)
+    A = to_clipper(stationary)
     # Reflect B through the origin for Minkowski difference
     B = [(-x, -y) for x, y in moving]
-    B = to_clipper(B, _SCALE)
+    B = to_clipper(B)
 
     # The boolean flag 'True' tells Clipper the paths are closed polygons
     nfp_paths = pyclipper.MinkowskiSum(A, B, True)
-    return [from_clipper(p, _SCALE) for p in nfp_paths]
+    return [from_clipper(p) for p in nfp_paths]
