@@ -18,8 +18,8 @@ class NestingGUI:
 
     def __init__(self) -> None:
         # Input dimensions in cm (for the container and JSON pattern).
-        self.container_width_cm = 20.0  # for example, 20 cm
-        self.container_height_cm = 15.0  # for example, 15 cm
+        self.container_width_cm = 140.0
+        self.container_height_cm = 200.0 
 
         # Compute effective scale so that the canvas fits the maximum allowed size.
         self.effective_scale = min(

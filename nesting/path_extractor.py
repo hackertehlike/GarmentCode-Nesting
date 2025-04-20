@@ -37,27 +37,22 @@ class PatternPathExtractor(BasicPattern):
         vertices = panel['vertices']
         outline = []
 
-        # Assume that panel['edges'] is ordered as the panel's edge loop.
         for edge in panel['edges']:
-            # Use the internal method _edge_as_curve to get an svgpath object for this edge.
             curve = self._edge_as_curve(vertices, edge)
 
-            # For the first edge, add the starting point.
             if not outline:
-                pt_start = curve.point(0)
-                outline.append([pt_start.real, pt_start.imag])
-            
-            # Generate intermediate samples.
-            ts = np.linspace(0, 1, samples_per_edge, endpoint=False)[1:]
-            for t in ts:
-                pt = curve.point(t)
-                outline.append([pt.real, pt.imag])
-            
-            # Ensure the curve's end point is added.
-            pt_end = curve.point(1)
-            outline.append([pt_end.real, pt_end.imag])
-        
+                p0 = curve.point(0)
+                outline.append([p0.real, -p0.imag])          # ←  flip here
+
+            for t in np.linspace(0, 1, samples_per_edge, endpoint=False)[1:]:
+                p = curve.point(t)
+                outline.append([p.real, -p.imag])            # ←  and here
+
+            p1 = curve.point(1)
+            outline.append([p1.real, -p1.imag])              # ←  and here
+
         return outline
+
 
     def get_all_panel_outlines(self, samples_per_edge=10):
         """
@@ -75,12 +70,11 @@ class PatternPathExtractor(BasicPattern):
         return outlines
 
 
-if __name__ == '__main__':
-    # Replace with the path to your pattern JSON file.
-    pattern_file = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification.json"
-    extractor = PatternPathExtractor(pattern_file)
-    all_outlines = extractor.get_all_panel_outlines(samples_per_edge=20)
-    for name, outline in all_outlines.items():
-        print(f"Panel: {name}")
-        for pt in outline:
-            print(pt)
+# if __name__ == '__main__':
+#     pattern_file = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification.json"
+#     extractor = PatternPathExtractor(pattern_file)
+#     all_outlines = extractor.get_all_panel_outlines(samples_per_edge=20)
+#     for name, outline in all_outlines.items():
+#         print(f"Panel: {name}")
+#         for pt in outline:
+#             print(pt)
