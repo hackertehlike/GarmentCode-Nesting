@@ -5,7 +5,7 @@ import json
 import copy
 
 from pygarment.pattern.core import BasicPattern
-
+from nesting import utils
 
 class PatternPathExtractor(BasicPattern):
     """
@@ -23,15 +23,8 @@ class PatternPathExtractor(BasicPattern):
 
     def get_panel_outline(self, panel_name, samples_per_edge=10):
         """
-        Returns the outline (path) of the given panel as a list of [x, y] points.
-        For each edge, the associated curve is sampled to approximate curves.
-        
-        Args:
-            panel_name: The key/name of the panel in the pattern spec.
-            samples_per_edge: Number of points sampled per edge (including start and end).
-            
-        Returns:
-            A list of [x, y] coordinates approximating the panel's boundary.
+        Returns the outline (path) of the given panel as a list of [x, y] points,
+        shifted so that its bottom‑left vertex becomes (0,0).
         """
         panel = self.pattern['panels'][panel_name]
         vertices = panel['vertices']
@@ -51,7 +44,17 @@ class PatternPathExtractor(BasicPattern):
             p1 = curve.point(1)
             outline.append([p1.real, -p1.imag])              # ←  and here
 
-        return outline
+        # Shift the outline so that its bottom left vertex is at (0,0)
+        xs = [pt[0] for pt in outline]
+        ys = [pt[1] for pt in outline]
+        min_x = min(xs)
+        min_y = min(ys)
+        shifted_outline = [[x - min_x, y - min_y] for x, y in outline]
+
+        if utils._signed_area(shifted_outline) < 0:        # currently CCW → reverse
+            shifted_outline.reverse()
+
+        return shifted_outline
 
 
     def get_all_panel_outlines(self, samples_per_edge=10):
@@ -78,3 +81,5 @@ class PatternPathExtractor(BasicPattern):
 #         print(f"Panel: {name}")
 #         for pt in outline:
 #             print(pt)
+
+

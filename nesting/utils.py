@@ -3,7 +3,9 @@ from typing import List, Tuple, Iterable
 import math
 import pyclipper
 
-_SCALE = 1_000  # three‑decimal precision; adjust as required
+# clipper uses int coordinates, so we need to scale our floats
+# for nesting purposes 3 decimal precision is sufficient
+_SCALE = 1_000  # three‑decimal precision
 
 def to_clipper(path):
     """Convert a float path to IntPoint (int) for Pyclipper."""
@@ -48,6 +50,10 @@ def polygons_overlap(poly_a, poly_b, area_tol = 1e-12) -> bool:
             return True
     return False
 
+def _translate_polygon(poly, dx, dy):
+    """Return a *new* polygon translated by (dx, dy)."""
+    return [(x + dx, y + dy) for (x, y) in poly]
+
 
 def no_fit_polygon(stationary, moving):
     """
@@ -62,3 +68,24 @@ def no_fit_polygon(stationary, moving):
     # The boolean flag 'True' tells Clipper the paths are closed polygons
     nfp_paths = pyclipper.MinkowskiSum(A, B, True)
     return [from_clipper(p) for p in nfp_paths]
+
+def polygon_area(poly):
+    """
+    Calculate the area of a polygon using pyclipper.
+    The polygon is represented as a list of (x, y) tuples.
+    The area is returned as a float.
+    """
+    if len(poly) < 3:
+        return 0.0  # Not a polygon
+    area = pyclipper.Area(to_clipper(poly))
+    return area * _SCALE * _SCALE
+
+def _signed_area(poly):
+    """
+    Shoelace formula.  Positive ⇒ clockwise winding,
+    negative ⇒ counter-clockwise, zero ⇒ degenerate.
+    """
+    area = 0.0
+    for (x0, y0), (x1, y1) in zip(poly, poly[1:] + [poly[0]]):
+        area += x0 * y1 - x1 * y0
+    return area * 0.5
