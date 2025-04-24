@@ -6,6 +6,7 @@ import pyclipper
 # clipper uses int coordinates, so we need to scale our floats
 # for nesting purposes 3 decimal precision is sufficient
 _SCALE = 1_000  # three‑decimal precision
+CW     = pyclipper.Orientation   # True for clockwise in pyclipper
 
 def to_clipper(path):
     """Convert a float path to IntPoint (int) for Pyclipper."""
@@ -30,7 +31,22 @@ def add_seam_allowance(contour, allowance = 1.0, join_type = pyclipper.JT_MITER,
     pco.AddPath(subj, join_type, pyclipper.ET_CLOSEDPOLYGON)
     delta = int(round(allowance * _SCALE))
     solution = pco.Execute(delta)
-    return [from_clipper(p) for p in solution]
+
+    offset_paths = []
+    for path in solution:
+        outline = from_clipper(path)          # → list[(x, y)]
+
+        # --- shift so bottom-left becomes (0, 0) --------------------------
+        xs = [pt[0] for pt in outline]
+        ys = [pt[1] for pt in outline]
+        min_x = min(xs)
+        min_y = min(ys)
+        shifted_outline = [[x - min_x, y - min_y] for x, y in outline]
+        # ------------------------------------------------------------------
+
+        offset_paths.append(shifted_outline)
+
+    return offset_paths
 
 
 def polygons_overlap(poly_a, poly_b, area_tol = 1e-12) -> bool:
@@ -80,12 +96,8 @@ def polygon_area(poly):
     area = pyclipper.Area(to_clipper(poly))
     return area * _SCALE * _SCALE
 
+
 def _signed_area(poly):
-    """
-    Shoelace formula.  Positive ⇒ clockwise winding,
-    negative ⇒ counter-clockwise, zero ⇒ degenerate.
-    """
-    area = 0.0
-    for (x0, y0), (x1, y1) in zip(poly, poly[1:] + [poly[0]]):
-        area += x0 * y1 - x1 * y0
-    return area * 0.5
+    """Shoelace – positive ⇒ clockwise, negative ⇒ counter-clockwise."""
+    return 0.5 * sum(x0*y1 - x1*y0 for (x0, y0), (x1, y1)
+                     in zip(poly, poly[1:]+[poly[0]]))

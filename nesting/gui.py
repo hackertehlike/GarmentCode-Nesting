@@ -32,7 +32,7 @@ class NestingGUI:
         self._update_scale_factors()
 
         # seam allowance in cm
-        self.seam_allowance_cm: float = 0.0
+        self.seam_allowance_cm: float = 1.0
 
         # geometry stores (in cm)
         self.raw_panel_outlines: Dict[str, List[List[float]]] = {}  # as read from JSON
@@ -297,11 +297,16 @@ class NestingGUI:
 
         for name, outer_cm in self.panel_outlines.items():
             inner_cm = self.raw_panel_outlines.get(name, [])
+            
+            oxs, oys = zip(*outer_cm)
+            ixs, iys = zip(*inner_cm)
+            dx_cm = (max(oxs) - min(oxs) - (max(ixs) - min(ixs))) / 2
+            dy_cm = (max(oys) - min(oys) - (max(iys) - min(iys))) / 2
             out_px = [(x*self.effective_scale + offset_x,
                        y*self.effective_scale + offset_y) for x, y in outer_cm]
-            in_px  = [(x*self.effective_scale + offset_x,
-                       y*self.effective_scale + offset_y) for x, y in inner_cm]
-
+            in_px = [((x + dx_cm) * self.effective_scale + offset_x, 
+                      (y + dy_cm) * self.effective_scale + offset_y)
+         for x, y in inner_cm]
             d_out = "M " + " L ".join(f"{x} {y}" for x, y in out_px) + " Z"
             d_in  = "M " + " L ".join(f"{x} {y}" for x, y in in_px) + " Z"
 
@@ -475,7 +480,13 @@ class NestingGUI:
             return
 
         try:
-            layout = Layout(self.raw_panel_outlines)
+            # print inner and outer outlines
+            for name, outline in self.panel_outlines.items():
+                print(f"Panel: {name}")
+                print("Outer outline:", outline)
+                print("Inner outline:", self.raw_panel_outlines[name])
+                print()
+            layout = Layout(self.panel_outlines)
                                                             
             container = Container(self.container_width_cm,
                                 self.container_height_cm)
