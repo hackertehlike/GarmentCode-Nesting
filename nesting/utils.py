@@ -2,10 +2,11 @@ from __future__ import annotations
 from typing import List, Tuple, Iterable
 import math
 import pyclipper
+from nesting.layout import Layout, Container, Piece
 
 # clipper uses int coordinates, so we need to scale our floats
 # for nesting purposes 3 decimal precision is sufficient
-_SCALE = 1_000  # three‑decimal precision
+_SCALE = 1000  # three‑decimal precision
 CW     = pyclipper.Orientation   # True for clockwise in pyclipper
 
 def to_clipper(path):
@@ -34,15 +35,13 @@ def add_seam_allowance(contour, allowance = 1.0, join_type = pyclipper.JT_MITER,
 
     offset_paths = []
     for path in solution:
-        outline = from_clipper(path)          # → list[(x, y)]
+        outline = from_clipper(path)
 
-        # --- shift so bottom-left becomes (0, 0) --------------------------
         xs = [pt[0] for pt in outline]
         ys = [pt[1] for pt in outline]
         min_x = min(xs)
         min_y = min(ys)
         shifted_outline = [[x - min_x, y - min_y] for x, y in outline]
-        # ------------------------------------------------------------------
 
         offset_paths.append(shifted_outline)
 
@@ -73,17 +72,23 @@ def _translate_polygon(poly, dx, dy):
 
 def no_fit_polygon(stationary, moving):
     """
-    Compute the No‑Fit Polygon of *moving* about *stationary*.
-    Returned coordinates are floats in the original units.
+    No-Fit Polygon of *moving* about *stationary*.
+    Coordinates returned as floats in the original units.
     """
+    
     A = to_clipper(stationary)
-    # Reflect B through the origin for Minkowski difference
-    B = [(-x, -y) for x, y in moving]
+    B = [(-x, -y) for x, y in moving]          # reflect the moving part
     B = to_clipper(B)
+    nfp = pyclipper.MinkowskiSum(B, A, True)
 
-    # The boolean flag 'True' tells Clipper the paths are closed polygons
-    nfp_paths = pyclipper.MinkowskiSum(A, B, True)
-    return [from_clipper(p) for p in nfp_paths]
+    # 4. Back to floating-point
+    return [entry for p in nfp for entry in from_clipper(p)] #[from_clipper(p) for p in nfp] 
+
+def flatten_nfp(xss):
+    """
+    Flatten a list of lists into a single list.
+    """
+    return [x for xs in xss for x in from_clipper(xs)]
 
 def polygon_area(poly):
     """
@@ -94,10 +99,57 @@ def polygon_area(poly):
     if len(poly) < 3:
         return 0.0  # Not a polygon
     area = pyclipper.Area(to_clipper(poly))
-    return area * _SCALE * _SCALE
+    return area / _SCALE**2  # Convert to float
 
 
 def _signed_area(poly):
     """Shoelace – positive ⇒ clockwise, negative ⇒ counter-clockwise."""
     return 0.5 * sum(x0*y1 - x1*y0 for (x0, y0), (x1, y1)
                      in zip(poly, poly[1:]+[poly[0]]))
+
+def _px_to_cm(self, dx_px: float, dy_px: float) -> tuple[float, float]:
+    scale = self.effective_scale
+    return dx_px / scale, dy_px / scale
+
+def _cm_to_px(self, dx_cm: float, dy_cm: float) -> tuple[float, float]:
+    scale = self.effective_scale
+    return dx_cm * scale, dy_cm * scale
+
+def inner_fit_rectangle(container: Container, piece: Piece):
+    """
+    IFR (CW) in container coordinates when the *piece* anchor is its
+    top-left corner and y grows **down**.
+    """
+    Wc, Hc = container.width, container.height          # container
+    Wp = max(x for x, _ in piece.vertices)              # width
+    Hp = max(y for _, y in piece.vertices)              # height
+
+    if Wp > Wc or Hp > Hc:               # piece larger than container
+        return []
+
+    # TL ➜ TR ➜ BR ➜ BL  (CW with y-down)
+    return [
+        (0.0,        0.0),               # top-left  (same as anchor)
+        (Wc - Wp,    0.0),               # top-right
+        (Wc - Wp, Hc - Hp),              # bottom-right
+        (0.0,     Hc - Hp),              # bottom-left
+    ]
+    
+
+def _fits(self, poly, dx, dy):
+        """
+        Check if the polygon *poly* fits in the container at (dx, dy).
+        The polygon is translated by (dx, dy) and checked against the
+        container boundaries and all previously placed pieces.
+        """
+        xs, ys = zip(*_translate_polygon(poly, dx, dy))
+        if (min(xs) < 0 or max(xs) > self.container.width or
+            min(ys) < 0 or max(ys) > self.container.height):
+            return False
+
+        for other, ox, oy in self.placed:
+            if polygons_overlap(
+                    _translate_polygon(poly, dx, dy),
+                    _translate_polygon(other.vertices, ox, oy)):
+                return False
+        return True

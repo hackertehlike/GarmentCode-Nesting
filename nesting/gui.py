@@ -8,7 +8,7 @@ from nicegui import ui, events
 from nesting import utils  # add_seam_allowance, polygons_overlap, etc.
 from nesting.path_extractor import PatternPathExtractor
 from nesting.layout import Layout, Container
-from nesting.placement_engine import BottomLeftDecoder, GreedyBLDecoder
+from nesting.placement_engine import BottomLeftDecoder, GreedyBLDecoder, NFPDecoder
 
 # viewer size in CSS‑pixels
 MAX_CANVAS_PX_WIDTH  = 800   
@@ -105,6 +105,9 @@ class NestingGUI:
             
             ui.button("Auto place (Bottom‑Left)", on_click=self._auto_place)
             ui.button("Auto place (Greedy)", on_click=lambda _: self._auto_place("Greedy"))
+            ui.button("Auto place (NFP)", on_click=lambda _: self._auto_place("NFP"))
+
+            # ui.button("Gravitate", on_click=self._gravitate)
 
     def _build_sidebar(self) -> None:   
         with ui.column() as sb:
@@ -177,6 +180,7 @@ class NestingGUI:
     # ---------------------------------------------------------------------------- #
     #                                PATTERN LOADERS                               #
     # ---------------------------------------------------------------------------- #
+    
     def _load_pattern(self, e: events.UploadEventArguments):
         """
         Loads pattern from the uploaded JSON file, populates necessary fields and draws its outlines
@@ -200,8 +204,8 @@ class NestingGUI:
             self.pattern_loaded = True
             self._draw_outlines()
             # Extract real style parameters and parameter order from the spec.
-            self.style_params = extractor.spec.get("parameters", {})
-            self.parameter_order = extractor.spec.get("parameter_order", list(self.style_params.keys()))
+            # self.style_params = extractor.spec.get("parameters", {})
+            # self.parameter_order = extractor.spec.get("parameter_order", list(self.style_params.keys()))
             # Update panel selector options.
             self.panel_select.options = [str(k) for k in self.raw_panel_outlines.keys()]
             if self.panel_select.options:
@@ -280,7 +284,7 @@ class NestingGUI:
 
         offset_x = 0
         offset_y = 0
-        self.offset_px = (0, 0)
+        self.offset_px = (offset_x, offset_y)
 
         # Optional border
         for x1, y1, x2, y2 in [
@@ -381,9 +385,9 @@ class NestingGUI:
 
     def _on_drag_end(self, *_):
         self.drag_data = {}
-        #print offsets
-        for name, (dx, dy) in self.panel_transforms.items():
-            print(f"Panel {name} offset: ({dx}, {dy})")
+        # print offsets
+        # for name, (dx, dy) in self.panel_transforms.items():
+        #     print(f"Panel {name} offset: ({dx}, {dy})")
 
     def _global_drag_move(self, e) -> None:
         if self.drag_data:
@@ -447,20 +451,19 @@ class NestingGUI:
 
     def _apply_placements(self, placements_cm: list[tuple[int, float, float]]):
         """
-        placements_cm – list of (piece_id, dx_cm, dy_cm) from BottomLeftDecoder.
-        It rewrites self.panel_transforms **in pixels** and updates the SVG
+        placements_cm – list of (piece_id, dx_cm, dy_cm)
+        It rewrites self.panel_transforms in pixels and updates the SVG
         paths that were created by _draw_outlines().
         """
         if not self.pattern_loaded:
             ui.notify("Load a pattern first", type="warning")
             return
 
-        # Make absolutely sure the canvas is drawn and we have the path refs
         self._draw_outlines()
 
         cm_to_px = self.effective_scale          # 1 cm → this many CSS‑pixels
         for name, dx_cm, dy_cm in placements_cm:
-            if name not in self.panel_path_refs:        # defensive guard
+            if name not in self.panel_path_refs:
                 ui.notify(f"Unknown panel '{name}'", type="warning")
                 continue
             
@@ -480,12 +483,6 @@ class NestingGUI:
             return
 
         try:
-            # print inner and outer outlines
-            for name, outline in self.panel_outlines.items():
-                print(f"Panel: {name}")
-                print("Outer outline:", outline)
-                print("Inner outline:", self.raw_panel_outlines[name])
-                print()
             layout = Layout(self.panel_outlines)
                                                             
             container = Container(self.container_width_cm,
@@ -497,10 +494,15 @@ class NestingGUI:
             elif method == "Greedy":
                 # Greedy placement
                 decoder = GreedyBLDecoder(layout, container)
+            elif method == "NFP":
+                decoder = NFPDecoder(layout, container)
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             
             placements = decoder.decode()                     # [(name, dx, dy)]
+
+            print(f"Auto placement ({method}) usage:")
+            print(decoder.usage_BB())
 
             self._apply_placements(placements)
 
@@ -508,8 +510,6 @@ class NestingGUI:
 
         except Exception as exc:
             ui.notify(f'Auto placement failed: {exc}', type='negative')
-
-
 
 if __name__ in {"__main__", "__mp_main__"}:
     NestingGUI()

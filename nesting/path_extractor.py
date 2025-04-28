@@ -24,7 +24,7 @@ class PatternPathExtractor(BasicPattern):
     def get_panel_outline(self, panel_name, samples_per_edge=10):
         """
         Returns the outline (path) of the given panel as a list of [x, y] points,
-        shifted so that its bottom‑left vertex becomes (0,0).
+        shifted so that its top-left vertex becomes (0,0).
         """
         panel = self.pattern['panels'][panel_name]
         vertices = panel['vertices']
@@ -35,16 +35,17 @@ class PatternPathExtractor(BasicPattern):
 
             if not outline:
                 p0 = curve.point(0)
-                outline.append([p0.real, -p0.imag])          # ←  flip here
+                outline.append([p0.real, -p0.imag])
 
             for t in np.linspace(0, 1, samples_per_edge, endpoint=False)[1:]:
                 p = curve.point(t)
-                outline.append([p.real, -p.imag])            # ←  and here
+                outline.append([p.real, -p.imag])
 
             p1 = curve.point(1)
-            outline.append([p1.real, -p1.imag])              # ←  and here
+            outline.append([p1.real, -p1.imag])
 
-        # Shift the outline so that its bottom left vertex is at (0,0)
+        # shift the outline so that its TOP LEFT vertex of the bounding box is at (0,0)
+        # consistent with the canvas coordinate system
         xs = [pt[0] for pt in outline]
         ys = [pt[1] for pt in outline]
         min_x = min(xs)

@@ -1,5 +1,4 @@
 
-
 import math
 
 class Piece:
@@ -8,11 +7,18 @@ class Piece:
     Each piece has an ID, a list of vertices, a rotation angle, and a locked state.
     """
 
-    def __init__ (self, vertices):
-        self.id = -1
+    def __init__ (self, vertices, id = None):
+        self.id = id
         self.vertices = vertices
         self.rotation = 0
         self.locked = False
+
+        #bounding box
+        xs, ys = zip(*self.vertices)
+        # self.min_x = min(xs)
+        self.max_x = max(xs)
+        # self.min_y = min(ys)
+        self.max_y = max(ys)
 
     def rotate (self, angle):
         rad = angle * math.pi / 180
@@ -37,8 +43,7 @@ class Layout:
     def __init__(self, polygon_paths: dict[str, list[list[float]]]):
         self.order = []
         for name, path in polygon_paths.items():     # preserve current order
-            p = Piece(path)
-            p.id   = name                            
+            p = Piece(path, id = name)               
             self.order.append(p)
 
         
