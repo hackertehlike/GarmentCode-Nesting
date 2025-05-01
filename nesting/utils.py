@@ -19,11 +19,17 @@ def from_clipper(path):
     return [(x * inv, y * inv) for x, y in path]
 
 
-def add_seam_allowance(contour, allowance = 1.0, join_type = pyclipper.JT_MITER, miter_limit: float = 2.0):
+def add_seam_allowance(piece, allowance = 1.0, join_type = pyclipper.JT_MITER, miter_limit: float = 2.0) -> None:
     """
-    Offset *contour* outward by *allowance* (in the same units as the input).
-    Negative allowance contracts the shape.
+    Updates the piece's outer path with the seam allowance.
+    The piece's inner path is unchanged.
     """
+    contour = piece.get_inner_path()
+    if not contour or len(contour) < 3:
+        raise ValueError("Piece has no inner path to offset.")
+    
+    print(f"Adding seam allowance of {allowance} to piece {piece.id}")
+
     subj = to_clipper(contour)
     if allowance == 0:
         return [from_clipper(subj)]
@@ -41,11 +47,17 @@ def add_seam_allowance(contour, allowance = 1.0, join_type = pyclipper.JT_MITER,
         ys = [pt[1] for pt in outline]
         min_x = min(xs)
         min_y = min(ys)
-        shifted_outline = [[x - min_x, y - min_y] for x, y in outline]
+        shifted_outline = [(x - min_x, y - min_y) for x, y in outline]
 
-        offset_paths.append(shifted_outline)
+        offset_paths+=shifted_outline
 
-    return offset_paths
+    # Update the piece's outer path with the offset paths
+    piece.outer_path = offset_paths
+
+    # print("Updating bounding box of the piece")
+    piece.update_bbox()
+
+    print (f"Piece {piece.id} outer path updated with seam allowance")
 
 
 def polygons_overlap(poly_a, poly_b, area_tol = 1e-12) -> bool:
@@ -102,16 +114,16 @@ def polygon_area(poly):
     return area / _SCALE**2  # Convert to float
 
 
-def _signed_area(poly):
+def signed_area(poly):
     """Shoelace – positive ⇒ clockwise, negative ⇒ counter-clockwise."""
     return 0.5 * sum(x0*y1 - x1*y0 for (x0, y0), (x1, y1)
                      in zip(poly, poly[1:]+[poly[0]]))
 
-def _px_to_cm(self, dx_px: float, dy_px: float) -> tuple[float, float]:
+def px_to_cm(self, dx_px: float, dy_px: float) -> tuple[float, float]:
     scale = self.effective_scale
     return dx_px / scale, dy_px / scale
 
-def _cm_to_px(self, dx_cm: float, dy_cm: float) -> tuple[float, float]:
+def cm_to_px(self, dx_cm: float, dy_cm: float) -> tuple[float, float]:
     scale = self.effective_scale
     return dx_cm * scale, dy_cm * scale
 
@@ -136,20 +148,29 @@ def inner_fit_rectangle(container: Container, piece: Piece):
     ]
     
 
-def _fits(self, poly, dx, dy):
-        """
-        Check if the polygon *poly* fits in the container at (dx, dy).
-        The polygon is translated by (dx, dy) and checked against the
-        container boundaries and all previously placed pieces.
-        """
-        xs, ys = zip(*_translate_polygon(poly, dx, dy))
-        if (min(xs) < 0 or max(xs) > self.container.width or
-            min(ys) < 0 or max(ys) > self.container.height):
-            return False
+# def fits(self, poly, dx, dy):
+#         """
+#         Check if the polygon *poly* fits in the container at (dx, dy).
+#         The polygon is translated by (dx, dy) and checked against the
+#         container boundaries and all previously placed pieces.
+#         """
+#         xs, ys = zip(*_translate_polygon(poly, dx, dy))
+#         if (min(xs) < 0 or max(xs) > self.container.width or
+#             min(ys) < 0 or max(ys) > self.container.height):
+#             return False
 
-        for other, ox, oy in self.placed:
-            if polygons_overlap(
-                    _translate_polygon(poly, dx, dy),
-                    _translate_polygon(other.vertices, ox, oy)):
-                return False
-        return True
+#         for other, ox, oy in self.placed:
+#             if polygons_overlap(
+#                     _translate_polygon(poly, dx, dy),
+#                     _translate_polygon(other.vertices, ox, oy)):
+#                 return False
+#         return True
+
+def scale(vertices:List[Tuple[float, float]], factor: float) -> List[Tuple[float, float]]:
+    """Scale the piece *in place* by *factor*."""
+    import copy
+    vertices = copy.deepcopy(vertices)
+    for i, (x, y) in enumerate(vertices):
+        vertices[i] = (x * factor, y * factor)
+
+    return vertices

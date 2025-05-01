@@ -11,32 +11,39 @@ class PlacementEngine():
     def __init__(self, layout: Layout, container: Container):
         self.layout = layout
         self.container = container
+        self.placed: list[Piece] = [] 
 
     def decode(self):
         pass
 
-    def _fits(self, polygon, dx: float, dy: float) -> bool:
+    def _fits(self, piece: Piece, dx: float, dy: float) -> bool:
         """
-        Check if the polygon fits in the container at (dx, dy).
-        The polygon is translated by (dx, dy) and checked against the
-        container boundaries and all previously placed pieces.
+        Would **piece** fit at offset (dx, dy) inside the container and
+        without overlapping any already-placed piece?
         """
+        poly   = utils._translate_polygon(piece.get_outer_path(), dx, dy)
 
-        translated = utils._translate_polygon(polygon, dx, dy)
-
-        # inside container?
-        xs, ys = zip(*translated)
-        if (min(xs) < 0 or max(xs) > self.container.width or
-            min(ys) < 0 or max(ys) > self.container.height):
+        # container boundaries
+        xs, ys = zip(*poly)
+        if (
+            min(xs) < 0
+            or max(xs) > self.container.width
+            or min(ys) < 0
+            or max(ys) > self.container.height
+        ):
             return False
 
-        # no overlap with already fixed parts?
-        for other, ox, oy in self.placed:
-            if utils.polygons_overlap(
-                    translated,
-                    utils._translate_polygon(other.vertices, ox, oy)):
+        # intersections with fixed parts
+        for other in self.placed:
+            other_poly = utils._translate_polygon(
+                other.get_outer_path(),
+                *other.translation,
+            )
+            if utils.polygons_overlap(poly, other_poly):
                 return False
+
         return True
+
     
 
     def anchor(self, piece):
@@ -53,19 +60,14 @@ class PlacementEngine():
         Call AFTER decode() to get the correct values.
         """
         flattened_vertices = [(v[0]+ p[1], v[1]+ p[2]) for p in self.placed for v in p[0].vertices]
-        print (f"flattened vertices: {flattened_vertices}")
+        # print (f"flattened vertices: {flattened_vertices}")
         x_vals = [v[0] for v in flattened_vertices]
         y_vals = [v[1] for v in flattened_vertices]
         min_x = min(x_vals)
         max_x = max(x_vals)
         min_y = min(y_vals)
         max_y = max(y_vals)
-        # get the bounding box of the placed pieces
-        # min_x = min([v[0] for v in flattened_vertices])#min([p[1] for p in self.placed])
-        # max_x = max([p[1] + p[0].max_x for p in self.placed])
-        # min_y = min([p[2] for p in self.placed])
-        # max_y = max([p[2] + p[0].max_y for p in self.placed])
-
+        
         # calculate the area total of placed pieces
         total_area = sum([utils.polygon_area(p[0].vertices) for p in self.placed])
         # calculate the area of the bounding box
@@ -76,6 +78,33 @@ class PlacementEngine():
         return ratio
 
 
+    def rest_length(self):
+        """ Returns the length of the rest of the container that is not used by the pieces.
+        Call AFTER decode() to get the correct values.
+        """
+        # the rightmost x coordinate of the bounding box
+        flattened_vertices = [(v[0]+ p[1], v[1]+ p[2]) for p in self.placed for v in p[0].vertices]
+        # print (f"flattened vertices: {flattened_vertices}")
+        x_vals = [v[0] for v in flattened_vertices]
+        # y_vals = [v[1] for v in flattened_vertices]
+        # min_x = min(x_vals)
+        max_x = max(x_vals)
+
+        return self.container.width - max_x
+    
+
+    def gravitate(self, piece, x, y, step=1.0):
+        """Slide left as far as possible, then down; repeat until jammed."""
+        moved = True
+        while moved:
+            moved = False
+            while x - step >= 0 and self._fits(piece.vertices, x - step, y):
+                x -= step
+                moved = True
+            while y + step <= self.container.height and self._fits(piece.vertices, x, y + step):
+                y += step
+                moved = True
+        return x, y
 
 class BottomLeftDecoder(PlacementEngine):
     """
@@ -85,22 +114,7 @@ class BottomLeftDecoder(PlacementEngine):
     def __init__(self, layout, container,
                  step = 1.0):
         super().__init__(layout, container)
-        self.step = step                              # scan / slide increment
-        self.placed: list[tuple[Piece, float, float]] = []  # (piece, x, y)
-
-
-    def gravitate(self, piece, x, y):
-        """Slide left as far as possible, then down; repeat until jammed."""
-        moved = True
-        while moved:
-            moved = False
-            while x - self.step >= 0 and self._fits(piece.vertices, x - self.step, y):
-                x -= self.step
-                moved = True
-            while y + self.step <= self.container.height and self._fits(piece.vertices, x, y + self.step):
-                y += self.step
-                moved = True
-        return x, y
+        # self.placed: list[tuple[Piece, float, float]] = []  # (piece, x, y)
 
     def decode(self):
         for piece in self.layout.order:
@@ -119,12 +133,11 @@ class GreedyBLDecoder(BottomLeftDecoder):
     def __init__(self, layout, container):
         super().__init__(layout, container)
 
-        # sort the pieces by area
+        # sort the pieces by area 
         self.layout.order.sort(key=lambda p: utils.polygon_area(p.vertices), reverse=True)
         print (f"Sorted pieces by area: {[p.id for p in self.layout.order]}")
         self.container = container
-        self.step = 1.0
-        self.placed = []
+        # self.placed = []
 
     def decode(self):
         return super().decode()
@@ -133,7 +146,7 @@ class NFPDecoder(PlacementEngine):
 
     def __init__(self, layout, container, wall_step=1.0):
         super().__init__(layout, container)
-        self.placed = []  # (piece, x, y)
+        # self.placed = []  # (piece, x, y)
         self.container = container
         self.wall_step = wall_step
         self._nfp_cache = {}
@@ -142,10 +155,12 @@ class NFPDecoder(PlacementEngine):
        # go in layout order
         for piece in self.layout.order:
             # find the best position for the piece
-            print(f"Placing piece {piece.id}...")
+            # print(f"Placing piece {piece.id}...")
             best_x, best_y = self._find_best_position(piece)
-            print(f"Placing piece {piece.id} at ({best_x}, {best_y})")
+            # print(f"Placing piece {piece.id} at ({best_x}, {best_y})")
             self.placed.append((piece, best_x, best_y))
+
+        # print (f"Placed pieces: {[p.id for p, _, _ in self.placed]}")
         return [(p.id, dx, dy) for p, dx, dy in self.placed]
     
     def _find_best_position(self, piece):
@@ -159,7 +174,7 @@ class NFPDecoder(PlacementEngine):
         # for the piece in the container
         inner_fit = utils.inner_fit_rectangle(self.container, piece)
         if not inner_fit:
-            print(f"Piece {piece.id} has no ifr")
+            # print(f"Piece {piece.id} has no ifr")
             return None, None
 
         # iterate over nfps all previously placed pieces
@@ -174,7 +189,7 @@ class NFPDecoder(PlacementEngine):
             return best_x, best_y
 
         for other, ox, oy in self.placed:
-            print(f"Checking piece {piece.id} with {other.id}")
+            # print(f"Checking piece {piece.id} with {other.id}")
             nfp = self._nfp(other, piece)
             # print(f"Piece {piece.id} nfp with {other.id}: {nfp}")
             for x, y in nfp:
@@ -196,8 +211,11 @@ class NFPDecoder(PlacementEngine):
 
         # if no position was found, return None
         if best_x is None or best_y is None:
-            print(f"Piece {piece.id} does not fit in the container")
+            # print(f"Piece {piece.id} does not fit in the container")
             return None, None
+        
+        # gravitate the piece to the bottom left corner
+        best_x, best_y = self.gravitate(piece, best_x, best_y)
         
         return best_x, best_y
 

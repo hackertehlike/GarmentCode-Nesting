@@ -1,5 +1,7 @@
 
 import math
+from typing import Dict, List, Tuple
+
 
 class Piece:
     """
@@ -9,29 +11,79 @@ class Piece:
 
     def __init__ (self, vertices, id = None):
         self.id = id
-        self.vertices = vertices
-        self.rotation = 0
+        # self.vertices = vertices
+        self.rotation = 0 # wrt to the original piece
+        self.translation = (0, 0)
+
         self.locked = False
 
+        self.inner_path : List[Tuple[float, float]] = vertices
+        self.outer_path : List[Tuple[float, float]] = vertices # by default, the path has NO seam allowance
+
         #bounding box
-        xs, ys = zip(*self.vertices)
-        # self.min_x = min(xs)
+        self.update_bbox()
+
+    def update_bbox(self):
+        print("Updating bounding box for piece ", self.id)
+
+        # get the min and max x and y coordinates
+        xs = [pt[0] for pt in self.outer_path]
+        ys = [pt[1] for pt in self.outer_path]
+        # print(f"Piece {self.id} vertices: {xs}, {ys}")
+        self.min_x = min(xs)
         self.max_x = max(xs)
-        # self.min_y = min(ys)
+        self.min_y = min(ys)
         self.max_y = max(ys)
+        # print(f"Types: {type(self.min_x)}, {type(self.max_x)}, {type(self.min_y)}, {type(self.max_y)}")
+        self.bbox_width = self.max_x - self.min_x
+        self.bbox_height = self.max_y - self.min_y
+        self.bbox_area = self.bbox_width * self.bbox_height
+        # print(f"Piece {self.id} bounding box updated: ({self.min_x}, {self.min_y}), ({self.max_x}, {self.max_y})")
 
-    def rotate (self, angle):
-        rad = angle * math.pi / 180
-        cos_theta = math.cos(rad)
-        sin_theta = math.sin(rad)
+    
+    def get_inner_path(self) -> list[list[float]]:
+        """Returns the path of the piece as a list of [x, y] vertices."""
+        return self.inner_path
+    
+    def get_outer_path(self) -> list[list[float]]:
+        """Returns the path of the piece as a list of [x, y] vertices."""
+        return self.outer_path
 
-        for i in range(len(self.vertices)):
-            x = self.vertices[i][0]
-            y = self.vertices[i][1]
+    @property
+    def height(self) -> float:
+        """Axis-aligned bounding-box height."""
+        return self.max_y - self.min_y
+
+    @property
+    def width(self) -> float:
+        """Axis-aligned bounding-box width."""
+        return self.max_x - self.min_x
+
+    def rotate(self, angle: float):
+        """Rotate the piece *in place* by *angle* degrees."""
+        rad = math.radians(angle)
+        cos_theta, sin_theta = math.cos(rad), math.sin(rad)
+
+        for i, (x, y) in enumerate(self.vertices):
             self.vertices[i][0] = x * cos_theta - y * sin_theta
             self.vertices[i][1] = x * sin_theta + y * cos_theta
-            self.rotation += angle
-            self.rotation %= 360
+
+        # bookkeeping
+        self.rotation += angle
+        self.rotation %= 360
+
+        self.update_bbox()
+
+    def translate(self, dx: float, dy: float):
+        """Translate the piece *in place* by (dx, dy)."""
+        for i, (x, y) in enumerate(self.vertices):
+            self.vertices[i][0] = x + dx
+            self.vertices[i][1] = y + dy
+
+        # bookkeeping
+        self.translation = (self.translation[0] + dx, self.translation[1] + dy)
+
+
 
 class Layout:
 
@@ -40,12 +92,11 @@ class Layout:
     Each layout has a list of pieces and defines an insertion order.
     """
 
-    def __init__(self, polygon_paths: dict[str, list[list[float]]]):
-        self.order = []
-        for name, path in polygon_paths.items():     # preserve current order
-            p = Piece(path, id = name)               
-            self.order.append(p)
+    def __init__(self, polygon_paths: dict[str, Piece]):
+        self.order = polygon_paths
 
+        # the tallest piece in the layout
+        self.max_height = max(piece.height for piece in self.order)
         
 
 class Container:
