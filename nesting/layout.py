@@ -13,13 +13,13 @@ class Piece:
         self.id = id
         # self.vertices = vertices
         self.rotation = 0 # wrt to the original piece
-        self.translation = (0, 0)
+        self._translation = (0, 0)
 
         self.locked = False
 
         self.inner_path : List[Tuple[float, float]] = vertices
         self.outer_path : List[Tuple[float, float]] = vertices # by default, the path has NO seam allowance
-
+        self.scale = 1.0
         #bounding box
         self.update_bbox()
 
@@ -81,7 +81,18 @@ class Piece:
             self.vertices[i][1] = y + dy
 
         # bookkeeping
-        self.translation = (self.translation[0] + dx, self.translation[1] + dy)
+        self._translation = (self._translation[0] + dx, self._translation[1] + dy)
+
+    @property
+    def translation(self) -> Tuple[float, float]:
+        """Returns the translation of the piece."""
+        return (self._translation[0] * self.scale, self._translation[1] * self.scale)
+    
+    @translation.setter
+    def translation(self, value: Tuple[float, float]):
+        """Sets the translation of the piece."""
+        self._translation = (value[0] / self.scale, value[1] / self.scale)
+        # self.translate(value[0], value[1])
 
 
 
@@ -96,7 +107,7 @@ class Layout:
         self.order = polygon_paths
 
         # the tallest piece in the layout
-        self.max_height = max(piece.height for piece in self.order)
+        self.max_height = max(piece.height for piece in polygon_paths.values())
         
 
 class Container:

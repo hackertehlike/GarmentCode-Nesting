@@ -196,6 +196,10 @@ class NestingGUI:
         if self.pattern_loaded:
             self._draw_outlines()
 
+        # reset the translation of all pieces
+        for piece in self.pieces.values():
+            piece.translation = (0, 0)
+
     def _update_seam_allowance(self, _):
         self.seam_allowance_cm = float(self.sa_input.value or 0.0)
         if self.pattern_loaded:
@@ -206,8 +210,6 @@ class NestingGUI:
     #                                PATTERN LOADERS                               #
     # ---------------------------------------------------------------------------- #
     
-
-
 
     def _load_pattern(self, e: events.UploadEventArguments):
         """
@@ -269,7 +271,6 @@ class NestingGUI:
             ui.notify("Default pattern loaded ✓", type="positive")
         except Exception as exc:
             ui.notify(f"Could not load default pattern: {exc}", type="negative")
-            # print(f"Could not load default pattern: {exc}")
 
     def _update_scale_factors(self):
         """
@@ -311,6 +312,7 @@ class NestingGUI:
         # all_px += [utils.scale(piece.get_outer_path(), self.effective_scale) for piece in self.pieces.values()]
         all_px = []
         for piece in self.pieces.values():
+            piece.scale = self.effective_scale
             all_px += [(x, y) for (x, y) in utils.scale(piece.get_outer_path(), self.effective_scale)]
 
         xs, ys = zip(*all_px)
@@ -420,7 +422,6 @@ class NestingGUI:
         element.on("pointerdown", lambda e, p=panel_id: self._on_drag_start(e, p))
         element.on("pointermove", lambda e, p=panel_id: self._on_drag_move(e, p))
         element.on("pointerup",   lambda e, p=panel_id: self._on_drag_end(e, p))
-        # NEW: on click, handle panel selection if selection mode is enabled.
         element.on("click", lambda e, p=panel_id: self._handle_panel_click(p))
         return element
 
@@ -429,12 +430,14 @@ class NestingGUI:
     # ---------------------------------------------------------------------------- #
 
     def _on_drag_start(self, e, panel_id: str):
+        piece = self.pieces[panel_id]
         self.drag_data = {
             'panel_id': panel_id,
             'start_x': e.args.get('clientX', 0),
             'start_y': e.args.get('clientY', 0),
-            'orig_offset': self.pieces[panel_id].translation,
+            'orig_offset': piece.translation,  # Use the piece's translation
         }
+        print(f"Drag started for {panel_id} at ({self.drag_data['start_x']}, {self.drag_data['start_y']})")
 
     def _on_drag_move(self, e, panel_id: str):
         if not self.drag_data or self.drag_data['panel_id'] != panel_id:
@@ -516,11 +519,11 @@ class NestingGUI:
     #                                    DECODER                                   #
     # ---------------------------------------------------------------------------- #
 
-    def _apply_placements(self, placements_cm: list[tuple[int, float, float]]):
-    # async def _apply_placements(self, placements_cm: list[tuple[int, float, float]]):
+    # def _apply_placements(self, placements_cm: list[tuple[int, float, float]]):
+    async def _apply_placements(self, placements_cm: list[tuple[int, float, float]]):
         """
         placements_cm: list of (piece_id, dx_cm, dy_cm)
-        It rewrites self.panel_transforms in pixels and updates the SVG
+        It rewrites the translation of each piece and updates the SVG
         paths that were created by _draw_outlines().
         """
         if not self.pattern_loaded:
@@ -543,7 +546,11 @@ class NestingGUI:
             print (f"Placing {name} at ({dx_cm:.2f}, {dy_cm:.2f}) cm")
             dx_px = dx_cm * cm_to_px
             dy_px = dy_cm * cm_to_px
-            self.panel_transforms[name] = (dx_px, dy_px)
+            # self.panel_transforms[name] = (dx_px, dy_px)
+
+            piece = self.pieces[name]
+            piece.translation = (dx_px, dy_px)  # update translation in cm
+
             outer, inner = self.panel_path_refs[name]
 
             for path in (outer, inner):
@@ -551,16 +558,21 @@ class NestingGUI:
 
         ui.notify("Automatic placement applied", type="positive")
 
-    # async def _auto_place(self, method="BL"):
-    def _auto_place(self, method="BL"):
+    async def _auto_place(self, method="BL"):
+    # def _auto_place(self, method="BL"):
         if not self.pattern_loaded:
             ui.notify('Load a pattern first', type='warning')
             return
+        
+        print(f"Auto placing with method: {method}")
 
         try:
             layout = Layout(self.pieces)
             container = Container(self.container_width_cm,
                                   self.container_height_cm)
+            
+            print (f"Container: {container}")
+            print (f"Layout: {layout}")
 
             if method == "BL":
                 # Bottom-Left placement
@@ -576,9 +588,17 @@ class NestingGUI:
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             
+            print("Now decoding...")
             placements = decoder.decode()  # [(name, dx, dy)]
+            print("Decoding done")
+            # print placements
+            for name, dx, dy in placements:
+                print(f"Placing {name} at ({dx:.2f}, {dy:.2f}) cm")
+            
             utilization = decoder.usage_BB()
+            print(f"Utilization: {utilization:.2%}")
             rest_length = decoder.rest_length()
+            print(f"Rest length: {rest_length:.2f} cm")
 
             # print(f"Auto placement ({method}) usage:")
             
@@ -588,9 +608,7 @@ class NestingGUI:
             print(f"Auto placement ({method}) usage: {utilization:.2%}")
             print(f"Rest length: {rest_length:.2f} cm")
 
-            # await self._apply_placements(placements)
-            self._apply_placements(placements)
-
+            await self._apply_placements(placements)
 
             ui.notify('Auto placement completed ', type='positive')
         except Exception as exc:
@@ -623,19 +641,19 @@ class NestingGUI:
             outer.props('stroke="#FF0000"')
             ui.notify(f"Panel '{panel_id}' selected", type="info")
 
-    def _rotate_panel(self):
-        if not self.selected_panel:
-            ui.notify("No panel selected", type="warning")
-            return
+    # def _rotate_panel(self):
+    #     if not self.selected_panel:
+    #         ui.notify("No panel selected", type="warning")
+    #         return
 
-        # Rotate the selected panel by 90 degrees.
-        outer, inner = self.panel_path_refs[self.selected_panel]
-        dx, dy = self.panel_transforms[self.selected_panel]
-        outer.props(f'transform="translate({dx},{dy}) rotate(90)"')
-        inner.props(f'transform="translate({dx},{dy}) rotate(90)"')
-        self.panel_transforms[self.selected_panel] = (dx, dy)
-        self.panel_rotations[self.selected_panel] = (self.panel_rotations[self.selected_panel] + 90) % 360
-        ui.notify(f"Panel '{self.selected_panel}' rotated", type="info")
+    #     # Rotate the selected panel by 90 degrees.
+    #     outer, inner = self.panel_path_refs[self.selected_panel]
+    #     dx, dy = self.panel_transforms[self.selected_panel]
+    #     outer.props(f'transform="translate({dx},{dy}) rotate(90)"')
+    #     inner.props(f'transform="translate({dx},{dy}) rotate(90)"')
+    #     self.panel_transforms[self.selected_panel] = (dx, dy)
+    #     self.panel_rotations[self.selected_panel] = (self.panel_rotations[self.selected_panel] + 90) % 360
+    #     ui.notify(f"Panel '{self.selected_panel}' rotated", type="info")
 
 if __name__ in {"__main__", "__mp_main__"}:
     NestingGUI()

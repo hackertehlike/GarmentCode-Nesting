@@ -17,38 +17,68 @@ class PlacementEngine():
         pass
 
     def _fits(self, piece: Piece, dx: float, dy: float) -> bool:
-        """
-        Would **piece** fit at offset (dx, dy) inside the container and
-        without overlapping any already-placed piece?
-        """
-        poly   = utils._translate_polygon(piece.get_outer_path(), dx, dy)
+        """Return True iff *piece* can be put at (dx, dy) [cm]"""
+        poly = utils._translate_polygon(piece.get_outer_path(), dx, dy)
 
-        # container boundaries
+        # container boundaries (all cm)
         xs, ys = zip(*poly)
-        if (
-            min(xs) < 0
-            or max(xs) > self.container.width
-            or min(ys) < 0
-            or max(ys) > self.container.height
-        ):
+        if (min(xs) < 0 or max(xs) > self.container.width
+                or min(ys) < 0 or max(ys) > self.container.height):
             return False
 
-        # intersections with fixed parts
-        for other in self.placed:
+        # 2️⃣  intersections with already‑placed parts
+        for other, ox, oy in self.placed:
             other_poly = utils._translate_polygon(
-                other.get_outer_path(),
-                *other.translation,
-            )
+                other.get_outer_path(), ox, oy)
             if utils.polygons_overlap(poly, other_poly):
                 return False
 
         return True
 
+    # def _fits(self, piece: Piece, dx: float, dy: float) -> bool:
+    #     """
+    #     Would **piece** fit at offset (dx, dy) inside the container and
+    #     without overlapping any already-placed piece?
+    #     """
+    #     poly = utils._translate_polygon(piece.get_outer_path(), dx, dy)
+
+    #     # container boundaries
+    #     xs, ys = zip(*poly)
+    #     if (
+    #         min(xs) < 0
+    #         or max(xs) > self.container.width
+    #         or min(ys) < 0
+    #         or max(ys) > self.container.height
+    #     ):
+    #         return False
+
+    #     # intersections with fixed parts
+    #     for other, _, _ in self.placed:
+    #         other_poly = utils._translate_polygon(
+    #             other.get_outer_path(),
+    #             *other.translation,
+    #         )
+    #         if utils.polygons_overlap(poly, other_poly):
+    #             return False
+
+    #     return True
+
     
 
     def anchor(self, piece):
         """Default: push piece against the container’s top-right corner."""
-        xs, ys  = zip(*piece.vertices)
+        # get the vertices of the piece
+
+        print (f"Piece {piece.id} anchoring")
+        vertices = piece.get_outer_path()
+        # get the x and y values of the vertices
+        xs = [v[0] for v in vertices]
+        # ys = [v[1] for v in vertices]
+        # get the min and max x and y values   
+        min_x = min(xs)
+        max_x = max(xs)
+        # min_y = min(ys)
+        # max_y = max(ys)
         start_x = self.container.width  - (max(xs) - min(xs))
         start_y = 0.0
         return start_x, start_y
@@ -59,7 +89,7 @@ class PlacementEngine():
 
         Call AFTER decode() to get the correct values.
         """
-        flattened_vertices = [(v[0]+ p[1], v[1]+ p[2]) for p in self.placed for v in p[0].vertices]
+        flattened_vertices = [(v[0]+ p[1], v[1]+ p[2]) for p in self.placed for v in p[0].get_outer_path()]
         # print (f"flattened vertices: {flattened_vertices}")
         x_vals = [v[0] for v in flattened_vertices]
         y_vals = [v[1] for v in flattened_vertices]
@@ -69,7 +99,7 @@ class PlacementEngine():
         max_y = max(y_vals)
         
         # calculate the area total of placed pieces
-        total_area = sum([utils.polygon_area(p[0].vertices) for p in self.placed])
+        total_area = sum([utils.polygon_area(p[0].get_outer_path()) for p in self.placed])
         # calculate the area of the bounding box
         bounding_box_area = (max_x - min_x) * (max_y - min_y)
 
@@ -83,7 +113,7 @@ class PlacementEngine():
         Call AFTER decode() to get the correct values.
         """
         # the rightmost x coordinate of the bounding box
-        flattened_vertices = [(v[0]+ p[1], v[1]+ p[2]) for p in self.placed for v in p[0].vertices]
+        flattened_vertices = [(v[0]+ p[1], v[1]+ p[2]) for p in self.placed for v in p[0].get_outer_path()]
         # print (f"flattened vertices: {flattened_vertices}")
         x_vals = [v[0] for v in flattened_vertices]
         # y_vals = [v[1] for v in flattened_vertices]
@@ -95,15 +125,19 @@ class PlacementEngine():
 
     def gravitate(self, piece, x, y, step=1.0):
         """Slide left as far as possible, then down; repeat until jammed."""
+        print (f"Piece {piece.id} gravitating")
+        #print piece type
+        # print (f"Piece {piece.id} type: {type(piece)}")
         moved = True
         while moved:
             moved = False
-            while x - step >= 0 and self._fits(piece.vertices, x - step, y):
+            while x - step >= 0 and self._fits(piece, x - step, y):
                 x -= step
                 moved = True
-            while y + step <= self.container.height and self._fits(piece.vertices, x, y + step):
+            while y + step <= self.container.height and self._fits(piece, x, y + step):
                 y += step
                 moved = True
+        # print (f"Piece {piece.id} gravitated to ({x}, {y})")
         return x, y
 
 class BottomLeftDecoder(PlacementEngine):
@@ -117,9 +151,10 @@ class BottomLeftDecoder(PlacementEngine):
         # self.placed: list[tuple[Piece, float, float]] = []  # (piece, x, y)
 
     def decode(self):
-        for piece in self.layout.order:
+        for piece_id, piece in self.layout.order.items():
             x0, y0 = self.anchor(piece)
             dx, dy = self.gravitate(piece, x0, y0)
+            print (f"Piece {piece.id} placed at ({dx}, {dy})")
             self.placed.append((piece, dx, dy))
         return [(p.id, dx, dy) for p, dx, dy in self.placed]
     
@@ -134,8 +169,10 @@ class GreedyBLDecoder(BottomLeftDecoder):
         super().__init__(layout, container)
 
         # sort the pieces by area 
-        self.layout.order.sort(key=lambda p: utils.polygon_area(p.vertices), reverse=True)
-        print (f"Sorted pieces by area: {[p.id for p in self.layout.order]}")
+        pieces = list(self.layout.order.values())
+        pieces.sort(key=lambda p: p.bbox_area, reverse=True)
+        self.layout.order = pieces  # Update layout.order with the sorted list
+        print (f"Sorted pieces by area: {[p.id for p in pieces]}")
         self.container = container
         # self.placed = []
 
@@ -163,7 +200,7 @@ class NFPDecoder(PlacementEngine):
         # print (f"Placed pieces: {[p.id for p, _, _ in self.placed]}")
         return [(p.id, dx, dy) for p, dx, dy in self.placed]
     
-    def _find_best_position(self, piece):
+    def _find_best_position(self, piece: Piece):
         """
         Find the best position for the piece in the container.
         The piece is placed using the BLF strategy.
@@ -204,7 +241,7 @@ class NFPDecoder(PlacementEngine):
                                               (x_translated == best_x and y_translated < best_y)):
                         
                             # check if we are intersecting with other placed pieces
-                            if self._fits(piece.vertices, x_translated, y_translated):
+                            if self._fits(piece.get_outer_path(), x_translated, y_translated):
                                 # update the best position
                                 best_x = x_translated
                                 best_y = y_translated
