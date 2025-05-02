@@ -6,19 +6,19 @@ from typing import Dict, List, Tuple
 class Piece:
     """
     A class representing a piece in the layout.
-    Each piece has an ID, a list of vertices, a rotation angle, and a locked state.
+    Each piece has an ID, a list of outer_path, a rotation angle, and a locked state.
     """
 
-    def __init__ (self, vertices, id = None):
+    def __init__ (self, outer_path, id = None):
         self.id = id
-        # self.vertices = vertices
+        # self.outer_path = outer_path
         self.rotation = 0 # wrt to the original piece
         self._translation = (0, 0)
 
         self.locked = False
 
-        self.inner_path : List[Tuple[float, float]] = vertices
-        self.outer_path : List[Tuple[float, float]] = vertices # by default, the path has NO seam allowance
+        self.inner_path : List[Tuple[float, float]] = outer_path
+        self.outer_path : List[Tuple[float, float]] = outer_path # by default, the path has NO seam allowance
         self.scale = 1.0
         #bounding box
         self.update_bbox()
@@ -29,7 +29,7 @@ class Piece:
         # get the min and max x and y coordinates
         xs = [pt[0] for pt in self.outer_path]
         ys = [pt[1] for pt in self.outer_path]
-        # print(f"Piece {self.id} vertices: {xs}, {ys}")
+        # print(f"Piece {self.id} outer_path: {xs}, {ys}")
         self.min_x = min(xs)
         self.max_x = max(xs)
         self.min_y = min(ys)
@@ -42,11 +42,11 @@ class Piece:
 
     
     def get_inner_path(self) -> list[list[float]]:
-        """Returns the path of the piece as a list of [x, y] vertices."""
+        """Returns the path of the piece as a list of [x, y] outer_path."""
         return self.inner_path
     
     def get_outer_path(self) -> list[list[float]]:
-        """Returns the path of the piece as a list of [x, y] vertices."""
+        """Returns the path of the piece as a list of [x, y] outer_path."""
         return self.outer_path
 
     @property
@@ -60,25 +60,27 @@ class Piece:
         return self.max_x - self.min_x
 
     def rotate(self, angle: float):
-        """Rotate the piece *in place* by *angle* degrees."""
-        rad = math.radians(angle)
-        cos_theta, sin_theta = math.cos(rad), math.sin(rad)
+        """Rotate the piece *in place* by angle (in degrees)."""
+        angle_rad = math.radians(angle)
+        cos_angle = math.cos(angle_rad)
+        sin_angle = math.sin(angle_rad)
 
-        for i, (x, y) in enumerate(self.vertices):
-            self.vertices[i][0] = x * cos_theta - y * sin_theta
-            self.vertices[i][1] = x * sin_theta + y * cos_theta
-
+        for i, (x, y) in enumerate(self.outer_path):
+            # Apply rotation matrix
+            new_x = x * cos_angle - y * sin_angle
+            new_y = x * sin_angle + y * cos_angle
+            self.outer_path[i] = (new_x, new_y)
         # bookkeeping
         self.rotation += angle
-        self.rotation %= 360
-
+        self.rotation = self.rotation % 360
+        # update the bounding box
         self.update_bbox()
 
     def translate(self, dx: float, dy: float):
         """Translate the piece *in place* by (dx, dy)."""
-        for i, (x, y) in enumerate(self.vertices):
-            self.vertices[i][0] = x + dx
-            self.vertices[i][1] = y + dy
+        for i, (x, y) in enumerate(self.outer_path):
+            self.outer_path[i][0] = x + dx
+            self.outer_path[i][1] = y + dy
 
         # bookkeeping
         self._translation = (self._translation[0] + dx, self._translation[1] + dy)

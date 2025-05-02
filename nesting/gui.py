@@ -75,14 +75,14 @@ class NestingGUI:
 
     def _build_canvas(self) -> None:
         with ui.element("div").classes("relative").style(
-            f"width:{self.container_width}px;height:{self.container_height}px"
+            f"width:{self.container_width_px}px;height:{self.container_height}px"
         ):
             self.scene = (
                 ui.element("svg")
                 .props(
-                    f'width="{self.container_width}" '
+                    f'width="{self.container_width_px}" '
                     f'height="{self.container_height}" '
-                    f'viewBox="0 0 {self.container_width} {self.container_height}"'
+                    f'viewBox="0 0 {self.container_width_px} {self.container_height}"'
                 )
                 .style("position:absolute;top:0;left:0")
             )
@@ -189,9 +189,9 @@ class NestingGUI:
         self.container_height_cm = float(self.height_input.value or self.container_height_cm)
         self._update_scale_factors()
         self.scene.props(
-            f'width="{self.container_width}" '
+            f'width="{self.container_width_px}" '
             f'height="{self.container_height}" '
-            f'viewBox="0 0 {self.container_width} {self.container_height}"'
+            f'viewBox="0 0 {self.container_width_px} {self.container_height}"'
         )
         if self.pattern_loaded:
             self._draw_outlines()
@@ -281,7 +281,7 @@ class NestingGUI:
             MAX_CANVAS_PX_WIDTH  / self.container_width_cm,
             MAX_CANVAS_PX_HEIGHT / self.container_height_cm,
         )
-        self.container_width  = int(self.container_width_cm  * self.effective_scale)
+        self.container_width_px  = int(self.container_width_cm  * self.effective_scale)
         self.container_height = int(self.container_height_cm * self.effective_scale)
 
     def _rebuild_panel_outlines(self):
@@ -326,9 +326,9 @@ class NestingGUI:
 
         # Optional border
         for x1, y1, x2, y2 in [
-            (0, 0, self.container_width, 0),
-            (self.container_width, 0, self.container_width, self.container_height),
-            (self.container_width, self.container_height, 0, self.container_height),
+            (0, 0, self.container_width_px, 0),
+            (self.container_width_px, 0, self.container_width_px, self.container_height),
+            (self.container_width_px, self.container_height, 0, self.container_height),
             (0, self.container_height, 0, 0)
         ]:
             self._svg_line(x1, y1, x2, y2, stroke="#8a8a8a")
@@ -499,7 +499,7 @@ class NestingGUI:
             dx, dy = self.pieces[name].translation
             poly = to_px(self.pieces[name].get_outer_path(), dx, dy)
             xs_poly, ys_poly = zip(*poly)
-            if min(xs_poly) < 0 or max(xs_poly) > self.container_width or min(ys_poly) < 0 or max(ys_poly) > self.container_height:
+            if min(xs_poly) < 0 or max(xs_poly) > self.container_width_px or min(ys_poly) < 0 or max(ys_poly) > self.container_height:
                 panels_outside.append(name)
 
         # Build the notification message.
@@ -641,19 +641,20 @@ class NestingGUI:
             outer.props('stroke="#FF0000"')
             ui.notify(f"Panel '{panel_id}' selected", type="info")
 
-    # def _rotate_panel(self):
-    #     if not self.selected_panel:
-    #         ui.notify("No panel selected", type="warning")
-    #         return
+    def _rotate_panel(self):
+        if not self.selected_panel:
+            ui.notify("No panel selected", type="warning")
+            return
 
-    #     # Rotate the selected panel by 90 degrees.
-    #     outer, inner = self.panel_path_refs[self.selected_panel]
-    #     dx, dy = self.panel_transforms[self.selected_panel]
-    #     outer.props(f'transform="translate({dx},{dy}) rotate(90)"')
-    #     inner.props(f'transform="translate({dx},{dy}) rotate(90)"')
-    #     self.panel_transforms[self.selected_panel] = (dx, dy)
-    #     self.panel_rotations[self.selected_panel] = (self.panel_rotations[self.selected_panel] + 90) % 360
-    #     ui.notify(f"Panel '{self.selected_panel}' rotated", type="info")
+        # Rotate the selected panel by 90 degrees.
+        piece = self.pieces[self.selected_panel]
+        piece.rotate(90)
+        outer, inner = self.panel_path_refs[self.selected_panel]
+        dx, dy = piece.translation
+        outer.props(f'transform="translate({dx},{dy}) rotate(90)"').update()
+        inner.props(f'transform="translate({dx},{dy}) rotate(90)"').update()
+
+        ui.notify(f"Panel '{self.selected_panel}' rotated", type="info")
 
 if __name__ in {"__main__", "__mp_main__"}:
     NestingGUI()

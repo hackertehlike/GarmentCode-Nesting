@@ -133,8 +133,8 @@ def inner_fit_rectangle(container: Container, piece: Piece):
     top-left corner and y grows **down**.
     """
     Wc, Hc = container.width, container.height          # container
-    Wp = max(x for x, _ in piece.vertices)              # width
-    Hp = max(y for _, y in piece.vertices)              # height
+    Wp = max(x for x, _ in piece.get_outer_path())              # width
+    Hp = max(y for _, y in piece.get_outer_path())            # height
 
     if Wp > Wc or Hp > Hc:               # piece larger than container
         return []

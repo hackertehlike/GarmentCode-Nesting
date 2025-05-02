@@ -26,7 +26,7 @@ class PlacementEngine():
                 or min(ys) < 0 or max(ys) > self.container.height):
             return False
 
-        # 2️⃣  intersections with already‑placed parts
+        # intersections with already‑placed parts
         for other, ox, oy in self.placed:
             other_poly = utils._translate_polygon(
                 other.get_outer_path(), ox, oy)
@@ -168,11 +168,13 @@ class GreedyBLDecoder(BottomLeftDecoder):
     def __init__(self, layout, container):
         super().__init__(layout, container)
 
-        # sort the pieces by area 
-        pieces = list(self.layout.order.values())
-        pieces.sort(key=lambda p: p.bbox_area, reverse=True)
-        self.layout.order = pieces  # Update layout.order with the sorted list
-        print (f"Sorted pieces by area: {[p.id for p in pieces]}")
+        # sort the pieces by area
+        # Create a list of (piece_id, piece) tuples sorted by area
+        sorted_pieces = sorted(self.layout.order.items(), key=lambda item: item[1].bbox_area, reverse=True)
+
+        # Update layout.order with the sorted list
+        self.layout.order = dict(sorted_pieces)
+        # print (f"Sorted pieces by area: {[p.id for p in pieces]}")
         self.container = container
         # self.placed = []
 
@@ -190,14 +192,14 @@ class NFPDecoder(PlacementEngine):
 
     def decode(self):
        # go in layout order
-        for piece in self.layout.order:
+        for piece in self.layout.order.values():
             # find the best position for the piece
             # print(f"Placing piece {piece.id}...")
             best_x, best_y = self._find_best_position(piece)
             # print(f"Placing piece {piece.id} at ({best_x}, {best_y})")
             self.placed.append((piece, best_x, best_y))
 
-        # print (f"Placed pieces: {[p.id for p, _, _ in self.placed]}")
+        print (f"Placed pieces: {[p.id for p, _, _ in self.placed]}")
         return [(p.id, dx, dy) for p, dx, dy in self.placed]
     
     def _find_best_position(self, piece: Piece):
@@ -209,7 +211,9 @@ class NFPDecoder(PlacementEngine):
 
         # get inner fit rectangle
         # for the piece in the container
+        print (f"Piece {piece.id} finding best position")
         inner_fit = utils.inner_fit_rectangle(self.container, piece)
+        print("inner fit rectangle: ", inner_fit)
         if not inner_fit:
             # print(f"Piece {piece.id} has no ifr")
             return None, None
@@ -236,15 +240,15 @@ class NFPDecoder(PlacementEngine):
                 # check if the translated nfp is inside the inner fit rectangle
                 if (inner_fit[0][0] <= x_translated <= inner_fit[1][0] and
                     inner_fit[0][1] <= y_translated <= inner_fit[3][1]):
-                        # check if the translated nfp is inside the container
-                        if best_x is None or (x_translated < best_x or
-                                              (x_translated == best_x and y_translated < best_y)):
-                        
-                            # check if we are intersecting with other placed pieces
-                            if self._fits(piece.get_outer_path(), x_translated, y_translated):
-                                # update the best position
-                                best_x = x_translated
-                                best_y = y_translated
+                    # check if the translated nfp is inside the container
+                    if best_x is None or (x_translated < best_x or
+                                          (x_translated == best_x and y_translated < best_y)):
+                    
+                        # check if we are intersecting with other placed pieces
+                        if self._fits(piece, x_translated, y_translated):
+                            # update the best position
+                            best_x = x_translated
+                            best_y = y_translated
 
         # if no position was found, return None
         if best_x is None or best_y is None:
@@ -260,7 +264,7 @@ class NFPDecoder(PlacementEngine):
     def _nfp(self, stationary, moving):
         key = (stationary.id, moving.id)
         if key not in self._nfp_cache:
-            self._nfp_cache[key] = utils.no_fit_polygon(stationary.vertices,
-                                                        moving.vertices)
+            self._nfp_cache[key] = utils.no_fit_polygon(stationary.get_outer_path(),
+                                                        moving.get_outer_path())
                                                         
         return self._nfp_cache[key]
