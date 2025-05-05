@@ -49,12 +49,14 @@ class PatternPathExtractor(BasicPattern):
 
         # shift the outline so that its TOP LEFT vertex of the bounding box is at (0,0)
         # consistent with the canvas coordinate system
-        xs = [pt[0] for pt in outline]
-        ys = [pt[1] for pt in outline]
-        min_x = float(min(xs))
-        min_y = float(min(ys))
+        # xs = [pt[0] for pt in outline]
+        # ys = [pt[1] for pt in outline]
+        # min_x = float(min(xs))
+        # min_y = float(min(ys))
         
-        shifted_outline = [(x - min_x, y - min_y) for x, y in outline]
+        # shifted_outline = [(x - min_x, y - min_y) for x, y in outline]
+
+        shifted_outline = utils.shift_coordinates(outline)
 
         if utils.signed_area(shifted_outline) < 0:        # currently CCW → reverse
             shifted_outline.reverse()

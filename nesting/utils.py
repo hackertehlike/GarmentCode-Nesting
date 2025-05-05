@@ -146,7 +146,15 @@ def inner_fit_rectangle(container: Container, piece: Piece):
         (Wc - Wp, Hc - Hp),              # bottom-right
         (0.0,     Hc - Hp),              # bottom-left
     ]
-    
+
+def shift_coordinates(outline: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
+    xs = [pt[0] for pt in outline]
+    ys = [pt[1] for pt in outline]
+    min_x = float(min(xs))
+    min_y = float(min(ys))
+        
+    shifted_outline = [(x - min_x, y - min_y) for x, y in outline]
+    return shifted_outline
 
 # def fits(self, poly, dx, dy):
 #         """

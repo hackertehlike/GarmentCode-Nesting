@@ -301,98 +301,118 @@ class NestingGUI:
     #                                  DRAWING                                     #
     # ---------------------------------------------------------------------------- #
 
+    def _draw_panel(self, piece_id, fill="#bee5eb"):
+        """
+        Render a single pattern piece.
+
+        Parameters
+        ----------
+        piece_id: Key in self.pieces
+        fill : str, optional
+            Fill colour for the outer path (defaults to blue)
+
+        Notes
+        -----
+        * Does **not** clear the scene or update offsets.
+        * Populates ``self.panel_path_refs[piece_id]``
+        """
+
+        piece = self.pieces[piece_id]
+
+        # clear the piece's previous svg path
+        if piece_id in self.panel_path_refs:
+            outer_path, inner_path = self.panel_path_refs[piece_id]
+            outer_path.delete()
+            inner_path.delete()
+
+        # Scale the geometry
+        # outer_scaled = utils.scale(piece.get_outer_path(), self.effective_scale)
+        # outer_scaled += outer_scaled[:1]                 # close path
+
+        # inner_scaled = utils.scale(piece.get_inner_path(), self.effective_scale)
+        # inner_scaled += inner_scaled[:1]                 # close path
+
+        # # SVG path strings
+        # outer_cmd = "M " + " L ".join(
+        #     f"{x + piece.translation[0]} {y + piece.translation[1]}"
+        #     for x, y in outer_scaled
+        # )
+        # inner_cmd = "M " + " L ".join(
+        #     f"{x + piece.translation[0] + self.effective_scale * self.seam_allowance_cm} "
+        #     f"{y + piece.translation[1] + self.effective_scale * self.seam_allowance_cm}"
+        #     for x, y in inner_scaled
+        # )
+
+        outer_scaled = utils.scale(piece.get_outer_path(), self.effective_scale)
+        outer_scaled += outer_scaled[:1]
+
+        inner_scaled = utils.scale(piece.get_inner_path(), self.effective_scale)
+        inner_scaled += inner_scaled[:1]
+
+        outer_cmd = "M " + " L ".join(f"{x} {y}" for x, y in outer_scaled)
+        # inner_cmd = "M " + " L ".join(f"{x} {y}" for x, y in inner_scaled)
+
+        oxs, oys = zip(*outer_scaled)
+        ixs, iys = zip(*inner_scaled)
+        dx_px = (max(oxs) - min(oxs) - (max(ixs) - min(ixs))) / 2
+        dy_px = (max(oys) - min(oys) - (max(iys) - min(iys))) / 2
+        inner_cmd = "M " + " L ".join(
+            f"{x + dx_px} {y + dy_px}"
+            for x, y in inner_scaled
+        )
+
+        # Draw paths
+        outer_path = self._svg_path_draggable(
+            outer_cmd,
+            panel_id=piece_id,
+            stroke="#ed7ea7", stroke_width=2,
+            fill=fill, fill_opacity=0.35,
+        )
+        inner_path = self._svg_path_static(
+            inner_cmd,
+            stroke="#4b5563", stroke_width=1, stroke_dash="4 2",
+        )
+
+        tx, ty = piece.translation           # already in CSS‑pixels
+        for path in (outer_path, inner_path):
+            path.props(f'transform="translate({tx},{ty})"')
+
+        self.panel_path_refs[piece_id] = (outer_path, inner_path)
+
+
     def _draw_outlines(self):
+        """Clear the scene and redraw **all** panels."""
+        # Reset scene
         self.scene.clear()
-        # all_px = [
-        #     (x * self.effective_scale + piece.translation[0],
-        #      y * self.effective_scale + piece.translation[1])
-        #     for piece in self.pieces.values()
-        #     for x, y in piece.get_outer_path()
-        # ]
-        # all_px += [utils.scale(piece.get_outer_path(), self.effective_scale) for piece in self.pieces.values()]
+
         all_px = []
         for piece in self.pieces.values():
             piece.scale = self.effective_scale
-            all_px += [(x, y) for (x, y) in utils.scale(piece.get_outer_path(), self.effective_scale)]
+            all_px.extend(utils.scale(piece.get_outer_path(), self.effective_scale))
 
         xs, ys = zip(*all_px)
-        min_x, max_x = min(xs), max(xs)
-        min_y, max_y = min(ys), max(ys)
-        pattern_w, pattern_h = max_x - min_x, max_y - min_y
+        # pattern_w, pattern_h = max(xs) - min(xs), max(ys) - min(ys)
 
-        offset_x = 0
-        offset_y = 0
-        self.offset_px = (offset_x, offset_y)
+        self.offset_px = (0, 0)
 
-        # Optional border
+        # Border
         for x1, y1, x2, y2 in [
             (0, 0, self.container_width_px, 0),
             (self.container_width_px, 0, self.container_width_px, self.container_height),
             (self.container_width_px, self.container_height, 0, self.container_height),
-            (0, self.container_height, 0, 0)
+            (0, self.container_height, 0, 0),
         ]:
             self._svg_line(x1, y1, x2, y2, stroke="#8a8a8a")
 
+        
+        self.panel_path_refs.clear()                            
         fills = itertools.cycle(["#c3e6cb", "#bee5eb", "#ffeeba", "#f5c6cb"])
-        self.panel_path_refs.clear()
-        # self.panel_transforms.clear()
- 
 
         for piece_id, piece in self.pieces.items():
-            # print(f"Drawing {piece_id} at ({piece.translation[0]:.2f}, {piece.translation[1]:.2f})")
-            # dx, dy = piece.translation
-            # dx_px = dx * self.effective_scale + offset_x
-            # dy_px = dy * self.effective_scale + offset_y
-            # Draw the outer path
-            outer_path_scaled = utils.scale(piece.get_outer_path(), self.effective_scale)
-            outer_path_scaled += outer_path_scaled[:1]  # close the path
-            inner_path_scaled = utils.scale(piece.get_inner_path(), self.effective_scale)
-            inner_path_scaled += inner_path_scaled[:1]  # close the path
-            outer_path = self._svg_path_draggable(
-                "M " + " L ".join(f"{x+ piece.translation[0]} {y+ piece.translation[1]}" for x, y in outer_path_scaled),
-                panel_id=piece_id,
-                stroke="#ed7ea7", stroke_width=2,
-                fill=next(fills), fill_opacity=0.35,
-            )
-
-            # Draw the inner path
-            inner_path = self._svg_path_static(
-                "M " + " L ".join(f"{x+ piece.translation[0] + self.effective_scale*self.seam_allowance_cm} {y+ piece.translation[1] + self.effective_scale*self.seam_allowance_cm}" for x, y in inner_path_scaled),
-                stroke="#4b5563", stroke_width=1, stroke_dash="4 2"
-            )
-
-            self.panel_path_refs[piece_id] = (outer_path, inner_path)
-            # self.panel_transforms[piece_id] = (dx_px, dy_px)
-
-        # for name, outer_cm in self.panel_outlines.items():
-        #     inner_cm = self.raw_panel_outlines.get(name, [])
-            
-        #     oxs, oys = zip(*outer_cm)
-        #     ixs, iys = zip(*inner_cm)
-        #     dx_cm = (max(oxs) - min(oxs) - (max(ixs) - min(ixs))) / 2
-        #     dy_cm = (max(oys) - min(oys) - (max(iys) - min(iys))) / 2
-        #     out_px = [(x*self.effective_scale + offset_x,
-        #                y*self.effective_scale + offset_y) for x, y in outer_cm]
-        #     in_px = [((x + dx_cm) * self.effective_scale + offset_x, 
-        #               (y + dy_cm) * self.effective_scale + offset_y)
-        #  for x, y in inner_cm]
-        #     d_out = "M " + " L ".join(f"{x} {y}" for x, y in out_px) + " Z"
-        #     d_in  = "M " + " L ".join(f"{x} {y}" for x, y in in_px) + " Z"
-
-        #     inner_path = self._svg_path_static(
-        #         d_in, stroke="#4b5563", stroke_width=1, stroke_dash="4 2"
-        #     )
-        #     outer_path = self._svg_path_draggable(
-        #         d_out, panel_id=name,
-        #         stroke="#ed7ea7", stroke_width=2,
-        #         fill=next(fills), fill_opacity=0.35,
-        #     )
-
-        #     self.panel_path_refs[name] = (outer_path, inner_path)
-        #     self.panel_transforms[name] = (0, 0)
+            self._draw_panel(piece_id, fill=next(fills))
 
 
-    #------------------------- svg stuff - thank you chatgpt -----------------------#
+
     def _svg_line(self, x1, y1, x2, y2, *, stroke="#000") -> None:
         with self.scene:
             ui.element("line").props(
@@ -426,7 +446,7 @@ class NestingGUI:
         return element
 
     # ---------------------------------------------------------------------------- #
-    #               click and drag stuff, thx chatgpt but it works :)              #
+    #               click and drag stuff                                           #
     # ---------------------------------------------------------------------------- #
 
     def _on_drag_start(self, e, panel_id: str):
@@ -450,7 +470,7 @@ class NestingGUI:
         self.pieces[panel_id].translation = new_offset
         outer_path, inner_path = self.panel_path_refs[panel_id]
         for path in (outer_path, inner_path):
-            path.props(f'transform="translate({new_offset[0]},{new_offset[1]}) rotate({self.pieces[panel_id].rotation})"').update()
+            path.props(f'transform="translate({new_offset[0]},{new_offset[1]})"').update()
             # path.props(f'transform="translate({new_offset[0]},{new_offset[1]})"').update()
 
     def _on_drag_end(self, *_):
@@ -614,7 +634,6 @@ class NestingGUI:
         except Exception as exc:
             ui.notify(f'Auto placement failed: {exc}', type='negative')
 
-    # New method to enable selection mode.
     def _enable_selection_mode(self):
         self.selection_mode = True
         ui.notify("Select a panel by clicking on it", type="info")
@@ -649,10 +668,13 @@ class NestingGUI:
         # Rotate the selected panel by 90 degrees.
         piece = self.pieces[self.selected_panel]
         piece.rotate(90)
-        outer, inner = self.panel_path_refs[self.selected_panel]
-        dx, dy = piece.translation
-        outer.props(f'transform="translate({dx},{dy}) rotate(90)"').update()
-        inner.props(f'transform="translate({dx},{dy}) rotate(90)"').update()
+        
+        # refresh the outlines
+        self._draw_panel(self.selected_panel)
+
+        # reset the piece's translation
+        piece.translation = (0, 0)
+
 
         ui.notify(f"Panel '{self.selected_panel}' rotated", type="info")
 

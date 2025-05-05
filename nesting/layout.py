@@ -1,7 +1,7 @@
 
 import math
 from typing import Dict, List, Tuple
-
+from nesting import utils
 
 class Piece:
     """
@@ -60,10 +60,20 @@ class Piece:
         return self.max_x - self.min_x
 
     def rotate(self, angle: float):
-        """Rotate the piece *in place* by angle (in degrees)."""
+        """
+        Rotate the piece *in place* by angle (in degrees).
+        Modifies the piece's outer_path and inner_path.
+        The rotation is done around the origin (0, 0) of the piece (bounding box).
+        """
         angle_rad = math.radians(angle)
         cos_angle = math.cos(angle_rad)
         sin_angle = math.sin(angle_rad)
+
+        for i, (x, y) in enumerate(self.inner_path):
+            # Apply rotation matrix
+            new_x = x * cos_angle - y * sin_angle
+            new_y = x * sin_angle + y * cos_angle
+            self.inner_path[i] = (new_x, new_y)
 
         for i, (x, y) in enumerate(self.outer_path):
             # Apply rotation matrix
@@ -75,6 +85,10 @@ class Piece:
         self.rotation = self.rotation % 360
         # update the bounding box
         self.update_bbox()
+        # shift
+        # utils.shift_coordinates(self.outer_path)
+        self.outer_path = utils.shift_coordinates(self.outer_path)
+        self.inner_path = utils.shift_coordinates(self.inner_path)
 
     def translate(self, dx: float, dy: float):
         """Translate the piece *in place* by (dx, dy)."""
