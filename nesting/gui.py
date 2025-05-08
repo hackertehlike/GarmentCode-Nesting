@@ -7,9 +7,9 @@ from typing import Dict, List, Tuple
 
 from nicegui import ui, events
 from nesting import utils  # add_seam_allowance, polygons_overlap, etc.
-from nesting.path_extractor import PatternPathExtractor
-from nesting.layout import Layout, Container, Piece
-from nesting.placement_engine import BottomLeftDecoder, GreedyBLDecoder, NFPDecoder
+from .path_extractor import PatternPathExtractor
+from .layout import Layout, Container, Piece
+from .placement_engine import BottomLeftDecoder, GreedyBLDecoder, NFPDecoder
 
 # viewer size in CSS‑pixels
 MAX_CANVAS_PX_WIDTH  = 800   
@@ -29,7 +29,7 @@ class NestingGUI:
     def __init__(self) -> None:
         # container dimensions in cm
         self.container_width_cm  = 140.0
-        self.container_height_cm = 200.0
+        self.container_height_cm = 100.0
 
         self._update_scale_factors()
 
@@ -108,6 +108,7 @@ class NestingGUI:
             # Label to display utilization
             self.utilization_label = ui.label("Utilization: n/a")
             self.rest_length_label = ui.label("Rest length: n/a")
+            self.utilization_concave_label = ui.label("Concave hull utilization: n/a")
 
 
             ui.button("Check intersections & boundaries", on_click=self._check_intersections)
@@ -232,7 +233,7 @@ class NestingGUI:
             extractor = PatternPathExtractor(tmp_path)  # outlines in cm
             self.pieces = extractor.get_all_panel_pieces(samples_per_edge=20)
 
-            # ui.notify("Panels found: " + ", ".join(self.raw_panel_outlines.keys()))
+            ui.notify("Panels found: " + ", ".join(self.raw_panel_outlines.keys()))
             self._rebuild_panel_outlines()
             self.pattern_loaded = True
 
@@ -254,6 +255,7 @@ class NestingGUI:
         try:
             extractor = PatternPathExtractor(default_path)  # outlines in cm
             self.pieces = extractor.get_all_panel_pieces(samples_per_edge=20)
+            print("Default pattern loaded: ", self.pieces)
             
             # print (f"Default pattern loaded: {self.pieces}")
 
@@ -291,7 +293,7 @@ class NestingGUI:
         sa = self.seam_allowance_cm
         for piece in self.pieces.values():
             print("adding seam to: ", piece)
-            utils.add_seam_allowance(piece, sa)
+            piece.add_seam_allowance(sa)
             piece.translation = (0, 0)  # reset translation
 
         print ("Panel outlines rebuilt")
@@ -619,12 +621,21 @@ class NestingGUI:
             print(f"Utilization: {utilization:.2%}")
             rest_length = decoder.rest_length()
             print(f"Rest length: {rest_length:.2f} cm")
+            try:
+                concave_hull_usage = decoder.concave_hull_utilization()
+            except Exception as err:
+                ui.notify(f"Concave hull utilization skipped: {err}", type="warning")
+                concave_hull_usage = "n/a"
+
+            # print(f"Concave hull utilization: {concave_hull_usage:.2%}")
 
             # print(f"Auto placement ({method}) usage:")
             
             self.utilization_label.text = f"Utilization: {utilization:.2%}"
             self.rest_length_label.text = f"Rest length: {rest_length:.2f} cm"
-            
+            if concave_hull_usage != "n/a":
+                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
+
             print(f"Auto placement ({method}) usage: {utilization:.2%}")
             print(f"Rest length: {rest_length:.2f} cm")
 
@@ -671,10 +682,6 @@ class NestingGUI:
         
         # refresh the outlines
         self._draw_panel(self.selected_panel)
-
-        # reset the piece's translation
-        piece.translation = (0, 0)
-
 
         ui.notify(f"Panel '{self.selected_panel}' rotated", type="info")
 

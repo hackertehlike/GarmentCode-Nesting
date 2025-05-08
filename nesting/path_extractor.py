@@ -66,7 +66,7 @@ class PatternPathExtractor(BasicPattern):
         return piece
 
 
-    def get_all_panel_pieces(self, samples_per_edge=10):
+    def get_all_panel_pieces(self, samples_per_edge=10) -> dict[str, Piece]:
         """
         Returns a dictionary mapping each panel name to its outline (list of [x, y] points).
         

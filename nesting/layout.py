@@ -1,29 +1,31 @@
-
 import math
 from typing import Dict, List, Tuple
 from nesting import utils
 
+from collections import OrderedDict
 class Piece:
     """
     A class representing a piece in the layout.
     Each piece has an ID, a list of outer_path, a rotation angle, and a locked state.
     """
 
-    def __init__ (self, outer_path, id = None):
+    def __init__(self, original_path, id=None):
         self.id = id
-        # self.outer_path = outer_path
+
+        self.inner_path = original_path     # original inner geometry (in cm)
+        self.outer_path = original_path.copy()     # original outer geometry (in cm)
+        
+        self.add_seam_allowance()  # original outer geometry (in cm)
+        # self.translation = (0.0, 0.0)
         self.rotation = 0 # wrt to the original piece
         self._translation = (0, 0)
-
         self.locked = False
-
-        self.inner_path : List[Tuple[float, float]] = outer_path
-        self.outer_path : List[Tuple[float, float]] = outer_path # by default, the path has NO seam allowance
         self.scale = 1.0
+
         #bounding box
         self.update_bbox()
 
-    def update_bbox(self):
+    def update_bbox(self) -> None:
         print("Updating bounding box for piece ", self.id)
 
         # get the min and max x and y coordinates
@@ -110,6 +112,21 @@ class Piece:
         self._translation = (value[0] / self.scale, value[1] / self.scale)
         # self.translate(value[0], value[1])
 
+    def add_seam_allowance(self, allowance: float = 1.0) -> None:
+        """
+        Update this piece’s outer path with a seam allowance.
+        The inner path is unchanged.
+        This method calls utils.compute_offset_path, which handles all Pyclipper details.
+        """
+        contour = self.get_inner_path()
+        if not contour or len(contour) < 3:
+            raise ValueError("Piece has no inner path to offset.")
+
+        print(f"Adding seam allowance of {allowance} to piece {self.id}")
+        new_outer = utils.compute_offset_path(contour, allowance)
+        self.outer_path = new_outer
+        self.update_bbox()
+        print(f"Piece {self.id} outer path updated with seam allowance")
 
 
 class Layout:
@@ -120,7 +137,7 @@ class Layout:
     """
 
     def __init__(self, polygon_paths: dict[str, Piece]):
-        self.order = polygon_paths
+        self.order : OrderedDict[str, Piece] = polygon_paths
 
         # the tallest piece in the layout
         self.max_height = max(piece.height for piece in polygon_paths.values())
@@ -134,3 +151,29 @@ class Container:
     def __init__ (self, width, height):
         self.width = width
         self.height = height
+
+    @staticmethod
+    def inner_fit_rectangle(container: "Container",
+                            piece:      "Piece"
+    ) -> list[tuple[float, float]]:
+        """
+        Return the clockwise Inner‑Fit Rectangle (IFR) for *piece* with
+        its anchor at the piece’s top‑left corner.
+
+        Coordinates are given in container space (positive y downward).
+        Empty list ⇒ piece is larger than the container.
+        """
+        Wc, Hc = container.width, container.height
+        Wp = max(x for x, _ in piece.get_outer_path())
+        Hp = max(y for _, y in piece.get_outer_path())
+
+        if Wp > Wc or Hp > Hc:           # piece does not fit
+            return []
+
+        # TL ➜ TR ➜ BR ➜ BL  (CW with y‑down)
+        return [
+            (0.0,        0.0),           # top‑left
+            (Wc - Wp,    0.0),           # top‑right
+            (Wc - Wp, Hc - Hp),          # bottom‑right
+            (0.0,     Hc - Hp),          # bottom‑left
+        ]
