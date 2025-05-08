@@ -126,12 +126,27 @@ class NestingGUI:
             ui.button("Auto place (Bottom‑Left)", on_click=self._auto_place)
             ui.button("Auto place (Greedy)", on_click=lambda _: self._auto_place("Greedy"))
             ui.button("Auto place (NFP)", on_click=lambda _: self._auto_place("NFP"))
+            ui.button("Random Order (BL)", on_click=lambda _: self._auto_place("Random Order BL"))
 
             # Button to enable selection mode.
             ui.button("Select Panel", on_click=self._enable_selection_mode)
             ui.button("Reset Selection", on_click=lambda _: self._select_panel(""))
             ui.button("Rotate Panel", on_click=lambda _: self._rotate_panel())
+            # New random order button
 
+    # def randomize_order_and_autoplace(self):
+    #     """
+    #     Randomizes the order of the pieces and then calls the
+    #     Bottom‑Left auto placement.
+    #     """
+    #     from collections import OrderedDict
+    #     import random
+
+    #     piece_ids = list(self.pieces.keys())
+    #     random.shuffle(piece_ids)
+    #     new_order = OrderedDict((pid, self.pieces[pid]) for pid in piece_ids)
+    #     self.pieces = new_order
+    #     ui.notify("Random order applied; now auto placing...", type="positive")
 
     # ---------------------------------------------------------------------------- #
     #                     PARAMETER CHANGE STUFF (NOT WORKING)                     #
@@ -492,7 +507,7 @@ class NestingGUI:
     # ---------------------------------------------------------------------------- #
     #            INTERSECTION AND CONTAINMENT BOUNDARY CHECK                       #
     # ---------------------------------------------------------------------------- #
-    def _check_intersections(self) -> None:
+    def _check_intersections(self) -> bool:
         if not self.pattern_loaded:
             ui.notify("Load a pattern first", type="warning")
             return
@@ -528,14 +543,17 @@ class NestingGUI:
         messages = []
         if overlaps:
             messages.append("Overlaps:\n" + "\n".join(f"• {a} × {b}" for a, b in overlaps))
+            return True
         else:
             messages.append("No intersections")
         if panels_outside:
             messages.append("Panels outside container:\n" + "\n".join(f"• {p}" for p in panels_outside))
+            return True
         else:
             messages.append("All panels within container")
 
         ui.notify("\n".join(messages), multi_line=True)
+        return False
 
     # ---------------------------------------------------------------------------- #
     #                                    DECODER                                   #
@@ -607,6 +625,16 @@ class NestingGUI:
             elif method == "NFP":
                 decoder = NFPDecoder(layout, container)
                 # self.panel_rotations = {name: 0 for name in self.panel_outlines.keys()}
+            elif method == "Random Order BL":
+                # Random‑order Bottom‑Left placement
+                import random
+
+                piece_ids = list(self.pieces.keys())
+                random.shuffle(piece_ids)
+
+                shuffled = {pid: self.pieces[pid] for pid in piece_ids}
+                layout   = Layout(shuffled)                         # use shuffled order
+                decoder  = BottomLeftDecoder(layout, container, step=1.0)
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             
@@ -617,6 +645,7 @@ class NestingGUI:
             for name, dx, dy in placements:
                 print(f"Placing {name} at ({dx:.2f}, {dy:.2f}) cm")
             
+
             utilization = decoder.usage_BB()
             print(f"Utilization: {utilization:.2%}")
             rest_length = decoder.rest_length()
@@ -642,6 +671,13 @@ class NestingGUI:
             await self._apply_placements(placements)
 
             ui.notify('Auto placement completed ', type='positive')
+
+
+            # if the BL runs out of space and there are intersections, still draw it but notify the user
+            if self._check_intersections():
+                ui.notify("Auto placement has intersections", type="negative")
+                print("Auto placement has intersections")
+
         except Exception as exc:
             ui.notify(f'Auto placement failed: {exc}', type='negative')
 

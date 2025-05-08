@@ -41,7 +41,7 @@ class PlacementEngine():
         """Default: push piece against the container’s top-right corner."""
         # get the vertices of the piece
 
-        print (f"Piece {piece.id} anchoring")
+        # print (f"Piece {piece.id} anchoring")
         vertices = piece.get_outer_path()
         # get the x and y values of the vertices
         xs = [v[0] for v in vertices]
@@ -120,7 +120,7 @@ class PlacementEngine():
 
     def gravitate(self, piece, x, y, step=1.0):
         """Slide left as far as possible, then down; repeat until jammed."""
-        print (f"Piece {piece.id} gravitating")
+        # print (f"Piece {piece.id} gravitating")
         #print piece type
         # print (f"Piece {piece.id} type: {type(piece)}")
         moved = True
@@ -153,7 +153,7 @@ class BottomLeftDecoder(PlacementEngine):
         for piece_id, piece in self.layout.order.items():
             x0, y0 = self.anchor(piece)
             dx, dy = self.gravitate(piece, x0, y0)
-            print (f"Piece {piece.id} placed at ({dx}, {dy})")
+            # print (f"Piece {piece.id} placed at ({dx}, {dy})")
             self.placed.append((piece))
             piece.translation = (dx, dy)
         return [(p.id, *p.translation) for p in self.placed]
@@ -200,7 +200,7 @@ class NFPDecoder(PlacementEngine):
             self.placed.append((piece))
             piece.translation = (best_x, best_y)
 
-        print (f"Placed pieces: {[p.id for p, _, _ in self.placed]}")
+        # print (f"Placed pieces: {[p.id for p, _, _ in self.placed]}")
         return [(p.id, *piece.translation) for p in self.placed]
     
     def _find_best_position(self, piece: Piece):
@@ -213,10 +213,10 @@ class NFPDecoder(PlacementEngine):
 
         # get inner fit rectangle
         # for the piece in the container
-        print (f"Piece {piece.id} finding best position")
+        # print (f"Piece {piece.id} finding best position")
         # inner_fit = utils.inner_fit_rectangle(self.container, piece)
         inner_fit = Container.inner_fit_rectangle(self.container, piece)
-        print("inner fit rectangle: ", inner_fit)
+        # print("inner fit rectangle: ", inner_fit)
         if not inner_fit:
             # print(f"Piece {piece.id} has no ifr")
             return None, None
@@ -253,10 +253,11 @@ class NFPDecoder(PlacementEngine):
                             # update the best position
                             best_x = x_translated
                             best_y = y_translated
+                            print(f"Piece {piece.id} best position: ({best_x}, {best_y})")
 
         # if no position was found, return None
         if best_x is None or best_y is None:
-            # print(f"Piece {piece.id} does not fit in the container")
+            print(f"Piece {piece.id} does not fit in the container")
             return None, None
         
         # gravitate the piece to the bottom left corner
