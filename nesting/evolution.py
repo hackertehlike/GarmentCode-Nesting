@@ -17,10 +17,10 @@ from collections import OrderedDict
 import random
 
 # META VARIABLES
-NUM_GENERATIONS = 5
-POPULATION_SIZE = 10
-ELITE_POPULATION_SIZE = 4
-MUTATION_RATE = 0.1
+NUM_GENERATIONS = 15
+POPULATION_SIZE = 20
+ELITE_POPULATION_SIZE = 5
+MUTATION_RATE = 0.2
 # SINGLE_CELL_STYLE = False
 
 class Evolution:
@@ -70,7 +70,7 @@ class Evolution:
         self.population.sort(key=lambda x: x.fitness, reverse=True)
         
         # return the top N layouts
-        print("Returning elite layouts...")
+        print(f"Returning elite layouts best {self.population[0].fitness}...")
         return self.population[:ELITE_POPULATION_SIZE]
     
     def next_generation(self) -> None:
@@ -95,7 +95,7 @@ class Evolution:
         print(f"Generation {self.generation} completed.")
         print("New population:")
         for i, chromosome in enumerate(self.population):
-            print(f"Layout {i}: {[piece.id for piece in chromosome.genes]} with fitness {chromosome.fitness}")
+            print(f"Layout {i}: {[(piece.id, piece.rotation) for piece in chromosome.genes]} with fitness {chromosome.fitness}")
 
         # print divider
         print("-" * 50)

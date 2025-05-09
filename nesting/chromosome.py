@@ -8,6 +8,7 @@ import random
 from .layout import Layout, Piece, Container
 from .placement_engine import *
 import random
+import numpy as np
 # from nesting.placement_engine import BottomLeftDecoder
 
 # class Gene:
@@ -99,7 +100,8 @@ class Chromosome(Layout):
         # ── GA‑specific state ──────────────────────────────────────
         self.genes: list[Piece] = list(self.order.values())  # flat list
         self.container = container
-        self.fitness: float = 0.0
+        self.fitness = 0.0
+        self.calculate_fitness()                     # initial fitness
 
     # @cached_property
     # def order(self) -> OrderedDict[str, Piece]:
@@ -154,63 +156,71 @@ class Chromosome(Layout):
 
     def crossover_pmx(self, other: "Chromosome") -> "Chromosome":
         """
-        Partially‑Mapped Crossover (PMX) that is robust against two‑gene cycles.
+        Partially‑Mapped Crossover (PMX)
         """
 
-        #print divider
-        print("-" * 50)
-        print(" " * 50)
-        print("-" * 50)
-        # print(f"Performing PMX crossover between {self} and {other}")
-
-        
+        # ── sanity checks ────────────────────────────────────────────────
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
-        # Print the genes of the parents as lists of ids
-        print(f"Parent 1 genes: {[piece.id for piece in self.genes]}")
-        print(f"Parent 2 genes: {[piece.id for piece in other.genes]}")
+        # ── 1. choose the crossover range ───────────────────────────────
+        c1, c2 = sorted(random.sample(range(size), 2))          # inclusive
+        while c1 == c2 or (c1 == 0 and c2 == size-1):           # avoid full copy
+            c1, c2 = sorted(random.sample(range(size), 2))
+        # c1 … c2   will be copied verbatim from parent 1
 
-        # ── 1. choose the crossover range ──────────────────────────────
-        c1, c2 = sorted(random.sample(range(size), 2))
-        print(f"Crossover points: c1={c1}, c2={c2}")
-
-        # ── 2. start the child with the slice from the first parent ────
+        # ── 2. start the child with the slice from parent 1 ─────────────
         child: list[Piece | None] = [None] * size
         child[c1 : c2 + 1] = self.genes[c1 : c2 + 1]
-        print(f"Initial child after copying slice: {[p.id if p is not None else None for p in child]}")
 
-        # ── 3. mapping: only   other‑gene → self‑gene   (one direction) ─
-        mapping = {other.genes[i]: self.genes[i] for i in range(c1, c2 + 1)}
-        # Print mapping with piece ids instead of objects
-        mapping_str = {piece.id: mapping[piece].id for piece in mapping}
-        print(f"Mapping created from crossover slice: {mapping_str}")
+        # ── 3. fill the remaining positions from parent 2 ───────────────
+        # iterate over indices *outside* the copied slice
+        for i in list(range(0, c1)) + list(range(c2 + 1, size)):
+            candidate = other.genes[i]
 
-        # ── 4. fill the remaining positions from the second parent ────
-        for i in range(size):
-            if c1 <= i <= c2:
-                continue
+            # if the candidate is already in the copied slice,
+            # follow the mapping chain until we find an unused gene
+            while candidate in self.genes[c1 : c2 + 1]:
+                idx_in_parent1 = self.genes.index(candidate)    # where it came from
+                candidate = other.genes[idx_in_parent1]         # mapped partner
 
-            gene = other.genes[i]
-            visited = set()  # guards against 2‑gene cycles
-            print(f"Processing gene at index {i}: {gene.id}")
+            child[i] = candidate
 
-            # follow the mapping chain until we hit a gene that is
-            # *not* yet in the child or the chain runs out
-            while gene in child and gene in mapping:
-                if gene in visited:  # 2‑gene or longer cycle
-                    print(f"Cycle detected for gene {gene.id}, finding next unused gene.")
-                    # pick the next unused gene from the first parent
-                    gene = next(g for g in self.genes if g not in child)
-                    break
-                visited.add(gene)
-                print(f"Following mapping for gene {gene.id}.")
-                gene = mapping[gene]
+        # ── 4. build and return the child chromosome ────────────────────
+        return Chromosome(child, self.container)
 
-            child[i] = gene
-            print(f"Child after placing gene at index {i}: {[p.id if p is not None else None for p in child]}")
+    
+        # # ── 3. mapping: only   other‑gene → self‑gene   (one direction) ─
+        # mapping = {other.genes[i]: self.genes[i] for i in range(c1, c2 + 1)}
+        # # Print mapping with piece ids instead of objects
+        # mapping_str = {piece.id: mapping[piece].id for piece in mapping}
+        # print(f"Mapping created from crossover slice: {mapping_str}")
 
-        print(f"Final child genes: {[p.id for p in child if p is not None]}")
+        # # ── 4. fill the remaining positions from the second parent ────
+        # for i in range(size):
+        #     if c1 <= i <= c2:
+        #         continue
+
+        #     gene = other.genes[i]
+        #     visited = set()  # guards against 2‑gene cycles
+        #     print(f"Processing gene at index {i}: {gene.id}")
+
+        #     # follow the mapping chain until we hit a gene that is
+        #     # *not* yet in the child or the chain runs out
+        #     while gene in child and gene in mapping:
+        #         if gene in visited:  # 2‑gene or longer cycle
+        #             print(f"Cycle detected for gene {gene.id}, finding next unused gene.")
+        #             # pick the next unused gene from the first parent
+        #             gene = next(g for g in self.genes if g not in child)
+        #             break
+        #         visited.add(gene)
+        #         print(f"Following mapping for gene {gene.id}.")
+        #         gene = mapping[gene]
+
+        #     child[i] = gene
+        #     print(f"Child after placing gene at index {i}: {[p.id if p is not None else None for p in child]}")
+
+        # print(f"Final child genes: {[p.id for p in child if p is not None]}")
         return Chromosome(child, self.container)
 
 
