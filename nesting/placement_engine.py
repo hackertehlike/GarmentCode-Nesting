@@ -1,7 +1,8 @@
+from collections import OrderedDict
 from .layout import Layout, Container, Piece
 from abc import ABC, abstractmethod
 import numpy as np, scipy.spatial as sps
-
+import random
 from nesting import utils
 
 class PlacementEngine():
@@ -51,7 +52,7 @@ class PlacementEngine():
         max_x = max(xs)
         # min_y = min(ys)
         # max_y = max(ys)
-        start_x = self.container.width  - (max(xs) - min(xs))
+        start_x = self.container.width  - (max_x - min_x)
         start_y = 0.0
         return start_x, start_y
     
@@ -156,7 +157,7 @@ class BottomLeftDecoder(PlacementEngine):
             # print (f"Piece {piece.id} placed at ({dx}, {dy})")
             self.placed.append((piece))
             piece.translation = (dx, dy)
-        return [(p.id, *p.translation) for p in self.placed]
+        return [(p.id, *p.translation, p.rotation) for p in self.placed]
     
 
 class GreedyBLDecoder(BottomLeftDecoder):
@@ -175,12 +176,31 @@ class GreedyBLDecoder(BottomLeftDecoder):
         # Update layout.order with the sorted list
         self.layout.order = dict(sorted_pieces)
         # print (f"Sorted pieces by area: {[p.id for p in pieces]}")
-        self.container = container
+        # self.container = container
         # self.placed = []
-
-    def decode(self):
-        return super().decode()
     
+class RandomDecoder(BottomLeftDecoder):
+
+    def __init__(self, layout, container, rotations_on = True):
+        #self.container = container
+
+        # 
+        ids = [id for id in layout.order.keys()]
+        random.shuffle(ids)
+        shuffled_dict = {id : layout.order[id] for id in ids}
+        layout = Layout(shuffled_dict)
+
+        valid_rotations = {0, 90, 180, 270}
+
+        if rotations_on:
+            for id, piece in layout.order.items():
+                rot = random.sample(valid_rotations, 1)[0]
+                piece.rotate(rot)
+                print(piece.rotation)
+
+        super().__init__(layout, container)
+        
+
 class NFPDecoder(PlacementEngine):
 
     def __init__(self, layout, container, wall_step=1.0):
@@ -199,11 +219,13 @@ class NFPDecoder(PlacementEngine):
             # print(f"Placing piece {piece.id} at ({best_x}, {best_y})")
             self.placed.append((piece))
             piece.translation = (best_x, best_y)
+        
+        # print pieces
+        # print([piece.translation for piece in self.layout.order.values()])
 
-        # print (f"Placed pieces: {[p.id for p, _, _ in self.placed]}")
-        return [(p.id, *piece.translation) for p in self.placed]
+        return [(p.id, *p.translation) for p in self.placed]
     
-    def _find_best_position(self, piece: Piece):
+    def _find_best_position(self, piece: Piece, gravitate_on = False):
 
         """
         Find the best position for the piece in the container.
@@ -215,7 +237,7 @@ class NFPDecoder(PlacementEngine):
         # for the piece in the container
         # print (f"Piece {piece.id} finding best position")
         # inner_fit = utils.inner_fit_rectangle(self.container, piece)
-        inner_fit = Container.inner_fit_rectangle(self.container, piece)
+        inner_fit = self.container.inner_fit_rectangle(piece)
         # print("inner fit rectangle: ", inner_fit)
         if not inner_fit:
             # print(f"Piece {piece.id} has no ifr")
@@ -253,7 +275,7 @@ class NFPDecoder(PlacementEngine):
                             # update the best position
                             best_x = x_translated
                             best_y = y_translated
-                            print(f"Piece {piece.id} best position: ({best_x}, {best_y})")
+                            # print(f"Piece {piece.id} best position: ({best_x}, {best_y})")
 
         # if no position was found, return None
         if best_x is None or best_y is None:
@@ -261,8 +283,10 @@ class NFPDecoder(PlacementEngine):
             return None, None
         
         # gravitate the piece to the bottom left corner
-        best_x, best_y = self.gravitate(piece, best_x, best_y)
+        if gravitate_on:
+            best_x, best_y = self.gravitate(piece, best_x, best_y)
         
+        # print(f"Piece {piece.id} placed at ({best_x}, {best_y})")
         return best_x, best_y
 
 

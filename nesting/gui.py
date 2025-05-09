@@ -7,9 +7,9 @@ from typing import Dict, List, Tuple
 
 from nicegui import ui, events
 from nesting import utils  # add_seam_allowance, polygons_overlap, etc.
-from .path_extractor import PatternPathExtractor
-from .layout import Layout, Container, Piece
-from .placement_engine import BottomLeftDecoder, GreedyBLDecoder, NFPDecoder
+from .path_extractor import *
+from .layout import *
+from .placement_engine import *
 
 # viewer size in CSS‑pixels
 MAX_CANVAS_PX_WIDTH  = 800   
@@ -577,7 +577,7 @@ class NestingGUI:
         # print("Outlines drawn")
 
         cm_to_px = self.effective_scale          # 1 cm → this many CSS‑pixels
-        for name, dx_cm, dy_cm in placements_cm:
+        for name, dx_cm, dy_cm, rotation in placements_cm:
             if name not in self.panel_path_refs:
                 print(f"Unknown panel '{name}'")
                 ui.notify(f"Unknown panel '{name}'", type="warning")
@@ -590,11 +590,13 @@ class NestingGUI:
 
             piece = self.pieces[name]
             piece.translation = (dx_px, dy_px)  # update translation in cm
-
+            #piece.rotate(rotation)
             outer, inner = self.panel_path_refs[name]
-
+            #outer = piece.get_outer_path()
+            #inner = piece.get_inner_path()
+            self._draw_panel(piece.id)
             for path in (outer, inner):
-                path.props(f'transform="translate({dx_px},{dy_px})"').update()
+                path.props(f'transform="translate({dx_px},{dy_px}),rotate({rotation})"').update()
 
         ui.notify("Automatic placement applied", type="positive")
 
@@ -627,26 +629,17 @@ class NestingGUI:
                 # self.panel_rotations = {name: 0 for name in self.panel_outlines.keys()}
             elif method == "Random Order BL":
                 # Random‑order Bottom‑Left placement
-                import random
-
-                piece_ids = list(self.pieces.keys())
-                random.shuffle(piece_ids)
-
-                shuffled = {pid: self.pieces[pid] for pid in piece_ids}
-                layout   = Layout(shuffled)                         # use shuffled order
-                decoder  = BottomLeftDecoder(layout, container, step=1.0)
+                decoder = RandomDecoder(layout, container) 
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             
             print("Now decoding...")
             placements = decoder.decode()  # [(name, dx, dy)]
             print("Decoding done")
-            # print placements
-            for name, dx, dy in placements:
-                print(f"Placing {name} at ({dx:.2f}, {dy:.2f}) cm")
             
 
             utilization = decoder.usage_BB()
+            
             print(f"Utilization: {utilization:.2%}")
             rest_length = decoder.rest_length()
             print(f"Rest length: {rest_length:.2f} cm")
@@ -667,6 +660,10 @@ class NestingGUI:
 
             print(f"Auto placement ({method}) usage: {utilization:.2%}")
             print(f"Rest length: {rest_length:.2f} cm")
+
+            # print placements
+            for name, dx, dy, rot in placements:
+                 print(f"Placing {name} at ({dx:.2f}, {dy:.2f}) cm with rotation {rot}")
 
             await self._apply_placements(placements)
 

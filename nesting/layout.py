@@ -67,6 +67,10 @@ class Piece:
         Modifies the piece's outer_path and inner_path.
         The rotation is done around the origin (0, 0) of the piece (bounding box).
         """
+
+        if (angle == 0):
+            return
+        
         angle_rad = math.radians(angle)
         cos_angle = math.cos(angle_rad)
         sin_angle = math.sin(angle_rad)
@@ -152,8 +156,7 @@ class Container:
         self.width = width
         self.height = height
 
-    @staticmethod
-    def inner_fit_rectangle(container: "Container",
+    def inner_fit_rectangle(self,
                             piece:      "Piece"
     ) -> list[tuple[float, float]]:
         """
@@ -163,14 +166,14 @@ class Container:
         Coordinates are given in container space (positive y downward).
         Empty list ⇒ piece is larger than the container.
         """
-        Wc, Hc = container.width, container.height
+        Wc, Hc = self.width, self.height
         Wp = max(x for x, _ in piece.get_outer_path())
         Hp = max(y for _, y in piece.get_outer_path())
 
         if Wp > Wc or Hp > Hc:           # piece does not fit
             return []
 
-        # TL ➜ TR ➜ BR ➜ BL  (CW with y‑down)
+        # TL -> TR -> BR -> BL  (CW with y‑down)
         return [
             (0.0,        0.0),           # top‑left
             (Wc - Wp,    0.0),           # top‑right
