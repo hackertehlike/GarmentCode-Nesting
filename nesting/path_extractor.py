@@ -6,6 +6,9 @@ import copy
 
 from pygarment.pattern.core import BasicPattern
 from nesting import utils
+from nesting import layout
+from nesting.layout import Piece
+
 
 class PatternPathExtractor(BasicPattern):
     """
@@ -21,9 +24,9 @@ class PatternPathExtractor(BasicPattern):
     def _flip_y(self, p):
         return p
 
-    def get_panel_outline(self, panel_name, samples_per_edge=10):
+    def _get_panel_outline(self, panel_name, samples_per_edge=10):
         """
-        Returns the outline (path) of the given panel as a list of [x, y] points,
+        Returns the Piece object representing the given panel as a list of [x, y] points,
         shifted so that its top-left vertex becomes (0,0).
         """
         panel = self.pattern['panels'][panel_name]
@@ -46,19 +49,24 @@ class PatternPathExtractor(BasicPattern):
 
         # shift the outline so that its TOP LEFT vertex of the bounding box is at (0,0)
         # consistent with the canvas coordinate system
-        xs = [pt[0] for pt in outline]
-        ys = [pt[1] for pt in outline]
-        min_x = min(xs)
-        min_y = min(ys)
-        shifted_outline = [[x - min_x, y - min_y] for x, y in outline]
+        # xs = [pt[0] for pt in outline]
+        # ys = [pt[1] for pt in outline]
+        # min_x = float(min(xs))
+        # min_y = float(min(ys))
+        
+        # shifted_outline = [(x - min_x, y - min_y) for x, y in outline]
 
-        if utils._signed_area(shifted_outline) < 0:        # currently CCW → reverse
+        shifted_outline = utils.shift_coordinates(outline)
+
+        if utils.signed_area(shifted_outline) < 0:        # currently CCW → reverse
             shifted_outline.reverse()
 
-        return shifted_outline
+        # Create a Piece object for the panel outline
+        piece = Piece(shifted_outline, id=panel_name)
+        return piece
 
 
-    def get_all_panel_outlines(self, samples_per_edge=10):
+    def get_all_panel_pieces(self, samples_per_edge=10) -> dict[str, Piece]:
         """
         Returns a dictionary mapping each panel name to its outline (list of [x, y] points).
         
@@ -66,12 +74,13 @@ class PatternPathExtractor(BasicPattern):
             samples_per_edge: Number of sampling points per edge.
         
         Returns:
-            A dict where keys are panel names and values are lists of [x, y] points.
+            A dict of Piece objects keyed by their name/id, each representing a panel.
         """
-        outlines = {}
+        all_pieces = {}
         for panel_name in self.pattern['panels']:
-            outlines[panel_name] = self.get_panel_outline(panel_name, samples_per_edge)
-        return outlines
+            piece = self._get_panel_outline(panel_name, samples_per_edge)
+            all_pieces[panel_name] = piece
+        return all_pieces
 
 
 # if __name__ == '__main__':
