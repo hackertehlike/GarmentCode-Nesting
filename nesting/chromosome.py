@@ -2,13 +2,18 @@ from __future__ import annotations
 from collections import OrderedDict
 # from functools import cached_property
 # from typing import Generic, List, Sequence, TypeVar
+from itertools import chain
 from typing import List, Mapping
 import random
+from itertools import chain
+import copy
+
 
 from .layout import Layout, Piece, Container
 from .placement_engine import *
 import random
 import numpy as np
+import copy
 # from nesting.placement_engine import BottomLeftDecoder
 
 # class Gene:
@@ -154,40 +159,75 @@ class Chromosome(Layout):
         # if 'order' in self.__dict__:
         #     del self.__dict__['order']
 
-    def crossover_pmx(self, other: "Chromosome") -> "Chromosome":
-        """
-        Partially‑Mapped Crossover (PMX)
-        """
+    # def crossover_pmx(self, other: "Chromosome") -> "Chromosome":
+    #     """
+    #     Partially‑Mapped Crossover (PMX)
+    #     """
 
-        # ── sanity checks ────────────────────────────────────────────────
+    #     # ── sanity checks ────────────────────────────────────────────────
+    #     assert len(self.genes) == len(other.genes), "Parents must be equal length"
+    #     size = len(self.genes)
+
+    #     # ── 1. choose the crossover range ───────────────────────────────
+    #     c1, c2 = sorted(random.sample(range(size), 2))          # inclusive
+    #     while c1 == c2 or (c1 == 0 and c2 == size-1):           # avoid full copy
+    #         c1, c2 = sorted(random.sample(range(size), 2))
+    #     # c1 … c2   will be copied verbatim from parent 1
+
+    #     # ── 2. start the child with the slice from parent 1 ─────────────
+    #     child: list[Piece | None] = [None] * size
+    #     child[c1 : c2 + 1] = self.genes[c1 : c2 + 1]
+
+    #     # ── 3. fill the remaining positions from parent 2 ───────────────
+    #     # iterate over indices *outside* the copied slice
+    #     for i in list(range(0, c1)) + list(range(c2 + 1, size)):
+    #         candidate = other.genes[i]
+
+    #         # if the candidate is already in the copied slice,
+    #         # follow the mapping chain until we find an unused gene
+    #         while candidate.id in [cand.id for cand in self.genes[c1 : c2 + 1]]:
+    #             idx_in_parent1 = self.genes.index(candidate)    # where it came from
+    #             candidate = other.genes[idx_in_parent1]         # mapped partner
+
+    #         child[i] = copy.deepcopy(candidate)
+    #         # child[i] = candidate
+            
+    #     # ── 4. build and return the child chromosome ────────────────────
+    #     return Chromosome(child, self.container)
+
+
+    def crossover_pmx(self, other: "Chromosome") -> "Chromosome":
+        """Partially‑Mapped Crossover (PMX) that matches pieces by *id*."""
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
-        # ── 1. choose the crossover range ───────────────────────────────
-        c1, c2 = sorted(random.sample(range(size), 2))          # inclusive
-        while c1 == c2 or (c1 == 0 and c2 == size-1):           # avoid full copy
+        # 1. crossover window (avoid copying the whole chromosome)
+        c1, c2 = sorted(random.sample(range(size), 2))
+        while c1 == c2 or (c1 == 0 and c2 == size - 1):
             c1, c2 = sorted(random.sample(range(size), 2))
-        # c1 … c2   will be copied verbatim from parent 1
 
-        # ── 2. start the child with the slice from parent 1 ─────────────
+        # 2. start the child with the slice from parent 1
         child: list[Piece | None] = [None] * size
         child[c1 : c2 + 1] = self.genes[c1 : c2 + 1]
 
-        # ── 3. fill the remaining positions from parent 2 ───────────────
-        # iterate over indices *outside* the copied slice
-        for i in list(range(0, c1)) + list(range(c2 + 1, size)):
+        # helper structures for ID‑based look‑ups
+        slice_ids        = {p.id for p in child[c1 : c2 + 1]}
+        id_to_index_self = {p.id: idx for idx, p in enumerate(self.genes)}
+
+        # 3. fill the remaining positions from parent 2
+        for i in chain(range(0, c1), range(c2 + 1, size)):
             candidate = other.genes[i]
 
-            # if the candidate is already in the copied slice,
-            # follow the mapping chain until we find an unused gene
-            while candidate in self.genes[c1 : c2 + 1]:
-                idx_in_parent1 = self.genes.index(candidate)    # where it came from
-                candidate = other.genes[idx_in_parent1]         # mapped partner
+            # follow the mapping chain until we find a piece *not* in the slice
+            while candidate.id in slice_ids:
+                idx_in_parent1 = id_to_index_self[candidate.id]
+                candidate      = other.genes[idx_in_parent1]
 
-            child[i] = candidate
+            child[i] = copy.deepcopy(candidate)      # independent gene
 
-        # ── 4. build and return the child chromosome ────────────────────
+        # 4. build and return the child chromosome
         return Chromosome(child, self.container)
+
 
     
         # # ── 3. mapping: only   other‑gene → self‑gene   (one direction) ─
@@ -221,7 +261,7 @@ class Chromosome(Layout):
         #     print(f"Child after placing gene at index {i}: {[p.id if p is not None else None for p in child]}")
 
         # print(f"Final child genes: {[p.id for p in child if p is not None]}")
-        return Chromosome(child, self.container)
+        # return Chromosome(child, self.container)
 
 
 # if __name__ == "__main__":
