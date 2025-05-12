@@ -17,6 +17,7 @@ from collections import OrderedDict
 import random
 import time
 import matplotlib.pyplot as plt
+import os
 
 
 # TODO: make into a config file or parameters to the class
@@ -41,7 +42,8 @@ class Evolution:
         population_size: int = 10,
         elite_population_size: int = 5,
         mutation_rate: float = 0.2,
-        pmx: bool = True
+        pmx: bool = True,
+        allow_duplicate_genes: bool = False,
     ):
         self.generation = 0
         self.container = container
@@ -54,10 +56,23 @@ class Evolution:
         self.elite_population_size = elite_population_size
         self.mutation_rate = mutation_rate
         self.pmx = pmx
+        self.allow_duplicate_genes = allow_duplicate_genes
+        self._log("Evolution instance created.", divider=True)
 
         # Lists to store per-generation metrics for optional plotting
         self.survival_rates = []
         self.avg_child_fitnesses = []
+        self.log_lines = []
+
+    def _log(self, msg: str = "", divider: bool = False):
+        """Helper for consistent logging and log collection."""
+        if divider:
+            line = "-" * 60
+            print(line)
+            self.log_lines.append(line)
+        if msg:
+            print(msg)
+            self.log_lines.append(msg)
 
     def random_sample(self, k):
         """
@@ -71,8 +86,7 @@ class Evolution:
         while num_generated < k:
             chromosome = self.generate_random_chromosome()
             if chromosome not in samples:
-                # generate random rotation
-                #rotations.sample()
+                # TODO: generate random rotation
 
                 samples.append(chromosome)
                 num_generated += 1
@@ -81,9 +95,10 @@ class Evolution:
         samples.sort(key=lambda x: x.fitness, reverse=True)
         
         # print the populations (by id) and rotation and fitness
+        print()
         for i, chromosome in enumerate(samples):
             print(f"Layout {i}: {[piece.id for piece in chromosome.genes]} with fitness {chromosome.fitness}")
-
+        print("-" * 50)
         
 
             
@@ -103,34 +118,21 @@ class Evolution:
         while len(self.population) < self.population_size:
             chromosome = self.generate_random_chromosome()
             self.population.append(chromosome)
-        print(f"Initial population of {self.population_size} layouts generated.")
-        # print the populations (by id) and rotation
+        self._log(f"Initial population of {self.population_size} layouts generated.", divider=True)
         for i, chromosome in enumerate(self.population):
-            print(f"Layout {i}: {[piece.id for piece in chromosome.genes]} with fitness {chromosome.fitness}")
-        print("Population generation completed.")
-        # print divider
-        print("-" * 50)
-        print(" " * 50)
-        print("-" * 50)
-        print(" " * 50)
-
+            self._log(f"Layout {i}: {[piece.id for piece in chromosome.genes]} | Fitness: {chromosome.fitness:.4f}")
+        self._log("Population generation completed.", divider=True)
 
     def get_elite(self) -> list[Chromosome]:
-        """
-        Evaluates the fitness of each layout in the population.
-        The fitness function is a placeholder and should be replaced with a real one.
-        """
-        print("Evaluating fitness of the population...")
-        for chromosome in self.population:
-            chromosome.calculate_fitness()
-        # sort the population by fitness
+        # self._log("Evaluating fitness of the population...", divider=False)
+        # for chromosome in self.population:
+        #     chromosome.calculate_fitness()
         self.population.sort(key=lambda x: x.fitness, reverse=True)
-        
-        # return the top N layouts
-        print(f"Returning elite layouts best {self.population[0].fitness}...")
+        self._log(f"Returning elite layouts. Best fitness: {self.population[0].fitness:.4f}", divider=True)
         return self.population[:self.elite_population_size]
     
     def next_generation(self) -> None:
+        self._log("Next generation...", divider=True)
         old_elite = self.get_elite()  
         old_elite_ids = {id(chromo) for chromo in old_elite}
         new_population = old_elite[:]
@@ -148,6 +150,12 @@ class Evolution:
             new_population.append(child)
 
         self.population = new_population
+
+        #print the new population
+        for i, chromosome in enumerate(self.population):
+            self._log(f"Layout {i}: {[piece.id for piece in chromosome.genes]} | Fitness: {chromosome.fitness:.4f}")
+        self._log(divider=True)
+
         self.generation += 1
 
         new_elite = self.get_elite()
@@ -155,7 +163,7 @@ class Evolution:
         # 1) Survival Rate
         intersection_count = len(old_elite_ids & new_elite_ids)
         survival_rate = intersection_count / len(old_elite_ids)
-        print(f"Elite survival rate: {survival_rate:.2%}")
+        self._log(f"Elite survival rate: {survival_rate:.2%}")
 
         # 2) Average child fitness
         children = new_population[len(old_elite):]  # exclude the elite parents
@@ -163,31 +171,39 @@ class Evolution:
             avg_child_fitness = sum(ch.fitness for ch in children) / len(children)
         else:
             avg_child_fitness = 0
-        print(f"Average child fitness: {avg_child_fitness:.2f}")
+        self._log(f"Average child fitness: {avg_child_fitness:.4f}")
 
         # Store metrics for plotting later
         self.survival_rates.append(survival_rate)
         self.avg_child_fitnesses.append(avg_child_fitness)
 
-        print(f"Generation {self.generation} completed.")
+        self._log(f"Generation {self.generation} completed.", divider=True)
 
-    def run(self, plot_results: bool = False) -> Chromosome:
+
+    def run(self, results_dir=None, plot_results: bool = False) -> Chromosome:
         """
         Runs the genetic algorithm for a specified number of generations.
         If plot_results=True, produces a simple plot of survival rate
         and average child fitness vs. generation at the end.
         """
+        self.log_lines = []  # Reset log for this run
+        self._log("Starting evolution...", divider=True)
         self.generate_population()
-        print("Starting evolution...")
 
         for _ in range(self.num_generations):
             self.next_generation()
 
-        print("Evolution completed.")
+        self._log("Evolution completed.", divider=True)
         best_layout = self.get_elite()[0]
-        print(f"Best layout fitness: {best_layout.fitness}")
+        self._log(f"Best layout fitness: {best_layout.fitness:.4f}", divider=True)
 
-        # Optional plotting at the end
+        # Save log to file if results_dir is provided
+        if results_dir:
+            log_path = os.path.join(results_dir, "run_log.txt")
+            with open(log_path, "w", encoding="utf-8") as f:
+                for line in self.log_lines:
+                    f.write(line + "\n")
+
         if plot_results:
             self._plot_metrics()
 

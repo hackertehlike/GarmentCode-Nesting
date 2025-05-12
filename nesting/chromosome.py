@@ -47,7 +47,6 @@ class Chromosome(Layout):
     A class representing a chromosome
     """
 
-
     def __init__(self,
                  pieces: Layout | Mapping[str, Piece] | list[Piece],
                  container: Container) -> None:
@@ -80,10 +79,12 @@ class Chromosome(Layout):
         """
         Perform mutation on the chromosome
         """
+        print()
         print("!" * 50)
         print("MUTATION OCCURRED")
         print("!" * 50)
-
+        print()
+        
         # randomly select a mutation type: either split, rotate, or swap (with different probabilities)
         mutation_type = random.choices(
             ["split", "rotate", "swap"],
@@ -156,8 +157,8 @@ class Chromosome(Layout):
     def crossover_ox1_k(self, other: "Chromosome") -> "Chromosome":
         """Order Crossover (OX1) with *k* randomly chosen segments.
 
-        Allows an arbitrary (random) number of *non‑overlapping* segments to be copied from the
-        first parent (``self``) to the child.  The missing genes are then
+        Allows an arbitrary (random) number of non‑overlapping segments to be copied from the
+        first parent (self) to the child.  The missing genes are then
         inserted in their relative order taken from the other parent
         """
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
@@ -255,8 +256,6 @@ class Chromosome(Layout):
                 candidate      = other.genes[idx_in_parent1]
 
             child[i] = copy.deepcopy(candidate)      # independent gene
-
-        # TODO: add more crossover methods
 
         # 4. build and return the child chromosome
         return Chromosome(child, self.container)
