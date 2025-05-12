@@ -16,18 +16,6 @@ import numpy as np
 import copy
 # from nesting.placement_engine import BottomLeftDecoder
 
-# class Gene:
-#     """
-#     A class representing a gene
-#     """
-
-#     def __init__(self, piece):
-
-#         self.piece = None
-#         self.rotation = 0
-
-# T = TypeVar("T", bound=object)          # any hashable, comparable type
-
 # fitness functions
 def fitness_usage_bb(chromosome: Chromosome) -> float:
     decoder = BottomLeftDecoder(chromosome, chromosome.container)
@@ -59,33 +47,6 @@ class Chromosome(Layout):
     A class representing a chromosome
     """
 
-    # def __init__(self, layout: Layout | list[Piece], container: Container):
-    #     # Accept either a Layout (use its `.order`) or a plain list of Piece
-    #     genes = layout.order if isinstance(layout, Layout) else layout
-    #     super().__init__(genes)
-    #     self.container = container
-    #     self.fitness: float = 0.0
-
-
-    # def __init__(self, pieces: Layout | list[Piece], container: Container):
-
-    #     # if isinstance(pieces, Layout):
-    #     #     super().__init__(pieces.order.values())
-    #     # else:
-    #     #     super().__init__(pieces)
-
-    #     self.genes: List[Piece] = []
-    #     # get the genes from the layout
-    #     if isinstance(pieces, Layout):
-    #         # if pieces is a Layout, get the order
-    #         genes = pieces.order.values()
-    #     else:
-    #         # if pieces is a list of Piece, use it directly
-    #         genes = pieces
-    #     # store the genes
-
-    #     self.container = container
-    #     self.fitness: float = 0.0
 
     def __init__(self,
                  pieces: Layout | Mapping[str, Piece] | list[Piece],
@@ -93,11 +54,11 @@ class Chromosome(Layout):
 
         # ── build the mapping that Layout expects ──────────────────
         if isinstance(pieces, Layout):
-            mapping = pieces.order                           # already OrderedDict
-        elif isinstance(pieces, Mapping):                    # dict / OrderedDict
-            mapping = OrderedDict(pieces)
-        else:                                                # assume a list
-            mapping = OrderedDict((p.id, p) for p in pieces)
+            mapping = OrderedDict((pid, copy.deepcopy(p)) for pid, p in pieces.order.items())
+        elif isinstance(pieces, Mapping):
+            mapping = OrderedDict((pid, copy.deepcopy(p)) for pid, p in pieces.items())
+        else:
+            mapping = OrderedDict((p.id, copy.deepcopy(p)) for p in pieces)
 
         # hand the mapping to Layout
         super().__init__(mapping)
@@ -106,12 +67,7 @@ class Chromosome(Layout):
         self.genes: list[Piece] = list(self.order.values())  # flat list
         self.container = container
         self.fitness = 0.0
-        self.calculate_fitness()                     # initial fitness
-
-    # @cached_property
-    # def order(self) -> OrderedDict[str, Piece]:
-    #     """OrderedDict keyed by piece.id (built only once, then cached)."""
-    #     return OrderedDict((p.id, p) for p in self.genes)        
+        self.calculate_fitness()                     # initial fitness  
 
 
     def calculate_fitness(self):
@@ -120,6 +76,7 @@ class Chromosome(Layout):
         self.fitness = fitness_func(self)
 
     def mutate(self):
+        # TODO: add more mutation types
         """
         Perform mutation on the chromosome
         """
@@ -155,46 +112,120 @@ class Chromosome(Layout):
             print(f"Before swap: {[piece.id for piece in self.genes]}")
             self.genes[index1], self.genes[index2] = self.genes[index2], self.genes[index1]
             print(f"After swap: {[piece.id for piece in self.genes]}")
+
+    def crossover_ox1(self, other: "Chromosome") -> "Chromosome":
+        """Order Crossover (OX1) with *k* randomly chosen segments.
+
+        This generalises the classical 2‑point OX1 by allowing an arbitrary
+        (random) number of *non‑overlapping* segments to be copied from the
+        first parent (``self``) to the child.  The missing genes are then
+        inserted in their relative order taken from the second parent
+        (``other``), exactly as illustrated in the reference screenshot.
+        """
+        assert len(self.genes) == len(other.genes), "Parents must be equal length"
+        size = len(self.genes)
+
+        # 1) Decide how many segments to copy (at least 1, but never all genes)
+        max_segments_reasonable = max(1, min(3, size // 3))  # conservative upper bound
+        n_segments = random.randint(1, max_segments_reasonable)
+
+        # 2) Pick 2·n unique cut points and turn them into ordered pairs (segments)
+        cut_points = sorted(random.sample(range(size), 2 * n_segments))
+        segments: list[tuple[int, int]] = []
+        for a, b in zip(cut_points[::2], cut_points[1::2]):
+            start, end = (a, b) if a <= b else (b, a)
+            segments.append((start, end))
+
+        # 3) Build the child and copy slices from *self*
+        child: List[Piece | None] = [None] * size
+        placed_ids: set[str] = set()
+        for start, end in segments:
+            for idx in range(start, end + 1):
+                gene = copy.deepcopy(self.genes[idx])
+                child[idx] = gene
+                placed_ids.add(gene.id)
+
+        # 4) Fill the remaining slots with genes from *other* in order
+        other_iter = (g for g in other.genes if g.id not in placed_ids)
+        for idx in range(size):
+            if child[idx] is None:
+                child[idx] = copy.deepcopy(next(other_iter))
+
+        return Chromosome(child, self.container)
         
-        # if 'order' in self.__dict__:
-        #     del self.__dict__['order']
+    def crossover_ox1_k(self, other: "Chromosome") -> "Chromosome":
+        """Order Crossover (OX1) with *k* randomly chosen segments.
 
-    # def crossover_pmx(self, other: "Chromosome") -> "Chromosome":
-    #     """
-    #     Partially‑Mapped Crossover (PMX)
-    #     """
+        Allows an arbitrary (random) number of *non‑overlapping* segments to be copied from the
+        first parent (``self``) to the child.  The missing genes are then
+        inserted in their relative order taken from the other parent
+        """
+        assert len(self.genes) == len(other.genes), "Parents must be equal length"
+        size = len(self.genes)
 
-    #     # ── sanity checks ────────────────────────────────────────────────
-    #     assert len(self.genes) == len(other.genes), "Parents must be equal length"
-    #     size = len(self.genes)
+        # 1) Decide how many segments to copy (at least 1, but never all genes)
+        max_segments_reasonable = max(1, min(3, size // 3))  # conservative upper bound
+        n_segments = random.randint(1, max_segments_reasonable)
 
-    #     # ── 1. choose the crossover range ───────────────────────────────
-    #     c1, c2 = sorted(random.sample(range(size), 2))          # inclusive
-    #     while c1 == c2 or (c1 == 0 and c2 == size-1):           # avoid full copy
-    #         c1, c2 = sorted(random.sample(range(size), 2))
-    #     # c1 … c2   will be copied verbatim from parent 1
+        # 2) Pick 2·n unique cut points and turn them into ordered pairs (segments)
+        cut_points = sorted(random.sample(range(size), 2 * n_segments))
+        segments: list[tuple[int, int]] = []
+        for a, b in zip(cut_points[::2], cut_points[1::2]):
+            start, end = (a, b) if a <= b else (b, a)
+            segments.append((start, end))
 
-    #     # ── 2. start the child with the slice from parent 1 ─────────────
-    #     child: list[Piece | None] = [None] * size
-    #     child[c1 : c2 + 1] = self.genes[c1 : c2 + 1]
+        # 3) Build the child and copy slices from *self*
+        child: List[Piece | None] = [None] * size
+        placed_ids: set[str] = set()
+        for start, end in segments:
+            for idx in range(start, end + 1):
+                gene = copy.deepcopy(self.genes[idx])
+                child[idx] = gene
+                placed_ids.add(gene.id)
 
-    #     # ── 3. fill the remaining positions from parent 2 ───────────────
-    #     # iterate over indices *outside* the copied slice
-    #     for i in list(range(0, c1)) + list(range(c2 + 1, size)):
-    #         candidate = other.genes[i]
+        # 4) Fill the remaining slots with genes from *other* in order
+        other_iter = (g for g in other.genes if g.id not in placed_ids)
+        for idx in range(size):
+            if child[idx] is None:
+                child[idx] = copy.deepcopy(next(other_iter))
 
-    #         # if the candidate is already in the copied slice,
-    #         # follow the mapping chain until we find an unused gene
-    #         while candidate.id in [cand.id for cand in self.genes[c1 : c2 + 1]]:
-    #             idx_in_parent1 = self.genes.index(candidate)    # where it came from
-    #             candidate = other.genes[idx_in_parent1]         # mapped partner
+        return Chromosome(child, self.container)
+    
+    def crossover_ox1(self, other: "Chromosome") -> "Chromosome":
+        """Order Crossover (OX1).
 
-    #         child[i] = copy.deepcopy(candidate)
-    #         # child[i] = candidate
-            
-    #     # ── 4. build and return the child chromosome ────────────────────
-    #     return Chromosome(child, self.container)
+        Algorithm steps:
+        1. Choose two random crossover points (c1, c2).
+        2. Copy the slice between c1 and c2 from *this* parent into the child.
+        3. Starting from the position after c2 in *other* parent, copy genes in order
+           that are not yet present in the child, wrapping around until the child is full.
+        """
+        assert len(self.genes) == len(other.genes), "Parents must be equal length"
+        size = len(self.genes)
 
+        # 1. choose crossover points ensuring we do not copy the whole chromosome
+        c1, c2 = sorted(random.sample(range(size), 2))
+        while c1 == 0 and c2 == size - 1:  # avoid trivial copy
+            c1, c2 = sorted(random.sample(range(size), 2))
+
+        # 2. create child and insert slice from parent 1 (self)
+        child: list[Piece | None] = [None] * size
+        child[c1 : c2 + 1] = [copy.deepcopy(p) for p in self.genes[c1 : c2 + 1]]
+
+        # helper: set of ids already placed in child
+        placed_ids = {p.id for p in child[c1 : c2 + 1] if p is not None}
+
+        # 3. fill remaining positions with genes from parent 2 (other)
+        current_idx = (c2 + 1) % size  # first position to fill
+        for gene in chain(other.genes[c2 + 1 :], other.genes[: c2 + 1]):
+            if gene.id in placed_ids:
+                continue  # skip duplicates
+            child[current_idx] = copy.deepcopy(gene)
+            placed_ids.add(gene.id)
+            current_idx = (current_idx + 1) % size
+
+        # 4. return new chromosome instance
+        return Chromosome(child, self.container)
 
     def crossover_pmx(self, other: "Chromosome") -> "Chromosome":
         """Partially‑Mapped Crossover (PMX) that matches pieces by *id*."""
@@ -225,107 +256,24 @@ class Chromosome(Layout):
 
             child[i] = copy.deepcopy(candidate)      # independent gene
 
+        # TODO: add more crossover methods
+
         # 4. build and return the child chromosome
         return Chromosome(child, self.container)
-
-
     
-        # # ── 3. mapping: only   other‑gene → self‑gene   (one direction) ─
-        # mapping = {other.genes[i]: self.genes[i] for i in range(c1, c2 + 1)}
-        # # Print mapping with piece ids instead of objects
-        # mapping_str = {piece.id: mapping[piece].id for piece in mapping}
-        # print(f"Mapping created from crossover slice: {mapping_str}")
+    def _signature(self) -> tuple:
+        """Immutable fingerprint: ((id, rotation), …) in gene order."""
+        return tuple((p.id, p.rotation) for p in self.genes)
 
-        # # ── 4. fill the remaining positions from the second parent ────
-        # for i in range(size):
-        #     if c1 <= i <= c2:
-        #         continue
+    # equality by value
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Chromosome):
+            return NotImplemented
+        return self._signature() == other._signature()
 
-        #     gene = other.genes[i]
-        #     visited = set()  # guards against 2‑gene cycles
-        #     print(f"Processing gene at index {i}: {gene.id}")
-
-        #     # follow the mapping chain until we hit a gene that is
-        #     # *not* yet in the child or the chain runs out
-        #     while gene in child and gene in mapping:
-        #         if gene in visited:  # 2‑gene or longer cycle
-        #             print(f"Cycle detected for gene {gene.id}, finding next unused gene.")
-        #             # pick the next unused gene from the first parent
-        #             gene = next(g for g in self.genes if g not in child)
-        #             break
-        #         visited.add(gene)
-        #         print(f"Following mapping for gene {gene.id}.")
-        #         gene = mapping[gene]
-
-        #     child[i] = gene
-        #     print(f"Child after placing gene at index {i}: {[p.id if p is not None else None for p in child]}")
-
-        # print(f"Final child genes: {[p.id for p in child if p is not None]}")
-        # return Chromosome(child, self.container)
-
-
-# if __name__ == "__main__":
-
-    # # small test
-    # p0 = GenericChromosome([1, 2, 3, 4, 5, 6, 7, 8])
-    # p1 = GenericChromosome([3, 7, 5, 1, 6, 8, 2, 4])
-
-    # child = p0.crossover_pmx(p1)
-    # print("Parent 0:", p0.genes)
-    # print("Parent 1:", p1.genes)
-    # print("Child   :", child.genes)
-
-# class GenericChromosome(Generic[T]):
-#     """
-#     A chromosome that stores an ordered list of genes of *any* type.
-#     Sub‑classes inherit the PMX operator and may add fitness logic, etc.
-#     """
-
-#     def __init__(self, genes: Sequence[T]):
-#         # store a *copy* so we never mutate the original list from outside
-#         self.genes: List[T] = list(genes)
-
-#     # ————————————————————————————— PMX crossover ————————————————————————————— #
-
-#     def crossover_pmx(self, other: "GenericChromosome[T]") -> "GenericChromosome[T]":
-#         """
-#         Partially‑Mapped Crossover (PMX) — independent of the gene type.
-#         Produces a child of the *same* concrete class as the parent.
-#         """
-#         assert len(self.genes) == len(other.genes), "Parents must be equal length"
-#         size = len(self.genes)
-
-#         # choose the crossover range
-#         c1, c2 = sorted(random.sample(range(size), 2))
-#         print(f"c1: {c1}, c2: {c2}")
-
-#         # initialize the child with None
-#         child: List[T | None] = [None] * size
-#         child[c1 : c2 + 1] = self.genes[c1 : c2 + 1]            # copy slice from self
-
-#         # build the mapping induced by the selected slice
-#         mapping: dict[T, T] = {}
-#         for i in range(c1, c2 + 1):
-#             a, b = other.genes[i], self.genes[i]
-#             mapping[a] = b   # other → self
-#             mapping[b] = a   # self  → other
-
-#         # fill the remaining positions
-#         for i in range(size):
-#             if c1 <= i <= c2:
-#                 continue
-
-#             gene = other.genes[i]
-#             # if it's already in the child, follow the mapping until we find a gene that isn't
-#             while gene in child:
-#                 gene = mapping[gene]
-#             child[i] = gene
-
-
-#         # return a new instance of *this* class,
-#         # so sub‑classes keep their specialised behaviour
-#         return self.__class__(child)
-
-#     # def __repr__(self) -> str:
-#     #     return f"{self.__class__.__name__}({self.genes!r})"
-#
+    # hash to allow membership tests in sets / dict keys
+    def __hash__(self) -> int:
+        return hash(self._signature())
+    
+    def __repr__(self) -> str:
+        return f"Chromosome({self._signature()})"

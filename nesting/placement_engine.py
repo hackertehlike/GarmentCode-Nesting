@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 import numpy as np, scipy.spatial as sps
 import random
 from nesting import utils
-
 class PlacementEngine():
     """
     Base class for layout placement strategies.
@@ -299,3 +298,13 @@ class NFPDecoder(PlacementEngine):
         return self._nfp_cache[key]
     
 
+# class GeneticAlgorithmDecoder(PlacementEngine):
+#     """
+#     Genetic Algorithm decoder.
+#     """
+
+#     def __init__(self, layout, container):
+#         super().__init__(layout, container)
+#         self.evolution = Evolution(layout.order, container)
+#         best_layout = self.evolution.run()
+#         # TODO: decode the best layout

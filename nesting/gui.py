@@ -70,8 +70,8 @@ class NestingGUI:
         # Layout with canvas/toolbar on the left and a style sidebar on the right.
         with ui.row().classes("w-full h-screen"):
             with ui.column().classes("flex-1"):
-                self._build_canvas()
                 self._build_toolbar()
+                self._build_canvas()
 
     def _build_canvas(self) -> None:
         with ui.element("div").classes("relative").style(
@@ -248,7 +248,7 @@ class NestingGUI:
             extractor = PatternPathExtractor(tmp_path)  # outlines in cm
             self.pieces = extractor.get_all_panel_pieces(samples_per_edge=20)
 
-            ui.notify("Panels found: " + ", ".join(self.raw_panel_outlines.keys()))
+            # ui.notify("Panels found: " + ", ".join(self.raw_panel_outlines.keys()))
             self._rebuild_panel_outlines()
             self.pattern_loaded = True
 
@@ -265,7 +265,7 @@ class NestingGUI:
         """
         So I don't have to load something in every time I change code... 
         """
-        default_path = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification.json"
+        default_path = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification_asym_dress.json"
         
         try:
             extractor = PatternPathExtractor(default_path)  # outlines in cm
@@ -629,7 +629,7 @@ class NestingGUI:
                 # self.panel_rotations = {name: 0 for name in self.panel_outlines.keys()}
             elif method == "Random Order BL":
                 # Random‑order Bottom‑Left placement
-                decoder = RandomDecoder(layout, container) 
+                decoder = RandomDecoder(layout, container)
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             
@@ -668,7 +668,6 @@ class NestingGUI:
             await self._apply_placements(placements)
 
             ui.notify('Auto placement completed ', type='positive')
-
 
             # if the BL runs out of space and there are intersections, still draw it but notify the user
             if self._check_intersections():
