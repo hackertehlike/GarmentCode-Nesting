@@ -1,38 +1,28 @@
-"""
-Genetic algorithm evolving a population of nesting layouts.
-This module implements a genetic algorithm to evolve a population of nesting layouts.
-
-Randomly generates a starting population of layouts.
-
-Each generation, the algorithm evaluates the fitness of each layout, selects the elite layouts,
-performs crossover and mutation to create new layouts, and replaces the old population with the new one.
-"""
-
 from __future__ import annotations
+import random
 
-from nesting.path_extractor import PatternPathExtractor
 from .layout import Piece, Container
 from .chromosome import Chromosome
-from collections import OrderedDict
-import random
-import time
-import matplotlib.pyplot as plt
-import os
 
-
-# TODO: make into a config file or parameters to the class
-# # META VARIABLES
-# NUM_GENERATIONS = 10
-# POPULATION_SIZE = 10
-# ELITE_POPULATION_SIZE = 5
-# MUTATION_RATE = 0.2
-# PMX = True
-# SINGLE_CELL_STYLE = False
 
 class Evolution:
+    """Genetic‑Algorithm driver that evolves a population of layouts.
+
+    New metrics added in this revision
+    ----------------------------------
+    * **mean_crossover_gain** – average \(child_fitness − mean_parent_fitness) for
+      offspring produced *before* mutation.
+    * **mean_mutation_gain** – average \(post_mutation_fitness − pre_mutation_fitness)
+      for offspring that actually underwent mutation.
+
+    The two series are stored in `self.mean_crossover_gain` and
+    `self.mean_mutation_gain`, one float per generation.  Zero is recorded if
+    the denominator is zero (e.g. no mutation happened in that generation).
     """
-    A class representing the evolution of a population of layouts.
-    """
+
+    # ------------------------------------------------------------------
+    # Construction
+    # ------------------------------------------------------------------
 
     def __init__(
         self,
@@ -44,28 +34,43 @@ class Evolution:
         mutation_rate: float = 0.2,
         pmx: bool = True,
         allow_duplicate_genes: bool = False,
-    ):
+        max_duplicate_retries: int = 50,
+    ) -> None:
         self.generation = 0
         self.container = container
         self.pieces = pieces
-        self.population = []
-        
-        # Meta variables as instance attributes
+        self.population: list[Chromosome] = []
+
+        # GA parameters
         self.num_generations = num_generations
         self.population_size = population_size
         self.elite_population_size = elite_population_size
         self.mutation_rate = mutation_rate
         self.pmx = pmx
         self.allow_duplicate_genes = allow_duplicate_genes
-        self._log("Evolution instance created.", divider=True)
+        self.max_duplicate_retries = max_duplicate_retries
 
-        # Lists to store per-generation metrics for optional plotting
-        self.survival_rates = []
-        self.avg_child_fitnesses = []
-        self.log_lines = []
+        # ── metric series ────────────────────────────────────────────
+        self.survival_rates: list[float] = []
+        self.avg_child_fitnesses: list[float] = []
+        self.best_fitness_history: list[float] = []
+        self.delta_best: list[float] = []
+        self.child_parent_success_ratio: list[float] = []
+        self.mean_crossover_gain: list[float] = []
+        self.mean_mutation_gain: list[float] = []
 
-    def _log(self, msg: str = "", divider: bool = False):
-        """Helper for consistent logging and log collection."""
+        # ── in‑memory run log ───────────────────────────────────────
+        self.log_lines: list[str] = []
+        self._log(
+            f"Evolution instance created. allow_duplicates={self.allow_duplicate_genes}",
+            divider=True,
+        )
+
+    # ------------------------------------------------------------------
+    # Logging helper
+    # ------------------------------------------------------------------
+
+    def _log(self, msg: str = "", *, divider: bool = False) -> None:
         if divider:
             line = "-" * 60
             print(line)
@@ -74,175 +79,146 @@ class Evolution:
             print(msg)
             self.log_lines.append(msg)
 
-    def random_sample(self, k):
-        """
-        Randomly samples k elements from the population and returns their fitness values.
-        """
-        piece_ids = list(self.pieces.keys())
-        samples = []
-        rotations = {0, 90, 180, 270}
+    # ------------------------------------------------------------------
+    # Population helpers
+    # ------------------------------------------------------------------
 
-        num_generated = 0
-        while num_generated < k:
-            chromosome = self.generate_random_chromosome()
-            if chromosome not in samples:
-                # TODO: generate random rotation
+    def _generate_random_chromosome(self) -> Chromosome:
+        ids_ = list(self.pieces.keys())
+        random.shuffle(ids_)
+        chrom = Chromosome([self.pieces[i] for i in ids_], self.container)
 
-                samples.append(chromosome)
-                num_generated += 1
+        # ramdomize rotations
+        for piece in chrom.genes:
+            rotation = random.choice([0, 90, 180, 270])
+            piece.rotation = rotation
         
-        # sort the samples by fitness
-        samples.sort(key=lambda x: x.fitness, reverse=True)
-        
-        # print the populations (by id) and rotation and fitness
-        print()
-        for i, chromosome in enumerate(samples):
-            print(f"Layout {i}: {[piece.id for piece in chromosome.genes]} with fitness {chromosome.fitness}")
-        print("-" * 50)
-        
+        chrom.sync_order()
 
-            
-    def generate_random_chromosome(self) -> Chromosome:
-        """
-        Generates a random chromosome (layout) by shuffling the pieces.
-        """
-        piece_ids = list(self.pieces.keys())
-        random.shuffle(piece_ids)
-        # hand the *pieces* to Chromosome
-        shuffled_pieces = [self.pieces[pid] for pid in piece_ids]
-        chromosome = Chromosome(shuffled_pieces, self.container)
-        chromosome.calculate_fitness()
-        return chromosome
+        chrom.calculate_fitness()
+        return chrom
 
     def generate_population(self) -> None:
         while len(self.population) < self.population_size:
-            chromosome = self.generate_random_chromosome()
-            self.population.append(chromosome)
+            self.population.append(self._generate_random_chromosome())
         self._log(f"Initial population of {self.population_size} layouts generated.", divider=True)
-        for i, chromosome in enumerate(self.population):
-            self._log(f"Layout {i}: {[piece.id for piece in chromosome.genes]} | Fitness: {chromosome.fitness:.4f}")
+        for i, chrom in enumerate(self.population):
+            self._log(f"Layout {i}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
         self._log("Population generation completed.", divider=True)
 
-    def get_elite(self) -> list[Chromosome]:
-        # self._log("Evaluating fitness of the population...", divider=False)
-        # for chromosome in self.population:
-        #     chromosome.calculate_fitness()
-        self.population.sort(key=lambda x: x.fitness, reverse=True)
-        self._log(f"Returning elite layouts. Best fitness: {self.population[0].fitness:.4f}", divider=True)
-        return self.population[:self.elite_population_size]
-    
-    def next_generation(self) -> None:
-        self._log("Next generation...", divider=True)
-        old_elite = self.get_elite()  
-        old_elite_ids = {id(chromo) for chromo in old_elite}
-        new_population = old_elite[:]
+        best = max(c.fitness for c in self.population)
+        self.best_fitness_history.append(best)
+        self.delta_best.append(0.0)
+        self.child_parent_success_ratio.append(0.0)
+        self.mean_crossover_gain.append(0.0)
+        self.mean_mutation_gain.append(0.0)
 
-        # Produce children
-        while len(new_population) < self.population_size:
-            parent1, parent2 = random.sample(self.population, 2)
-            if self.pmx:
-                child = parent1.crossover_pmx(parent2)
-            else:
-                child = parent1.crossover_ox1_k(parent2)
+    # ------------------------------------------------------------------
+    # GA core operations
+    # ------------------------------------------------------------------
+
+    def _get_elite(self) -> list[Chromosome]:
+        self.population.sort(key=lambda c: c.fitness, reverse=True)
+        self._log(f"Returning elite layouts. Best fitness: {self.population[0].fitness:.4f}", divider=True)
+        return self.population[: self.elite_population_size]
+
+    def _generate_offspring(self, old_pop: list[Chromosome]) -> tuple[Chromosome, bool, float, float]:
+        """Return (child, success_flag, crossover_gain, mutation_gain)."""
+        retries = 0
+        while True:
+            p1, p2 = random.sample(old_pop, 2)
+            avg_parent_fit = (p1.fitness + p2.fitness) / 2
+
+            # --- crossover ---
+            child = p1.crossover_pmx(p2) if self.pmx else p1.crossover_ox1_k(p2)
+            child.calculate_fitness()  # fitness after crossover
+            crossover_gain = child.fitness - avg_parent_fit
+
+            # --- mutation (optional) ---
+            mutation_gain = 0.0
             if random.random() < self.mutation_rate:
+                pre_mut_fit = child.fitness
                 child.mutate()
-            child.calculate_fitness()
-            new_population.append(child)
+                child.calculate_fitness()
+                mutation_gain = child.fitness - pre_mut_fit
+
+            success = child.fitness > p1.fitness and child.fitness > p2.fitness
+
+            if self.allow_duplicate_genes or child not in old_pop:
+                return child, success, crossover_gain, mutation_gain
+            retries += 1
+            if retries >= self.max_duplicate_retries:
+                self._log("Max duplicate retries reached; accepting duplicate.")
+                return child, success, crossover_gain, mutation_gain
+
+    def next_generation(self) -> None:
+        self._log("Next generation…", divider=True)
+        old_elite = self._get_elite()
+        old_elite_ids = {id(c) for c in old_elite}
+
+        new_population = list(old_elite)
+        success_count = child_count = 0
+        crossover_gain_sum = mutation_gain_sum = 0.0
+        crossover_count = mutation_count = 0
+
+        while len(new_population) < self.population_size:
+            child, success, c_gain, m_gain = self._generate_offspring(self.population)
+            if self.allow_duplicate_genes or child not in new_population:
+                new_population.append(child)
+                child_count += 1
+                if success:
+                    success_count += 1
+                crossover_gain_sum += c_gain
+                crossover_count += 1
+                if m_gain != 0.0:
+                    mutation_gain_sum += m_gain
+                    mutation_count += 1
 
         self.population = new_population
-
-        #print the new population
-        for i, chromosome in enumerate(self.population):
-            self._log(f"Layout {i}: {[piece.id for piece in chromosome.genes]} | Fitness: {chromosome.fitness:.4f}")
-        self._log(divider=True)
-
         self.generation += 1
 
-        new_elite = self.get_elite()
-        new_elite_ids = {id(chromo) for chromo in new_elite}
-        # 1) Survival Rate
-        intersection_count = len(old_elite_ids & new_elite_ids)
-        survival_rate = intersection_count / len(old_elite_ids)
-        self._log(f"Elite survival rate: {survival_rate:.2%}")
-
-        # 2) Average child fitness
-        children = new_population[len(old_elite):]  # exclude the elite parents
-        if children:
-            avg_child_fitness = sum(ch.fitness for ch in children) / len(children)
-        else:
-            avg_child_fitness = 0
-        self._log(f"Average child fitness: {avg_child_fitness:.4f}")
-
-        # Store metrics for plotting later
+        # ---- metrics ----
+        new_elite = self._get_elite()
+        new_elite_ids = {id(c) for c in new_elite}
+        survival_rate = len(old_elite_ids & new_elite_ids) / len(old_elite_ids)
         self.survival_rates.append(survival_rate)
-        self.avg_child_fitnesses.append(avg_child_fitness)
 
+        children = new_population[len(old_elite):]
+        avg_child_fit = sum(c.fitness for c in children) / len(children) if children else 0.0
+        self.avg_child_fitnesses.append(avg_child_fit)
+
+        cur_best = new_elite[0].fitness
+        prev_best = self.best_fitness_history[-1]
+        self.best_fitness_history.append(cur_best)
+        self.delta_best.append(cur_best - prev_best)
+
+        ratio = success_count / child_count if child_count else 0.0
+        self.child_parent_success_ratio.append(ratio)
+
+        mean_c_gain = crossover_gain_sum / crossover_count if crossover_count else 0.0
+        mean_m_gain = mutation_gain_sum / mutation_count if mutation_count else 0.0
+        self.mean_crossover_gain.append(mean_c_gain)
+        self.mean_mutation_gain.append(mean_m_gain)
+
+        # ---- logging ----
+        for i, chrom in enumerate(self.population):
+            self._log(f"Layout {i}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
+        self._log(f"Elite survival rate: {survival_rate:.2%}")
+        self._log(f"Average child fitness: {avg_child_fit:.4f}")
+        self._log(f"Δ‑Best: {self.delta_best[-1]:+.4f}")
+        self._log(f"Child‑parent success ratio: {ratio:.2%}")
+        self._log(f"Mean crossover gain: {mean_c_gain:+.4f}")
+        self._log(f"Mean mutation gain: {mean_m_gain:+.4f}")
         self._log(f"Generation {self.generation} completed.", divider=True)
 
+    # ------------------------------------------------------------------
+    # Run convenience
+    # ------------------------------------------------------------------
 
-    def run(self, results_dir=None, plot_results: bool = False) -> Chromosome:
-        """
-        Runs the genetic algorithm for a specified number of generations.
-        If plot_results=True, produces a simple plot of survival rate
-        and average child fitness vs. generation at the end.
-        """
-        self.log_lines = []  # Reset log for this run
-        self._log("Starting evolution...", divider=True)
+    def run(self) -> Chromosome:
+        self._log("Starting evolution…", divider=True)
         self.generate_population()
-
         for _ in range(self.num_generations):
             self.next_generation()
-
         self._log("Evolution completed.", divider=True)
-        best_layout = self.get_elite()[0]
-        self._log(f"Best layout fitness: {best_layout.fitness:.4f}", divider=True)
-
-        # Save log to file if results_dir is provided
-        if results_dir:
-            log_path = os.path.join(results_dir, "run_log.txt")
-            with open(log_path, "w", encoding="utf-8") as f:
-                for line in self.log_lines:
-                    f.write(line + "\n")
-
-        if plot_results:
-            self._plot_metrics()
-
-        return best_layout
-
-    def _plot_metrics(self):
-        """Plots survival rate and average child fitness per generation."""
-        gens = range(1, self.generation + 1)
-
-        plt.figure()
-        plt.plot(gens, self.survival_rates, marker='o', label='Survival Rate')
-        plt.plot(gens, self.avg_child_fitnesses, marker='x', label='Avg Child Fitness')
-        plt.title("GA Per‑Generation Metrics")
-        plt.xlabel("Generation")
-        plt.ylabel("Value")
-        plt.legend()
-        plt.grid(True)
-        plt.show()
-    
-if __name__ == "__main__":
-    default_container = Container(140, 200)
-    # default_path = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification.json"
-    default_path = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification_asym_dress.json"
-    extractor = PatternPathExtractor(default_path)
-    all_pieces = extractor.get_all_panel_pieces(samples_per_edge=20)
-
-    # Create an instance of the Evolution class
-    evolution = Evolution(all_pieces, default_container)
-    # Run the evolution process
-    # best_layout = evolution.run()
-    # Print the best layout
-    # print("Best layout:")
-    # for piece in best_layout.genes:
-    #     print(piece.id)
-    # print(f"Fitness: {best_layout.fitness}")
-
-    #log time
-    start_time = time.time()
-    samples = evolution.random_sample(200)
-    end_time = time.time()
-    
-    print(f"Time taken: {end_time - start_time} seconds")
+        return self._get_elite()[0]

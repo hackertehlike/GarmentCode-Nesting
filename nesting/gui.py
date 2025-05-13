@@ -6,7 +6,8 @@ import yaml
 from typing import Dict, List, Tuple
 
 from nicegui import ui, events
-from nesting import utils  # add_seam_allowance, polygons_overlap, etc.
+from nesting import utils
+from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap, etc.
 from .path_extractor import *
 from .layout import *
 from .placement_engine import *
@@ -127,6 +128,7 @@ class NestingGUI:
             ui.button("Auto place (Greedy)", on_click=lambda _: self._auto_place("Greedy"))
             ui.button("Auto place (NFP)", on_click=lambda _: self._auto_place("NFP"))
             ui.button("Random Order (BL)", on_click=lambda _: self._auto_place("Random Order BL"))
+            ui.button("Genetic Algorithm", on_click=lambda _: self._auto_place("Genetic Algorithm"))
 
             # Button to enable selection mode.
             ui.button("Select Panel", on_click=self._enable_selection_mode)
@@ -596,7 +598,9 @@ class NestingGUI:
             #inner = piece.get_inner_path()
             self._draw_panel(piece.id)
             for path in (outer, inner):
+                print(rotation)
                 path.props(f'transform="translate({dx_px},{dy_px}),rotate({rotation})"').update()
+                
 
         ui.notify("Automatic placement applied", type="positive")
 
@@ -630,6 +634,20 @@ class NestingGUI:
             elif method == "Random Order BL":
                 # Random‑order Bottom‑Left placement
                 decoder = RandomDecoder(layout, container)
+            elif method == "Genetic Algorithm":
+                evo = Evolution(
+                    self.pieces,
+                    container,
+                    num_generations=2,
+                    population_size=5,
+                    elite_population_size=2,
+                    mutation_rate=0.1,
+                    pmx=True,
+                    allow_duplicate_genes=True,
+                )
+                evo.generate_population()
+                best_chromosome = evo.run()
+                decoder = BottomLeftDecoder(best_chromosome, container)
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             

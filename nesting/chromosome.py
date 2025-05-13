@@ -106,12 +106,14 @@ class Chromosome(Layout):
             angle = random.choice([90, 180, 270])
             print(f"Rotating piece at index {piece_index} by {angle} degrees.")
             self.genes[piece_index].rotate(angle)
+            self.sync_order()  # sync the order
         elif mutation_type == "swap":
             # Swap two random pieces
             index1, index2 = random.sample(range(len(self.genes)), 2)
             print(f"Swapping pieces at indices {index1} and {index2}.")
             print(f"Before swap: {[piece.id for piece in self.genes]}")
             self.genes[index1], self.genes[index2] = self.genes[index2], self.genes[index1]
+            self.sync_order()  # sync the order
             print(f"After swap: {[piece.id for piece in self.genes]}")
 
     def crossover_ox1(self, other: "Chromosome") -> "Chromosome":
@@ -259,6 +261,10 @@ class Chromosome(Layout):
 
         # 4. build and return the child chromosome
         return Chromosome(child, self.container)
+    
+    def sync_order(self) -> None:
+        """Sync the order of the genes with the order dict."""
+        self.order = OrderedDict((p.id, p) for p in self.genes)
     
     def _signature(self) -> tuple:
         """Immutable fingerprint: ((id, rotation), …) in gene order."""

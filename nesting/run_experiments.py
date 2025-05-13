@@ -1,141 +1,143 @@
+
 import os
-import matplotlib.pyplot as plt
 from itertools import product
+import time
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
 from nesting.path_extractor import PatternPathExtractor
-from .evolution import Evolution
-from .layout import Container
 
-def param_sweep(pieces, container):
-    # Example parameter lists
-    population_sizes = [10, 20]
-    elite_sizes = [3, 5]
-    mutation_rates = [0.1, 0.2, 0.3]
-    pmx_values = [True, False]
-    num_generations = [5, 10, 15]
+# –– local import: Evolution class just defined above –––––––––––
+from .evolution import Evolution  # noqa: E402
+from .layout import Container  # noqa: E402
 
-    for (pop_size, elite_size, mut_rate, pmx, num_gen) in product(
-        population_sizes, elite_sizes, mutation_rates, pmx_values, num_generations
+
+# ------------------------------------------------------------------
+# Parameter sweep driver
+# ------------------------------------------------------------------
+
+
+def param_sweep(pieces, container) -> None:
+    """Run a grid search over GA hyper‑parameters and plot rich metrics."""
+
+    population_sizes   = [10, 20]
+    elite_sizes        = [3, 5]
+    mutation_rates     = [0.1, 0.2, 0.3]
+    pmx_values         = [True, False]
+    num_generations_ls = [5, 10, 15]
+    duplicate_policy   = [True, False]
+
+    # ------------------------------------------------------------------
+    for pop, elite, mut_r, pmx, gens, allow_dups in product(
+        population_sizes, elite_sizes, mutation_rates, pmx_values, num_generations_ls, duplicate_policy
     ):
-        param_label = (
-            f"pop{pop_size}_elite{elite_size}_mut{mut_rate}_"
-            f"crossover_{'pmx' if pmx else 'ox'}_gen{num_gen}"
+        label = (
+            f"pop{pop}_elite{elite}_mut{mut_r}_"
+            f"crossover_{'pmx' if pmx else 'ox'}_gen{gens}_dups_{'yes' if allow_dups else 'no'}"
         )
-        results_dir = os.path.join("sweep_results", param_label)
-        os.makedirs(results_dir, exist_ok=True)
+        out_dir = os.path.join("sweep_results_2", label)
+        os.makedirs(out_dir, exist_ok=True)
 
-        print(f"\nRunning GA with parameters: {param_label}")
-        print("-" * 50)
-        print("\n")
+        print(f"\nRunning GA with parameters: {label}\n{'-'*50}\n")
+        start = time.time()
 
-        # Lists to track fitness across generations
-        gen_all_fitnesses = []
-        gen_best_fitness = []
-        gen_avg_fitness = []
+        # ------------------ run GA ------------------
 
-        # Create & initialize the Evolution object
-        evol = Evolution(
+        evo = Evolution(
             pieces,
             container,
-            num_generations=num_gen,
-            population_size=pop_size,
-            elite_population_size=elite_size,
-            mutation_rate=mut_rate,
-            pmx=pmx
+            num_generations=gens,
+            population_size=pop,
+            elite_population_size=elite,
+            mutation_rate=mut_r,
+            pmx=pmx,
+            allow_duplicate_genes=allow_dups,
         )
-        evol.generate_population()
 
-        # Loop over each generation and store fitness data
-        for g in range(num_gen):
-            evol.next_generation()
-            
-            # Collect fitnesses from the current population
-            fitness_list = [chrom.fitness for chrom in evol.population]
-            gen_all_fitnesses.append(fitness_list)
-            
-            # Record best & average fitness
-            best_fit = max(fitness_list)
-            avg_fit = sum(fitness_list) / len(fitness_list)
-            gen_best_fitness.append(best_fit)
-            gen_avg_fitness.append(avg_fit)
+        # ------------------ run & capture per‑generation fitnesses ------------------
+        gen_all_fitnesses: list[list[float]] = []
+        evo.generate_population()
+        for _ in range(gens):
+            evo.next_generation()
+            gen_all_fitnesses.append([c.fitness for c in evo.population])
 
-        # Build a DataFrame of all fitness data for a swarm plot
-        all_data = []
-        for gen_idx, fitness_list in enumerate(gen_all_fitnesses):
-            for fit in fitness_list:
-                all_data.append({"Generation": gen_idx + 1, "Fitness": fit})
-        df_fitness = pd.DataFrame(all_data)
+        # ------------------ plotting helpers ------------------
+        def save_line_plot(data, title, fname, ylabel="Value", marker="o"):
+            plt.figure(); plt.plot(range(1, gens + 1), data, marker=marker)
+            plt.title(title); plt.xlabel("Generation"); plt.ylabel(ylabel); plt.grid(True)
+            plt.savefig(os.path.join(out_dir, fname), dpi=300); plt.close()
 
-        # 1) Swarm plot of all fitnesses per generation
+        # Swarm plot of all fitnesses per generation -----------------------
+        df_swarm = pd.DataFrame(
+            {"Generation": g_idx + 1, "Fitness": fit}
+            for g_idx, fit_list in enumerate(gen_all_fitnesses)
+            for fit in fit_list
+        )
         plt.figure(figsize=(7, 5))
-        sns.swarmplot(data=df_fitness, x="Generation", y="Fitness", size=3, alpha=0.7)
-        plt.title(f"All Fitnesses Swarm Plot – {param_label}")
-        plt.xlabel("Generation")
-        plt.ylabel("Fitness")
-        swarm_path = os.path.join(results_dir, "all_fitnesses_swarm.png")
-        plt.savefig(swarm_path, dpi=300)
+        sns.swarmplot(data=df_swarm, x="Generation", y="Fitness", size=3, alpha=0.7)
+        plt.title(f"All Fitnesses – {label}")
+        plt.savefig(os.path.join(out_dir, "all_fitnesses_swarm.png"), dpi=300)
         plt.close()
 
-        # 2) Plot average child fitness from Evolution
-        gens = range(1, len(evol.avg_child_fitnesses) + 1)
+        # Individual metric plots ------------------------------------------
+        save_line_plot(evo.avg_child_fitnesses, f"Avg Child Fitness – {label}", "avg_child_fitness.png")
+        save_line_plot(evo.survival_rates, f"Survival Rate – {label}", "survival_rate.png", ylabel="Rate", marker="x")
+        save_line_plot(evo.best_fitness_history[1:], f"Best Fitness – {label}", "best_fitness.png")
+        save_line_plot(evo.delta_best[1:], f"Δ‑Best – {label}", "delta_best.png", ylabel="Δ‑Best")
+        save_line_plot(
+            evo.child_parent_success_ratio[1:],
+            f"Child‑Parent Success Ratio – {label}",
+            "success_ratio.png",
+            ylabel="Ratio",
+        )
+
+        # Operator gains combined plot ------------------------------------
         plt.figure()
-        plt.plot(gens, evol.avg_child_fitnesses, marker='o', label='Avg Child Fitness')
-        plt.title(f"Average Child Fitness – {param_label}")
-        plt.xlabel("Generation")
-        plt.ylabel("Average Child Fitness")
-        plt.legend()
-        avg_child_path = os.path.join(results_dir, "avg_child_fitness.png")
-        plt.savefig(avg_child_path, dpi=300)
-        plt.close()
+        plt.plot(range(1, gens + 1), evo.mean_crossover_gain[1:], marker="o", label="Mean Crossover Gain")
+        plt.plot(range(1, gens + 1), evo.mean_mutation_gain[1:], marker="x", label="Mean Mutation Gain")
+        plt.xlabel("Generation"); plt.ylabel("Mean Gain"); plt.title(f"Operator Gains – {label}")
+        plt.legend(); plt.grid(True)
+        plt.savefig(os.path.join(out_dir, "operator_gains.png"), dpi=300); plt.close()
 
-        # 3) Survival rate
-        plt.figure()
-        plt.plot(gens, evol.survival_rates, marker='x', color='green', label='Survival Rate')
-        plt.title(f"Survival Rate – {param_label}")
-        plt.xlabel("Generation")
-        plt.ylabel("Survival Rate")
-        plt.legend()
-        survival_path = os.path.join(results_dir, "survival_rate.png")
-        plt.savefig(survival_path, dpi=300)
-        plt.close()
 
-        # 4) Best & average fitness
-        plt.figure()
-        plt.plot(range(1, num_gen + 1), gen_best_fitness, marker='o', label='Best Fitness')
-        plt.plot(range(1, num_gen + 1), gen_avg_fitness, marker='x', label='Avg Fitness')
-        plt.xlabel("Generation")
-        plt.ylabel("Fitness")
-        plt.title(f"Best & Average Fitness – {param_label}")
-        plt.legend()
-        plt.savefig(os.path.join(results_dir, "best_avg_fitness.png"), dpi=300)
-        plt.close()
-
-        # Save CSV of per-generation data
-        csv_path = os.path.join(results_dir, "generation_data.csv")
-        with open(csv_path, "w", encoding="utf-8") as f:
-            f.write("Generation,BestFitness,AvgFitness,SurvivalRate,AvgChildFitness,AllFitnesses\n")
-            for i in range(num_gen):
-                best_val = gen_best_fitness[i]
-                avg_val = gen_avg_fitness[i]
-                survival_val = evol.survival_rates[i] if i < len(evol.survival_rates) else None
-                child_avg_val = evol.avg_child_fitnesses[i] if i < len(evol.avg_child_fitnesses) else None
-                all_fits = gen_all_fitnesses[i] if i < len(gen_all_fitnesses) else []
-                row = (
-                    f"{i+1},{best_val},{avg_val},"
-                    f"{survival_val},{child_avg_val},{all_fits}\n"
+        duration = time.time() - start
+        print(f"Elapsed time: {duration:.1f} s")
+        evo.log_lines.append(f"Elapsed time: {duration:.1f} s")
+                             
+        # ------------------ CSV dump ------------------
+        csv_hdr = [
+            "Generation", "BestFitness", "AvgChildFitness", "SurvivalRate", "DeltaBest", "SuccessRatio", "CrossoverGain", "MutationGain"
+        ]
+        with open(os.path.join(out_dir, "generation_data.csv"), "w", encoding="utf-8") as fh:
+            fh.write(",".join(csv_hdr) + "\n")
+            for g in range(gens):
+                fh.write(
+                    f"{g+1},"
+                    f"{evo.best_fitness_history[g+1]},"  # skip generation 0 placeholder
+                    f"{evo.avg_child_fitnesses[g]},"
+                    f"{evo.survival_rates[g]},"
+                    f"{evo.delta_best[g+1]},"
+                    f"{evo.child_parent_success_ratio[g+1]},"
+                    f"{evo.mean_crossover_gain[g+1]},"
+                    f"{evo.mean_mutation_gain[g+1]}\n"
                 )
-                f.write(row)
 
-        print(f"Completed all {num_gen} generations for {param_label}.")
-        print(f"Results (plots, CSV, logs) in {results_dir}.\n\n")
+        # ------------------ log file ------------------
+        with open(os.path.join(out_dir, "run_log.txt"), "w", encoding="utf-8") as fh:
+            for line in evo.log_lines:
+                fh.write(line + "\n")
+
+        print(f"Completed {gens} generations for {label} → {out_dir}\n\n")
 
 
+# ------------------------------------------------------------------
+# Convenience CLI entry‑point
+# ------------------------------------------------------------------
 
 if __name__ == "__main__":
     default_container = Container(140, 200)
     default_path = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification_asym_dress.json"
     extractor = PatternPathExtractor(default_path)
-    all_pieces = extractor.get_all_panel_pieces(samples_per_edge=20)
-    param_sweep(all_pieces, default_container)
+    pieces = extractor.get_all_panel_pieces(samples_per_edge=20)
+    param_sweep(pieces, default_container)
