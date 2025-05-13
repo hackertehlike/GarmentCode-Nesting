@@ -156,6 +156,7 @@ class BottomLeftDecoder(PlacementEngine):
             # print (f"Piece {piece.id} placed at ({dx}, {dy})")
             self.placed.append((piece))
             piece.translation = (dx, dy)
+            # piece.rotate(piece.rotation)
         return [(p.id, *p.translation, p.rotation) for p in self.placed]
     
 
@@ -222,7 +223,9 @@ class NFPDecoder(PlacementEngine):
         # print pieces
         # print([piece.translation for piece in self.layout.order.values()])
 
-        return [(p.id, *p.translation) for p in self.placed]
+        return [(p.id, *p.translation, p.rotation) for p in self.placed]
+
+
     
     def _find_best_position(self, piece: Piece, gravitate_on = False):
 

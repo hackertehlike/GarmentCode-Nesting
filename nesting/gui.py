@@ -6,6 +6,7 @@ import yaml
 from typing import Dict, List, Tuple
 
 from nicegui import ui, events
+from nicegui.events import KeyEventArguments
 from nesting import utils
 from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap, etc.
 from .path_extractor import *
@@ -131,11 +132,20 @@ class NestingGUI:
             ui.button("Genetic Algorithm", on_click=lambda _: self._auto_place("Genetic Algorithm"))
 
             # Button to enable selection mode.
-            ui.button("Select Panel", on_click=self._enable_selection_mode)
+            ui.button("Select Panel (S)", on_click=self._enable_selection_mode)
             ui.button("Reset Selection", on_click=lambda _: self._select_panel(""))
-            ui.button("Rotate Panel", on_click=lambda _: self._rotate_panel())
-            # New random order button
+            ui.button("Rotate Panel (R)", on_click=lambda _: self._rotate_panel())
 
+        self._kb = ui.keyboard(on_key=self._handle_key, active=True)
+        
+    def _handle_key(self, e: KeyEventArguments) -> None:
+        if not e.action.keydown:      # ignore key‑up / repeats
+            return
+        if e.key == 'r':
+            self._rotate_panel()
+        elif e.key == 's':
+            self._enable_selection_mode()
+                
     # def randomize_order_and_autoplace(self):
     #     """
     #     Randomizes the order of the pieces and then calls the
@@ -248,7 +258,7 @@ class NestingGUI:
 
         try:
             extractor = PatternPathExtractor(tmp_path)  # outlines in cm
-            self.pieces = extractor.get_all_panel_pieces(samples_per_edge=20)
+            self.pieces = extractor.get_all_panel_pieces(samples_per_edge=7)
 
             # ui.notify("Panels found: " + ", ".join(self.raw_panel_outlines.keys()))
             self._rebuild_panel_outlines()
@@ -271,7 +281,7 @@ class NestingGUI:
         
         try:
             extractor = PatternPathExtractor(default_path)  # outlines in cm
-            self.pieces = extractor.get_all_panel_pieces(samples_per_edge=20)
+            self.pieces = extractor.get_all_panel_pieces(samples_per_edge=7)
             print("Default pattern loaded: ", self.pieces)
             
             # print (f"Default pattern loaded: {self.pieces}")
@@ -599,8 +609,8 @@ class NestingGUI:
             self._draw_panel(piece.id)
             for path in (outer, inner):
                 print(rotation)
-                path.props(f'transform="translate({dx_px},{dy_px}),rotate({rotation})"').update()
-                
+                # path.props(f'transform="translate({dx_px},{dy_px}),rotate({rotation})"').update()
+                path.props(f'transform="translate({dx_px},{dy_px})"').update()
 
         ui.notify("Automatic placement applied", type="positive")
 
@@ -711,7 +721,7 @@ class NestingGUI:
         # Revert previously selected panel to its original style.
         if self.selected_panel and self.selected_panel in self.panel_path_refs:
             outer, _ = self.panel_path_refs[self.selected_panel]
-            # Reset stroke to the default (modify as needed); here we use the default purple.
+            # Reset stroke to the default
             outer.props('stroke="#ed7ea7"')
         # Set new selection.
         self.selected_panel = panel_id
@@ -732,6 +742,7 @@ class NestingGUI:
         
         # refresh the outlines
         self._draw_panel(self.selected_panel)
+        # self.selected_panel = ""
 
         ui.notify(f"Panel '{self.selected_panel}' rotated", type="info")
 

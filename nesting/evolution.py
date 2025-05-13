@@ -90,11 +90,11 @@ class Evolution:
 
         # ramdomize rotations
         for piece in chrom.genes:
-            rotation = random.choice([0, 90, 180, 270])
-            piece.rotation = rotation
+            # rotation = random.choice([0, 90, 180, 270])
+            rotation = 90
+            piece.rotate(rotation)
         
         chrom.sync_order()
-
         chrom.calculate_fitness()
         return chrom
 
