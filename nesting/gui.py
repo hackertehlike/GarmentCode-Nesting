@@ -606,9 +606,13 @@ class NestingGUI:
             outer, inner = self.panel_path_refs[name]
             #outer = piece.get_outer_path()
             #inner = piece.get_inner_path()
+
+            if piece.rotation != rotation:               # avoid double‑rotating
+                piece.rotate((rotation - piece.rotation) % 360)
+
             self._draw_panel(piece.id)
             for path in (outer, inner):
-                print(rotation)
+                # print(rotation)
                 # path.props(f'transform="translate({dx_px},{dy_px}),rotate({rotation})"').update()
                 path.props(f'transform="translate({dx_px},{dy_px})"').update()
 
