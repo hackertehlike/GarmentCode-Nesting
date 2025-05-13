@@ -30,7 +30,7 @@ class NestingGUI:
 
     def __init__(self) -> None:
         # container dimensions in cm
-        self.container_width_cm  = 140.0
+        self.container_width_cm  = 400.0
         self.container_height_cm = 100.0
 
         self._update_scale_factors()

@@ -228,10 +228,24 @@ class NFPDecoder(PlacementEngine):
 
     
     def _find_best_position(self, piece: Piece, gravitate_on = False):
-
         """
-        Find the best position for the piece in the container.
-        The piece is placed using the BLF strategy.
+        Finds the best position to place a given piece within the container.
+        This method determines the optimal position for a piece by evaluating 
+        potential placements based on the no-fit polygon (NFP) and the inner 
+        fit rectangle of the container. It ensures that the piece does not 
+        overlap with already placed pieces and adheres to the container's 
+        boundaries.
+        If no valid position is found with the NFP, it defaults to gravitating
+        the piece to the bottom-left corner of the container.
+        Args:
+            piece (Piece): The piece to be placed in the container.
+            gravitate_on (bool, optional): If True, the piece will be 
+                gravitated towards the bottom-left corner after determining 
+                the best position. Defaults to False.
+        Returns:
+            tuple: A tuple (best_x, best_y) representing the coordinates of 
+            the best position for the piece. If no valid position is found, 
+            returns (None, None).
         """
         best_x, best_y = None, None
 
@@ -281,8 +295,9 @@ class NFPDecoder(PlacementEngine):
 
         # if no position was found, return None
         if best_x is None or best_y is None:
-            print(f"Piece {piece.id} does not fit in the container")
-            return None, None
+            # Could not place via NFP → behave like Bottom‑Left
+            ax, ay = self.anchor(piece)
+            best_x, best_y = (self.gravitate(piece, ax, ay))
         
         # gravitate the piece to the bottom left corner
         if gravitate_on:
@@ -299,15 +314,3 @@ class NFPDecoder(PlacementEngine):
                                                         moving.get_outer_path())
                                                         
         return self._nfp_cache[key]
-    
-
-# class GeneticAlgorithmDecoder(PlacementEngine):
-#     """
-#     Genetic Algorithm decoder.
-#     """
-
-#     def __init__(self, layout, container):
-#         super().__init__(layout, container)
-#         self.evolution = Evolution(layout.order, container)
-#         best_layout = self.evolution.run()
-#         # TODO: decode the best layout

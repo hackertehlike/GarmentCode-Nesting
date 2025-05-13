@@ -23,7 +23,7 @@ class Piece:
         self.scale = 1.0
 
         #bounding box
-        self.update_bbox()
+        #self.update_bbox()
 
     def update_bbox(self) -> None:
         print("Updating bounding box for piece ", self.id)
