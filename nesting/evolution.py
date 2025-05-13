@@ -1,5 +1,6 @@
 from __future__ import annotations
 import random
+import time
 
 from .layout import Piece, Container
 from .chromosome import Chromosome
@@ -216,9 +217,12 @@ class Evolution:
     # ------------------------------------------------------------------
 
     def run(self) -> Chromosome:
+        start = time.time()
         self._log("Starting evolution…", divider=True)
         self.generate_population()
         for _ in range(self.num_generations):
             self.next_generation()
         self._log("Evolution completed.", divider=True)
+        end = time.time()
+        self._log(f"Total time: {end - start:.2f} seconds")
         return self._get_elite()[0]

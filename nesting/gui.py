@@ -595,7 +595,7 @@ class NestingGUI:
                 ui.notify(f"Unknown panel '{name}'", type="warning")
                 continue
             
-            print (f"Placing {name} at ({dx_cm:.2f}, {dy_cm:.2f}) cm")
+            # print(f"Placing {name} at ({dx_cm:.2f}, {dy_cm:.2f}) cm")
             dx_px = dx_cm * cm_to_px
             dy_px = dy_cm * cm_to_px
             # self.panel_transforms[name] = (dx_px, dy_px)
@@ -652,14 +652,14 @@ class NestingGUI:
                 evo = Evolution(
                     self.pieces,
                     container,
-                    num_generations=2,
-                    population_size=5,
-                    elite_population_size=2,
+                    num_generations=10,
+                    population_size=10,
+                    elite_population_size=5,
                     mutation_rate=0.1,
                     pmx=True,
                     allow_duplicate_genes=True,
                 )
-                evo.generate_population()
+                # evo.generate_population()
                 best_chromosome = evo.run()
                 decoder = BottomLeftDecoder(best_chromosome, container)
             else:

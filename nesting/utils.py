@@ -69,7 +69,7 @@ def from_clipper(path):
 #     print (f"Piece {piece.id} outer path updated with seam allowance")
 
 
-def polygons_overlap(poly_a, poly_b, area_tol = 1e-12) -> bool:
+def polygons_overlap(poly_a, poly_b, area_tol = 1e-4) -> bool:
     """
     True iff poly_a and poly_b overlap with **positive area**.
     Touching at an edge or point returns False.
