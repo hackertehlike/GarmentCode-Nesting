@@ -1,7 +1,7 @@
 from __future__ import annotations
 import random
 import time
-from concurrent.futures import ProcessPoolExecutor
+#from concurrent.futures import ProcessPoolExecutor
 
 from .layout import Piece, Container
 from .chromosome import Chromosome
