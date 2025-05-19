@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import time
 import yaml
@@ -353,3 +354,16 @@ class GUIPattern:
 
         return self.saved_garment_archive if pack else self.saved_garment_folder
 
+    
+    def export_for_nesting(self) -> Path:
+        """
+        Serialize the CURRENT sewing pattern to a temporary folder (no zip),
+        then return the Path to the JSON file inside for the nesting GUI.
+        """
+        # write the pattern files (including .json) to disk:
+        pattern_folder = Path(self.save(pack=False))
+        # find the JSON spec
+        json_files = list(pattern_folder.glob('*.json'))
+        if not json_files:
+            raise RuntimeError(f'export_for_nesting: no .json in {pattern_folder}')
+        return json_files[0]

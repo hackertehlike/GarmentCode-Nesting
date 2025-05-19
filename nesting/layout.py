@@ -132,6 +132,18 @@ class Piece:
         self.update_bbox()
         print(f"Piece {self.id} outer path updated with seam allowance")
 
+    def reset_rotation(self) -> None:
+        """
+        Reset the rotation of the piece to 0 degrees.
+        """
+        needed_rotation = (360 - self.rotation) % 360
+        if needed_rotation != 0:
+            self.rotate(needed_rotation)
+            #self.rotation = 0
+            print(f"Piece {self.id} rotation reset to 0 degrees")
+        else:
+            print(f"Piece {self.id} is already at 0 degrees")
+
 
 class Layout:
 

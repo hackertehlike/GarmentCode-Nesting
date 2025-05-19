@@ -2,6 +2,11 @@
 
 # NOTE: NiceGUI reference: https://nicegui.io/
 
+from contextlib import closing
+import socket
+import subprocess
+import sys
+import webbrowser
 import yaml
 import traceback
 from datetime import datetime
@@ -288,6 +293,11 @@ class GUIState:
             ui.button('Random', on_click=self.random)
             ui.button('Default', on_click=self.default)
             ui.button('Upload', on_click=self.ui_design_dialog.open)  
+            ui.button(
+                'NEST',
+                on_click=lambda: self.launch_nesting_gui()   # ← wrapped: no `e` passed
+            )
+            ui.button('Download Current Garment', on_click=lambda: self.state_download())
     
         # Design parameters
         design_params = self.pattern_state.design_params
@@ -755,3 +765,61 @@ class GUIState:
         """Download current state of a garment"""
         archive_path = self.pattern_state.save()
         ui.download(archive_path, f'Configured_design_{datetime.now().strftime("%y%m%d-%H-%M-%S")}.zip')
+
+    @staticmethod
+    def _find_free_port() -> int:
+        """Ask the OS for a free TCP port and return it."""
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+            s.bind(("", 0))               # 0 ⇒ let the OS choose
+            return s.getsockname()[1]
+
+    @staticmethod
+    def _is_port_open(port: int, timeout: float = 0.1) -> bool:
+        """Check whether localhost:port is accepting TCP connections."""
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+            s.settimeout(timeout)
+            return s.connect_ex(("localhost", port)) == 0
+
+    async def _wait_and_open_tab(self, port: int) -> None:
+        """
+        Poll until the Nesting GUI server is live, then open a new browser tab.
+        Does not call any other NiceGUI UI functions to avoid slot errors.
+        """
+        for _ in range(50):                      # ~5 seconds total
+            await asyncio.sleep(0.1)
+            if self._is_port_open(port):
+                ui.run_javascript(f"window.open('http://localhost:{port}', '_blank');")
+                return
+        # silently give up if server never appears
+
+    def launch_nesting_gui(self) -> None:
+        """
+        Export current pattern, launch the NestingGUI on a free port,
+        and schedule the client tab to open once the server is up.
+        """
+        try:
+            # 1) Export pattern JSON
+            json_path: Path = self.pattern_state.export_for_nesting()
+
+            # 2) Find a free port and start the NestingGUI process
+            port = self._find_free_port()
+            log_file = (self.local_path_3d / "nesting_gui.log").open("w")
+            args = [
+                sys.executable,
+                "-m", "nesting.run_gui",
+                str(json_path),
+                str(port),
+            ]
+            subprocess.Popen(
+                args,
+                stdout=log_file,
+                stderr=subprocess.STDOUT,
+                start_new_session=True,
+            )
+
+            # 3) Notify immediately and schedule the tab‐opener task
+            ui.notify("Launching Nesting GUI…", type="info")
+            asyncio.create_task(self._wait_and_open_tab(port))
+
+        except Exception as exc:
+            ui.notify(f"Failed to launch nesting GUI: {exc}", type="negative")

@@ -14,8 +14,8 @@ async def index(client: Client):
 
     # Connection end
     # https://github.com/zauberzeug/nicegui/discussions/1379
-    await client.disconnected()
-    print('Closed connection ', gui_st.pattern_state.id, '. Deleting files...')
+    # await client.disconnected()
+    #print('Closed connection ', gui_st.pattern_state.id, '. Deleting files...')
     gui_st.release()
 
 if __name__ == '__main__':

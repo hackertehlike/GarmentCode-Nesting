@@ -4,6 +4,7 @@ import tempfile
 import copy
 import yaml
 from typing import Dict, List, Tuple
+from pathlib import Path
 
 from nicegui import ui, events
 from nicegui.events import KeyEventArguments
@@ -28,7 +29,7 @@ class NestingGUI:
     • A button tests all enlarged outlines for pairwise intersections.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, pattern_path: str | Path | None = None) -> None:
         # container dimensions in cm
         self.container_width_cm  = 400.0
         self.container_height_cm = 100.0
@@ -62,7 +63,15 @@ class NestingGUI:
         self.selection_mode: bool = False
 
         self._build_layout()
-        self._load_default_pattern()  # auto load default pattern
+        #self._load_default_pattern()  # auto load default pattern
+
+        if pattern_path is not None:
+            # user supplied a pattern → load it once
+            self._load_pattern_from_file(Path(pattern_path))
+        else:
+            # fall back to the previous hard-coded default
+            self._load_default_pattern()
+
 
     # ---------------------------------------------------------------------------- #
     #                                  UI Builders                                 #
@@ -135,6 +144,7 @@ class NestingGUI:
             ui.button("Select Panel (S)", on_click=self._enable_selection_mode)
             ui.button("Reset Selection", on_click=lambda _: self._select_panel(""))
             ui.button("Rotate Panel (R)", on_click=lambda _: self._rotate_panel())
+            ui.button("Reset rotations", on_click=lambda _: self._reset_rotations())
 
         self._kb = ui.keyboard(on_key=self._handle_key, active=True)
         
@@ -238,6 +248,14 @@ class NestingGUI:
     #                                PATTERN LOADERS                               #
     # ---------------------------------------------------------------------------- #
     
+    
+    def _load_pattern_from_file(self, path: Path) -> None:
+        extractor = PatternPathExtractor(path)   # same code as before
+        self.pieces = extractor.get_all_panel_pieces(samples_per_edge=7)
+        self._rebuild_panel_outlines()
+        self.pattern_loaded = True
+        self._draw_outlines()
+
 
     def _load_pattern(self, e: events.UploadEventArguments):
         """
@@ -749,6 +767,12 @@ class NestingGUI:
         # self.selected_panel = ""
 
         ui.notify(f"Panel '{self.selected_panel}' rotated", type="info")
+
+    def _reset_rotations(self):
+        for piece in self.pieces.values():
+            piece.reset_rotation()
+        self._draw_outlines()
+        ui.notify("All panel rotations reset", type="positive")
 
 if __name__ in {"__main__", "__mp_main__"}:
     NestingGUI()
