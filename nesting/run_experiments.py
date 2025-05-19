@@ -10,6 +10,7 @@ from __future__ import annotations
 import os, time, itertools, shutil
 from functools import partial
 from itertools import product
+from concurrent.futures import ProcessPoolExecutor
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -22,12 +23,13 @@ from .layout import Container
 # -----------------------------------------------------------------------------
 # Hyper‑parameter grid
 # -----------------------------------------------------------------------------
-population_sizes   = [10, 20]
-elite_sizes        = [3, 5]
-mutation_rates     = [0.1, 0.2, 0.3]
-pmx_values         = [True, False]
-num_generations_ls = [10, 15]
-duplicate_policy   = [True, False]
+population_sizes   = [20, 50, 100]
+elite_sizes        = [3, 5, 10, 15]
+mutation_rates     = [0.1]
+#pmx_values         = [True, False]
+pmx_values         = [False]
+num_generations_ls = [150]
+duplicate_policy   = [False]
 
 # -----------------------------------------------------------------------------
 # Helper: save a simple line or box plot
@@ -36,12 +38,19 @@ def _save_plot(fig, out_dir: str, fname: str) -> None:
     os.makedirs(out_dir, exist_ok=True)
     fig.savefig(os.path.join(out_dir, fname), dpi=300, bbox_inches="tight")
     plt.close(fig)
-
+    
+def _calc_fitness(child, container):
+    """
+    Compute fitness for one individual and return it.
+    Kept very small so it is picklable.
+    """
+    child.fitness = child.calculate_fitness(container)  # or whatever you do
+    return child
 
 # -----------------------------------------------------------------------------
 # Main sweep driver
 # -----------------------------------------------------------------------------
-def param_sweep(pieces, container) -> None:
+def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: bool = True ) -> None: 
     """
     Runs GA on the full Cartesian product of the parameter grid and
     produces – in addition to the per‑run artefacts – aggregate CSVs and
@@ -63,9 +72,23 @@ def param_sweep(pieces, container) -> None:
             f"{'pmx' if pmx else 'ox'}_gen{gens}_"
             f"dups_{'yes' if allow_dups else 'no'}"
         )
-        out_dir = os.path.join("sweep_results_new", label)
+                # ------------------------------------------------------------------ sweep (inside the for-each-combination loop)
+
+        out_dir = os.path.join("sweep_results_3", label)
         shutil.rmtree(out_dir, ignore_errors=True)
-        os.makedirs(out_dir, exist_ok=True)
+        os.makedirs(out_dir, exist_ok=True)        # ← create first!
+
+        # ---------- rolling CSV & progress-plot folder ---------------------
+        header = ("Generation,BestFitness,AvgChildFitness,SurvivalRate,"
+                  "DeltaBest,SuccessRatio,CrossoverGain,MutationGain\n")
+
+        progress_csv = os.path.join(out_dir, "generation_progress.csv")
+        with open(progress_csv, "w") as fh:        # write header once
+            fh.write(header)
+
+        prog_dir = os.path.join(out_dir, "progress_plots")
+        if plot_progress:
+            os.makedirs(prog_dir, exist_ok=True)
 
         print(f"\n— Running {label} —")
         t0 = time.time()
@@ -85,9 +108,55 @@ def param_sweep(pieces, container) -> None:
         evo.generate_population()
         per_gen_fitness: list[list[float]] = []
 
-        for _ in range(gens):
-            evo.next_generation()
+        for g_idx in range(gens):                 # ← inner generation loop
+            evo.next_generation()                 # advance GA one step
             per_gen_fitness.append([c.fitness for c in evo.population])
+
+            # ──────────────────────────────────────────────────────────────
+            # STEP 3 – PROGRESS LOG & OPTIONAL QUICK PLOTS  (copy as-is)
+            # ──────────────────────────────────────────────────────────────
+            g = g_idx + 1                         # human-friendly generation number
+
+            if (g % log_interval == 0) or (g == gens):
+                # ---- 3-A  append one-line snapshot to this run’s CSV ----
+                with open(progress_csv, "a") as fh:
+                    fh.write(
+                        f"{g},"
+                        f"{evo.best_fitness_history[g]},"
+                        f"{evo.avg_child_fitnesses[g_idx]},"
+                        f"{evo.survival_rates[g_idx]},"
+                        f"{evo.delta_best[g]},"
+                        f"{evo.child_parent_success_ratio[g]},"
+                        f"{evo.mean_crossover_gain[g]},"
+                        f"{evo.mean_mutation_gain[g]}\n"
+                    )
+
+                # ---- 3-B  brief console read-out ------------------------
+                print(
+                    f"[{label}] Gen {g:3d} | "
+                    f"best={evo.best_fitness_history[g]:.4f}  "
+                    f"avg_child={evo.avg_child_fitnesses[g_idx]:.4f}  "
+                    f"Δ_best={evo.delta_best[g]:+.4f}"
+                )
+
+                # ---- 3-C  overwrite quick progress plots ----------------
+                if plot_progress:
+                    def _quick(series, title, fname,
+                                ylabel="Value", marker="o"):
+                        fig, ax = plt.subplots()
+                        ax.plot(range(1, g + 1), series,
+                                marker=marker, ms=4, lw=1)
+                        ax.set(xlabel="Generation", ylabel=ylabel, title=title)
+                        ax.grid(True)
+                        _save_plot(fig, prog_dir, fname)   # overwrites previous file
+
+                    _quick(evo.best_fitness_history[1:g + 1],
+                            f"Best Fitness ≤ Gen {g}", "best_fitness.png")
+                    _quick(evo.avg_child_fitnesses[:g_idx + 1],
+                            f"Avg Child Fitness ≤ Gen {g}", "avg_child_fitness.png")
+                    _quick(evo.delta_best[1:g + 1],
+                            f"Δ-Best ≤ Gen {g}", "delta_best.png",
+                            ylabel="Δ-Best", marker="x")
 
         # ---------------- small helper for individual plots -----------------
         def line_plot(series, title, fname, ylabel="Value", marker="o"):
@@ -198,7 +267,7 @@ def param_sweep(pieces, container) -> None:
     # -----------------------------------------------------------------------
     # 5. Automatic comparison plots (one parameter at a time)
     # -----------------------------------------------------------------------
-    comparison_root = "comparison_plots"
+    comparison_root = "comparison_plots_2"
     shutil.rmtree(comparison_root, ignore_errors=True)
 
     # Utility: median best‑fitness per generation for a *fixed* param dict
@@ -244,7 +313,7 @@ def param_sweep(pieces, container) -> None:
 # CLI convenience
 # -----------------------------------------------------------------------------
 if __name__ == "__main__":
-    container = Container(140, 200)
+    container = Container(140, 500)
     default_path = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification_asym_dress.json"
-    pieces = PatternPathExtractor(default_path).get_all_panel_pieces(samples_per_edge=5)
+    pieces = PatternPathExtractor(default_path).get_all_panel_pieces(samples_per_edge=3)
     param_sweep(pieces, container)

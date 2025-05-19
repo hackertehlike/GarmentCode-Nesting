@@ -652,12 +652,14 @@ class NestingGUI:
                 evo = Evolution(
                     self.pieces,
                     container,
-                    num_generations=10,
+                    num_generations=20,
                     population_size=10,
                     elite_population_size=5,
                     mutation_rate=0.1,
                     pmx=True,
                     allow_duplicate_genes=True,
+                    early_stop_tolerance=0.01,
+                    early_stop_window=5,
                 )
                 # evo.generate_population()
                 best_chromosome = evo.run()
@@ -750,6 +752,8 @@ class NestingGUI:
 
         ui.notify(f"Panel '{self.selected_panel}' rotated", type="info")
 
-if __name__ in {"__main__", "__mp_main__"}:
+
+if __name__ in {"__main__"}:
+
     NestingGUI()
     ui.run(port=8080)
