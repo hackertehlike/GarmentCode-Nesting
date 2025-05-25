@@ -23,6 +23,23 @@ class PatternPathExtractor(BasicPattern):
         
     def _flip_y(self, p):
         return p
+    
+    def _edge_as_curve(self, vertices: list, edge: dict):
+        base_curve = super()._edge_as_curve(vertices, edge)
+
+        if isinstance(base_curve, svgpath.Arc):
+            return svgpath.Arc(
+                base_curve.start,
+                base_curve.radius,
+                rotation=base_curve.rotation,
+                large_arc=base_curve.large_arc,
+                sweep=not base_curve.sweep,
+                end=base_curve.end
+            )
+
+        # All other segment types (Line, CubicBezier, QuadraticBezier) are
+        # unaffected by the reflection, so keep them as they are.
+        return base_curve
 
     def _get_panel_outline(self, panel_name, samples_per_edge=10):
         """

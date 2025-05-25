@@ -538,6 +538,9 @@ class NestingGUI:
     #            INTERSECTION AND CONTAINMENT BOUNDARY CHECK                       #
     # ---------------------------------------------------------------------------- #
     def _check_intersections(self) -> bool:
+
+        print("Checking intersections...")
+
         if not self.pattern_loaded:
             ui.notify("Load a pattern first", type="warning")
             return
@@ -571,19 +574,21 @@ class NestingGUI:
 
         # Build the notification message.
         messages = []
+
         if overlaps:
-            messages.append("Overlaps:\n" + "\n".join(f"• {a} × {b}" for a, b in overlaps))
-            return True
+            #messages.append(f"Intersections found: {overlaps}")
+            messages.append("Overlaps:\n" + "\n".join(f"• {a} x {b}" for a, b in overlaps))
+            #ui.notify("\n".join(messages), multi_line=True)
         else:
             messages.append("No intersections")
         if panels_outside:
             messages.append("Panels outside container:\n" + "\n".join(f"• {p}" for p in panels_outside))
-            return True
+
         else:
             messages.append("All panels within container")
 
         ui.notify("\n".join(messages), multi_line=True)
-        return False
+        return bool(overlaps or panels_outside)
 
     # ---------------------------------------------------------------------------- #
     #                                    DECODER                                   #

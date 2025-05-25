@@ -359,11 +359,25 @@ class GUIPattern:
         """
         Serialize the CURRENT sewing pattern to a temporary folder (no zip),
         then return the Path to the JSON file inside for the nesting GUI.
+        Also inject the current design_params under "design".
         """
-        # write the pattern files (including .json) to disk:
+        # 1) write the raw pattern JSON out
         pattern_folder = Path(self.save(pack=False))
-        # find the JSON spec
         json_files = list(pattern_folder.glob('*.json'))
         if not json_files:
             raise RuntimeError(f'export_for_nesting: no .json in {pattern_folder}')
-        return json_files[0]
+        spec_path = json_files[0]
+
+        # 2) load it, inject design_params
+        with open(spec_path, 'r', encoding='utf-8') as f:
+            spec = json.load(f)
+
+        # stash in your current design parameters
+        spec['design'] = self.design_params
+
+        # 3) write out the enriched JSON
+        enriched = pattern_folder / 'nesting_export.json'
+        with open(enriched, 'w', encoding='utf-8') as f:
+            json.dump(spec, f, indent=2)
+
+        return enriched
