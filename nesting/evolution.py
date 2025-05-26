@@ -1,18 +1,20 @@
 from __future__ import annotations
+import multiprocessing
 import random
 import time
-#from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .layout import Piece, Container
 from .chromosome import Chromosome
 
-# ── evolution.py  (top-level, above class Evolution) ────────────────────────
+# evolution.py
 def _eval_fitness(chrom: "Chromosome") -> "Chromosome":
     """Worker helper for ProcessPoolExecutor: recompute fitness in place."""
     chrom.calculate_fitness()            # container is already held by chrom
     return chrom
 
 
+METRICS_ENABLED = False  # set to False to disable metrics collection
 class Evolution:
     """Genetic‑Algorithm driver that evolves a population of layouts.
 
@@ -180,8 +182,12 @@ class Evolution:
                 self._log("Max duplicate retries reached; accepting duplicate.")
                 return child, success, crossover_gain, mutation_gain
 
+
     def next_generation(self) -> None:
         self._log("Next generation…", divider=True)
+
+        start = time.time()
+
         old_elite = self._get_elite()
         old_elite_ids = {id(c) for c in old_elite}
 
@@ -190,67 +196,101 @@ class Evolution:
         crossover_gain_sum = mutation_gain_sum = 0.0
         crossover_count = mutation_count = 0
 
+        # remaining = self.population_size - len(new_population)
+        # if remaining > 0:
+        #     oversub_factor = 2  # a few extras in case duplicates are rejected
+        #     tasks = remaining * oversub_factor
+
+        #     with ThreadPoolExecutor(max_workers=self.num_threads) as exe:
+        #         futures = [exe.submit(self._generate_offspring, self.population)
+        #                    for _ in range(tasks)]
+
+        #         for fut in as_completed(futures):
+        #             child, success, c_gain, m_gain = fut.result()
+
+        #             if self.allow_duplicate_genes or child not in new_population:
+        #                 new_population.append(child)
+        #                 child_count += 1
+        #                 if success:
+        #                     success_count += 1
+        #                 crossover_gain_sum += c_gain
+        #                 crossover_count += 1
+        #                 if m_gain != 0.0:
+        #                     mutation_gain_sum += m_gain
+        #                     mutation_count += 1
+
+        #                 if len(new_population) >= self.population_size:
+        #                     break
+
+        # generate offspring until we reach the target population size
+        remaining = self.population_size - len(new_population)
         while len(new_population) < self.population_size:
             child, success, c_gain, m_gain = self._generate_offspring(self.population)
-            if self.allow_duplicate_genes or child not in new_population:
-                new_population.append(child)
-                child_count += 1
-                if success:
-                    success_count += 1
-                crossover_gain_sum += c_gain
-                crossover_count += 1
-                if m_gain != 0.0:
-                    mutation_gain_sum += m_gain
-                    mutation_count += 1
+            child_count += 1
+            if success:
+                success_count += 1
+            crossover_gain_sum += c_gain
+            crossover_count += 1
+            if m_gain != 0.0:
+                mutation_gain_sum += m_gain
+                mutation_count += 1
 
-        # Recalculate fitness in parallel
+            new_population.append(child)
+
+        # Recalculate fitness
+        
         # def calc_fitness(chromosome):
         #     chromosome.calculate_fitness()
         #     return chromosome
 
-        # with ProcessPoolExecutor() as executor:
-        #     new_population = list(executor.map(_eval_fitness, new_population))
+        with ThreadPoolExecutor() as executor:
+            new_population = list(executor.map(_eval_fitness, new_population))
 
-        # serially evaluate fitness
-        for chrom in new_population:
-            chrom.calculate_fitness()
+        # # serially evaluate fitness
+        # for chrom in new_population:
+        #     chrom.calculate_fitness()
 
         self.population = new_population
         self.generation += 1
 
         # ---- metrics ----
-        new_elite = self._get_elite()
-        new_elite_ids = {id(c) for c in new_elite}
-        survival_rate = len(old_elite_ids & new_elite_ids) / len(old_elite_ids)
-        self.survival_rates.append(survival_rate)
+        if METRICS_ENABLED:
+            new_elite = self._get_elite()
+            new_elite_ids = {id(c) for c in new_elite}
+            survival_rate = len(old_elite_ids & new_elite_ids) / len(old_elite_ids)
+            self.survival_rates.append(survival_rate)
 
-        children = new_population[len(old_elite):]
-        avg_child_fit = sum(c.fitness for c in children) / len(children) if children else 0.0
-        self.avg_child_fitnesses.append(avg_child_fit)
+            children = new_population[len(old_elite):]
+            avg_child_fit = sum(c.fitness for c in children) / len(children) if children else 0.0
+            self.avg_child_fitnesses.append(avg_child_fit)
 
-        cur_best = new_elite[0].fitness
-        prev_best = self.best_fitness_history[-1]
-        self.best_fitness_history.append(cur_best)
-        self.delta_best.append(cur_best - prev_best)
+            cur_best = new_elite[0].fitness
+            prev_best = self.best_fitness_history[-1]
+            self.best_fitness_history.append(cur_best)
+            self.delta_best.append(cur_best - prev_best)
 
-        ratio = success_count / child_count if child_count else 0.0
-        self.child_parent_success_ratio.append(ratio)
+            ratio = success_count / child_count if child_count else 0.0
+            self.child_parent_success_ratio.append(ratio)
 
-        mean_c_gain = crossover_gain_sum / crossover_count if crossover_count else 0.0
-        mean_m_gain = mutation_gain_sum / mutation_count if mutation_count else 0.0
-        self.mean_crossover_gain.append(mean_c_gain)
-        self.mean_mutation_gain.append(mean_m_gain)
+            mean_c_gain = crossover_gain_sum / crossover_count if crossover_count else 0.0
+            mean_m_gain = mutation_gain_sum / mutation_count if mutation_count else 0.0
+            self.mean_crossover_gain.append(mean_c_gain)
+            self.mean_mutation_gain.append(mean_m_gain)
+        
+            self._log(f"Elite survival rate: {survival_rate:.2%}")
+            self._log(f"Average child fitness: {avg_child_fit:.4f}")
+            self._log(f"Δ‑Best: {self.delta_best[-1]:+.4f}")
+            self._log(f"Child‑parent success ratio: {ratio:.2%}")
+            self._log(f"Mean crossover gain: {mean_c_gain:+.4f}")
+            self._log(f"Mean mutation gain: {mean_m_gain:+.4f}")
+            self._log(f"Generation {self.generation} completed.", divider=True)
 
-        # ---- logging ----
+            # ---- logging ----
         for i, chrom in enumerate(self.population):
             self._log(f"Layout {i}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
-        self._log(f"Elite survival rate: {survival_rate:.2%}")
-        self._log(f"Average child fitness: {avg_child_fit:.4f}")
-        self._log(f"Δ‑Best: {self.delta_best[-1]:+.4f}")
-        self._log(f"Child‑parent success ratio: {ratio:.2%}")
-        self._log(f"Mean crossover gain: {mean_c_gain:+.4f}")
-        self._log(f"Mean mutation gain: {mean_m_gain:+.4f}")
-        self._log(f"Generation {self.generation} completed.", divider=True)
+        
+        end = time.time()
+        self._log(f"Generation {self.generation} took {end - start:.2f} seconds.", divider=True)
 
 
     # ------------------------------------------------------------------
@@ -319,6 +359,7 @@ class Evolution:
         end = time.time()
         self._log(f"Total time: {end - start:.2f} seconds")
         return self._get_elite()[0]
+    
 
 # CLI entry point
 if __name__ == "__main__":

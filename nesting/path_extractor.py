@@ -76,7 +76,10 @@ class PatternPathExtractor(BasicPattern):
         shifted_outline = utils.shift_coordinates(outline)
 
         if utils.signed_area(shifted_outline) < 0:        # currently CCW → reverse
+            print(panel_name, "is CCW, reversing it")
             shifted_outline.reverse()
+        else:
+            print(panel_name, "is CW, keeping it as is")
 
         # Create a Piece object for the panel outline
         piece = Piece(shifted_outline, id=panel_name)

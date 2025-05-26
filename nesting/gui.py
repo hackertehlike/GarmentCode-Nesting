@@ -2,7 +2,7 @@ from __future__ import annotations
 import itertools
 import tempfile
 import copy
-import yaml
+# import yaml
 from typing import Dict, List, Tuple
 from pathlib import Path
 
@@ -53,10 +53,10 @@ class NestingGUI:
         self.drag_data: Dict = {}
 
         self.pattern_loaded = False
-        self.yaml_loaded     = False
+        #self.yaml_loaded     = False
 
-        self.style_params: Dict = {}
-        self.parameter_order: List[str] = []
+        self.design_params: Dict[str, any] = {}  # design specification from JSON
+        # self.parameter_order: List[str] = []
 
         # Currently selected panel for style editing.
         self.selected_panel: str = ""
@@ -67,7 +67,7 @@ class NestingGUI:
 
         if pattern_path is not None:
             # user supplied a pattern → load it once
-            self._load_pattern_from_file(Path(pattern_path))
+            self._load_pattern_core(Path(pattern_path))
         else:
             # fall back to the previous hard-coded default
             self._load_default_pattern()
@@ -83,6 +83,50 @@ class NestingGUI:
             with ui.column().classes("flex-1"):
                 self._build_toolbar()
                 self._build_canvas()
+                self._build_sidebar()
+
+    
+
+    def _build_sidebar(self) -> None:
+        """Build the sidebar with style parameters."""
+
+        # print the design parameters to the console
+        print("Design parameters:", self.design_params)
+
+        def _iter_leaf_params(node: dict, prefix: str = ''):
+            GATES = {'style', 'sleeveless', 'type'}
+
+            for key, value in node.items():
+                if isinstance(value, dict) and {'v', 'type'} <= value.keys():
+                    if value['v'] is not None or key in GATES:
+                        yield prefix + key, value
+                elif isinstance(value, dict):
+                    yield from _iter_leaf_params(value, prefix + key + '.')
+                    
+        if not hasattr(self, "sidebar"):
+            self.sidebar = ui.column().classes("w-1/3 h-full overflow-y-auto p-4")
+
+        self.sidebar.clear()
+
+        with self.sidebar:
+            ui.label("Style Parameters").classes("text-xl font-bold mb-4")
+            filtered = self._filtered_design_tree()  # filter out irrelevant blocks
+            for name, spec in _iter_leaf_params(filtered):
+                t, val = spec['type'], spec['v']
+
+                if t in ('float', 'int'):
+                    ui.number(value=val, label=name,
+                            on_change=lambda e, n=name: self._on_param_change(n, e))
+
+                # elif t == 'bool':
+                #     ui.checkbox(value=val, text=name,
+                #                 on_change=lambda e, n=name: self._on_param_change(n, e))
+
+                # elif t.startswith('select'):
+                #     ui.select(spec['range'], value=val, label=name,
+                #             on_change=lambda e, n=name: self._on_param_change(n, e))
+
+
 
     def _build_canvas(self) -> None:
         with ui.element("div").classes("relative").style(
@@ -128,10 +172,10 @@ class NestingGUI:
                       auto_upload=True)
             
 
-            ui.upload(label="Load YAML parameters",
-                    on_upload=self._load_yaml,
-                    auto_upload=True,
-                    multiple=False)
+            # ui.upload(label="Load YAML parameters",
+            #         on_upload=self._load_yaml,
+            #         auto_upload=True,
+            #         multiple=False)
 
             
             ui.button("Auto place (Bottom‑Left)", on_click=self._auto_place)
@@ -173,50 +217,103 @@ class NestingGUI:
     # ---------------------------------------------------------------------------- #
     #                     PARAMETER CHANGE STUFF (NOT WORKING)                     #
     # ---------------------------------------------------------------------------- #
+    def _filtered_design_tree(self) -> dict:
+        dp_all = copy.deepcopy(self.design_params)          # never mutate source
+        meta    = dp_all.get('meta', {})
 
-    def _load_yaml(self, e: events.UploadEventArguments):
-        import tempfile, yaml, os
+        # 1 ───────────────────────── top-level meta filtering ──────────────────── #
+        upper  = meta.get('upper',  {}).get('v')
+        wb     = meta.get('wb',     {}).get('v')
+        bottom = meta.get('bottom', {}).get('v')
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".yaml") as tmp:
-            tmp.write(e.content.read())
-            tmp_path = tmp.name
+        keep_top = {'meta'}                                 # always keep meta
 
-        try:
-            with open(tmp_path, "r", encoding="utf-8") as f:
-                raw = yaml.safe_load(f) or {}
+        if wb   is not None: keep_top.add('waistband')
+        if upper is not None: keep_top.update({'shirt', 'collar', 'sleeve', 'left'})
 
-            def _flatten(node, prefix=""):
-                flat = {}
-                for k, v in node.items():
-                    if isinstance(v, dict) and "v" not in v:
-                        flat.update(_flatten(v, prefix + k + "."))
-                    else:
-                        flat[prefix + k] = v.get("v") if isinstance(v, dict) else v
-                return flat
+        bottom_map = {
+            'SkirtCircle':      {'skirt'},
+            'AsymmSkirtCircle': {'flare-skirt'},
+            'GodetSkirt':       {'godet-skirt'},
+            'PencilSkirt':      {'pencil-skirt'},
+            'Skirt2':           {'skirt'},
+            'SkirtManyPanels':  {'skirt-many-panels'},
+            'SkirtLevels':      {'levels-skirt'},
+            'Pants':            {'pants'},
+        }
+        keep_top.update(bottom_map.get(bottom, set()))
 
-            self.style_params   = _flatten(raw)
-            self.parameter_order = sorted(self.style_params)  # or any order you prefer
-            self.yaml_loaded     = True
-            ui.notify("YAML parameters loaded ✓", type="positive")
+        dp = {k: v for k, v in dp_all.items() if k in keep_top}
 
-            # if self.pattern_loaded:
-            #     self._refresh_sidebar()
-        except Exception as exc:
-            ui.notify(f"Could not load YAML: {exc}", type="negative")
+        # 2 ────────────────────── sub-block “gate” filtering ───────────────────── #
+        # Collar › component ------------------------------------------------------ #
+        comp = dp.get('collar', {}).get('component')
+        if comp and comp.get('style', {}).get('v') is None:
+            for k in list(comp.keys()):
+                print(f"Removing {k} from collar.component")
+                comp.pop(k)
+
+        # Sleeve block ----------------------------------------------------------- #
+        sleeve = dp.get('sleeve')
+        if sleeve:
+            if sleeve.get('sleeveless', {}).get('v'):       # True  → hide sleeve details
+                print("Hiding sleeve details")
+                for k in list(sleeve.keys()):
+                    print(f"Removing {k} from sleeve")
+                    sleeve.pop(k)
+            else:
+                cuff = sleeve.get('cuff')
+                if cuff and cuff.get('type', {}).get('v') is None:
+                    for k in list(cuff.keys()):
+                        cuff.pop(k)
+
+        print("dp:", dp)
+        return dp
 
 
-    def _on_param_change(self, param: str, e) -> None:
-        try:
-            new_val = float(e.value)
-        except ValueError:
-            new_val = e.value      # for string or bool parameters
-        self.style_params[param] = new_val
-        # ui.notify(f"{param} → {new_val}")
+    # def _load_yaml(self, e: events.UploadEventArguments):
+    #     import tempfile, yaml
+
+    #     with tempfile.NamedTemporaryFile(delete=False, suffix=".yaml") as tmp:
+    #         tmp.write(e.content.read())
+    #         tmp_path = tmp.name
+
+    #     try:
+    #         with open(tmp_path, "r", encoding="utf-8") as f:
+    #             raw = yaml.safe_load(f) or {}
+
+    #         def _flatten(node, prefix=""):
+    #             flat = {}
+    #             for k, v in node.items():
+    #                 if isinstance(v, dict) and "v" not in v:
+    #                     flat.update(_flatten(v, prefix + k + "."))
+    #                 else:
+    #                     flat[prefix + k] = v.get("v") if isinstance(v, dict) else v
+    #             return flat
+
+    #         self.style_params   = _flatten(raw)
+    #         self.parameter_order = sorted(self.style_params)  # or any order you prefer
+    #         self.yaml_loaded     = True
+    #         ui.notify("YAML parameters loaded ✓", type="positive")
+
+    #         # if self.pattern_loaded:
+    #         #     self._refresh_sidebar()
+    #     except Exception as exc:
+    #         ui.notify(f"Could not load YAML: {exc}", type="negative")
 
 
-    # TODO: recalculate panels
-    def _update_pattern_by_style(self):
-        pass
+    # def _on_param_change(self, param: str, e) -> None:
+    #     try:
+    #         new_val = float(e.value)
+    #     except ValueError:
+    #         new_val = e.value      # for string or bool parameters
+    #     self.style_params[param] = new_val
+    #     # ui.notify(f"{param} → {new_val}")
+
+
+    # # TODO: recalculate panels
+    # def _update_pattern_by_style(self):
+    #     pass
 
     # ---------------------------------------------------------------------------- #
     #                                  TOOLBAR                                     #
@@ -249,75 +346,55 @@ class NestingGUI:
     # ---------------------------------------------------------------------------- #
     
     
-    def _load_pattern_from_file(self, path: Path) -> None:
-        extractor = PatternPathExtractor(path)   # same code as before
-        self.pieces = extractor.get_all_panel_pieces(samples_per_edge=7)
-        self._rebuild_panel_outlines()
-        self.pattern_loaded = True
-        self._draw_outlines()
-
-
-    def _load_pattern(self, e: events.UploadEventArguments):
+    def _load_pattern_core(self, path: Path) -> None:
         """
-        Loads pattern from the uploaded JSON file, populates necessary fields and draws its outlines
+        Clear old state, load geometry + design parameters from *path*,
+        and rebuild the sidebar.
         """
-        # self.raw_panel_outlines.clear()
-        # self.panel_outlines.clear()
+        # --- clear old GUI/scene state ---------------------------------
         self.panel_path_refs.clear()
-        # self.panel_transforms.clear()
         self.selected_panel = ""
         self.pieces.clear()
         self.drag_data.clear()
         self.scene.clear()
 
+        # --- geometry --------------------------------------------------
+        extractor = PatternPathExtractor(path)
+        self.pieces = extractor.get_all_panel_pieces(samples_per_edge=7)
+        self._rebuild_panel_outlines()
+        self.pattern_loaded = True
+        self._draw_outlines()
+
+        # --- design parameters ----------------------------------------
+        with path.open("r", encoding="utf-8") as f:
+            spec = json.load(f)
+            self.design_params = spec.get("design", {})
+            print("Design parameters loaded:", self.design_params)
+
+        # --- sidebar ---------------------------------------------------
+        self._build_sidebar()          # see next section
+
+
+    def _load_pattern(self, e: events.UploadEventArguments):
+        """Handle file-upload event and delegate to the core loader."""
         with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmp:
             tmp.write(e.content.read())
-            tmp_path = tmp.name
+            tmp_path = Path(tmp.name)
 
         try:
-            extractor = PatternPathExtractor(tmp_path)  # outlines in cm
-            self.pieces = extractor.get_all_panel_pieces(samples_per_edge=7)
-
-            # ui.notify("Panels found: " + ", ".join(self.raw_panel_outlines.keys()))
-            self._rebuild_panel_outlines()
-            self.pattern_loaded = True
-
-            self._draw_outlines()
-            # for(name, _) in self.panel_outlines.items():
-            #     self.panel_rotations[name] = 0.0
-            #     print(f"Panel {name} rotation: {self.panel_rotations[name]}")
-            
+            self._load_pattern_core(tmp_path)
             ui.notify("Pattern loaded ✓", type="positive")
         except Exception as exc:
             ui.notify(f"Could not load pattern: {exc}", type="negative")
+            raise                    # optional: keep traceback in server log
+
 
     def _load_default_pattern(self):
         """
         So I don't have to load something in every time I change code... 
         """
         default_path = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification_asym_dress.json"
-        
-        try:
-            extractor = PatternPathExtractor(default_path)  # outlines in cm
-            self.pieces = extractor.get_all_panel_pieces(samples_per_edge=7)
-            print("Default pattern loaded: ", self.pieces)
-            
-            # print (f"Default pattern loaded: {self.pieces}")
-
-            # for name, piece in self.pieces.items():
-            #     self.panel_transforms[name] = (0, 0)
-            #     self.panel_rotations[name] = 0.0
-                # print(f"Panel {name} rotation: {self.panel_rotations[name]}")
-        
-
-            # ui.notify("Panels found: " + ", ".join(self.raw_panel_outlines.keys()))
-            self._rebuild_panel_outlines()
-            self.pattern_loaded = True
-            self._draw_outlines()
-
-            ui.notify("Default pattern loaded ✓", type="positive")
-        except Exception as exc:
-            ui.notify(f"Could not load default pattern: {exc}", type="negative")
+        self._load_pattern_core(Path(default_path))
 
     def _update_scale_factors(self):
         """
@@ -504,7 +581,7 @@ class NestingGUI:
             'start_y': e.args.get('clientY', 0),
             'orig_offset': piece.translation,  # Use the piece's translation
         }
-        print(f"Drag started for {panel_id} at ({self.drag_data['start_x']}, {self.drag_data['start_y']})")
+        # print(f"Drag started for {panel_id} at ({self.drag_data['start_x']}, {self.drag_data['start_y']})")
 
     def _on_drag_move(self, e, panel_id: str):
         if not self.drag_data or self.drag_data['panel_id'] != panel_id:
@@ -780,5 +857,7 @@ class NestingGUI:
         ui.notify("All panel rotations reset", type="positive")
 
 if __name__ in {"__main__", "__mp_main__"}:
-    NestingGUI()
-    ui.run(port=8080)
+    # run_gui.py
+    
+    gui = NestingGUI(pattern_path=None)
+    ui.run(port=8082)
