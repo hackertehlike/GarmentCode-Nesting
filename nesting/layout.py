@@ -16,12 +16,12 @@ class Piece:
         self.inner_path = original_path     # original inner geometry (in cm)
         self.outer_path = original_path.copy()     # original outer geometry (in cm)
         
-        self.add_seam_allowance()  # original outer geometry (in cm)
+        #self.add_seam_allowance()  # original outer geometry (in cm)
         # self.translation = (0.0, 0.0)
         self.rotation = 0 # wrt to the original piece
         self._translation = (0, 0)
         self.locked = False
-        self.scale = 1.0
+        #self.scale = 1.0
 
         #bounding box
         #self.update_bbox()
@@ -69,6 +69,8 @@ class Piece:
         The rotation is done around the origin (0, 0) of the piece (bounding box).
         """
 
+        print (f"Rotating piece {self.id} by {angle} degrees")
+
         if (angle == 0):
             return
         
@@ -109,12 +111,15 @@ class Piece:
     @property
     def translation(self) -> Tuple[float, float]:
         """Returns the translation of the piece."""
-        return (self._translation[0] * self.scale, self._translation[1] * self.scale)
-    
+        #return (self._translation[0] * self.scale, self._translation[1] * self.scale)
+        return (self._translation[0], self._translation[1])
+
     @translation.setter
     def translation(self, value: Tuple[float, float]):
         """Sets the translation of the piece."""
-        self._translation = (value[0] / self.scale, value[1] / self.scale)
+        # self._translation = (value[0] / self.scale, value[1] / self.scale)
+        self._translation = (value[0], value[1])
+
         # self.translate(value[0], value[1])
 
     def add_seam_allowance(self, allowance: float = 1.0) -> None:

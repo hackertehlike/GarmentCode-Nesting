@@ -369,8 +369,8 @@ class NestingGUI:
 
         # --- geometry --------------------------------------------------
         extractor = PatternPathExtractor(path)
-        #self.pieces = extractor.get_all_panel_pieces(samples_per_edge=5)
-        panel_pieces = extractor.get_all_panel_pieces(samples_per_edge=5)
+        
+        panel_pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE,)
         # duplicate the pieces twice and add to pieces so we have 3 copies of each piece and add them to pieces
        
         # avoid modifying the original pieces
@@ -785,10 +785,18 @@ class NestingGUI:
                     population_size=config.POPULATION_SIZE,
                     elite_population_size=config.ELITE_POPULATION_SIZE,
                     mutation_rate=config.MUTATION_RATE,
+                    enable_dynamic_stopping=config.ENABLE_DYNAMIC_STOPPING,
+                    early_stop_window=config.EARLY_STOP_WINDOW,
+                    early_stop_tolerance=config.EARLY_STOP_TOLERANCE,
+                    enable_extension=config.ENABLE_EXTENSION,
+                    extend_window=config.EXTEND_WINDOW,
+                    extend_threshold=config.EXTEND_THRESHOLD,
+                    max_generations=config.MAX_GENERATIONS,
                 )
                 best_chromosome = evo.run()
-                DecoderClass = DECODER_REGISTRY[config.SELECTED_DECODER]
-                decoder      = DecoderClass(best_chromosome, container, step=config.BL_STEP)
+                view    = LayoutView(best_chromosome.genes)
+                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.BL_STEP)
+  
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             

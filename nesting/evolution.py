@@ -30,7 +30,7 @@ class Evolution:
         population_size: int = 10,
         elite_population_size: int = 5,
         mutation_rate: float = 0.2,
-        crossover_method: str = config.SELECTED_CROSSOVER,
+        crossover_method: str = "pmx",
         #pmx: bool = True,`
         # allow_duplicate_genes: bool = False,
         # max_duplicate_retries: int = 50,
@@ -72,15 +72,12 @@ class Evolution:
 
 
         # ── metrics ────────────────────────────────────────────
-        self.survival_rates: list[float] = []
         self.avg_child_fitnesses: list[float] = []
         self.best_fitness_history: list[float] = []
         self.delta_best: list[float] = []
-        self.child_parent_success_ratio: list[float] = []
-        self.mean_crossover_gain: list[float] = []
-        self.mean_mutation_gain: list[float] = []
 
-        log_dir = "evo_runs"
+
+        log_dir = config.SAVE_LOGS_PATH
         Path(log_dir).mkdir(parents=True, exist_ok=True)        # ensure folder exists
         ts            = time.strftime("%Y%m%d_%H%M%S")
         self.log_path = Path(log_dir) / f"evolution_log_{ts}.txt"
@@ -112,6 +109,8 @@ class Evolution:
     # ------------------------------------------------------------------
 
     def _generate_random_chromosome(self) -> Chromosome:
+        
+        self._log("Generating random chromosome...")
         ids_ = list(self.pieces.keys())
         random.shuffle(ids_)
         chrom = Chromosome([self.pieces[i] for i in ids_], self.container)
@@ -123,8 +122,10 @@ class Evolution:
             if rotation != 0:
                 piece.rotate(rotation)
         
-        chrom.sync_order()
+        #chrom.sync_order()
         chrom.calculate_fitness()
+
+        self._log(f"Random chromosome generated with fitness: {chrom.fitness:.4f}")
         return chrom
 
     def generate_population(self) -> None:
@@ -139,12 +140,6 @@ class Evolution:
             self._log(f"Layout {i}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
         self._log("Population generation completed.", divider=True)
 
-        best = max(c.fitness for c in self.population)
-        # self.best_fitness_history.append(best)
-        # self.delta_best.append(0.0)
-        # self.child_parent_success_ratio.append(0.0)
-        # self.mean_crossover_gain.append(0.0)
-        # self.mean_mutation_gain.append(0.0)
 
     # ------------------------------------------------------------------
     # GA core operations
@@ -198,6 +193,11 @@ class Evolution:
         if random.random() < self.mutation_rate:
             child.mutate()
 
+        # --- fitness evaluation ---
+        # use ProcessPoolExecutor to parallelize fitness evaluation
+        
+        child.calculate_fitness() 
+
         self._log(f"Offspring generated in {time.time() - start:.2f} s")
         return child
 
@@ -224,6 +224,17 @@ class Evolution:
         self.population = new_population
         self.generation += 1
 
+        self._log(f"Generation {self.generation} created with {len(self.population)} chromosomes.", divider=True)
+
+        best = max(c.fitness for c in self.population)
+        if self.best_fitness_history:
+            delta = best - self.best_fitness_history[-1]
+        else:
+            delta = 0.0
+        self.best_fitness_history.append(best)
+        self.delta_best.append(delta)
+        self._log(f"Best fitness this gen: {best:.4f} (Δ {delta:+.4f})")
+
         # ── average child fitness and full population fitness vector ─────────
         children      = new_population[len(old_elite):]
         avg_child_fit = (sum(c.fitness for c in children) / len(children)) if children else 0.0
@@ -233,7 +244,8 @@ class Evolution:
         self._metrics_buffer.append(row)
 
         # flush every 5 generations to limit I/O
-        if len(self._metrics_buffer) >= 5:
+        if len(self._metrics_buffer) >= 5 and config.SAVE_LOGS:
+            self._log("Flushing metrics to CSV file…")
             self._flush_metrics()
 
             # ---- logging ----
@@ -241,6 +253,7 @@ class Evolution:
             self._log(f"Layout {i}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
         
         end = time.time()
+        
         self._log(f"Generation {self.generation} took {end - start:.2f} seconds.", divider=True)
 
 
@@ -258,8 +271,11 @@ class Evolution:
             raise ValueError("max_generations cannot be smaller than num_generations")
 
         while self.generation < planned_generations:
+            print (f"Generation {self.generation + 1} of {planned_generations}...")
             self.next_generation()
 
+            print(f"Generation {self.generation} completed.")
+            print(f"Population size: {len(self.population)}")
             # ------------------ EARLY‑STOPPING -------------------
             if (
                 self.enable_dynamic_stopping
@@ -275,6 +291,8 @@ class Evolution:
                     self.early_stopped = True
                     break
 
+
+            print(f"Generation {self.generation} fitness: {self._get_elite()[0].fitness:.4f}")
             # ----------------‑ DYNAMIC EXTENSION ---------------‑
             if (
                 self.enable_extension
@@ -297,6 +315,7 @@ class Evolution:
                             f"{planned_generations}).",
                             divider=True,
                         )
+            print("didnt early stop or extend")
 
             # max gen clamp
             if self.max_generations is not None and planned_generations > self.max_generations:
@@ -306,7 +325,8 @@ class Evolution:
         end = time.time()
         self._log(f"Total time: {end - start:.2f} seconds")
 
-        self._flush_log()  
+        if config.SAVE_LOGS:
+            self._flush_log()  
 
         return self._get_elite()[0]
 

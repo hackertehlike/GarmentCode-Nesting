@@ -1,6 +1,6 @@
 # nesting/config.py
 
-from typing import Literal
+from typing import Literal, Mapping
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
@@ -30,11 +30,26 @@ NUM_GENERATIONS       = 2
 ELITE_POPULATION_SIZE = 5
 MUTATION_RATE         = 0.1
 
+# dynamic stopping and extension for GA
+ENABLE_DYNAMIC_STOPPING: bool = True
+EARLY_STOP_WINDOW: int         = 20
+EARLY_STOP_TOLERANCE: float    = 1e-4
+ENABLE_EXTENSION: bool         = True
+EXTEND_WINDOW: int             = 10
+EXTEND_THRESHOLD: float        = 0.1
+MAX_GENERATIONS: int    = 200  # or None for “no hard cap”
 
+# mutation weights
+MUTATION_WEIGHTS: Mapping[str, float] = {
+    "split": 0.3,
+    "rotate": 0.2,
+    "swap":   0.5,
+}
 
 
 # log
 SAVE_LOGS = False
+SAVE_LOGS_PATH = "nesting/run_logs"
+LOG_TIME = True
 
-
-
+SAMPLES_PER_EDGE = 5

@@ -54,8 +54,8 @@ class Chromosome(Layout):
         # deep-copy once, store as list
         self._genes = [copy.deepcopy(p) for p in pieces]
         self.container = container
-        self.fitness = 0.0
-        self.calculate_fitness()
+        self.fitness = None
+        #self.calculate_fitness()
 
     @property
     def genes(self) -> list[Piece]:
@@ -80,28 +80,25 @@ class Chromosome(Layout):
         print()
         
         # randomly select a mutation type: either split, rotate, or swap (with different probabilities)
-        mutation_type = random.choices(
-            ["split", "rotate", "swap"],
-            # weights=[0.1, 0.3, 0.6],
-            weights = [0, 0.5, 0.5], # for now, only rotate and swap
-            k=1
-        )[0]
-        print(f"Selected mutation type: {mutation_type}")
+        mutation_types, weights = zip(*config.MUTATION_WEIGHTS.items())
 
-        if mutation_type == "split":
+        mutation = random.choices(mutation_types, weights=weights, k=1)[0]
+        print(f"Selected mutation type: {mutation}")
+
+        if mutation == "split":
             # TODO
             # for now, dont do anything
             # later i'll implement a split mutation
             # print("Split mutation selected, but not implemented yet.")
             return
-        elif mutation_type == "rotate":
+        elif mutation == "rotate":
             # Select a random piece and rotate it by 90, 180, or 270 degrees
             piece_index = random.randint(0, len(self.genes) - 1)
             angle = random.choice([90, 180, 270])
             print(f"Rotating piece at index {piece_index} by {angle} degrees.")
             self.genes[piece_index].rotate(angle)
             #self.sync_order()  # sync the order
-        elif mutation_type == "swap":
+        elif mutation == "swap":
             # Swap two random pieces
             index1, index2 = random.sample(range(len(self.genes)), 2)
             print(f"Swapping pieces at indices {index1} and {index2}.")
@@ -115,7 +112,8 @@ class Chromosome(Layout):
             print(f"After swap: {[piece.id for piece in self.genes]}")
         #self.sync_order()  # ensure the order is updated after mutation
         end = time.time()
-        print(f"Mutation took {end - start:.4f} seconds")
+        if config.LOG_TIME:
+            print(f"Mutation took {end - start:.4f} seconds")
 
         
     def crossover_ox1_k(self, other: "Chromosome") -> "Chromosome":
@@ -156,7 +154,9 @@ class Chromosome(Layout):
                 child[idx] = copy.deepcopy(next(other_iter))
 
         end = time.time()
-        print(f"OX1-k crossover took {end - start:.4f} seconds with {n_segments} segments")
+        
+        if config.LOG_TIME:
+            print(f"OX1-k crossover took {end - start:.4f} seconds with {n_segments} segments")
 
         return Chromosome(child, self.container)
     
@@ -197,7 +197,9 @@ class Chromosome(Layout):
             current_idx = (current_idx + 1) % size
 
         end = time.time()
-        print(f"OX1 crossover took {end - start:.4f} seconds")
+        
+        if config.LOG_TIME:
+            print(f"OX1 crossover took {end - start:.4f} seconds")
 
         # 4. return new chromosome instance
         return Chromosome(child, self.container)
@@ -233,7 +235,9 @@ class Chromosome(Layout):
             child[i] = copy.deepcopy(candidate)      # independent gene
 
         end = time.time()
-        print(f"PMX crossover took {end - start:.4f} seconds")
+        
+        if config.LOG_TIME:
+            print(f"PMX crossover took {end - start:.4f} seconds")
 
         # 4. build and return the child chromosome
         return Chromosome(child, self.container)
