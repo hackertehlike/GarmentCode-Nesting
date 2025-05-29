@@ -27,7 +27,7 @@ class Piece:
         #self.update_bbox()
 
     def update_bbox(self) -> None:
-        print("Updating bounding box for piece ", self.id)
+        #print("Updating bounding box for piece ", self.id)
 
         # get the min and max x and y coordinates
         xs = [pt[0] for pt in self.outer_path]
@@ -69,7 +69,7 @@ class Piece:
         The rotation is done around the origin (0, 0) of the piece (bounding box).
         """
 
-        print (f"Rotating piece {self.id} by {angle} degrees")
+        #print (f"Rotating piece {self.id} by {angle} degrees")
 
         if (angle == 0):
             return

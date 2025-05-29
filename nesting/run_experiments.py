@@ -99,7 +99,7 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
             container,
             num_generations     = gens,
             population_size     = pop,
-            elite_population_size = elite,
+            #elite_population_size = elite,
             mutation_rate       = mut_r,
             pmx                 = pmx,
             allow_duplicate_genes = allow_dups,

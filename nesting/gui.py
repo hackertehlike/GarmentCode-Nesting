@@ -32,8 +32,8 @@ class NestingGUI:
 
     def __init__(self, pattern_path: str | Path | None = None) -> None:
         # container dimensions in cm
-        self.container_width_cm  = 200.0
-        self.container_height_cm = 200.0
+        self.container_width_cm  = config.CONTAINER_WIDTH_CM
+        self.container_height_cm = config.CONTAINER_HEIGHT_CM
         
         self.container = Container(self.container_width_cm, self.container_height_cm)
         self.layout = None  # will be a Layout instance once pattern is loaded
@@ -41,13 +41,7 @@ class NestingGUI:
         self._update_scale_factors()
 
         # seam allowance in cm
-        self.seam_allowance_cm: float = 1.0
-
-        # geometry stores (in cm)
-        #self.raw_panel_outlines: Dict[str, List[List[float]]] = {}  # as read from JSON
-        #self.panel_outlines:     Dict[str, List[List[float]]] = {}   # after seam allowance
-        #self.offset_px: Tuple[float, float] = (0.0, 0.0)            # for centering
-        #self.panel_rotations: Dict[str, float] = {}  # for rotation
+        self.seam_allowance_cm: float = config.SEAM_ALLOWANCE_CM
 
         self.pieces : Dict[str, Piece] = {}  # for storing pieces
 
@@ -60,14 +54,12 @@ class NestingGUI:
         #self.yaml_loaded     = False
 
         self.design_params: Dict[str, any] = {}  # design specification from JSON
-        # self.parameter_order: List[str] = []
 
         # Currently selected panel for style editing.
         self.selected_panel: str = ""
         self.selection_mode: bool = False
 
         self._build_layout()
-        #self._load_default_pattern()  # auto load default pattern
 
         if pattern_path is not None:
             # user supplied a pattern → load it once
@@ -154,7 +146,6 @@ class NestingGUI:
                 "Seam allowance (cm)", value=self.seam_allowance_cm,
                 on_change=self._update_seam_allowance,
             )
-
 
             # Label to display utilization
             self.utilization_label = ui.label("Utilization: n/a")
@@ -391,7 +382,7 @@ class NestingGUI:
         #     copy2 = copy.deepcopy(piece)
         #     copy2.id = f"{piece.id}_copy2"
         #     self.pieces[copy2.id] = copy2
-        # #print all the pieces
+        #print all the pieces
         # for piece_id, piece in self.pieces.items():
         #     print(f"Loaded piece: {piece_id} with translation {piece.translation} and rotation {piece.rotation}")
         self._rebuild_panel_outlines()
@@ -769,7 +760,7 @@ class NestingGUI:
 
             if method == "BL":
                 # Bottom-Left placement
-                decoder = BottomLeftDecoder(layout, container, step=config.BL_STEP)
+                decoder = BottomLeftDecoder(layout, container, step=config.GRAVITATE_STEP)
             elif method == "Greedy":
                 # Greedy placement
                 decoder = GreedyBLDecoder(layout, container)   
@@ -783,7 +774,6 @@ class NestingGUI:
                     container,
                     num_generations=config.NUM_GENERATIONS,
                     population_size=config.POPULATION_SIZE,
-                    elite_population_size=config.ELITE_POPULATION_SIZE,
                     mutation_rate=config.MUTATION_RATE,
                     enable_dynamic_stopping=config.ENABLE_DYNAMIC_STOPPING,
                     early_stop_window=config.EARLY_STOP_WINDOW,
@@ -794,8 +784,11 @@ class NestingGUI:
                     max_generations=config.MAX_GENERATIONS,
                 )
                 best_chromosome = evo.run()
+                if best_chromosome is None:
+                    ui.notify("No valid solution found by the Genetic Algorithm", type="negative")
+                    return
                 view    = LayoutView(best_chromosome.genes)
-                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.BL_STEP)
+                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
   
             else:
                 raise ValueError(f"Unknown placement method: {method}")

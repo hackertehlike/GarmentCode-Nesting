@@ -1,10 +1,15 @@
 from __future__ import annotations
+import copy
 import csv
 import multiprocessing
 import random
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 from .layout import Piece, Container
 from .chromosome import Chromosome
@@ -66,6 +71,14 @@ class Evolution:
         self.extend_threshold = extend_threshold
         self.max_generations = max_generations
 
+        self.population_weights = config.POPULATION_WEIGHTS
+        self.n_elites    = int(self.population_weights['elites'] * population_size)
+        self.n_offspring = int(self.population_weights['offspring'] * population_size)
+        self.n_mutants   = int(self.population_weights['mutants']   * population_size)
+        self.n_randoms   = int(self.population_weights['randoms']   * population_size)
+        self.remainder   = population_size - (self.n_elites + self.n_offspring + self.n_mutants + self.n_randoms)
+        self.n_mutants  += self.remainder  # put leftovers into mutants
+
         # run‑state flags
         self.early_stopped: bool = False
         self.extended_generations: int = 0
@@ -75,16 +88,23 @@ class Evolution:
         self.avg_child_fitnesses: list[float] = []
         self.best_fitness_history: list[float] = []
         self.delta_best: list[float] = []
+        #self.mean_offspring_gain: list[float] = []
+        #self.mean_mutant_gain: list[float] = []
 
-
-        log_dir = config.SAVE_LOGS_PATH
-        Path(log_dir).mkdir(parents=True, exist_ok=True)        # ensure folder exists
         ts            = time.strftime("%Y%m%d_%H%M%S")
+        log_dir = config.SAVE_LOGS_PATH
+        
+        # append timestamp to log path
+        log_dir = f"{log_dir}_{ts}"
+        Path(log_dir).mkdir(parents=True, exist_ok=True)        # ensure folder exists
+        
         self.log_path = Path(log_dir) / f"evolution_log_{ts}.txt"
         self.csv_path   = Path(log_dir) / f"evolution_metrics_{ts}.csv"
+        self.pdf_path   = Path(log_dir) / f"evolution_metrics_report_{ts}.pdf"
 
         self.log_lines       : list[str]          = []
         self._metrics_buffer : list[dict[str, float]] = []
+        self._all_metrics: list[dict[str, float]] = []
         self._csv_header_done: bool               = False
 
         self._log(
@@ -131,10 +151,14 @@ class Evolution:
     def generate_population(self) -> None:
         # generate initial population in parallel
         self._log("Generating initial population...")
-        with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(self._generate_random_chromosome) for _ in range(self.population_size)]
-            self.population = [f.result() for f in futures]
 
+        if config.MULTITHREADING:
+            with ThreadPoolExecutor() as executor:
+                futures = [executor.submit(self._generate_random_chromosome) for _ in range(self.population_size)]
+                self.population = [f.result() for f in futures]
+        else:
+            self.population = [self._generate_random_chromosome() for _ in range(self.population_size)]
+            
         self._log(f"Initial population of {self.population_size} layouts generated.", divider=True)
         for i, chrom in enumerate(self.population):
             self._log(f"Layout {i}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
@@ -205,62 +229,116 @@ class Evolution:
 
     def next_generation(self) -> None:
         self._log("Next generation…", divider=True)
-
         start = time.time()
 
         old_elite = self._get_elite()
+        if not old_elite:
+            self._log("No elite chromosomes found. Cannot create next generation.", divider=True)
+            return
+
+        # Compute population segment sizes from weights
+        total = self.population_size
+        w = config.POPULATION_WEIGHTS
+        # Always include current elites
+        # self.n_elites = len(old_elite)
+        # n_offspring = int(w['offspring'] * total)
+        # n_mutants = int(w['mutants'] * total)
+        # n_randoms = int(w['randoms'] * total)
+        # # Adjust to fill exactly
+        # remainder = total - (self.n_elites + n_offspring + n_mutants + n_randoms)
+        # assign remainder to offspring by default
+        # n_offspring += remainder
+
+        # 1) Start new population with elites
         new_population = list(old_elite)
+        parent_mean = sum(c.fitness for c in old_elite) / self.n_elites
 
-        # generate offspring until we reach the target population size
-        remaining = self.population_size - len(new_population)
-        # parallel offspring generation
-        with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(self._generate_offspring, self.population)
-                       for _ in range(remaining)]
-            for fut in as_completed(futures):
-                child = fut.result()
-                new_population.append(child)
+        # 2) Generate offspring via crossover
+        offspring = []
+        self._log(f"Generating {self.n_offspring} offspring...")
+        if config.MULTITHREADING:
+            with ThreadPoolExecutor() as executor:
+                futures = [executor.submit(self._generate_offspring, self.population)
+                           for _ in range(self.n_offspring)]
+                for fut in as_completed(futures):
+                    offspring.append(fut.result())
+        else:
+            for _ in range(self.n_offspring):
+                offspring.append(self._generate_offspring(self.population))
+        new_population.extend(offspring)
 
+        # 3) Generate mutants by copying+mutating elites
+        mutants = []
+        self._log(f"Generating {self.n_mutants} mutants...")
+        def make_mutant():
+            spawn = copy.deepcopy(random.choice(old_elite))
+            spawn = spawn.mutate()
+            spawn.calculate_fitness()
+            return spawn
+        if config.MULTITHREADING:
+            with ThreadPoolExecutor() as executor:
+                futures = [executor.submit(make_mutant) for _ in range(self.n_mutants)]
+                for fut in as_completed(futures):
+                    mutants.append(fut.result())
+        else:
+            for _ in range(self.n_mutants):
+                mutants.append(make_mutant())
+        new_population.extend(mutants)
+
+        # 4) Generate new randoms
+        randoms = []
+        self._log(f"Generating {self.n_randoms} random chromosomes...")
+        for _ in range(self.n_randoms):
+            randoms.append(self._generate_random_chromosome())
+        new_population.extend(randoms)
+
+        # 5) Diagnostics: average gains
+        avg_off = (sum(c.fitness for c in offspring) / len(offspring)) if offspring else 0.0
+        avg_mut = (sum(c.fitness for c in mutants) / len(mutants)) if mutants else 0.0
+        avg_rand = (sum(c.fitness for c in randoms) / len(randoms)) if randoms else 0.0
+        self._log(f"Avg offspring gain: {avg_off - parent_mean:+.4f};"
+                  f" avg mutant gain: {avg_mut - parent_mean:+.4f};"
+                  f" avg random gain: {avg_rand - parent_mean:+.4f}")
+
+        # 6) Finalize
         self.population = new_population
         self.generation += 1
 
-        self._log(f"Generation {self.generation} created with {len(self.population)} chromosomes.", divider=True)
-
-        best = max(c.fitness for c in self.population)
-        if self.best_fitness_history:
-            delta = best - self.best_fitness_history[-1]
-        else:
-            delta = 0.0
+        best = max(c.fitness for c in new_population)
+        delta = best - self.best_fitness_history[-1] if self.best_fitness_history else 0.0
         self.best_fitness_history.append(best)
         self.delta_best.append(delta)
-        self._log(f"Best fitness this gen: {best:.4f} (Δ {delta:+.4f})")
+        self._log(f"Generation {self.generation}: best {best:.4f} (Δ {delta:+.4f})", divider=True)
 
-        # ── average child fitness and full population fitness vector ─────────
-        children      = new_population[len(old_elite):]
-        avg_child_fit = (sum(c.fitness for c in children) / len(children)) if children else 0.0
-        row = {"generation": self.generation,
-            "avg_child_fit": avg_child_fit}
-        row.update({f"fit_{i}": c.fitness for i, c in enumerate(new_population)})
+        # 7) Log metrics
+        row = {
+            'generation': self.generation,
+            'avg_mut': avg_mut,
+            'avg_off': avg_off,
+            'avg_rand': avg_rand,
+            'best_fit': best,
+            'delta_best': delta,
+            'mean_offspring_gain': avg_off - parent_mean,
+            'mean_mutant_gain': avg_mut - parent_mean,
+            'mean_random_gain': avg_rand - parent_mean,
+        }
+        # for i, chrom in enumerate(new_population):
+        #     row[f'fit_{i}'] = chrom.fitness
         self._metrics_buffer.append(row)
-
-        # flush every 5 generations to limit I/O
-        if len(self._metrics_buffer) >= 5 and config.SAVE_LOGS:
-            self._log("Flushing metrics to CSV file…")
+        self._all_metrics.append(row)
+        if (len(self._metrics_buffer) >= 5 or self.generation == self.num_generations) and config.SAVE_LOGS:
             self._flush_metrics()
 
-            # ---- logging ----
-        for i, chrom in enumerate(self.population):
-            self._log(f"Layout {i}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
-        
-        end = time.time()
-        
-        self._log(f"Generation {self.generation} took {end - start:.2f} seconds.", divider=True)
+        self._log(f"Generation {self.generation} completed in {time.time()-start:.2f}s.")
+
 
 
     def run(self) -> Chromosome:
         """Evolve the population, applying dynamic‑stopping logic if enabled."""
         start = time.time()
         self._log("Starting evolution…", divider=True)
+        # log the config
+        self._log(f"Config: {config.__dict__}", divider=True)
         self.generate_population()
 
         planned_generations = self.num_generations
@@ -273,6 +351,12 @@ class Evolution:
         while self.generation < planned_generations:
             print (f"Generation {self.generation + 1} of {planned_generations}...")
             self.next_generation()
+
+            # this should never happen in theory because we always have at least one working saved
+            # otherwise it immediately fails
+            if not self.population:
+                self._log("TPK :( Stopping evolution.", divider=True)
+                return None
 
             print(f"Generation {self.generation} completed.")
             print(f"Population size: {len(self.population)}")
@@ -325,6 +409,8 @@ class Evolution:
         end = time.time()
         self._log(f"Total time: {end - start:.2f} seconds")
 
+        self.analyze_metrics()
+
         if config.SAVE_LOGS:
             self._flush_log()  
 
@@ -349,15 +435,46 @@ class Evolution:
             writer.writerows(self._metrics_buffer)
         self._metrics_buffer.clear()
 
+    def analyze_metrics(self) -> None:
+        """
+        After a run, call this to generate:
+         - A PDF with an overview plot and separate per-metric plots
+        """
+        # 1) build DataFrame
+        df = pd.DataFrame(self._all_metrics)    
+        # 2) open a PDF and write multiple pages
+        
+        # out_dir = Path(config.SAVE_LOGS_PATH)
+        self._log(f"Writing metrics report to {self.pdf_path}")
+       
+        # create a PDF file in the output directory
+        
+        # self._log("Generating metrics report PDF...")
+        # log the DataFrame
+        self._log(f"Metrics DataFrame:\n{df.head()}", divider=True)
+        # create a PdfPages object to write multiple pages
+        self.log_dir = Path(config.SAVE_LOGS_PATH)
 
+        with PdfPages(self.pdf_path) as pdf:
+            # Overview: all four on one page
+            plt.figure()
+            for col in ['avg_mut', 'avg_off', 'avg_rand', 'best_fit']:
+                plt.plot(df['generation'], df[col], label=col)
+            plt.xlabel('Generation')
+            plt.ylabel('Value')
+            plt.title('GA Metrics Overview')
+            plt.legend()
+            pdf.savefig()
+            plt.close()
 
-# CLI entry point
-if __name__ == "__main__":
-    from .path_extractor import PatternPathExtractor
-    # create a simple test case
-    layout_file = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification_asym_dress.json"
-    pieces = PatternPathExtractor(layout_file).get_all_panel_pieces(samples_per_edge=3)
-    container = Container(140, 500)
-    # create an instance of the Evolution class
-    evolution = Evolution(pieces, container, early_stop_window=5, early_stop_tolerance=0.01)
-    evolution.run()
+            # One page per metric
+            # for col in ['avg_mut', 'avg_off', 'avg_rand', 'best_fit']:
+            #     plt.figure()
+            #     plt.plot(df['generation'], df[col])
+            #     plt.xlabel('Generation')
+            #     plt.ylabel(col)
+            #     plt.title(f'{col} over Generations')
+            #     pdf.savefig()
+            #     plt.close()
+
+        print(f"✅ Metrics report written to {self.pdf_path}")

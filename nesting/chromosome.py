@@ -67,17 +67,25 @@ class Chromosome(Layout):
         # pass in the selected decoder name, too
         self.fitness = metric_fn(self, config.SELECTED_DECODER)
 
-    def mutate(self):
+    def mutate(self) -> "Chromosome":
+        
         # TODO: add more mutation types
         """
-        Perform mutation on the chromosome
+        Perform mutation on the chromosome.
+        Available mutation types (configurable via config.MUTATION_WEIGHTS):
+        - split      : (not yet implemented)
+        - rotate     : rotate one piece by 90/180/270°
+        - swap       : swap two genes
+        - inversion  : reverse the subsequence between two cut points
+        - insertion  : remove one gene and re-insert it elsewhere
+        - scramble   : randomly shuffle the genes within a subsequence
         """
         start = time.time()
-        print()
-        print("!" * 50)
-        print("MUTATION OCCURRED")
-        print("!" * 50)
-        print()
+        # print()
+        # print("!" * 50)
+        # print("MUTATION OCCURRED")
+        # print("!" * 50)
+        # print()
         
         # randomly select a mutation type: either split, rotate, or swap (with different probabilities)
         mutation_types, weights = zip(*config.MUTATION_WEIGHTS.items())
@@ -85,35 +93,53 @@ class Chromosome(Layout):
         mutation = random.choices(mutation_types, weights=weights, k=1)[0]
         print(f"Selected mutation type: {mutation}")
 
-        if mutation == "split":
-            # TODO
-            # for now, dont do anything
-            # later i'll implement a split mutation
-            # print("Split mutation selected, but not implemented yet.")
-            return
-        elif mutation == "rotate":
-            # Select a random piece and rotate it by 90, 180, or 270 degrees
-            piece_index = random.randint(0, len(self.genes) - 1)
-            angle = random.choice([90, 180, 270])
-            print(f"Rotating piece at index {piece_index} by {angle} degrees.")
-            self.genes[piece_index].rotate(angle)
-            #self.sync_order()  # sync the order
-        elif mutation == "swap":
-            # Swap two random pieces
-            index1, index2 = random.sample(range(len(self.genes)), 2)
-            print(f"Swapping pieces at indices {index1} and {index2}.")
-            print(f"Before swap: {[piece.id for piece in self.genes]}")
-            #self.genes[index1], self.genes[index2] = self.genes[index2], self.genes[index1]
-            # self.sync_order()  # sync the order
-            genes = self.genes
-            genes[index1], genes[index2] = genes[index2], genes[index1]
-            return Chromosome(genes, self.container)
+        n = len(self.genes)
 
-            print(f"After swap: {[piece.id for piece in self.genes]}")
-        #self.sync_order()  # ensure the order is updated after mutation
+        if mutation == "split":
+            # placeholder
+            pass
+
+        elif mutation == "rotate":
+            idx = random.randrange(n)
+            angle = random.choice([90, 180, 270])
+            print(f"[mutate] Rotating gene at {idx} by {angle}°")
+            self.genes[idx].rotate(angle)
+
+        elif mutation == "swap":
+            i, j = random.sample(range(n), 2)
+            print(f"[mutate] Swapping genes at {i} and {j}")
+            self.genes[i], self.genes[j] = self.genes[j], self.genes[i]
+
+        elif mutation == "inversion":
+            # pick two cut points and reverse the slice
+            i, j = sorted(random.sample(range(n), 2))
+            print(f"[mutate] Inverting subsequence [{i}:{j}]")
+            self.genes[i:j+1] = reversed(self.genes[i:j+1])
+
+        elif mutation == "insertion":
+            # remove one gene and insert it at a random other position
+            i = random.randrange(n)
+            gene = self.genes.pop(i)
+            j = random.randrange(n)
+            print(f"[mutate] Moving gene from {i} to {j}")
+            self.genes.insert(j, gene)
+
+        elif mutation == "scramble":
+            # pick a slice and shuffle it
+            i, j = sorted(random.sample(range(n), 2))
+            sub = self.genes[i:j+1]
+            print(f"[mutate] Scrambling subsequence [{i}:{j}]")
+            random.shuffle(sub)
+            self.genes[i:j+1] = sub
+
+        else:
+            raise ValueError(f"Unknown mutation type: {mutation}")
+
         end = time.time()
         if config.LOG_TIME:
             print(f"Mutation took {end - start:.4f} seconds")
+
+        return self
 
         
     def crossover_ox1_k(self, other: "Chromosome") -> "Chromosome":
@@ -127,18 +153,18 @@ class Chromosome(Layout):
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
-        # 1) Decide how many segments to copy (at least 1, but never all genes)
+        # decide how many segments to copy (at least 1, at most 3)
         max_segments_reasonable = max(1, min(3, size // 3))  # conservative upper bound
         n_segments = random.randint(1, max_segments_reasonable)
 
-        # 2) Pick 2·n unique cut points and turn them into ordered pairs (segments)
+        # pick 2·n unique cut points and turn them into ordered pairs (segments)
         cut_points = sorted(random.sample(range(size), 2 * n_segments))
         segments: list[tuple[int, int]] = []
         for a, b in zip(cut_points[::2], cut_points[1::2]):
             start, end = (a, b) if a <= b else (b, a)
             segments.append((start, end))
 
-        # 3) Build the child and copy slices from *self*
+        # build the child and copy slices from *self*
         child: List[Piece | None] = [None] * size
         placed_ids: set[str] = set()
         for start, end in segments:
@@ -147,7 +173,7 @@ class Chromosome(Layout):
                 child[idx] = gene
                 placed_ids.add(gene.id)
 
-        # 4) Fill the remaining slots with genes from *other* in order
+        # fill the remaining slots with genes from *other* in order
         other_iter = (g for g in other.genes if g.id not in placed_ids)
         for idx in range(size):
             if child[idx] is None:

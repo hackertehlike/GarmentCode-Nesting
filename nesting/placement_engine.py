@@ -141,7 +141,7 @@ class PlacementEngine():
 
 
 
-    def gravitate(self, piece, x, y, step=1.0):
+    def gravitate(self, piece, x, y, step=config.GRAVITATE_STEP):
         """Slide left as far as possible, then down; repeat until jammed."""
         # print (f"Piece {piece.id} gravitating")
         #print piece type
@@ -187,7 +187,7 @@ class PlacementEngine():
 @register_decoder("BL")
 class BottomLeftDecoder(PlacementEngine):
 
-    def __init__(self, layout, container, *, step=config.BL_STEP, **kwargs):
+    def __init__(self, layout, container, *, step=None, **kwargs):
         super().__init__(layout, container)
         self.step = step
 
@@ -207,7 +207,7 @@ class BottomLeftDecoder(PlacementEngine):
 
 class GreedyBLDecoder(BottomLeftDecoder):
     def __init__(self, layout, container, *, step=None, **kwargs):
-        super().__init__(layout, container, step=config.BL_STEP, **kwargs)
+        super().__init__(layout, container, step=config.GRAVITATE_STEP, **kwargs)
 
         # sort the pieces by area
         # Create a list of (piece_id, piece) tuples sorted by area
@@ -241,7 +241,7 @@ class RandomDecoder(PlacementEngine):
                 p.rotate(random.choice(config.ALLOWED_ROTATIONS))
 
         # 2) bottom-left place on *this* layout
-        bl = BottomLeftDecoder(self.layout, self.container, step=config.BL_STEP)
+        bl = BottomLeftDecoder(self.layout, self.container, step=config.GRAVITATE_STEP)
         placements = bl.decode()
 
         # 3) mirror the placed list so that usage_BB() sees it
