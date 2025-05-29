@@ -221,9 +221,6 @@ class Evolution:
                 child = fut.result()
                 new_population.append(child)
 
-        with ThreadPoolExecutor() as executor:
-            new_population = list(executor.map(_eval_fitness, new_population))
-
         self.population = new_population
         self.generation += 1
 
