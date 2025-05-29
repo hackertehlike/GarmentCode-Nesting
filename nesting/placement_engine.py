@@ -4,6 +4,18 @@ from abc import ABC, abstractmethod
 import numpy as np, scipy.spatial as sps
 import random
 from nesting import utils
+import nesting.config as config
+
+
+DECODER_REGISTRY: dict[str, type] = {}
+
+def register_decoder(name: str):
+    def deco(cls):
+        DECODER_REGISTRY[name] = cls
+        return cls
+    return deco
+
+
 class PlacementEngine():
     """
     Base class for layout placement strategies.
@@ -167,16 +179,12 @@ class PlacementEngine():
                     return False
         return True
 
-    
+@register_decoder("BL")
 class BottomLeftDecoder(PlacementEngine):
-    """
-    Places the pieces strictly in the given order with a bottom‑left strategy.
-    """
 
-    def __init__(self, layout, container,
-                 step = 1.0):
+    def __init__(self, layout, container, *, step=config.BL_STEP, **kwargs):
         super().__init__(layout, container)
-        # self.placed: list[tuple[Piece, float, float]] = []  # (piece, x, y)
+        self.step = step
 
     def decode(self):
         for piece_id, piece in self.layout.order.items():
@@ -190,14 +198,11 @@ class BottomLeftDecoder(PlacementEngine):
         return [(p.id, *p.translation, p.rotation) for p in self.placed]
     
 
-class GreedyBLDecoder(BottomLeftDecoder):
-    """
-    Greedily places pieces in the container sorted by order of area.
-    The pieces are placed using BL placement strategy. 
-    """
+@register_decoder("Greedy")
 
-    def __init__(self, layout, container):
-        super().__init__(layout, container)
+class GreedyBLDecoder(BottomLeftDecoder):
+    def __init__(self, layout, container, *, step=None, **kwargs):
+        super().__init__(layout, container, step=config.BL_STEP, **kwargs)
 
         # sort the pieces by area
         # Create a list of (piece_id, piece) tuples sorted by area
@@ -208,36 +213,33 @@ class GreedyBLDecoder(BottomLeftDecoder):
         # print (f"Sorted pieces by area: {[p.id for p in pieces]}")
         # self.container = container
         # self.placed = []
-    
-class RandomDecoder(BottomLeftDecoder):
 
-    def __init__(self, layout, container, rotations_on = True):
-        #self.container = container
-
-        # 
-        ids = [id for id in layout.order.keys()]
+@register_decoder("Random")
+class RandomDecoder(PlacementEngine):
+    def __init__(self, layout, container, *, step=None, rotations_on=False, **kwargs):
+        # shuffle order
+        ids = list(layout.order)
         random.shuffle(ids)
-        shuffled_dict = {id : layout.order[id] for id in ids}
-        layout = Layout(shuffled_dict)
+        shuffled = OrderedDict((i, layout.order[i]) for i in ids)
+        super().__init__(Layout(shuffled), container,
+                         step=step,
+                         rotations_on=rotations_on,
+                         **kwargs)
+    def decode(self):
+        # if rotations_on, apply random rotations
+        if self.rotations_on:
+            for p in self.layout.order.values():
+                p.rotate(random.choice([0,90,180,270]))
+        # then BL‐place them
+        return BottomLeftDecoder(self.layout, self.container, step=self.step).decode()
 
-        valid_rotations = {0, 90, 180, 270}
-
-        if rotations_on:
-            for id, piece in layout.order.items():
-                rot = random.sample(valid_rotations, 1)[0]
-                piece.rotate(rot)
-                print(piece.rotation)
-
-        super().__init__(layout, container)
-        
-
+@register_decoder("NFP")
 class NFPDecoder(PlacementEngine):
 
-    def __init__(self, layout, container, wall_step=1.0):
+    def __init__(self, layout, container, *, step=None, **kwargs):
         super().__init__(layout, container)
         # self.placed = []  # (piece, x, y)
         self.container = container
-        self.wall_step = wall_step
         self._nfp_cache = {}
 
     def decode(self):

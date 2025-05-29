@@ -13,7 +13,7 @@ from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap,
 from .path_extractor import *
 from .layout import *
 from .placement_engine import *
-from .config import DECODER_TYPE
+import nesting.config as config
 
 # viewer size in CSS‑pixels
 MAX_CANVAS_PX_WIDTH  = 800   
@@ -32,8 +32,11 @@ class NestingGUI:
 
     def __init__(self, pattern_path: str | Path | None = None) -> None:
         # container dimensions in cm
-        self.container_width_cm  = 400.0
-        self.container_height_cm = 100.0
+        self.container_width_cm  = 200.0
+        self.container_height_cm = 200.0
+        
+        self.container = Container(self.container_width_cm, self.container_height_cm)
+        self.layout = None  # will be a Layout instance once pattern is loaded
 
         self._update_scale_factors()
 
@@ -120,15 +123,6 @@ class NestingGUI:
                     ui.number(value=val, label=name,
                             on_change=lambda e, n=name: self._on_param_change(n, e))
 
-                # elif t == 'bool':
-                #     ui.checkbox(value=val, text=name,
-                #                 on_change=lambda e, n=name: self._on_param_change(n, e))
-
-                # elif t.startswith('select'):
-                #     ui.select(spec['range'], value=val, label=name,
-                #             on_change=lambda e, n=name: self._on_param_change(n, e))
-
-
 
     def _build_canvas(self) -> None:
         with ui.element("div").classes("relative").style(
@@ -207,10 +201,8 @@ class NestingGUI:
 
         # 2. Feed those copies to the metric engine
         layout_cm    = Layout(pieces_cm)
-        container_cm = Container(self.container_width_cm,
-                                 self.container_height_cm)
 
-        pe = PlacementEngine(layout_cm, container_cm)
+        pe = PlacementEngine(layout_cm, self.container)
         pe.placed = list(layout_cm.order.values())      # mark everything “placed”
 
         util = pe.usage_BB()
@@ -225,20 +217,6 @@ class NestingGUI:
             self._rotate_panel()
         elif e.key == 's':
             self._enable_selection_mode()
-                
-    # def randomize_order_and_autoplace(self):
-    #     """
-    #     Randomizes the order of the pieces and then calls the
-    #     Bottom‑Left auto placement.
-    #     """
-    #     from collections import OrderedDict
-    #     import random
-
-    #     piece_ids = list(self.pieces.keys())
-    #     random.shuffle(piece_ids)
-    #     new_order = OrderedDict((pid, self.pieces[pid]) for pid in piece_ids)
-    #     self.pieces = new_order
-    #     ui.notify("Random order applied; now auto placing...", type="positive")
 
     # ---------------------------------------------------------------------------- #
     #                     PARAMETER CHANGE STUFF (NOT WORKING)                     #
@@ -349,17 +327,22 @@ class NestingGUI:
         self.container_width_cm  = float(self.width_input.value or self.container_width_cm)
         self.container_height_cm = float(self.height_input.value or self.container_height_cm)
         self._update_scale_factors()
+
+        self.container.width = self.container_width_cm
+        self.container.height = self.container_height_cm
+
         self.scene.props(
             f'width="{self.container_width_px}" '
             f'height="{self.container_height}" '
             f'viewBox="0 0 {self.container_width_px} {self.container_height}"'
         )
+
         if self.pattern_loaded:
             self._draw_outlines()
 
-        # reset the translation of all pieces
         for piece in self.pieces.values():
             piece.translation = (0, 0)
+
 
     def _update_seam_allowance(self, _):
         self.seam_allowance_cm = float(self.sa_input.value or 0.0)
@@ -389,10 +372,15 @@ class NestingGUI:
         #self.pieces = extractor.get_all_panel_pieces(samples_per_edge=5)
         panel_pieces = extractor.get_all_panel_pieces(samples_per_edge=5)
         # duplicate the pieces twice and add to pieces so we have 3 copies of each piece and add them to pieces
-        # Add original pieces
+       
+        # avoid modifying the original pieces
         self.pieces.update({
             f"{piece.id}": copy.deepcopy(piece) for piece in panel_pieces.values()
         })
+
+
+        self.layout = Layout(self.pieces)
+
         # Add first set of copies with updated ids
         # for piece in panel_pieces.values():
         #     copy1 = copy.deepcopy(piece)
@@ -765,7 +753,6 @@ class NestingGUI:
         ui.notify("Automatic placement applied", type="positive")
 
     async def _auto_place(self, method="BL"):
-    # def _auto_place(self, method="BL"):
         if not self.pattern_loaded:
             ui.notify('Load a pattern first', type='warning')
             return
@@ -773,53 +760,44 @@ class NestingGUI:
         print(f"Auto placing with method: {method}")
 
         try:
-            layout = Layout(self.pieces)
-            container = Container(self.container_width_cm,
-                                  self.container_height_cm)
-            
+            #layout = self.layout
+            layout = copy.deepcopy(self.layout)
+            container = self.container
+
             print (f"Container: {container}")
             print (f"Layout: {layout}")
 
             if method == "BL":
                 # Bottom-Left placement
-                decoder = BottomLeftDecoder(layout, container, step=1.0)
-                # self.panel_rotations = {name: 0 for name in self.panel_outlines.keys()}
+                decoder = BottomLeftDecoder(layout, container, step=config.BL_STEP)
             elif method == "Greedy":
                 # Greedy placement
-                decoder = GreedyBLDecoder(layout, container)
-                # self.panel_rotations = {name: 0 for name in self.panel_outlines.keys()}
+                decoder = GreedyBLDecoder(layout, container, step=config.BL_STEP)   
             elif method == "NFP":
                 decoder = NFPDecoder(layout, container)
-                # self.panel_rotations = {name: 0 for name in self.panel_outlines.keys()}
             elif method == "Random Order BL":
-                # Random‑order Bottom‑Left placement
-                decoder = RandomDecoder(layout, container)
+                decoder = RandomDecoder(layout, container, step=config.BL_STEP)
             elif method == "Genetic Algorithm":
                 evo = Evolution(
                     self.pieces,
                     container,
-                    num_generations=10,
-                    population_size=10,
-                    elite_population_size=5,
-                    mutation_rate=0.1,
-                    pmx=True,
+                    num_generations=config.NUM_GENERATIONS,
+                    population_size=config.POPULATION_SIZE,
+                    elite_population_size=config.ELITE_POPULATION_SIZE,
+                    mutation_rate=config.MUTATION_RATE,
                 )
                 best_chromosome = evo.run()
-                # choose decoder based on global setting
-                if DECODER_TYPE == "BL":
-                    decoder = BottomLeftDecoder(best_chromosome, container)
-                else:
-                    decoder = NFPDecoder(best_chromosome, container)
+                DecoderClass = DECODER_REGISTRY[config.SELECTED_DECODER]
+                decoder      = DecoderClass(best_chromosome, container, step=config.BL_STEP)
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             
             print("Now decoding...")
             placements = decoder.decode()  # [(name, dx, dy)]
             print("Decoding done")
-            
 
             utilization = decoder.usage_BB()
-            
+
             print(f"Utilization: {utilization:.2%}")
             rest_length = decoder.rest_length()
             print(f"Rest length: {rest_length:.2f} cm")

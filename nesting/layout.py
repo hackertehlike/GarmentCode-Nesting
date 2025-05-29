@@ -1,5 +1,6 @@
 import math
-from typing import Dict, List, Tuple
+from types import MappingProxyType
+from typing import Dict, Tuple
 from nesting import utils
 
 from collections import OrderedDict
@@ -156,7 +157,7 @@ class Layout:
         self.order : OrderedDict[str, Piece] = polygon_paths
 
         # the tallest piece in the layout
-        self.max_height = max(piece.height for piece in polygon_paths.values())
+        #self.max_height = max(piece.height for piece in polygon_paths.values())
 
         if translations:
             for piece_id, translation in translations.items():
@@ -166,6 +167,11 @@ class Layout:
                     raise ValueError(f"Translation for piece {piece_id} not found in layout.")
         
 
+class LayoutView:
+    """Expose .order for decoders without copying geometry or mutating state."""
+    def __init__(self, pieces: list[Piece]):
+        tmp = OrderedDict((p.id, p) for p in pieces)
+        self.order = MappingProxyType(tmp)
 class Container:
     """
     A class representing a rectangular container.
@@ -174,6 +180,12 @@ class Container:
     def __init__ (self, width, height):
         self.width = width
         self.height = height
+
+    
+    def update(self, width: float, height: float):
+        self.width = width
+        self.height = height
+
 
     def inner_fit_rectangle(self,
                             piece:      "Piece"
@@ -199,3 +211,4 @@ class Container:
             (Wc - Wp, Hc - Hp),          # bottom‑right
             (0.0,     Hc - Hp),          # bottom‑left
         ]
+

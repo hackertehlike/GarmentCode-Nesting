@@ -2,102 +2,70 @@ from __future__ import annotations
 from collections import OrderedDict
 # from functools import cached_property
 # from typing import Generic, List, Sequence, TypeVar
-from functools import partial
 from itertools import chain
 import time
-from typing import List, Mapping
+from typing import Callable, List
 import random
 from itertools import chain
 import copy
 
 
-from .layout import Layout, Piece, Container
+from .layout import *
 from .placement_engine import *
-from .config import SELECTED_FITNESS_METRIC  # use selected metric from central config
+import nesting.config as config
+# from .config import SELECTED_FITNESS_METRIC  # use selected metric from central config
 import random
-import numpy as np
 import copy
-# from nesting.placement_engine import BottomLeftDecoder
 
-# fitness functions
-def fitness_usage_bb(chromosome: Chromosome, decoder = "BL") -> float:
-    if decoder == "BL":
-        # use the BottomLeftDecoder
-        from .placement_engine import BottomLeftDecoder
-        decoder = BottomLeftDecoder(chromosome, chromosome.container)
-        
-    elif decoder == "NFP":
-        from .placement_engine import NFPDecoder
-        decoder = NFPDecoder(chromosome, chromosome.container)
+from .placement_engine import DECODER_REGISTRY
+
+METRIC_REGISTRY: dict[str, Callable] = {}
+
+def register_metric(name: str):
+    def deco(fn):
+        METRIC_REGISTRY[name] = fn
+        return fn
+    return deco
+
+def _run_decoder(chromosome, decoder_name: str):
+    view = LayoutView(chromosome.genes)
+    Decoder = DECODER_REGISTRY[decoder_name]
+    decoder = Decoder(view, chromosome.container)
     decoder.decode()
+    return decoder
 
-    if not decoder.layout_is_valid:
-        print("Layout is invalid, returning fitness of 0.0")
-        return 0.0
-    return decoder.usage_BB()
+@register_metric("usage_bb")
+def fitness_usage_bb(chromosome, decoder: str):
+    dec = _run_decoder(chromosome, decoder)
+    return dec.usage_BB()
 
-def fitness_concave_hull(chromosome: Chromosome) -> float:
-    decoder = BottomLeftDecoder(chromosome, chromosome.container)
-    decoder.decode()
-    if not decoder.layout_is_valid:
-        print("Layout is invalid, returning fitness of 0.0")
-        return 0.0
-    return decoder.concave_hull_utilization()
+@register_metric("concave_hull")
+def fitness_concave_hull(chromosome, decoder: str):
+    dec = _run_decoder(chromosome, decoder)
+    return dec.concave_hull_utilization()
 
-def fitness_rest_length(chromosome: Chromosome) -> float:
-    decoder = BottomLeftDecoder(chromosome, chromosome.container)
-    decoder.decode()
-    if not decoder.layout_is_valid:
-        print("Layout is invalid, returning fitness of 0.0")
-        return 0.0
-    return decoder.rest_length()
-
-# META VARIABLES
-
-FITNESS_METRICS = {
-    "usage_bb_bl": fitness_usage_bb,  # calls with default decoder="BL"
-    "usage_bb_nfp": partial(fitness_usage_bb, decoder="NFP"),
-    "concave_hull": fitness_concave_hull,
-    "rest_length": fitness_rest_length,
-}
-
-# Local override removed; using SELECTED_FITNESS_METRIC from config
-
+@register_metric("rest_length")
+def fitness_rest_length(chromosome, decoder: str):
+    dec = _run_decoder(chromosome, decoder)
+    return dec.rest_length()
 class Chromosome(Layout):
-    """
-    A class representing a chromosome
-    """
-
-    def __init__(self,
-                 pieces: Layout | Mapping[str, Piece] | list[Piece],
-                 container: Container) -> None:
-
-        # ── build the mapping that Layout expects ──────────────────
-        if isinstance(pieces, Layout):
-            mapping = OrderedDict((pid, copy.deepcopy(p)) for pid, p in pieces.order.items())
-        elif isinstance(pieces, Mapping):
-            mapping = OrderedDict((pid, copy.deepcopy(p)) for pid, p in pieces.items())
-        else:
-            mapping = OrderedDict((p.id, copy.deepcopy(p)) for p in pieces)
-
-        # hand the mapping to Layout
-        super().__init__(mapping)
-
-        # ── GA‑specific state ──────────────────────────────────────
-        self.genes: list[Piece] = list(self.order.values())  # flat list
+    
+    def __init__(self, pieces: list[Piece], container: Container):
+        # deep-copy once, store as list
+        self._genes = [copy.deepcopy(p) for p in pieces]
         self.container = container
         self.fitness = 0.0
-        self.calculate_fitness()                     # initial fitness  
+        self.calculate_fitness()
+
+    @property
+    def genes(self) -> list[Piece]:
+        return self._genes
 
 
     def calculate_fitness(self):
-        # Get the fitness function from the mapping using the meta variable
-        start = time.time()
-        print(f"Calculating fitness using {SELECTED_FITNESS_METRIC} metric...")
-        fitness_func = FITNESS_METRICS[SELECTED_FITNESS_METRIC]
-        self.fitness = fitness_func(self)
-        end = time.time()
-        print(f"Fitness calculated in {end - start:.4f} seconds")
+        metric_fn = METRIC_REGISTRY[config.SELECTED_FITNESS_METRIC]
+        # pass in the selected decoder name, too
+        self.fitness = metric_fn(self, config.SELECTED_DECODER)
 
     def mutate(self):
         # TODO: add more mutation types
@@ -138,10 +106,14 @@ class Chromosome(Layout):
             index1, index2 = random.sample(range(len(self.genes)), 2)
             print(f"Swapping pieces at indices {index1} and {index2}.")
             print(f"Before swap: {[piece.id for piece in self.genes]}")
-            self.genes[index1], self.genes[index2] = self.genes[index2], self.genes[index1]
+            #self.genes[index1], self.genes[index2] = self.genes[index2], self.genes[index1]
             # self.sync_order()  # sync the order
+            genes = self.genes
+            genes[index1], genes[index2] = genes[index2], genes[index1]
+            return Chromosome(genes, self.container)
+
             print(f"After swap: {[piece.id for piece in self.genes]}")
-        self.sync_order()  # ensure the order is updated after mutation
+        #self.sync_order()  # ensure the order is updated after mutation
         end = time.time()
         print(f"Mutation took {end - start:.4f} seconds")
 

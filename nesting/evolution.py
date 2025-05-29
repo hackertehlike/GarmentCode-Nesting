@@ -1,4 +1,5 @@
 from __future__ import annotations
+import csv
 import multiprocessing
 import random
 import time
@@ -7,6 +8,7 @@ from pathlib import Path
 
 from .layout import Piece, Container
 from .chromosome import Chromosome
+import nesting.config as config
 
 # evolution.py
 def _eval_fitness(chrom: "Chromosome") -> "Chromosome":
@@ -14,8 +16,6 @@ def _eval_fitness(chrom: "Chromosome") -> "Chromosome":
     chrom.calculate_fitness()            # container is already held by chrom
     return chrom
 
-
-METRICS_ENABLED = False  # set to False to disable metrics collection
 class Evolution:
 
     # ------------------------------------------------------------------
@@ -30,11 +30,12 @@ class Evolution:
         population_size: int = 10,
         elite_population_size: int = 5,
         mutation_rate: float = 0.2,
-        pmx: bool = True,
+        crossover_method: str = config.SELECTED_CROSSOVER,
+        #pmx: bool = True,`
         # allow_duplicate_genes: bool = False,
         # max_duplicate_retries: int = 50,
         enable_dynamic_stopping: bool = True,
-        early_stop_window: int = 5,
+        early_stop_window: int = 20,
         early_stop_tolerance: float = 1e-4,
         enable_extension: bool = True,
         extend_window: int = 10,
@@ -51,7 +52,8 @@ class Evolution:
         self.population_size = population_size
         self.elite_population_size = elite_population_size
         self.mutation_rate = mutation_rate
-        self.pmx = pmx
+        self.crossover_method = crossover_method
+        #self.pmx = pmx
         # self.allow_duplicate_genes = allow_duplicate_genes
         # self.max_duplicate_retries = max_duplicate_retries
 
@@ -149,9 +151,24 @@ class Evolution:
     # ------------------------------------------------------------------
 
     def _get_elite(self) -> list[Chromosome]:
-        self.population.sort(key=lambda c: c.fitness, reverse=True)
-        self._log(f"Returning elite layouts. Best fitness: {self.population[0].fitness:.4f}", divider=True)
-        return self.population[: self.elite_population_size]
+
+        # Filter out unfit chromosomes
+        viable = [c for c in self.population if c.fitness > 0.0]
+
+        if not viable:
+            self._log("No viable chromosomes found (all fitness = 0.0)", divider=True)
+            return []
+
+        # Sort viable chromosomes by fitness (descending)
+        viable.sort(key=lambda c: c.fitness, reverse=True)
+
+        self._log(
+            f"Returning elite layouts. Best fitness: {viable[0].fitness:.4f}",
+            divider=True
+        )
+
+        return viable[: self.elite_population_size]
+
 
     
     def _generate_offspring(self, old_pop: list[Chromosome]) -> Chromosome:
@@ -161,12 +178,21 @@ class Evolution:
         self.allow_duplicate_genes is True.
         """
         start   = time.time()
-        retries = 0
+        #retries = 0
 
         p1, p2 = random.sample(old_pop, 2)
 
         # --- crossover ---
-        child = p1.crossover_pmx(p2) if self.pmx else p1.crossover_ox1_k(p2)
+        # child = p1.crossover_pmx(p2) if self.pmx else p1.crossover_ox1_k(p2)
+
+        if self.crossover_method == "pmx":
+            child = p1.crossover_pmx(p2)
+        elif self.crossover_method == "ox1":
+            child = p1.crossover_ox1(p2)
+        elif self.crossover_method == "ox1k":
+            child = p1.crossover_ox1_k(p2)
+        else:
+            raise ValueError(f"Unknown crossover method: {self.crossover_method}")
 
         # --- mutation (optional) ---
         if random.random() < self.mutation_rate:
@@ -185,38 +211,7 @@ class Evolution:
         start = time.time()
 
         old_elite = self._get_elite()
-        # old_elite_ids = {id(c) for c in old_elite}
-
         new_population = list(old_elite)
-        # success_count = child_count = 0
-        # crossover_gain_sum = mutation_gain_sum = 0.0
-        # crossover_count = mutation_count = 0
-
-        # remaining = self.population_size - len(new_population)
-        # if remaining > 0:
-        #     oversub_factor = 2  # a few extras in case duplicates are rejected
-        #     tasks = remaining * oversub_factor
-
-        #     with ThreadPoolExecutor(max_workers=self.num_threads) as exe:
-        #         futures = [exe.submit(self._generate_offspring, self.population)
-        #                    for _ in range(tasks)]
-
-        #         for fut in as_completed(futures):
-        #             child, success, c_gain, m_gain = fut.result()
-
-        #             if self.allow_duplicate_genes or child not in new_population:
-        #                 new_population.append(child)
-        #                 child_count += 1
-        #                 if success:
-        #                     success_count += 1
-        #                 crossover_gain_sum += c_gain
-        #                 crossover_count += 1
-        #                 if m_gain != 0.0:
-        #                     mutation_gain_sum += m_gain
-        #                     mutation_count += 1
-
-        #                 if len(new_population) >= self.population_size:
-        #                     break
 
         # generate offspring until we reach the target population size
         remaining = self.population_size - len(new_population)
@@ -225,35 +220,11 @@ class Evolution:
             futures = [executor.submit(self._generate_offspring, self.population)
                        for _ in range(remaining)]
             for fut in as_completed(futures):
-                child, _, _, _ = fut.result()
+                child = fut.result()
                 new_population.append(child)
-
-        # while len(new_population) < self.population_size:
-        #     child, success, c_gain, m_gain = self._generate_offspring(self.population)
-        #     child_count += 1
-        #     if success:
-        #         success_count += 1
-        #     crossover_gain_sum += c_gain
-        #     crossover_count += 1
-        #     if m_gain != 0.0:
-        #         mutation_gain_sum += m_gain
-        #         mutation_count += 1
-
-        #     new_population.append(child)
-
-        # Recalculate fitness
-        
-        # def calc_fitness(chromosome):
-        #     chromosome.calculate_fitness()
-        #     return chromosome
 
         with ThreadPoolExecutor() as executor:
             new_population = list(executor.map(_eval_fitness, new_population))
-
-        # # serially evaluate fitness
-        # for chrom in new_population:
-        #     chrom.calculate_fitness()
-
 
         self.population = new_population
         self.generation += 1
@@ -266,41 +237,9 @@ class Evolution:
         row.update({f"fit_{i}": c.fitness for i, c in enumerate(new_population)})
         self._metrics_buffer.append(row)
 
-        # flush every 10 generations to limit I/O
-        if len(self._metrics_buffer) >= 10:
+        # flush every 5 generations to limit I/O
+        if len(self._metrics_buffer) >= 5:
             self._flush_metrics()
-
-        # ---- metrics ----
-        # if METRICS_ENABLED:
-        #     new_elite = self._get_elite()
-        #     new_elite_ids = {id(c) for c in new_elite}
-        #     survival_rate = len(old_elite_ids & new_elite_ids) / len(old_elite_ids)
-        #     self.survival_rates.append(survival_rate)
-
-        #     children = new_population[len(old_elite):]
-        #     avg_child_fit = sum(c.fitness for c in children) / len(children) if children else 0.0
-        #     self.avg_child_fitnesses.append(avg_child_fit)
-
-        #     cur_best = new_elite[0].fitness
-        #     prev_best = self.best_fitness_history[-1]
-        #     self.best_fitness_history.append(cur_best)
-        #     self.delta_best.append(cur_best - prev_best)
-
-        #     ratio = success_count / child_count if child_count else 0.0
-        #     self.child_parent_success_ratio.append(ratio)
-
-        #     mean_c_gain = crossover_gain_sum / crossover_count if crossover_count else 0.0
-        #     mean_m_gain = mutation_gain_sum / mutation_count if mutation_count else 0.0
-        #     self.mean_crossover_gain.append(mean_c_gain)
-        #     self.mean_mutation_gain.append(mean_m_gain)
-        
-        #     self._log(f"Elite survival rate: {survival_rate:.2%}")
-        #     self._log(f"Average child fitness: {avg_child_fit:.4f}")
-        #     self._log(f"Δ‑Best: {self.delta_best[-1]:+.4f}")
-        #     self._log(f"Child‑parent success ratio: {ratio:.2%}")
-        #     self._log(f"Mean crossover gain: {mean_c_gain:+.4f}")
-        #     self._log(f"Mean mutation gain: {mean_m_gain:+.4f}")
-        #     self._log(f"Generation {self.generation} completed.", divider=True)
 
             # ---- logging ----
         for i, chrom in enumerate(self.population):
@@ -317,7 +256,7 @@ class Evolution:
         self.generate_population()
 
         planned_generations = self.num_generations
-        # guard against pathological user input
+        
         if planned_generations <= 0:
             raise ValueError("num_generations must be at least 1")
         if self.max_generations is not None and self.max_generations < planned_generations:
@@ -364,7 +303,7 @@ class Evolution:
                             divider=True,
                         )
 
-            # ----------------‑ MAX‑GEN CLAMP ---------------------‑
+            # max gen clamp
             if self.max_generations is not None and planned_generations > self.max_generations:
                 planned_generations = self.max_generations
 
