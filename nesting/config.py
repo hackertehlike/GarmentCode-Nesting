@@ -4,6 +4,7 @@ import math
 from typing import Literal, Mapping
 
 MULTITHREADING: bool = True
+VERBOSE: bool = True
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
@@ -31,7 +32,7 @@ ALLOWED_ROTATIONS = [0, 90, 180, 270]
 GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 100
+POPULATION_SIZE       = 20
 NUM_GENERATIONS       = 100
 # ELITE_POPULATION_SIZE = 1
 MUTATION_RATE         = 0.1
@@ -104,3 +105,4 @@ def __dict__() -> dict:
         "SAVE_LOGS_PATH": SAVE_LOGS_PATH,
         "LOG_TIME": LOG_TIME
     }
+    

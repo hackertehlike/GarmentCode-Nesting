@@ -100,7 +100,11 @@ class Evolution:
         
         self.log_path = Path(log_dir) / f"evolution_log_{ts}.txt"
         self.csv_path   = Path(log_dir) / f"evolution_metrics_{ts}.csv"
-        self.pdf_path   = Path(log_dir) / f"evolution_metrics_report_{ts}.pdf"
+        #self.pdf_path   = Path(log_dir) / f"evolution_metrics_report_{ts}.pdf"
+        plots_dir = Path(log_dir) / "plots"
+        plots_dir.mkdir(exist_ok=True)
+        self.plot_path      = plots_dir / f"fitness_curves_{ts}.png"
+        self.gain_plot_path = plots_dir / f"mean_gains_{ts}.png"
 
         self.log_lines       : list[str]          = []
         self._metrics_buffer : list[dict[str, float]] = []
@@ -237,59 +241,104 @@ class Evolution:
 
         # 1) Start new population with elites
         new_population = list(old_elite)
-        parent_mean = sum(c.fitness for c in old_elite) / self.n_elites
+        avg_elite = sum(c.fitness for c in old_elite) / self.n_elites
 
         # 2) Fire off ALL tasks in one ThreadPool:
         from concurrent.futures import ThreadPoolExecutor, as_completed
         jobs: dict = {}
+
         with ThreadPoolExecutor() as executor:
-            # offspring jobs
+            # 1) Offspring
             for _ in range(self.n_offspring):
-                fut = executor.submit(self._generate_offspring, self.population)
+                p1, p2 = random.sample(self.population, 2)
+                parent_f = max(p1.fitness, p2.fitness)
+                def do_offspring(p1=p1, p2=p2, parent_f=parent_f):
+                    try:
+                        child = (p1.crossover_pmx(p2)
+                                 if self.crossover_method=='pmx'
+                                 else p1.crossover_ox1(p2))
+                        if random.random() < self.mutation_rate:
+                            child.mutate()
+                        child.calculate_fitness()
+                        if self.config.VERBOSE:
+                            self._log(f"Offspring created with fitness: {child.fitness:.4f}")
+                        return child, parent_f, None
+                    except Exception as e:
+                        return None, parent_f, e
+
+                fut = executor.submit(do_offspring)
                 jobs[fut] = "offspring"
 
-            # mutant jobs
-            def make_mutant():
-                spawn = copy.deepcopy(random.choice(old_elite))
-                spawn.mutate()
-                spawn.calculate_fitness()
-                return spawn
-
+            # 2) Mutants
             for _ in range(self.n_mutants):
-                fut = executor.submit(make_mutant)
+                parent = random.choice(old_elite)
+                parent_f = parent.fitness
+                def do_mutant(parent=parent, parent_f=parent_f):
+                    try:
+                        child = copy.deepcopy(parent)
+                        child.mutate()
+                        child.calculate_fitness()
+                        if self.config.VERBOSE:
+                            self._log(f"Mutant created with fitness: {child.fitness:.4f}")
+                        return child, parent_f, None
+                    except Exception as e:
+                        return None, parent_f, e
+
+                fut = executor.submit(do_mutant)
                 jobs[fut] = "mutant"
 
-            # random jobs
+            # 3) Randoms
             for _ in range(self.n_randoms):
-                fut = executor.submit(self._generate_random_chromosome)
+                def do_random():
+                    try:
+                        child = self._generate_random_chromosome()
+                        if self.config.VERBOSE:
+                            self._log(f"Random chromosome created with fitness: {child.fitness:.4f}")
+                        return child, 0.0, None
+                    except Exception as e:
+                        return None, 0.0, e
+
+                fut = executor.submit(do_random)
                 jobs[fut] = "random"
 
-            # 3) collect results into three lists
-            offspring: list[Chromosome] = []
-            mutants:   list[Chromosome] = []
-            randoms:   list[Chromosome] = []
+            # 4) collect results into three lists
+            offspring, mutants, randoms = [], [], []
+            off_gains, mut_gains = [], []
+
             for fut in as_completed(jobs):
-                child = fut.result()
+                child, parent_f, err = fut.result()
                 kind = jobs[fut]
+                if err is not None:
+                    self._log(f"‼ {kind} task failed: {err}")
+                    continue
+
+                gain = child.fitness - parent_f
+
                 if kind == "offspring":
                     offspring.append(child)
+                    off_gains.append(gain)
                 elif kind == "mutant":
                     mutants.append(child)
+                    mut_gains.append(gain)
                 else:
                     randoms.append(child)
+
                 new_population.append(child)
 
-        # 4) Diagnostics: average gains
+        # 5) Compute per-operator stats
         avg_off  = sum(c.fitness for c in offspring) / len(offspring) if offspring else 0.0
-        avg_mut  = sum(c.fitness for c in mutants)   / len(mutants)   if mutants else  0.0
-        avg_rand = sum(c.fitness for c in randoms)   / len(randoms)   if randoms else  0.0
+        avg_mut  = sum(c.fitness for c in mutants)   / len(mutants)   if mutants else 0.0
+        avg_rand = sum(c.fitness for c in randoms)   / len(randoms)   if randoms else 0.0
+
+        mean_offspring_gain = sum(off_gains) / len(off_gains) if off_gains else 0.0
+        mean_mutant_gain    = sum(mut_gains) / len(mut_gains) if mut_gains else 0.0
+
         self._log(
-            f"Avg offspring gain: {avg_off - parent_mean:+.4f};"
-            f" avg mutant gain: {avg_mut - parent_mean:+.4f};"
-            f" avg random gain: {avg_rand - parent_mean:+.4f}"
+            f"Avg offspring gain vs parent: {mean_offspring_gain:+.4f};"
+            f" mutants: {mean_mutant_gain:+.4f}"
         )
 
-        # 5) Finalize
+        # 6) Finalize
         self.population = new_population
         self.generation += 1
 
@@ -299,25 +348,28 @@ class Evolution:
         self.delta_best.append(delta)
         self._log(f"Generation {self.generation}: best {best:.4f} (Δ {delta:+.4f})", divider=True)
 
-        # 6) Log metrics
+        # 7) Log metrics
         row = {
             'generation': self.generation,
+            'avg_child_fitness': sum(c.fitness for c in new_population) / len(new_population),
+            'avg_elite': avg_elite,
             'avg_off': avg_off,
             'avg_mut': avg_mut,
             'avg_rand': avg_rand,
             'best_fit': best,
             'delta_best': delta,
-            'mean_offspring_gain': avg_off - parent_mean,
-            'mean_mutant_gain':   avg_mut - parent_mean,
-            'mean_random_gain':   avg_rand - parent_mean,
+            'mean_offspring_gain': mean_offspring_gain,
+            'mean_mutant_gain': mean_mutant_gain,
         }
         self._metrics_buffer.append(row)
         self._all_metrics.append(row)
-        if (len(self._metrics_buffer) >= config.GENERATION_PER_FLUSH or self.generation == self.num_generations) and config.SAVE_LOGS:
+
+        if (len(self._metrics_buffer) >= config.GENERATION_PER_FLUSH
+            or self.generation == self.num_generations) and config.SAVE_LOGS:
             self._flush_metrics()
+            self.update_plots()
 
         self._log(f"Generation {self.generation} completed in {time.time()-start:.2f}s.")
-
 
 
     def run(self) -> Chromosome:
@@ -386,7 +438,6 @@ class Evolution:
                             f"{planned_generations}).",
                             divider=True,
                         )
-            print("didnt early stop or extend")
 
             # max gen clamp
             if self.max_generations is not None and planned_generations > self.max_generations:
@@ -422,46 +473,88 @@ class Evolution:
             writer.writerows(self._metrics_buffer)
         self._metrics_buffer.clear()
 
-    def analyze_metrics(self) -> None:
+    def update_plots(self) -> None:
         """
-        After a run, call this to generate:
-         - A PDF with an overview plot and separate per-metric plots
+        Overwrite two PNGs in plots/:
+         - fitness_curves: avg_off, avg_mut, avg_rand, best_fit vs generation
+         - mean_gains:      mean_offspring_gain, mean_mutant_gain, mean_random_gain vs generation
         """
-        # 1) build DataFrame
-        df = pd.DataFrame(self._all_metrics)    
-        # 2) open a PDF and write multiple pages
+        if not self._all_metrics:
+            return
+
+        import pandas as pd
+        import matplotlib.pyplot as plt
+
+        df = pd.DataFrame(self._all_metrics)
+
+        # ——— Plot 1: fitness curves ———
+        plt.figure(figsize=(8,5))
+        for col in ['avg_off', 'avg_mut', 'avg_rand', 'best_fit']:
+            plt.plot(df['generation'], df[col], label=col)
+        plt.xlabel("Generation")
+        plt.ylabel("Fitness")
+        plt.title("Average & Best Fitness Over Generations")
+        plt.legend(loc="best")
+        plt.tight_layout()
+        plt.savefig(self.plot_path)
+        plt.close()
+
+        # ——— Plot 2: mean gains ———
+        plt.figure(figsize=(8,5))
+        for col in ['mean_offspring_gain', 'mean_mutant_gain']:
+            plt.plot(df['generation'], df[col], marker='o', linestyle='--', label=col)
+        plt.xlabel("Generation")
+        plt.ylabel("Mean Gain")
+        plt.title("Mean Gains Over Generations")
+        plt.axhline(0, color='gray', linewidth=1)
+        plt.legend(loc="best")
+        plt.tight_layout()
+        plt.savefig(self.gain_plot_path)
+        plt.close()
+
+        self._log(f"Updated plots: {self.plot_path.name}, {self.gain_plot_path.name}")
+
+
+    # def analyze_metrics(self) -> None:
+    #     """
+    #     After a run, call this to generate:
+    #      - A PDF with an overview plot and separate per-metric plots
+    #     """
+    #     # 1) build DataFrame
+    #     df = pd.DataFrame(self._all_metrics)    
+    #     # 2) open a PDF and write multiple pages
         
-        # out_dir = Path(config.SAVE_LOGS_PATH)
-        self._log(f"Writing metrics report to {self.pdf_path}")
+    #     # out_dir = Path(config.SAVE_LOGS_PATH)
+    #     self._log(f"Writing metrics report to {self.pdf_path}")
        
-        # create a PDF file in the output directory
+    #     # create a PDF file in the output directory
         
-        # self._log("Generating metrics report PDF...")
-        # log the DataFrame
-        self._log(f"Metrics DataFrame:\n{df.head()}", divider=True)
-        # create a PdfPages object to write multiple pages
-        self.log_dir = Path(config.SAVE_LOGS_PATH)
+    #     # self._log("Generating metrics report PDF...")
+    #     # log the DataFrame
+    #     self._log(f"Metrics DataFrame:\n{df.head()}", divider=True)
+    #     # create a PdfPages object to write multiple pages
+    #     self.log_dir = Path(config.SAVE_LOGS_PATH)
 
-        with PdfPages(self.pdf_path) as pdf:
-            # Overview: all four on one page
-            plt.figure()
-            for col in ['avg_mut', 'avg_off', 'avg_rand', 'best_fit']:
-                plt.plot(df['generation'], df[col], label=col)
-            plt.xlabel('Generation')
-            plt.ylabel('Value')
-            plt.title('GA Metrics Overview')
-            plt.legend()
-            pdf.savefig()
-            plt.close()
+    #     with PdfPages(self.pdf_path) as pdf:
+    #         # Overview: all four on one page
+    #         plt.figure()
+    #         for col in ['avg_mut', 'avg_off', 'avg_rand', 'best_fit']:
+    #             plt.plot(df['generation'], df[col], label=col)
+    #         plt.xlabel('Generation')
+    #         plt.ylabel('Value')
+    #         plt.title('GA Metrics Overview')
+    #         plt.legend()
+    #         pdf.savefig()
+    #         plt.close()
 
-            # One page per metric
-            # for col in ['avg_mut', 'avg_off', 'avg_rand', 'best_fit']:
-            #     plt.figure()
-            #     plt.plot(df['generation'], df[col])
-            #     plt.xlabel('Generation')
-            #     plt.ylabel(col)
-            #     plt.title(f'{col} over Generations')
-            #     pdf.savefig()
-            #     plt.close()
+    #         # One page per metric
+    #         # for col in ['avg_mut', 'avg_off', 'avg_rand', 'best_fit']:
+    #         #     plt.figure()
+    #         #     plt.plot(df['generation'], df[col])
+    #         #     plt.xlabel('Generation')
+    #         #     plt.ylabel(col)
+    #         #     plt.title(f'{col} over Generations')
+    #         #     pdf.savefig()
+    #         #     plt.close()
 
-        print(f"✅ Metrics report written to {self.pdf_path}")
+    #     print(f"✅ Metrics report written to {self.pdf_path}")
