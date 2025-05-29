@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from typing import Optional
 from .layout import Layout, Container, Piece
 from abc import ABC, abstractmethod
 import numpy as np, scipy.spatial as sps
@@ -21,10 +22,14 @@ class PlacementEngine():
     Base class for layout placement strategies.
     """
 
-    def __init__(self, layout: Layout, container: Container):
+    def __init__(self,
+                 layout: Layout,
+                 container: Container,
+                 **kwargs,                      # ← absorb any extra arguments
+    ):        
         self.layout = layout
         self.container = container
-        self.placed: list[Piece] = [] 
+        self.placed: list[Piece] = []
 
     def decode(self):
         pass
@@ -216,22 +221,34 @@ class GreedyBLDecoder(BottomLeftDecoder):
 
 @register_decoder("Random")
 class RandomDecoder(PlacementEngine):
-    def __init__(self, layout, container, *, step=None, rotations_on=False, **kwargs):
-        # shuffle order
+    def __init__(self,
+                 layout: Layout,
+                 container: Container,
+                 *,
+                 rotations_on: bool = config.ENABLE_ROTATIONS,
+                 **kwargs):
+        # shuffle the insertion order
         ids = list(layout.order)
         random.shuffle(ids)
         shuffled = OrderedDict((i, layout.order[i]) for i in ids)
-        super().__init__(Layout(shuffled), container,
-                         step=step,
-                         rotations_on=rotations_on,
-                         **kwargs)
+        super().__init__(Layout(shuffled), container, **kwargs)
+        self.rotations_on = rotations_on
+
     def decode(self):
-        # if rotations_on, apply random rotations
+        # 1) optional random rotations
         if self.rotations_on:
             for p in self.layout.order.values():
-                p.rotate(random.choice([0,90,180,270]))
-        # then BL‐place them
-        return BottomLeftDecoder(self.layout, self.container, step=self.step).decode()
+                p.rotate(random.choice(config.ALLOWED_ROTATIONS))
+
+        # 2) bottom-left place on *this* layout
+        bl = BottomLeftDecoder(self.layout, self.container, step=config.BL_STEP)
+        placements = bl.decode()
+
+        # 3) mirror the placed list so that usage_BB() sees it
+        self.placed = bl.placed
+
+        return placements
+
 
 @register_decoder("NFP")
 class NFPDecoder(PlacementEngine):

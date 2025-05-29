@@ -33,7 +33,7 @@ MUTATION_RATE         = 0.1
 
 
 
-
+# log
 SAVE_LOGS = False
 
 

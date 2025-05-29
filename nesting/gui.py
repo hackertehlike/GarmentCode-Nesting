@@ -772,11 +772,11 @@ class NestingGUI:
                 decoder = BottomLeftDecoder(layout, container, step=config.BL_STEP)
             elif method == "Greedy":
                 # Greedy placement
-                decoder = GreedyBLDecoder(layout, container, step=config.BL_STEP)   
+                decoder = GreedyBLDecoder(layout, container)   
             elif method == "NFP":
                 decoder = NFPDecoder(layout, container)
             elif method == "Random Order BL":
-                decoder = RandomDecoder(layout, container, step=config.BL_STEP)
+                decoder = RandomDecoder(layout, container)
             elif method == "Genetic Algorithm":
                 evo = Evolution(
                     self.pieces,
