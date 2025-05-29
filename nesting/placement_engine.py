@@ -82,7 +82,11 @@ class PlacementEngine():
 
         # calculate the ratio of the used area of the bounding box to the area of the bounding box
         ratio = total_area / bounding_box_area
-        return ratio
+
+        if self.layout_is_valid():
+            return ratio
+        else:
+            return 0.0  # if the layout is not valid, return 0.0
 
 
     def rest_length(self):
@@ -252,7 +256,6 @@ class NFPDecoder(PlacementEngine):
         return [(p.id, *p.translation, p.rotation) for p in self.placed]
 
 
-    
     def _find_best_position(self, piece: Piece, gravitate_on = False):
         """
         Finds the best position to place a given piece within the container.
@@ -293,7 +296,7 @@ class NFPDecoder(PlacementEngine):
         # if first piece, place it at the bottom left corner
         if not self.placed:
             best_x = 0
-            best_y = self.container.height - piece.max_y
+            best_y = self.container.height - piece.height
             return best_x, best_y
 
         for other in self.placed:
@@ -306,8 +309,14 @@ class NFPDecoder(PlacementEngine):
                 x_translated = x + ox
                 y_translated = y + oy
                 # check if the translated nfp is inside the inner fit rectangle
-                if (inner_fit[0][0] <= x_translated <= inner_fit[1][0] and
-                    inner_fit[0][1] <= y_translated <= inner_fit[3][1]):
+                
+                
+                x0 = min(p[0] for p in inner_fit)
+                x1 = max(p[0] for p in inner_fit)
+                y0 = min(p[1] for p in inner_fit)
+                y1 = max(p[1] for p in inner_fit)
+
+                if x0 <= x_translated <= x1 and y0 <= y_translated <= y1:
                     # check if the translated nfp is inside the container
                     if best_x is None or (x_translated < best_x or
                                           (x_translated == best_x and y_translated < best_y)):
