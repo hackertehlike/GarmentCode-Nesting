@@ -91,7 +91,7 @@ class Chromosome(Layout):
         mutation_types, weights = zip(*config.MUTATION_WEIGHTS.items())
 
         mutation = random.choices(mutation_types, weights=weights, k=1)[0]
-        print(f"Selected mutation type: {mutation}")
+        #print(f"Selected mutation type: {mutation}")
 
         n = len(self.genes)
 
@@ -100,20 +100,24 @@ class Chromosome(Layout):
             pass
 
         elif mutation == "rotate":
-            idx = random.randrange(n)
-            angle = random.choice([90, 180, 270])
-            print(f"[mutate] Rotating gene at {idx} by {angle}°")
-            self.genes[idx].rotate(angle)
+            # pick how many genes to rotate
+            num_genes = random.randint(1, n)
+            for _ in range(num_genes):
+            # pick a random gene and rotate it by 90, 180, or 270 degrees
+                idx = random.randrange(n)
+                angle = random.choice(config.ALLOWED_ROTATIONS)
+                #print(f"[mutate] Rotating gene at {idx} by {angle}°")
+                self.genes[idx].rotate(angle)
 
         elif mutation == "swap":
             i, j = random.sample(range(n), 2)
-            print(f"[mutate] Swapping genes at {i} and {j}")
+            #print(f"[mutate] Swapping genes at {i} and {j}")
             self.genes[i], self.genes[j] = self.genes[j], self.genes[i]
 
         elif mutation == "inversion":
             # pick two cut points and reverse the slice
             i, j = sorted(random.sample(range(n), 2))
-            print(f"[mutate] Inverting subsequence [{i}:{j}]")
+            #print(f"[mutate] Inverting subsequence [{i}:{j}]")
             self.genes[i:j+1] = reversed(self.genes[i:j+1])
 
         elif mutation == "insertion":
@@ -121,14 +125,14 @@ class Chromosome(Layout):
             i = random.randrange(n)
             gene = self.genes.pop(i)
             j = random.randrange(n)
-            print(f"[mutate] Moving gene from {i} to {j}")
+            #print(f"[mutate] Moving gene from {i} to {j}")
             self.genes.insert(j, gene)
 
         elif mutation == "scramble":
             # pick a slice and shuffle it
             i, j = sorted(random.sample(range(n), 2))
             sub = self.genes[i:j+1]
-            print(f"[mutate] Scrambling subsequence [{i}:{j}]")
+            #print(f"[mutate] Scrambling subsequence [{i}:{j}]")
             random.shuffle(sub)
             self.genes[i:j+1] = sub
 

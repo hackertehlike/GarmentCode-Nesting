@@ -130,7 +130,7 @@ class Evolution:
 
     def _generate_random_chromosome(self) -> Chromosome:
         
-        self._log("Generating random chromosome...")
+        #self._log("Generating random chromosome...")
         ids_ = list(self.pieces.keys())
         random.shuffle(ids_)
         chrom = Chromosome([self.pieces[i] for i in ids_], self.container)
@@ -145,7 +145,7 @@ class Evolution:
         #chrom.sync_order()
         chrom.calculate_fitness()
 
-        self._log(f"Random chromosome generated with fitness: {chrom.fitness:.4f}")
+        #self._log(f"Random chromosome generated with fitness: {chrom.fitness:.4f}")
         return chrom
 
     def generate_population(self) -> None:
@@ -222,9 +222,8 @@ class Evolution:
         
         child.calculate_fitness() 
 
-        self._log(f"Offspring generated in {time.time() - start:.2f} s")
+        #self._log(f"Offspring generated in {time.time() - start:.2f} s")
         return child
-
 
 
     def next_generation(self) -> None:
@@ -236,97 +235,85 @@ class Evolution:
             self._log("No elite chromosomes found. Cannot create next generation.", divider=True)
             return
 
-        # Compute population segment sizes from weights
-        total = self.population_size
-        w = config.POPULATION_WEIGHTS
-        # Always include current elites
-        # self.n_elites = len(old_elite)
-        # n_offspring = int(w['offspring'] * total)
-        # n_mutants = int(w['mutants'] * total)
-        # n_randoms = int(w['randoms'] * total)
-        # # Adjust to fill exactly
-        # remainder = total - (self.n_elites + n_offspring + n_mutants + n_randoms)
-        # assign remainder to offspring by default
-        # n_offspring += remainder
-
         # 1) Start new population with elites
         new_population = list(old_elite)
         parent_mean = sum(c.fitness for c in old_elite) / self.n_elites
 
-        # 2) Generate offspring via crossover
-        offspring = []
-        self._log(f"Generating {self.n_offspring} offspring...")
-        if config.MULTITHREADING:
-            with ThreadPoolExecutor() as executor:
-                futures = [executor.submit(self._generate_offspring, self.population)
-                           for _ in range(self.n_offspring)]
-                for fut in as_completed(futures):
-                    offspring.append(fut.result())
-        else:
+        # 2) Fire off ALL tasks in one ThreadPool:
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        jobs: dict = {}
+        with ThreadPoolExecutor() as executor:
+            # offspring jobs
             for _ in range(self.n_offspring):
-                offspring.append(self._generate_offspring(self.population))
-        new_population.extend(offspring)
+                fut = executor.submit(self._generate_offspring, self.population)
+                jobs[fut] = "offspring"
 
-        # 3) Generate mutants by copying+mutating elites
-        mutants = []
-        self._log(f"Generating {self.n_mutants} mutants...")
-        def make_mutant():
-            spawn = copy.deepcopy(random.choice(old_elite))
-            spawn = spawn.mutate()
-            spawn.calculate_fitness()
-            return spawn
-        if config.MULTITHREADING:
-            with ThreadPoolExecutor() as executor:
-                futures = [executor.submit(make_mutant) for _ in range(self.n_mutants)]
-                for fut in as_completed(futures):
-                    mutants.append(fut.result())
-        else:
+            # mutant jobs
+            def make_mutant():
+                spawn = copy.deepcopy(random.choice(old_elite))
+                spawn.mutate()
+                spawn.calculate_fitness()
+                return spawn
+
             for _ in range(self.n_mutants):
-                mutants.append(make_mutant())
-        new_population.extend(mutants)
+                fut = executor.submit(make_mutant)
+                jobs[fut] = "mutant"
 
-        # 4) Generate new randoms
-        randoms = []
-        self._log(f"Generating {self.n_randoms} random chromosomes...")
-        for _ in range(self.n_randoms):
-            randoms.append(self._generate_random_chromosome())
-        new_population.extend(randoms)
+            # random jobs
+            for _ in range(self.n_randoms):
+                fut = executor.submit(self._generate_random_chromosome)
+                jobs[fut] = "random"
 
-        # 5) Diagnostics: average gains
-        avg_off = (sum(c.fitness for c in offspring) / len(offspring)) if offspring else 0.0
-        avg_mut = (sum(c.fitness for c in mutants) / len(mutants)) if mutants else 0.0
-        avg_rand = (sum(c.fitness for c in randoms) / len(randoms)) if randoms else 0.0
-        self._log(f"Avg offspring gain: {avg_off - parent_mean:+.4f};"
-                  f" avg mutant gain: {avg_mut - parent_mean:+.4f};"
-                  f" avg random gain: {avg_rand - parent_mean:+.4f}")
+            # 3) collect results into three lists
+            offspring: list[Chromosome] = []
+            mutants:   list[Chromosome] = []
+            randoms:   list[Chromosome] = []
+            for fut in as_completed(jobs):
+                child = fut.result()
+                kind = jobs[fut]
+                if kind == "offspring":
+                    offspring.append(child)
+                elif kind == "mutant":
+                    mutants.append(child)
+                else:
+                    randoms.append(child)
+                new_population.append(child)
 
-        # 6) Finalize
+        # 4) Diagnostics: average gains
+        avg_off  = sum(c.fitness for c in offspring) / len(offspring) if offspring else 0.0
+        avg_mut  = sum(c.fitness for c in mutants)   / len(mutants)   if mutants else  0.0
+        avg_rand = sum(c.fitness for c in randoms)   / len(randoms)   if randoms else  0.0
+        self._log(
+            f"Avg offspring gain: {avg_off - parent_mean:+.4f};"
+            f" avg mutant gain: {avg_mut - parent_mean:+.4f};"
+            f" avg random gain: {avg_rand - parent_mean:+.4f}"
+        )
+
+        # 5) Finalize
         self.population = new_population
         self.generation += 1
 
         best = max(c.fitness for c in new_population)
-        delta = best - self.best_fitness_history[-1] if self.best_fitness_history else 0.0
+        delta = best - (self.best_fitness_history[-1] if self.best_fitness_history else best)
         self.best_fitness_history.append(best)
         self.delta_best.append(delta)
         self._log(f"Generation {self.generation}: best {best:.4f} (Δ {delta:+.4f})", divider=True)
 
-        # 7) Log metrics
+        # 6) Log metrics
         row = {
             'generation': self.generation,
-            'avg_mut': avg_mut,
             'avg_off': avg_off,
+            'avg_mut': avg_mut,
             'avg_rand': avg_rand,
             'best_fit': best,
             'delta_best': delta,
             'mean_offspring_gain': avg_off - parent_mean,
-            'mean_mutant_gain': avg_mut - parent_mean,
-            'mean_random_gain': avg_rand - parent_mean,
+            'mean_mutant_gain':   avg_mut - parent_mean,
+            'mean_random_gain':   avg_rand - parent_mean,
         }
-        # for i, chrom in enumerate(new_population):
-        #     row[f'fit_{i}'] = chrom.fitness
         self._metrics_buffer.append(row)
         self._all_metrics.append(row)
-        if (len(self._metrics_buffer) >= 5 or self.generation == self.num_generations) and config.SAVE_LOGS:
+        if (len(self._metrics_buffer) >= config.GENERATION_PER_FLUSH or self.generation == self.num_generations) and config.SAVE_LOGS:
             self._flush_metrics()
 
         self._log(f"Generation {self.generation} completed in {time.time()-start:.2f}s.")

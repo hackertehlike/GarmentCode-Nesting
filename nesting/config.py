@@ -1,5 +1,6 @@
 # nesting/config.py
 
+import math
 from typing import Literal, Mapping
 
 MULTITHREADING: bool = True
@@ -51,15 +52,16 @@ ENABLE_EXTENSION: bool         = True
 EXTEND_WINDOW: int             = 10
 EXTEND_THRESHOLD: float        = 0.1
 MAX_GENERATIONS: int    = 200
+GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 
 # mutation weights
 # Example mutation weights in config.py
 MUTATION_WEIGHTS = {
-    "rotate":    0.1,
+    "rotate":    0.3,
     "swap":      0.2,
-    "inversion": 0.4,
+    "inversion": 0,
     "insertion": 0.1,
-    "scramble":  0.2,
+    "scramble":  0.4,
     "split":     0,   # keep zero until you implement it
 }
 
@@ -89,7 +91,6 @@ def __dict__() -> dict:
         "GRAVITATE_STEP": GRAVITATE_STEP,
         "POPULATION_SIZE": POPULATION_SIZE,
         "NUM_GENERATIONS": NUM_GENERATIONS,
-        "ELITE_POPULATION_SIZE": ELITE_POPULATION_SIZE,
         "MUTATION_RATE": MUTATION_RATE,
         "ENABLE_DYNAMIC_STOPPING": ENABLE_DYNAMIC_STOPPING,
         "EARLY_STOP_WINDOW": EARLY_STOP_WINDOW,
