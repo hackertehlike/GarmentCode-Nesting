@@ -13,6 +13,7 @@ from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap,
 from .path_extractor import *
 from .layout import *
 from .placement_engine import *
+from .config import DECODER_TYPE
 
 # viewer size in CSS‑pixels
 MAX_CANVAS_PX_WIDTH  = 800   
@@ -82,8 +83,9 @@ class NestingGUI:
         with ui.row().classes("w-full h-screen"):
             with ui.column().classes("flex-1"):
                 self._build_toolbar()
+                self._build_sidebar()    
                 self._build_canvas()
-                self._build_sidebar()
+
 
     
 
@@ -190,8 +192,32 @@ class NestingGUI:
             ui.button("Rotate Panel (R)", on_click=lambda _: self._rotate_panel())
             ui.button("Reset rotations", on_click=lambda _: self._reset_rotations())
 
+            ui.button("Calculate Usage for Current Layout", on_click=self._calculate_usage)
+
         self._kb = ui.keyboard(on_key=self._handle_key, active=True)
-        
+
+    def _calculate_usage(self):
+        scale = 1.0 / self.effective_scale              # px → cm
+        pieces_cm: Dict[str, Piece] = {}
+        for pid, p in self.pieces.items():
+            q              = copy.copy(p)               # shallow copy is enough
+            tx_px, ty_px   = p.translation
+            q.translation  = (tx_px * scale, ty_px * scale)
+            pieces_cm[pid] = q
+
+        # 2. Feed those copies to the metric engine
+        layout_cm    = Layout(pieces_cm)
+        container_cm = Container(self.container_width_cm,
+                                 self.container_height_cm)
+
+        pe = PlacementEngine(layout_cm, container_cm)
+        pe.placed = list(layout_cm.order.values())      # mark everything “placed”
+
+        util = pe.usage_BB()
+        print(f"Calculated utilisation (current layout): {util:.2%}")
+        return util
+
+
     def _handle_key(self, e: KeyEventArguments) -> None:
         if not e.action.keydown:      # ignore key‑up / repeats
             return
@@ -360,7 +386,26 @@ class NestingGUI:
 
         # --- geometry --------------------------------------------------
         extractor = PatternPathExtractor(path)
-        self.pieces = extractor.get_all_panel_pieces(samples_per_edge=7)
+        #self.pieces = extractor.get_all_panel_pieces(samples_per_edge=5)
+        panel_pieces = extractor.get_all_panel_pieces(samples_per_edge=5)
+        # duplicate the pieces twice and add to pieces so we have 3 copies of each piece and add them to pieces
+        # Add original pieces
+        self.pieces.update({
+            f"{piece.id}": copy.deepcopy(piece) for piece in panel_pieces.values()
+        })
+        # Add first set of copies with updated ids
+        # for piece in panel_pieces.values():
+        #     copy1 = copy.deepcopy(piece)
+        #     copy1.id = f"{piece.id}_copy1"
+        #     self.pieces[copy1.id] = copy1
+        # # Add second set of copies with updated ids
+        # for piece in panel_pieces.values():
+        #     copy2 = copy.deepcopy(piece)
+        #     copy2.id = f"{piece.id}_copy2"
+        #     self.pieces[copy2.id] = copy2
+        # #print all the pieces
+        # for piece_id, piece in self.pieces.items():
+        #     print(f"Loaded piece: {piece_id} with translation {piece.translation} and rotation {piece.rotation}")
         self._rebuild_panel_outlines()
         self.pattern_loaded = True
         self._draw_outlines()
@@ -581,7 +626,7 @@ class NestingGUI:
             'start_y': e.args.get('clientY', 0),
             'orig_offset': piece.translation,  # Use the piece's translation
         }
-        # print(f"Drag started for {panel_id} at ({self.drag_data['start_x']}, {self.drag_data['start_y']})")
+       # print(f"Drag started for {panel_id} at ({self.drag_data['start_x']}, {self.drag_data['start_y']})")
 
     def _on_drag_move(self, e, panel_id: str):
         if not self.drag_data or self.drag_data['panel_id'] != panel_id:
@@ -687,6 +732,7 @@ class NestingGUI:
         # self._draw_outlines()
 
         # print("Outlines drawn")
+        print(len(self.pieces), "pieces loaded")
 
         cm_to_px = self.effective_scale          # 1 cm → this many CSS‑pixels
         for name, dx_cm, dy_cm, rotation in placements_cm:
@@ -757,11 +803,13 @@ class NestingGUI:
                     elite_population_size=5,
                     mutation_rate=0.1,
                     pmx=True,
-                    allow_duplicate_genes=True,
                 )
-                # evo.generate_population()
                 best_chromosome = evo.run()
-                decoder = BottomLeftDecoder(best_chromosome, container)
+                # choose decoder based on global setting
+                if DECODER_TYPE == "BL":
+                    decoder = BottomLeftDecoder(best_chromosome, container)
+                else:
+                    decoder = NFPDecoder(best_chromosome, container)
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             

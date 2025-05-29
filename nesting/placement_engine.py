@@ -72,6 +72,8 @@ class PlacementEngine():
         max_x = max(x_vals)
         min_y = min(y_vals)
         max_y = max(y_vals)
+
+        # print(f"Bounding box: ({min_x}, {min_y}), ({max_x}, {max_y})")
         
         # calculate the area total of placed pieces
         total_area = sum([utils.polygon_area(p.get_outer_path()) for p in self.placed])
@@ -139,6 +141,29 @@ class PlacementEngine():
         return [(x + piece.translation[0], y + piece.translation[1]) for piece in self.placed
                 for x, y in piece.get_outer_path()]
     
+    def layout_is_valid(self) -> bool:
+        n = len(self.placed)
+        for i in range(n):
+            pi  = self.placed[i]
+            poly_i = utils._translate_polygon(pi.get_outer_path(), *pi.translation)
+
+            # ① Container bounds
+            xs_i, ys_i = zip(*poly_i)
+            if (min(xs_i) < 0 or
+                max(xs_i) > self.container.width or
+                min(ys_i) < 0 or
+                max(ys_i) > self.container.height):
+                return False
+
+            # ② Pairwise intersections (j > i prevents double checks)
+            for j in range(i + 1, n):
+                pj = self.placed[j]
+                poly_j = utils._translate_polygon(pj.get_outer_path(), *pj.translation)
+                if utils.polygons_overlap(poly_i, poly_j):
+                    return False
+        return True
+
+    
 class BottomLeftDecoder(PlacementEngine):
     """
     Places the pieces strictly in the given order with a bottom‑left strategy.
@@ -157,6 +182,7 @@ class BottomLeftDecoder(PlacementEngine):
             self.placed.append((piece))
             piece.translation = (dx, dy)
             # piece.rotate(piece.rotation)
+
         return [(p.id, *p.translation, p.rotation) for p in self.placed]
     
 
@@ -293,7 +319,7 @@ class NFPDecoder(PlacementEngine):
                             best_y = y_translated
                             # print(f"Piece {piece.id} best position: ({best_x}, {best_y})")
 
-        # if no position was found, return None
+        # if no position was found
         if best_x is None or best_y is None:
             # Could not place via NFP → behave like Bottom‑Left
             ax, ay = self.anchor(piece)

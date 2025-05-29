@@ -152,11 +152,18 @@ class Layout:
     Each layout has a list of pieces and defines an insertion order.
     """
 
-    def __init__(self, polygon_paths: dict[str, Piece]):
+    def __init__(self, polygon_paths: dict[str, Piece], translations: Dict[str, Tuple[float, float]] = None):
         self.order : OrderedDict[str, Piece] = polygon_paths
 
         # the tallest piece in the layout
         self.max_height = max(piece.height for piece in polygon_paths.values())
+
+        if translations:
+            for piece_id, translation in translations.items():
+                if piece_id in self.order:
+                    self.order[piece_id].translation = translation
+                else:
+                    raise ValueError(f"Translation for piece {piece_id} not found in layout.")
         
 
 class Container:

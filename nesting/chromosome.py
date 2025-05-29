@@ -2,7 +2,9 @@ from __future__ import annotations
 from collections import OrderedDict
 # from functools import cached_property
 # from typing import Generic, List, Sequence, TypeVar
+from functools import partial
 from itertools import chain
+import time
 from typing import List, Mapping
 import random
 from itertools import chain
@@ -11,36 +13,55 @@ import copy
 
 from .layout import Layout, Piece, Container
 from .placement_engine import *
+from .config import SELECTED_FITNESS_METRIC  # use selected metric from central config
 import random
 import numpy as np
 import copy
 # from nesting.placement_engine import BottomLeftDecoder
 
 # fitness functions
-def fitness_usage_bb(chromosome: Chromosome) -> float:
-    decoder = BottomLeftDecoder(chromosome, chromosome.container)
+def fitness_usage_bb(chromosome: Chromosome, decoder = "BL") -> float:
+    if decoder == "BL":
+        # use the BottomLeftDecoder
+        from .placement_engine import BottomLeftDecoder
+        decoder = BottomLeftDecoder(chromosome, chromosome.container)
+        
+    elif decoder == "NFP":
+        from .placement_engine import NFPDecoder
+        decoder = NFPDecoder(chromosome, chromosome.container)
     decoder.decode()
+
+    if not decoder.layout_is_valid:
+        print("Layout is invalid, returning fitness of 0.0")
+        return 0.0
     return decoder.usage_BB()
 
 def fitness_concave_hull(chromosome: Chromosome) -> float:
     decoder = BottomLeftDecoder(chromosome, chromosome.container)
     decoder.decode()
+    if not decoder.layout_is_valid:
+        print("Layout is invalid, returning fitness of 0.0")
+        return 0.0
     return decoder.concave_hull_utilization()
 
 def fitness_rest_length(chromosome: Chromosome) -> float:
     decoder = BottomLeftDecoder(chromosome, chromosome.container)
     decoder.decode()
+    if not decoder.layout_is_valid:
+        print("Layout is invalid, returning fitness of 0.0")
+        return 0.0
     return decoder.rest_length()
 
 # META VARIABLES
 
 FITNESS_METRICS = {
-    "usage_bb": fitness_usage_bb,
+    "usage_bb_bl": fitness_usage_bb,  # calls with default decoder="BL"
+    "usage_bb_nfp": partial(fitness_usage_bb, decoder="NFP"),
     "concave_hull": fitness_concave_hull,
     "rest_length": fitness_rest_length,
 }
 
-SELECTED_FITNESS_METRIC = "usage_bb"
+# Local override removed; using SELECTED_FITNESS_METRIC from config
 
 class Chromosome(Layout):
     """
@@ -71,14 +92,19 @@ class Chromosome(Layout):
 
     def calculate_fitness(self):
         # Get the fitness function from the mapping using the meta variable
+        start = time.time()
+        print(f"Calculating fitness using {SELECTED_FITNESS_METRIC} metric...")
         fitness_func = FITNESS_METRICS[SELECTED_FITNESS_METRIC]
         self.fitness = fitness_func(self)
+        end = time.time()
+        print(f"Fitness calculated in {end - start:.4f} seconds")
 
     def mutate(self):
         # TODO: add more mutation types
         """
         Perform mutation on the chromosome
         """
+        start = time.time()
         print()
         print("!" * 50)
         print("MUTATION OCCURRED")
@@ -106,55 +132,19 @@ class Chromosome(Layout):
             angle = random.choice([90, 180, 270])
             print(f"Rotating piece at index {piece_index} by {angle} degrees.")
             self.genes[piece_index].rotate(angle)
-            self.sync_order()  # sync the order
+            #self.sync_order()  # sync the order
         elif mutation_type == "swap":
             # Swap two random pieces
             index1, index2 = random.sample(range(len(self.genes)), 2)
             print(f"Swapping pieces at indices {index1} and {index2}.")
             print(f"Before swap: {[piece.id for piece in self.genes]}")
             self.genes[index1], self.genes[index2] = self.genes[index2], self.genes[index1]
-            self.sync_order()  # sync the order
+            # self.sync_order()  # sync the order
             print(f"After swap: {[piece.id for piece in self.genes]}")
+        self.sync_order()  # ensure the order is updated after mutation
+        end = time.time()
+        print(f"Mutation took {end - start:.4f} seconds")
 
-    def crossover_ox1(self, other: "Chromosome") -> "Chromosome":
-        """Order Crossover (OX1) with *k* randomly chosen segments.
-
-        This generalises the classical 2‑point OX1 by allowing an arbitrary
-        (random) number of *non‑overlapping* segments to be copied from the
-        first parent (``self``) to the child.  The missing genes are then
-        inserted in their relative order taken from the second parent
-        (``other``), exactly as illustrated in the reference screenshot.
-        """
-        assert len(self.genes) == len(other.genes), "Parents must be equal length"
-        size = len(self.genes)
-
-        # 1) Decide how many segments to copy (at least 1, but never all genes)
-        max_segments_reasonable = max(1, min(3, size // 3))  # conservative upper bound
-        n_segments = random.randint(1, max_segments_reasonable)
-
-        # 2) Pick 2·n unique cut points and turn them into ordered pairs (segments)
-        cut_points = sorted(random.sample(range(size), 2 * n_segments))
-        segments: list[tuple[int, int]] = []
-        for a, b in zip(cut_points[::2], cut_points[1::2]):
-            start, end = (a, b) if a <= b else (b, a)
-            segments.append((start, end))
-
-        # 3) Build the child and copy slices from *self*
-        child: List[Piece | None] = [None] * size
-        placed_ids: set[str] = set()
-        for start, end in segments:
-            for idx in range(start, end + 1):
-                gene = copy.deepcopy(self.genes[idx])
-                child[idx] = gene
-                placed_ids.add(gene.id)
-
-        # 4) Fill the remaining slots with genes from *other* in order
-        other_iter = (g for g in other.genes if g.id not in placed_ids)
-        for idx in range(size):
-            if child[idx] is None:
-                child[idx] = copy.deepcopy(next(other_iter))
-
-        return Chromosome(child, self.container)
         
     def crossover_ox1_k(self, other: "Chromosome") -> "Chromosome":
         """Order Crossover (OX1) with *k* randomly chosen segments.
@@ -163,6 +153,7 @@ class Chromosome(Layout):
         first parent (self) to the child.  The missing genes are then
         inserted in their relative order taken from the other parent
         """
+        start = time.time()
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
@@ -191,6 +182,9 @@ class Chromosome(Layout):
         for idx in range(size):
             if child[idx] is None:
                 child[idx] = copy.deepcopy(next(other_iter))
+
+        end = time.time()
+        print(f"OX1-k crossover took {end - start:.4f} seconds with {n_segments} segments")
 
         return Chromosome(child, self.container)
     
@@ -203,6 +197,9 @@ class Chromosome(Layout):
         3. Starting from the position after c2 in *other* parent, copy genes in order
            that are not yet present in the child, wrapping around until the child is full.
         """
+
+        start = time.time()
+
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
@@ -227,11 +224,15 @@ class Chromosome(Layout):
             placed_ids.add(gene.id)
             current_idx = (current_idx + 1) % size
 
+        end = time.time()
+        print(f"OX1 crossover took {end - start:.4f} seconds")
+
         # 4. return new chromosome instance
         return Chromosome(child, self.container)
 
     def crossover_pmx(self, other: "Chromosome") -> "Chromosome":
         """Partially‑Mapped Crossover (PMX) that matches pieces by *id*."""
+        start = time.time()
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
@@ -258,6 +259,9 @@ class Chromosome(Layout):
                 candidate      = other.genes[idx_in_parent1]
 
             child[i] = copy.deepcopy(candidate)      # independent gene
+
+        end = time.time()
+        print(f"PMX crossover took {end - start:.4f} seconds")
 
         # 4. build and return the child chromosome
         return Chromosome(child, self.container)
