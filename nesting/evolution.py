@@ -198,7 +198,7 @@ class Evolution:
         if random.random() < self.mutation_rate:
             child.mutate()
 
-        child.calculate_fitness()
+        # child.calculate_fitness()
 
         self._log(f"Offspring generated in {time.time() - start:.2f} s")
         return child
