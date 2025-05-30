@@ -121,25 +121,21 @@ class PlacementEngine():
     
     
     def concave_hull_utilization(self):
-        
-        # get the concave hull of the placed pieces
-
-        # get the vertices of the pieces
         flattened_vertices = self._flatten_piece_list()
-        # get the concave hull of the vertices
         dists, _ = sps.cKDTree(flattened_vertices).query(flattened_vertices, k=2)
-        d = np.median(dists[:,1])          # median first neighbour
-        alpha = (1.5 * d)**2
-        # alpha = 100
+        d = np.median(dists[:,1])
+        alpha = (0.5 * d)**2
+
         concave_hull = utils.concave_hull(flattened_vertices, alpha)
-        # get the area of the concave hull
-        print("concave hull computed")
-        area = utils.polygon_area(concave_hull)
-        total_area = sum([utils.polygon_area(p[0].get_outer_path()) for p in self.placed])
-       
-        return area / total_area
+        hull_area = utils.polygon_area(concave_hull)
+        print(f"Concave hull area: {hull_area}")
 
+        total_area = sum(
+            utils.polygon_area(piece.get_outer_path())
+            for piece in self.placed
+        )
 
+        return total_area / hull_area if hull_area > 0 else 0
 
     def gravitate(self, piece, x, y, step=config.GRAVITATE_STEP):
         """Slide left as far as possible, then down; repeat until jammed."""

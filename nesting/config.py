@@ -3,25 +3,20 @@
 import math
 from typing import Literal, Mapping
 
+# ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = True
 VERBOSE: bool = True
+
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
 CrossoverName = Literal["pmx", "ox1", "ox1k"]
-
-
+# ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
-SELECTED_FITNESS_METRIC: MetricName  = "usage_bb"
+SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"
 SELECTED_CROSSOVER      : CrossoverName = "ox1k"
 
 
-# ——— container defaults —————————————————————————————————————
-CONTAINER_WIDTH_CM  = 500
-CONTAINER_HEIGHT_CM = 500.0
-
-# ——— piece defaults —————————————————————————————————————
-SEAM_ALLOWANCE_CM = 1
 
 # ——— sampling (path extractor) —————————————————————————————————————
 SAMPLES_PER_EDGE  = 5
@@ -33,10 +28,8 @@ GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
 POPULATION_SIZE       = 20
-NUM_GENERATIONS       = 100
-# ELITE_POPULATION_SIZE = 1
+NUM_GENERATIONS       = 1
 MUTATION_RATE         = 0.1
-#MYOSIS_TO_MITOSIS = 0.8
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
     "elites": 0.1,  # weight for elite population
@@ -44,6 +37,18 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
     "mutants": 0.2,  # weight for mutants population
     "randoms": 0.3,  # weight for random population
 }
+
+
+# mutation weights
+MUTATION_WEIGHTS = {
+    "rotate":    0.3,
+    "swap":      0.2,
+    "inversion": 0,
+    "insertion": 0.1,
+    "scramble":  0.4,
+    "split":     0,   # keep zero until you implement it
+}
+
 
 # dynamic stopping and extension for GA
 ENABLE_DYNAMIC_STOPPING: bool = True
@@ -55,24 +60,18 @@ EXTEND_THRESHOLD: float        = 0.1
 MAX_GENERATIONS: int    = 200
 GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 
-# mutation weights
-# Example mutation weights in config.py
-MUTATION_WEIGHTS = {
-    "rotate":    0.3,
-    "swap":      0.2,
-    "inversion": 0,
-    "insertion": 0.1,
-    "scramble":  0.4,
-    "split":     0,   # keep zero until you implement it
-}
-
-
 # log
 SAVE_LOGS = True
 SAVE_LOGS_PATH = "nesting/run_logs"
 LOG_TIME = False
 
+# gui / layout / container settings
 SAMPLES_PER_EDGE = 5
+
+CONTAINER_WIDTH_CM  = 500
+CONTAINER_HEIGHT_CM = 500.0
+
+SEAM_ALLOWANCE_CM = 1
 
 def __dict__() -> dict:
     """

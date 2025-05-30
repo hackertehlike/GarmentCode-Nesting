@@ -5,12 +5,16 @@ import pyclipper
 # from .layout import Layout, Container, Piece
 # from .layout import Container, Piece
 # from CGAL.CGAL_Polygon_2 import Polygon_2
-from CGAL.CGAL_Alpha_shape_2 import (Alpha_shape_2, Alpha_shape_2_Edge,
-                                     REGULARIZED, GENERAL)
-from CGAL.CGAL_Alpha_shape_2 import Alpha_shape_2, REGULAR, SINGULAR 
-from CGAL import CGAL_Kernel
+# from CGAL.CGAL_Alpha_shape_2 import (Alpha_shape_2, Alpha_shape_2_Edge,
+#                                      REGULARIZED, GENERAL)
+# from CGAL.CGAL_Alpha_shape_2 import Alpha_shape_2, REGULAR, SINGULAR 
+# from CGAL import CGAL_Kernel
 
-Point_2 = CGAL_Kernel.Point_2
+# Point_2 = CGAL_Kernel.Point_2
+
+from shapely.geometry import MultiPoint
+from shapely.ops import unary_union
+
 
 # clipper uses int coordinates, so we need to scale our floats
 # for nesting purposes 3 decimal precision is sufficient
@@ -118,12 +122,13 @@ def polygon_area(poly):
     """
     Calculate the area of a polygon using pyclipper.
     The polygon is represented as a list of (x, y) tuples.
-    The area is returned as a float.
+    The area is returned as a float (always non-negative).
     """
     if len(poly) < 3:
         return 0.0  # Not a polygon
-    area = pyclipper.Area(to_clipper(poly))
-    return area / _SCALE**2  # Convert to float
+    signed = pyclipper.Area(to_clipper(poly))
+    return abs(signed) / _SCALE**2
+
 
 
 def signed_area(poly):
@@ -195,53 +200,26 @@ def scale(vertices:List[Tuple[float, float]], factor: float) -> List[Tuple[float
 
     return vertices
 
-def concave_hull(points, alpha2):
-    pts    = [Point_2(x, y) for x, y in points]
-    ashape = Alpha_shape_2(pts, alpha2, REGULARIZED)
+def concave_hull(points: list[tuple[float, float]], alpha: float) -> list[tuple[float, float]]:
+    """
+    Compute a concave (α-shape) hull of `points` using Shapely ≥2.0.
+    Falls back to the convex hull if concave fails.
+    Returns a closed CCW list of (x,y) coords.
+    """
+    mp = MultiPoint(points)
+    try:
+        # Shapely 2.x exposes .concave_hull
+        hull_poly = mp.concave_hull(alpha)
+        if hull_poly.is_empty or not hasattr(hull_poly, "exterior"):
+            raise ValueError("empty concave hull")
+    except Exception:
+        # fallback to convex hull
+        hull_poly = mp.convex_hull
 
-    # boundary edges are classified REGULAR; SINGULAR can also lie on the boundary
-    boundary_classes = (REGULAR, SINGULAR)
+    # extract and return a closed, CCW list of coords
+    coords = list(hull_poly.exterior.coords)
+    return coords
 
-    edges = [e for e in ashape.alpha_shape_edges()
-             if ashape.classify(e) in boundary_classes]
-
-    if not edges:
-        raise ValueError(
-            f"α‑shape produced no boundary edges for α²={alpha2:.4g} – "
-            "choose a larger radius or verify the point cloud."
-        )
-
-    # CGAL returns edges as pairs of vertex handles
-    # walk the edges to get the boundary polygon
-    from collections import defaultdict, deque
-
-    adj = defaultdict(list)
-    for e in edges:
-        v1, v2 = e[0], e[1]
-        adj[v1].append(v2)
-        adj[v2].append(v1)
-
-    # pick an arbitrary start and trace the boundary
-    start = edges[0][0]
-    hull = deque([start])
-    prev = None
-    while True:
-        cur = hull[-1]
-        nxt_candidates = [v for v in adj[cur] if v is not prev]
-        if not nxt_candidates:          # closed loop?
-            break
-        nxt = nxt_candidates[0]         # deterministic but not necessarily CCW
-        if nxt == start:
-            break
-        hull.append(nxt)
-        prev = cur
-
-    # make sure the polygon is closed and CCW
-    hull.append(start)
-    if signed_area(hull) < 0:  # currently CCW → reverse
-        hull.reverse()
-
-    return [(p.x(), p.y()) for p in hull]
 
 def compute_offset_path(contour: list[tuple[float, float]],
                         allowance: float = 1.0,
