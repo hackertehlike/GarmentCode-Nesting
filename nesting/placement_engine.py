@@ -6,7 +6,18 @@ import numpy as np, scipy.spatial as sps
 import random
 from nesting import utils
 import nesting.config as config
+from shapely.geometry import MultiPoint
+import alphashape
+from shapely.geometry import MultiLineString, Polygon
+from shapely.ops import unary_union, polygonize
+from scipy.spatial import Delaunay, cKDTree
+import numpy as np
 
+
+from shapely.geometry import MultiPoint, MultiLineString
+from shapely.ops import unary_union, polygonize
+from scipy.spatial import Delaunay
+import numpy as np
 
 DECODER_REGISTRY: dict[str, type] = {}
 
@@ -30,6 +41,7 @@ class PlacementEngine():
         self.layout = layout
         self.container = container
         self.placed: list[Piece] = []
+        self._last_hull: Optional[Polygon] = None  # for concave hull utilization
 
     def decode(self):
         pass
@@ -119,23 +131,125 @@ class PlacementEngine():
 
         return self.container.width - max_x
     
+    def alpha_shape(self,
+                    points: list[tuple[float, float]],
+                    trim_ratio: float = 15) -> Polygon:
+        """
+        Compute a true concave hull by:
+        1) Delaunay‐triangulating the point set (including interior samples)
+        2) Discarding any triangle whose longest edge > median_edge * trim_ratio
+        3) Polygonizing remaining triangle edges
+        4) Taking the largest resulting polygon
+        
+        Caches the final hull in self._last_hull.
+        """
+        from shapely.geometry import Point, Polygon
+        from scipy.spatial import Delaunay
+        import numpy as np
+        from shapely.ops import unary_union, polygonize
+        from shapely.geometry import MultiPoint, MultiLineString
+
+        # --- helper to sample a polygon's interior at regular spacing ---
+        def sample_interior(poly: Polygon, spacing: float = 10) -> list[tuple[float,float]]:
+            minx, miny, maxx, maxy = poly.bounds
+            xs = np.arange(minx + spacing/2, maxx, spacing)
+            ys = np.arange(miny + spacing/2, maxy, spacing)
+            pts = []
+            for x in xs:
+                for y in ys:
+                    if poly.contains(Point(x, y)):
+                        pts.append((x, y))
+            return pts
+
+        # --- 1) prepare point cloud: boundary vertices + interior samples ---
+        all_pts = []
+        for piece in self.placed:
+            raw = piece.get_outer_path()
+            # build a translated Polygon
+            poly = Polygon([(x + piece.translation[0], y + piece.translation[1]) for x, y in raw])
+            # 1a) boundary
+            all_pts.extend(poly.exterior.coords)
+            # 1b) interior
+            all_pts.extend(sample_interior(poly, spacing=3))
+
+        pts_arr = np.array(all_pts)
+        if len(pts_arr) < 4:
+            hull = MultiPoint(pts_arr).convex_hull
+            self._last_hull = hull
+            return hull
+
+        # --- 2) Delaunay & edge‐length thresholding ---
+        tri = Delaunay(pts_arr)
+        edge_lengths = []
+        for simplex in tri.simplices:
+            i, j, k = simplex
+            edge_lengths += [
+                np.linalg.norm(pts_arr[i] - pts_arr[j]),
+                np.linalg.norm(pts_arr[j] - pts_arr[k]),
+                np.linalg.norm(pts_arr[k] - pts_arr[i]),
+            ]
+        median_len = float(np.median(edge_lengths))
+        max_edge = median_len * trim_ratio
+        print(f"Delaunay trim: median={median_len:.2f}, threshold={max_edge:.2f}")
+
+        kept = set()
+        for simplex in tri.simplices:
+            i, j, k = simplex
+            lij = np.linalg.norm(pts_arr[i] - pts_arr[j])
+            ljk = np.linalg.norm(pts_arr[j] - pts_arr[k])
+            lki = np.linalg.norm(pts_arr[k] - pts_arr[i])
+            if lij <= max_edge and ljk <= max_edge and lki <= max_edge:
+                kept.update({tuple(sorted((i, j))),
+                            tuple(sorted((j, k))),
+                            tuple(sorted((k, i)))})
+        if not kept:
+            hull = MultiPoint(pts_arr).convex_hull
+            self._last_hull = hull
+            return hull
+
+        # --- 3) build lines, polygonize, pick largest ---
+        lines = [(tuple(pts_arr[i]), tuple(pts_arr[j])) for i, j in kept]
+        mls = MultiLineString(lines)
+        regions = list(polygonize(unary_union(mls)))
+        if not regions:
+            hull = MultiPoint(pts_arr).convex_hull
+            self._last_hull = hull
+            return hull
+
+        merged = unary_union(regions)
+        if hasattr(merged, "geoms"):
+            hull = max(merged.geoms, key=lambda p: p.area)
+        else:
+            hull = merged
+
+        # --- 4) cache and return ---
+        self._last_hull = hull
+        return hull
+
     
-    def concave_hull_utilization(self):
-        flattened_vertices = self._flatten_piece_list()
-        dists, _ = sps.cKDTree(flattened_vertices).query(flattened_vertices, k=2)
-        d = np.median(dists[:,1])
-        alpha = (0.5 * d)**2
+    def concave_hull_utilization(self) -> float:
+        """
+        Returns the ratio of the used area of the concave hull of placed pieces
+        to the area of that hull. Call AFTER decode().
+        """
+        if not self.placed:
+            return 0.0
+        # Flatten all vertices into global coordinates
+        flattened = [(x + piece.translation[0], y + piece.translation[1])
+                     for piece in self.placed
+                     for x, y in piece.get_outer_path()]
+        # Build concave hull
+        hull = self.alpha_shape(flattened)
+        self._last_hull = hull
+        print(f"Concave hull: {hull}")
+        if hull.is_empty:
+            raise ValueError("Concave hull is empty, cannot compute utilization.")
+        hull_area = hull.area
+        print(f"Hull area: {hull_area}")
+        total = sum(utils.polygon_area(p.get_outer_path()) for p in self.placed)
+        print(f"Total area of placed pieces: {total}")
+        return total / hull_area if hull_area > 0 and self.layout_is_valid() else 0.0
 
-        concave_hull = utils.concave_hull(flattened_vertices, alpha)
-        hull_area = utils.polygon_area(concave_hull)
-        print(f"Concave hull area: {hull_area}")
-
-        total_area = sum(
-            utils.polygon_area(piece.get_outer_path())
-            for piece in self.placed
-        )
-
-        return total_area / hull_area if hull_area > 0 else 0
 
     def gravitate(self, piece, x, y, step=config.GRAVITATE_STEP):
         """Slide left as far as possible, then down; repeat until jammed."""
@@ -164,7 +278,7 @@ class PlacementEngine():
             pi  = self.placed[i]
             poly_i = utils._translate_polygon(pi.get_outer_path(), *pi.translation)
 
-            # ① Container bounds
+            # Container bounds
             xs_i, ys_i = zip(*poly_i)
             if (min(xs_i) < 0 or
                 max(xs_i) > self.container.width or
@@ -172,7 +286,7 @@ class PlacementEngine():
                 max(ys_i) > self.container.height):
                 return False
 
-            # ② Pairwise intersections (j > i prevents double checks)
+            # Pairwise intersections (j > i prevents double checks)
             for j in range(i + 1, n):
                 pj = self.placed[j]
                 poly_j = utils._translate_polygon(pj.get_outer_path(), *pj.translation)

@@ -59,6 +59,9 @@ class NestingGUI:
         self.selected_panel: str = ""
         self.selection_mode: bool = False
 
+
+        self.hull_path: ui.element | None = None
+
         self._build_layout()
 
         if pattern_path is not None:
@@ -593,6 +596,29 @@ class NestingGUI:
         element.on("click", lambda e, p=panel_id: self._handle_panel_click(p))
         return element
 
+
+    def _draw_alpha_shape(self, polygon: Polygon, stroke: str = "#ff0000"):
+        if polygon.is_empty:
+            return
+
+        # 1) Delete previous hull if present
+        if self.hull_path is not None:
+            self.hull_path.delete()
+            self.hull_path = None
+
+        # 2) Build the 'd' string in px
+        coords_cm = list(polygon.exterior.coords)
+        coords_px = [(x*self.effective_scale, y*self.effective_scale) for x,y in coords_cm]
+        d = "M " + " L ".join(f"{x:.2f} {y:.2f}" for x,y in coords_px) + " Z"
+
+        # 3) Append new <path> and keep a handle to it
+        with self.scene:
+            self.hull_path = ui.element("path").props(
+                f'd="{d}" '
+                f'stroke="{stroke}" stroke-width="2" '
+                f'fill="none" pointer-events="none"'
+            )
+
     # ---------------------------------------------------------------------------- #
     #               click and drag stuff                                           #
     # ---------------------------------------------------------------------------- #
@@ -802,20 +828,13 @@ class NestingGUI:
             print(f"Utilization: {utilization:.2%}")
             rest_length = decoder.rest_length()
             print(f"Rest length: {rest_length:.2f} cm")
-            try:
-                concave_hull_usage = decoder.concave_hull_utilization()
-            except Exception as err:
-                ui.notify(f"Concave hull utilization skipped: {err}", type="warning")
-                concave_hull_usage = "n/a"
-
+            
             # print(f"Concave hull utilization: {concave_hull_usage:.2%}")
 
             # print(f"Auto placement ({method}) usage:")
             
             self.utilization_label.text = f"Utilization: {utilization:.2%}"
             self.rest_length_label.text = f"Rest length: {rest_length:.2f} cm"
-            if concave_hull_usage != "n/a":
-                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
 
             print(f"Auto placement ({method}) usage: {utilization:.2%}")
             print(f"Rest length: {rest_length:.2f} cm")
@@ -825,6 +844,15 @@ class NestingGUI:
                  print(f"Placing {name} at ({dx:.2f}, {dy:.2f}) cm with rotation {rot}")
 
             await self._apply_placements(placements)
+            try:
+                concave_hull_usage = decoder.concave_hull_utilization()
+                self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
+            except Exception as err:
+                ui.notify(f"Concave hull utilization skipped: {err}", type="warning")
+                concave_hull_usage = "n/a"
+
+            if concave_hull_usage != "n/a":
+                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
 
             ui.notify('Auto placement completed ', type='positive')
 

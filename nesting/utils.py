@@ -200,26 +200,6 @@ def scale(vertices:List[Tuple[float, float]], factor: float) -> List[Tuple[float
 
     return vertices
 
-def concave_hull(points: list[tuple[float, float]], alpha: float) -> list[tuple[float, float]]:
-    """
-    Compute a concave (α-shape) hull of `points` using Shapely ≥2.0.
-    Falls back to the convex hull if concave fails.
-    Returns a closed CCW list of (x,y) coords.
-    """
-    mp = MultiPoint(points)
-    try:
-        # Shapely 2.x exposes .concave_hull
-        hull_poly = mp.concave_hull(alpha)
-        if hull_poly.is_empty or not hasattr(hull_poly, "exterior"):
-            raise ValueError("empty concave hull")
-    except Exception:
-        # fallback to convex hull
-        hull_poly = mp.convex_hull
-
-    # extract and return a closed, CCW list of coords
-    coords = list(hull_poly.exterior.coords)
-    return coords
-
 
 def compute_offset_path(contour: list[tuple[float, float]],
                         allowance: float = 1.0,

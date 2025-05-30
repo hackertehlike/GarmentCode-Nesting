@@ -491,7 +491,7 @@ class Evolution:
             plt.plot(df['generation'], df[col], label=col)
         plt.xlabel("Generation")
         plt.ylabel("Fitness")
-        plt.title("Average & Best Fitness Over Generations")
+        plt.title("Average Fitness Over Generations")
         plt.legend(loc="best")
         plt.tight_layout()
         plt.savefig(self.plot_path)
