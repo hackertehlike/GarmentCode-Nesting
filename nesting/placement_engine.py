@@ -6,18 +6,13 @@ import numpy as np, scipy.spatial as sps
 import random
 from nesting import utils
 import nesting.config as config
-from shapely.geometry import MultiPoint
-import alphashape
-from shapely.geometry import MultiLineString, Polygon
-from shapely.ops import unary_union, polygonize
-from scipy.spatial import Delaunay, cKDTree
-import numpy as np
-
-
-from shapely.geometry import MultiPoint, MultiLineString
+# from shapely.geometry import MultiPoint
+# import alphashape
+from shapely.geometry import Point, Polygon, MultiPoint, MultiLineString
 from shapely.ops import unary_union, polygonize
 from scipy.spatial import Delaunay
 import numpy as np
+
 
 DECODER_REGISTRY: dict[str, type] = {}
 
@@ -131,88 +126,102 @@ class PlacementEngine():
 
         return self.container.width - max_x
     
+    
     def alpha_shape(self,
-                    points: list[tuple[float, float]],
-                    trim_ratio: float = 15) -> Polygon:
+                points: list[tuple[float, float]],
+                *,
+                trim_ratio: float = 7.0,
+                interior_spacing: float = 5.0,
+                boundary_spacing: float = 1.0
+               ) -> Polygon:
         """
-        Compute a true concave hull by:
-        1) Delaunay‐triangulating the point set (including interior samples)
-        2) Discarding any triangle whose longest edge > median_edge * trim_ratio
-        3) Polygonizing remaining triangle edges
-        4) Taking the largest resulting polygon
-        
-        Caches the final hull in self._last_hull.
-        """
-        from shapely.geometry import Point, Polygon
-        from scipy.spatial import Delaunay
-        import numpy as np
-        from shapely.ops import unary_union, polygonize
-        from shapely.geometry import MultiPoint, MultiLineString
+    Concave hull via Delaunay‐trimming, sampling:
+      • A coarse grid inside each piece (interior_spacing cm)
+      • A dense sampling along each piece’s boundary (boundary_spacing cm)
+    """
 
-        # --- helper to sample a polygon's interior at regular spacing ---
-        def sample_interior(poly: Polygon, spacing: float = 10) -> list[tuple[float,float]]:
+        # Ensure spacings are floats
+        interior_spacing = float(interior_spacing)
+        boundary_spacing = float(boundary_spacing)
+
+        # --- nested: sample a polygon’s interior sparsely ---
+        def sample_interior(poly: Polygon) -> list[tuple[float,float]]:
             minx, miny, maxx, maxy = poly.bounds
-            xs = np.arange(minx + spacing/2, maxx, spacing)
-            ys = np.arange(miny + spacing/2, maxy, spacing)
+            # center the grid so we don't start exactly on the boundary
+            xs = np.arange(minx + interior_spacing/2.0, maxx, interior_spacing)
+            ys = np.arange(miny + interior_spacing/2.0, maxy, interior_spacing)
             pts = []
             for x in xs:
                 for y in ys:
                     if poly.contains(Point(x, y)):
-                        pts.append((x, y))
+                        pts.append((float(x), float(y)))
             return pts
 
-        # --- 1) prepare point cloud: boundary vertices + interior samples ---
-        all_pts = []
+        # --- nested: sample a polygon’s exterior at regular intervals ---
+        def sample_boundary(poly: Polygon) -> list[tuple[float,float]]:
+            coords = list(poly.exterior.coords)
+            pts = []
+            for (x0, y0), (x1, y1) in zip(coords, coords[1:]):
+                edge_len = float(np.hypot(x1 - x0, y1 - y0))
+                # compute number of sample points as an integer
+                n_samples = max(int(edge_len / boundary_spacing), 1)
+                for t in np.linspace(0.0, 1.0, n_samples, endpoint=False):
+                    pts.append((float(x0 + t * (x1 - x0)),
+                                float(y0 + t * (y1 - y0))))
+            return pts
+
+        # --- 1) build sampled point cloud over all placed pieces ---
+        all_pts: list[tuple[float, float]] = []
         for piece in self.placed:
             raw = piece.get_outer_path()
-            # build a translated Polygon
-            poly = Polygon([(x + piece.translation[0], y + piece.translation[1]) for x, y in raw])
-            # boundary
-            all_pts.extend(poly.exterior.coords)
-            # interior
-            all_pts.extend(sample_interior(poly, config.INTERIOR_SAMPLE_SPACING))
+            poly = Polygon([(x + piece.translation[0], y + piece.translation[1])
+                            for x, y in raw])
+            # boundary first (dense)
+            all_pts.extend(sample_boundary(poly))
+            # then a few interior points
+            all_pts.extend(sample_interior(poly))
 
-        pts_arr = np.array(all_pts)
-        if len(pts_arr) < 4:
-            hull = MultiPoint(pts_arr).convex_hull
+        pts = np.array(all_pts, dtype=float)
+        if pts.shape[0] < 4:
+            hull = MultiPoint(pts).convex_hull
             self._last_hull = hull
             return hull
 
-        # --- 2) Delaunay & edge‐length thresholding ---
-        tri = Delaunay(pts_arr)
-        edge_lengths = []
+        # --- 2) Delaunay + trim by edge-length ---
+        tri = Delaunay(pts)
+        lengths = []
         for simplex in tri.simplices:
             i, j, k = simplex
-            edge_lengths += [
-                np.linalg.norm(pts_arr[i] - pts_arr[j]),
-                np.linalg.norm(pts_arr[j] - pts_arr[k]),
-                np.linalg.norm(pts_arr[k] - pts_arr[i]),
-            ]
-        median_len = float(np.median(edge_lengths))
-        max_edge = median_len * trim_ratio
-        #print(f"Delaunay trim: median={median_len:.2f}, threshold={max_edge:.2f}")
+            lengths.extend([
+                np.linalg.norm(pts[i] - pts[j]),
+                np.linalg.norm(pts[j] - pts[k]),
+                np.linalg.norm(pts[k] - pts[i]),
+            ])
+        median_len = float(np.median(lengths))
+        max_edge   = median_len * trim_ratio
 
         kept = set()
         for simplex in tri.simplices:
             i, j, k = simplex
-            lij = np.linalg.norm(pts_arr[i] - pts_arr[j])
-            ljk = np.linalg.norm(pts_arr[j] - pts_arr[k])
-            lki = np.linalg.norm(pts_arr[k] - pts_arr[i])
+            lij = np.linalg.norm(pts[i] - pts[j])
+            ljk = np.linalg.norm(pts[j] - pts[k])
+            lki = np.linalg.norm(pts[k] - pts[i])
             if lij <= max_edge and ljk <= max_edge and lki <= max_edge:
-                kept.update({tuple(sorted((i, j))),
-                            tuple(sorted((j, k))),
-                            tuple(sorted((k, i)))})
+                kept.update({
+                    tuple(sorted((i, j))),
+                    tuple(sorted((j, k))),
+                    tuple(sorted((k, i))),
+                })
         if not kept:
-            hull = MultiPoint(pts_arr).convex_hull
+            hull = MultiPoint(pts).convex_hull
             self._last_hull = hull
             return hull
 
-        # --- 3) build lines, polygonize, pick largest ---
-        lines = [(tuple(pts_arr[i]), tuple(pts_arr[j])) for i, j in kept]
-        mls = MultiLineString(lines)
+        # --- 3) polygonize the kept edges ---
+        mls = MultiLineString([ (tuple(pts[i]), tuple(pts[j])) for i,j in kept ])
         regions = list(polygonize(unary_union(mls)))
         if not regions:
-            hull = MultiPoint(pts_arr).convex_hull
+            hull = MultiPoint(pts).convex_hull
             self._last_hull = hull
             return hull
 
@@ -222,9 +231,10 @@ class PlacementEngine():
         else:
             hull = merged
 
-        # --- 4) cache and return ---
+        # --- 4) cache & return ---
         self._last_hull = hull
         return hull
+
 
     
     def concave_hull_utilization(self) -> float:
@@ -239,7 +249,9 @@ class PlacementEngine():
                      for piece in self.placed
                      for x, y in piece.get_outer_path()]
         # Build concave hull
-        hull = self.alpha_shape(flattened, config.HULL_TRIM_RATIO)
+        hull = self.alpha_shape(flattened, trim_ratio=config.HULL_TRIM_RATIO, 
+                                interior_spacing=config.INTERIOR_SAMPLE_SPACING,
+                                boundary_spacing=config.BOUNDARY_SAMPLE_SPACING)
         self._last_hull = hull
         #print(f"Concave hull: {hull}")
         if hull.is_empty:
