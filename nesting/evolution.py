@@ -6,6 +6,7 @@ import random
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+import seaborn as sns
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -33,7 +34,7 @@ class Evolution:
         container: Container,
         num_generations: int = 10,
         population_size: int = 10,
-        elite_population_size: int = 5,
+        #elite_population_size: int = 5,
         mutation_rate: float = 0.2,
         crossover_method: str = "pmx",
         #pmx: bool = True,`
@@ -55,7 +56,7 @@ class Evolution:
         # GA parameters
         self.num_generations = num_generations
         self.population_size = population_size
-        self.elite_population_size = elite_population_size
+        #self.elite_population_size = elite_population_size
         self.mutation_rate = mutation_rate
         self.crossover_method = crossover_method
         #self.pmx = pmx
@@ -79,12 +80,6 @@ class Evolution:
         self.remainder   = population_size - (self.n_elites + self.n_offspring + self.n_mutants + self.n_randoms)
         self.n_mutants  += self.remainder  # put leftovers into mutants
 
-        self._log(
-            f"Evolution initialized with {self.population_size} chromosomes, "
-            f"{self.n_elites} elites, {self.n_offspring} offspring, "
-            f"{self.n_mutants} mutants, {self.n_randoms} randoms.",
-            divider=True
-        )
 
         # run‑state flags
         self.early_stopped: bool = False
@@ -98,6 +93,7 @@ class Evolution:
         self.pop_fitness_history: list[list[float]] = []
         self.mean_offspring_gain: list[float] = []
         self.mean_mutant_gain: list[float] = []
+        self.mutation_perf: dict[str, list[float]] = {}      # per-generation mean gain
 
         ts            = time.strftime("%Y%m%d_%H%M%S")
         log_dir = config.SAVE_LOGS_PATH
@@ -115,15 +111,20 @@ class Evolution:
         self.plot_path      = plots_dir / f"fitness_curves_{ts}.png"
         self.gain_plot_path = plots_dir / f"mean_gains_{ts}.png"
         self.swarm_plot_path = plots_dir / f"fitness_swarm_{ts}.png"
+        self.mut_plot_path  = plots_dir / "mutation_gains.png" 
 
         self.log_lines       : list[str]          = []
         self._metrics_buffer : list[dict[str, float]] = []
         self._all_metrics: list[dict[str, float]] = []
         self._csv_header_done: bool               = False
 
+        self._swarm_df = pd.DataFrame(columns=["generation", "fitness", "origin"])
+        
         self._log(
-            f"Evolution instance created.",
-            divider=True,
+            f"Evolution initialized with {self.population_size} chromosomes, "
+            f"{self.n_elites} elites, {self.n_offspring} offspring, "
+            f"{self.n_mutants} mutants, {self.n_randoms} randoms.",
+            divider=True
         )
     # ------------------------------------------------------------------
     # Logging helper
@@ -203,7 +204,7 @@ class Evolution:
             divider=True
         )
 
-        return viable[: self.elite_population_size]
+        return viable[: self.n_elites]  # return top n_elites chromosomes
 
 
     
@@ -275,9 +276,11 @@ class Evolution:
                         child.calculate_fitness()
                         if config.VERBOSE:
                             self._log(f"Offspring created with fitness: {child.fitness:.4f}")
-                        return child, parent_f, None
+                        child.origin = "offspring"           # NEW
+                        return child, parent_f, None, None   # extra return slot kept for symmetry
                     except Exception as e:
-                        return None, parent_f, e
+                        return None, parent_f, None, e           # 4 values
+
 
                 fut = executor.submit(do_offspring)
                 jobs[fut] = "offspring"
@@ -293,10 +296,11 @@ class Evolution:
                         child.calculate_fitness()
                         if config.VERBOSE:
                             self._log(f"Mutant created with fitness: {child.fitness:.4f}")
-                        return child, parent_f, None
+                        child.origin = "mutant"              # NEW
+                        return child, parent_f, child.last_mutation, None
                     except Exception as e:
-                        return None, parent_f, e
-
+                        return None, parent_f, None, e           # 4 values
+                    
                 fut = executor.submit(do_mutant)
                 jobs[fut] = "mutant"
 
@@ -307,9 +311,9 @@ class Evolution:
                         child = self._generate_random_chromosome()
                         if config.VERBOSE:
                             self._log(f"Random chromosome created with fitness: {child.fitness:.4f}")
-                        return child, 0.0, None
+                        return child, 0.0, None, None        # 4 values
                     except Exception as e:
-                        return None, 0.0, e
+                        return None, 0.0, None, e
 
                 fut = executor.submit(do_random)
                 jobs[fut] = "random"
@@ -318,8 +322,10 @@ class Evolution:
             offspring, mutants, randoms = [], [], []
             off_gains, mut_gains = [], []
 
+            self._log("Collecting results from tasks…")
+
             for fut in as_completed(jobs):
-                child, parent_f, err = fut.result()
+                child, parent_f, op_used, err = fut.result()
                 kind = jobs[fut]
                 if err is not None:
                     self._log(f"‼ {kind} task failed: {err}")
@@ -333,10 +339,15 @@ class Evolution:
                 elif kind == "mutant":
                     mutants.append(child)
                     mut_gains.append(gain)
+                    if op_used is not None:
+                        self.mutation_perf.setdefault(op_used, []).append(gain)
                 else:
                     randoms.append(child)
 
                 new_population.append(child)
+
+            self._log(f"Collected {len(offspring)} offspring, {len(mutants)} mutants, "
+                  f"{len(randoms)} randoms.")
 
         # 5) Compute per-operator stats
         avg_off  = sum(c.fitness for c in offspring) / len(offspring) if offspring else 0.0
@@ -357,6 +368,12 @@ class Evolution:
         self.population = new_population
         self.pop_fitness_history.append([chrom.fitness for chrom in self.population])
         self.generation += 1
+        frame = pd.DataFrame([{
+            "generation": self.generation,
+            "fitness":   c.fitness,
+            "origin":    c.origin or "unknown"
+        } for c in self.population])
+        self._swarm_df = pd.concat([self._swarm_df, frame], ignore_index=True)
 
         best = max(c.fitness for c in new_population)
         delta = best - (self.best_fitness_history[-1] if self.best_fitness_history else best)
@@ -377,8 +394,14 @@ class Evolution:
             'mean_offspring_gain': mean_offspring_gain,
             'mean_mutant_gain': mean_mutant_gain,
         }
+        row_mut = {f"mut_gain_{k}": (sum(v)/len(v) if v else 0.0)
+           for k, v in self.mutation_perf.items()}
+        row.update(row_mut)
+        self.mutation_perf.clear()          # reset for next generation
+
         self._metrics_buffer.append(row)
         self._all_metrics.append(row)
+        
 
         if (len(self._metrics_buffer) >= config.GENERATION_PER_FLUSH
             or self.generation == self.num_generations) and config.SAVE_LOGS:
@@ -499,8 +522,11 @@ class Evolution:
         import pandas as pd
         import matplotlib.pyplot as plt
 
+        self._log("Updating plots…")
+
         df = pd.DataFrame(self._all_metrics)
 
+        self._log(f"Plotting {len(df)} generations of metrics.")
         # ——— Plot 1: fitness curves ———
         plt.figure(figsize=(8,5))
         for col in ['avg_off', 'avg_mut', 'avg_rand', 'best_fit']:
@@ -513,6 +539,8 @@ class Evolution:
         plt.savefig(self.plot_path)
         plt.close()
 
+        self._log(f"Fitness curves plot saved to {self.plot_path}")
+
         # ——— Plot 2: mean gains ———
         plt.figure(figsize=(8,5))
         for col in ['mean_offspring_gain', 'mean_mutant_gain']:
@@ -520,70 +548,100 @@ class Evolution:
         plt.xlabel("Generation")
         plt.ylabel("Mean Gain")
         plt.title("Mean Gains Over Generations")
-        plt.axhline(0, color='gray', linewidth=1)
+        #plt.axhline(0, color='gray', linewidth=1)
         plt.legend(loc="best")
         plt.tight_layout()
         plt.savefig(self.gain_plot_path)
         plt.close()
 
-        # ——— Swarm plot of fitnesses ———
-        plt.figure(figsize=(8,5))
-        plt.scatter(df['generation'], df['best_fit'], alpha=0.5, label='Best Fitness', color='blue')
-        for gen_idx, fitnesses in enumerate(self.pop_fitness_history):
-            x = [gen_idx] * len(fitnesses)
-            plt.scatter(x, fitnesses, alpha=0.6, s=10)
-        plt.xlabel("Generation")
-        plt.ylabel("Fitness")
-        plt.title("Swarm Plot of Fitnesses Over Generations")
-        plt.axhline(0, color='gray', linewidth=1)
-        plt.legend(loc="best")
-        plt.tight_layout()
-        plt.savefig(self.swarm_plot_path)
-        plt.close()
+        self._log(f"Mean gains plot saved to {self.gain_plot_path}")
 
-        self._log(f"Updated plots: {self.plot_path.name}, {self.gain_plot_path.name}, {self.swarm_plot_path.name}")
+        mut_cols = [c for c in df.columns if c.startswith("mut_gain_")]
+        if mut_cols:
+            plt.figure(figsize=(8,5))
+            for col in mut_cols:
+                plt.plot(df['generation'], df[col], marker='o', linestyle='-',
+                        label=col.removeprefix("mut_gain_"))
+            plt.xlabel("Generation")
+            plt.ylabel("Δ Fitness vs parent")
+            plt.title("Average Fitness Gain per Mutation Operator")
+            plt.axhline(0, linewidth=1)
+            plt.legend(loc="best")
+            plt.tight_layout()
+            plt.savefig(self.mut_plot_path)   # overwrite the same file
+            plt.close()
+
+        self._log(f"Mutation gains plot saved to {self.mut_plot_path}")
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        if self._swarm_df.empty:
+            raise ValueError("_swarm_df is empty – nothing to plot")
+
+        # Ensure numeric
+        df = self._swarm_df.copy()
+        df["generation"] = pd.to_numeric(df["generation"], errors="coerce")
+        df["fitness"]    = pd.to_numeric(df["fitness"],    errors="coerce")
+        df = df.dropna(subset=["generation", "fitness", "origin"])
+
+        if df.empty:
+            raise ValueError("All x/y/origin values are NaN or missing – check data collection")
+
+        self._log(f"Swarm plot data: {len(df)} points")
+
+        # Draw the swarmplot
+        sns.swarmplot(
+            data=df,
+            x="generation",
+            y="fitness",
+            hue="origin",
+            ax=ax,
+            size=3,
+            alpha=0.6,
+            dodge=True   # separates the hue levels slightly
+        )
 
 
-    # def analyze_metrics(self) -> None:
-    #     """
-    #     After a run, call this to generate:
-    #      - A PDF with an overview plot and separate per-metric plots
-    #     """
-    #     # 1) build DataFrame
-    #     df = pd.DataFrame(self._all_metrics)    
-    #     # 2) open a PDF and write multiple pages
-        
-    #     # out_dir = Path(config.SAVE_LOGS_PATH)
-    #     self._log(f"Writing metrics report to {self.pdf_path}")
-       
-    #     # create a PDF file in the output directory
-        
-    #     # self._log("Generating metrics report PDF...")
-    #     # log the DataFrame
-    #     self._log(f"Metrics DataFrame:\n{df.head()}", divider=True)
-    #     # create a PdfPages object to write multiple pages
-    #     self.log_dir = Path(config.SAVE_LOGS_PATH)
+        ax.set_xlabel("Generation")
+        ax.set_ylabel("Fitness")
+        ax.set_title("Fitness swarm plot (points jittered), colored by origin")
+        ax.legend(title="Origin", loc="upper left", bbox_to_anchor=(1, 1))
+        fig.tight_layout()
+        fig.savefig(self.swarm_plot_path)
+        plt.close(fig)
 
-    #     with PdfPages(self.pdf_path) as pdf:
-    #         # Overview: all four on one page
-    #         plt.figure()
-    #         for col in ['avg_mut', 'avg_off', 'avg_rand', 'best_fit']:
-    #             plt.plot(df['generation'], df[col], label=col)
-    #         plt.xlabel('Generation')
-    #         plt.ylabel('Value')
-    #         plt.title('GA Metrics Overview')
-    #         plt.legend()
-    #         pdf.savefig()
-    #         plt.close()
+        # ——— Plot 4: density swarm ———
+        # fig, ax = plt.subplots(figsize=(10, 6))
+        # if self._swarm_df.empty:
+        #     raise ValueError("_swarm_df is empty – nothing to plot")
 
-    #         # One page per metric
-    #         # for col in ['avg_mut', 'avg_off', 'avg_rand', 'best_fit']:
-    #         #     plt.figure()
-    #         #     plt.plot(df['generation'], df[col])
-    #         #     plt.xlabel('Generation')
-    #         #     plt.ylabel(col)
-    #         #     plt.title(f'{col} over Generations')
-    #         #     pdf.savefig()
-    #         #     plt.close()
+        # # ensure numeric
+        # df = self._swarm_df.copy()
+        # df["generation"] = pd.to_numeric(df["generation"], errors="coerce")
+        # df["fitness"]    = pd.to_numeric(df["fitness"],    errors="coerce")
+        # mask = df["generation"].notna() & df["fitness"].notna()
+        # df = df.loc[mask]
 
-    #     print(f"✅ Metrics report written to {self.pdf_path}")
+        # if df.empty:
+        #     raise ValueError("All x/y values are NaN – check data collection")
+
+        # # Draw swarmplot: one “swarm” per generation, colored by origin
+        # sns.swarmplot(
+        #     data=df,
+        #     x="generation",
+        #     y="fitness",
+        #     hue="origin",
+        #     ax=ax,
+        #     size=3,
+        #     alpha=0.6
+        # )
+
+        # ax.set_xlabel("Generation")
+        # ax.set_ylabel("Fitness")
+        # ax.set_title("Fitness swarm plot (points jittered), colored by origin")
+        # ax.legend(title="Origin", loc="upper left", bbox_to_anchor=(1, 1))
+        # fig.tight_layout()
+        # fig.savefig(self.swarm_plot_path)
+        # plt.close(fig)
+
+
+        self._log("Updated plots – including per-operator gains & coloured swarm.")

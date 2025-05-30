@@ -21,8 +21,8 @@ SELECTED_CROSSOVER      : CrossoverName = "ox1k"
 GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 100
-NUM_GENERATIONS       = 100
+POPULATION_SIZE       = 10
+NUM_GENERATIONS       = 2
 MUTATION_RATE         = 0.1
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
