@@ -17,9 +17,12 @@ SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"
 SELECTED_CROSSOVER      : CrossoverName = "ox1k"
 
 
+# ——— concave hull —————————————————————————————————————
+HULL_TRIM_RATIO = 18 # higher number -> more convex
+INTERIOR_SAMPLE_SPACING = 1.5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
 
 # ——— sampling (path extractor) —————————————————————————————————————
-SAMPLES_PER_EDGE  = 5
+SAMPLES_PER_EDGE  = 10
 ENABLE_ROTATIONS  = True
 ALLOWED_ROTATIONS = [0, 90, 180, 270]
 

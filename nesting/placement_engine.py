@@ -167,10 +167,10 @@ class PlacementEngine():
             raw = piece.get_outer_path()
             # build a translated Polygon
             poly = Polygon([(x + piece.translation[0], y + piece.translation[1]) for x, y in raw])
-            # 1a) boundary
+            # boundary
             all_pts.extend(poly.exterior.coords)
-            # 1b) interior
-            all_pts.extend(sample_interior(poly, spacing=3))
+            # interior
+            all_pts.extend(sample_interior(poly, config.INTERIOR_SAMPLE_SPACING))
 
         pts_arr = np.array(all_pts)
         if len(pts_arr) < 4:
@@ -190,7 +190,7 @@ class PlacementEngine():
             ]
         median_len = float(np.median(edge_lengths))
         max_edge = median_len * trim_ratio
-        print(f"Delaunay trim: median={median_len:.2f}, threshold={max_edge:.2f}")
+        #print(f"Delaunay trim: median={median_len:.2f}, threshold={max_edge:.2f}")
 
         kept = set()
         for simplex in tri.simplices:
@@ -239,15 +239,15 @@ class PlacementEngine():
                      for piece in self.placed
                      for x, y in piece.get_outer_path()]
         # Build concave hull
-        hull = self.alpha_shape(flattened)
+        hull = self.alpha_shape(flattened, config.HULL_TRIM_RATIO)
         self._last_hull = hull
-        print(f"Concave hull: {hull}")
+        #print(f"Concave hull: {hull}")
         if hull.is_empty:
             raise ValueError("Concave hull is empty, cannot compute utilization.")
         hull_area = hull.area
-        print(f"Hull area: {hull_area}")
+        #print(f"Hull area: {hull_area}")
         total = sum(utils.polygon_area(p.get_outer_path()) for p in self.placed)
-        print(f"Total area of placed pieces: {total}")
+        #print(f"Total area of placed pieces: {total}")
         return total / hull_area if hull_area > 0 and self.layout_is_valid() else 0.0
 
 
