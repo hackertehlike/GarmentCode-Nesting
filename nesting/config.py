@@ -21,8 +21,8 @@ SELECTED_CROSSOVER      : CrossoverName = "ox1k"
 GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 10
-NUM_GENERATIONS       = 2
+POPULATION_SIZE       = 100
+NUM_GENERATIONS       = 100
 MUTATION_RATE         = 0.1
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
@@ -45,7 +45,7 @@ MUTATION_WEIGHTS = {
 
 
 # dynamic stopping and extension for GA
-ENABLE_DYNAMIC_STOPPING: bool = True
+ENABLE_DYNAMIC_STOPPING: bool = False
 EARLY_STOP_WINDOW: int         = 10
 EARLY_STOP_TOLERANCE: float    = 1e-4
 ENABLE_EXTENSION: bool         = True
@@ -57,12 +57,14 @@ GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 # log
 SAVE_LOGS = True
 SAVE_LOGS_PATH = "nesting/run_logs"
-LOG_TIME = False
+LOG_TIME = True
 
 # ——— concave hull —————————————————————————————————————
 HULL_TRIM_RATIO = 10 # higher number -> more convex
 INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
 BOUNDARY_SAMPLE_SPACING = 3 # how many cm between sampled boundary points, tradeoff between speed and accuracy of the hull
+SNAP_TOLERANCE = 10 # how close points must be to snap to the hull, in cm
+
 
 # ——— sampling (path extractor) —————————————————————————————————————
 SAMPLES_PER_EDGE  = 10

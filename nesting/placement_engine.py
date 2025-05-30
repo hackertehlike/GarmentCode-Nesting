@@ -253,7 +253,65 @@ class PlacementEngine():
             full_hull = MultiPoint(pts).convex_hull
             hull = unary_union([hull, full_hull])
 
-        self._last_hull = hull #cache
+        # # Snap vertices close to container boundaries and insert corner points
+        tol = config.SNAP_TOLERANCE
+        w, h = self.container.width, self.container.height
+        coords = list(hull.exterior.coords)
+        snapped: list[tuple[float, float]] = []
+        n = len(coords)
+
+        def is_on_horiz(pt: tuple[float, float]) -> bool:
+            return abs(pt[1]) < tol or abs(pt[1] - h) < tol
+
+        def is_on_vert(pt: tuple[float, float]) -> bool:
+            return abs(pt[0]) < tol or abs(pt[0] - w) < tol
+
+        for i, (x, y) in enumerate(coords):
+            prev = coords[i - 1]
+            nxt  = coords[(i + 1) % n]
+
+            # snap X coordinate
+            if abs(x) < tol or (abs(prev[0]) < tol and abs(nxt[0]) < tol):
+                x = 0.0
+            elif abs(x - w) < tol or (abs(prev[0] - w) < tol and abs(nxt[0] - w) < tol):
+                x = w
+
+            # snap Y coordinate
+            if abs(y) < tol or (abs(prev[1]) < tol and abs(nxt[1]) < tol):
+                y = 0.0
+            elif abs(y - h) < tol or (abs(prev[1] - h) < tol and abs(nxt[1] - h) < tol):
+                y = h
+
+            curr = (x, y)
+            snapped.append(curr)
+
+            # Prepare snapped version of next for corner decision:
+            x2, y2 = coords[(i + 1) % n]
+            if abs(x2) < tol:
+                x2 = 0.0
+            elif abs(x2 - w) < tol:
+                x2 = w
+            if abs(y2) < tol:
+                y2 = 0.0
+            elif abs(y2 - h) < tol:
+                y2 = h
+            nxt_snapped = (x2, y2)
+
+            # If one is on horizontal boundary and the other on vertical, insert corner
+            if (is_on_horiz(curr) and is_on_vert(nxt_snapped)) or \
+               (is_on_vert(curr)  and is_on_horiz(nxt_snapped)):
+                # x from the vertical‐on point, y from the horizontal‐on point
+                corner = (
+                    curr[0] if is_on_vert(curr) else nxt_snapped[0],
+                    curr[1] if is_on_horiz(curr) else nxt_snapped[1]
+                )
+                # Only insert if it’s not already identical to last snapped
+                if corner not in snapped:
+                    snapped.append(corner)
+
+        # Rebuild hull from the augmented vertex list
+        hull = Polygon(snapped)
+        self._last_hull = hull
         return hull
 
 
