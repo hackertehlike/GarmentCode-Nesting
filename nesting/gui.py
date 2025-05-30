@@ -91,7 +91,7 @@ class NestingGUI:
         """Build the sidebar with style parameters."""
 
         # print the design parameters to the console
-        print("Design parameters:", self.design_params)
+        # print("Design parameters:", self.design_params)
 
         def _iter_leaf_params(node: dict, prefix: str = ''):
             GATES = {'style', 'sleeveless', 'type'}
@@ -276,7 +276,7 @@ class NestingGUI:
                     for k in list(cuff.keys()):
                         cuff.pop(k)
 
-        print("dp:", dp)
+        #print("dp:", dp)
         return dp
 
 
@@ -386,17 +386,17 @@ class NestingGUI:
 
         self.layout = Layout(self.pieces)
 
-        # Add first set of copies with updated ids
-        # for piece in panel_pieces.values():
-        #     copy1 = copy.deepcopy(piece)
-        #     copy1.id = f"{piece.id}_copy1"
-        #     self.pieces[copy1.id] = copy1
-        # # Add second set of copies with updated ids
-        # for piece in panel_pieces.values():
-        #     copy2 = copy.deepcopy(piece)
-        #     copy2.id = f"{piece.id}_copy2"
-        #     self.pieces[copy2.id] = copy2
-        #print all the pieces
+        num_copies = config.NUM_COPIES
+        for i in range(num_copies):
+            # Add copies of each piece with updated ids
+            for piece in panel_pieces.values():
+                copy_piece = copy.deepcopy(piece)
+                copy_piece.id = f"{piece.id}_copy{i+1}"
+                self.pieces[copy_piece.id] = copy_piece
+
+        print(f"Loaded {num_copies+1} copies, {len(self.pieces)} pieces in total.")
+
+        # print all the pieces
         # for piece_id, piece in self.pieces.items():
         #     print(f"Loaded piece: {piece_id} with translation {piece.translation} and rotation {piece.rotation}")
         self._rebuild_panel_outlines()
@@ -452,7 +452,7 @@ class NestingGUI:
         """
         sa = self.seam_allowance_cm
         for piece in self.pieces.values():
-            print("adding seam to: ", piece)
+            #print("adding seam to: ", piece)
             piece.add_seam_allowance(sa)
             piece.translation = (0, 0)  # reset translation
 
@@ -748,7 +748,7 @@ class NestingGUI:
         # self._draw_outlines()
 
         # print("Outlines drawn")
-        print(len(self.pieces), "pieces loaded")
+        # print(len(self.pieces), "pieces loaded")
 
         cm_to_px = self.effective_scale          # 1 cm → this many CSS‑pixels
         for name, dx_cm, dy_cm, rotation in placements_cm:
@@ -851,8 +851,8 @@ class NestingGUI:
             print(f"Rest length: {rest_length:.2f} cm")
 
             # print placements
-            for name, dx, dy, rot in placements:
-                 print(f"Placing {name} at ({dx:.2f}, {dy:.2f}) cm with rotation {rot}")
+            # for name, dx, dy, rot in placements:
+            #      print(f"Placing {name} at ({dx:.2f}, {dy:.2f}) cm with rotation {rot}")
 
             await self._apply_placements(placements)
             try:

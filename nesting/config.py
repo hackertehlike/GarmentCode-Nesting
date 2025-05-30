@@ -21,14 +21,14 @@ SELECTED_CROSSOVER      : CrossoverName = "ox1k"
 GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 20
-NUM_GENERATIONS       = 1
+POPULATION_SIZE       = 100
+NUM_GENERATIONS       = 100
 MUTATION_RATE         = 0.1
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
     "elites": 0.1,  # weight for elite population
-    "offspring": 0.4,  # weight for offspring population
-    "mutants": 0.2,  # weight for mutants population
+    "offspring": 0.2,  # weight for offspring population
+    "mutants": 0.4,  # weight for mutants population
     "randoms": 0.3,  # weight for random population
 }
 
@@ -46,7 +46,7 @@ MUTATION_WEIGHTS = {
 
 # dynamic stopping and extension for GA
 ENABLE_DYNAMIC_STOPPING: bool = True
-EARLY_STOP_WINDOW: int         = 20
+EARLY_STOP_WINDOW: int         = 10
 EARLY_STOP_TOLERANCE: float    = 1e-4
 ENABLE_EXTENSION: bool         = True
 EXTEND_WINDOW: int             = 10
@@ -59,7 +59,6 @@ SAVE_LOGS = True
 SAVE_LOGS_PATH = "nesting/run_logs"
 LOG_TIME = False
 
-
 # ——— concave hull —————————————————————————————————————
 HULL_TRIM_RATIO = 10 # higher number -> more convex
 INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
@@ -71,8 +70,9 @@ ENABLE_ROTATIONS  = True
 ALLOWED_ROTATIONS = [0, 90, 180, 270]
 
 
-# gui / layout / container settings
+# GUI STUFF
 SAMPLES_PER_EDGE = 5
+NUM_COPIES = 0
 
 CONTAINER_WIDTH_CM  = 500
 CONTAINER_HEIGHT_CM = 500.0

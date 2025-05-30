@@ -132,11 +132,11 @@ class Piece:
         if not contour or len(contour) < 3:
             raise ValueError("Piece has no inner path to offset.")
 
-        print(f"Adding seam allowance of {allowance} to piece {self.id}")
+        #print(f"Adding seam allowance of {allowance} to piece {self.id}")
         new_outer = utils.compute_offset_path(contour, allowance)
         self.outer_path = new_outer
         self.update_bbox()
-        print(f"Piece {self.id} outer path updated with seam allowance")
+        #print(f"Piece {self.id} outer path updated with seam allowance")
 
     def reset_rotation(self) -> None:
         """

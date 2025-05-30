@@ -50,12 +50,16 @@ def fitness_rest_length(chromosome, decoder: str):
     return dec.rest_length()
 class Chromosome(Layout):
     
-    def __init__(self, pieces: list[Piece], container: Container):
+    def __init__(self, pieces: list[Piece], container: Container, origin: str = "random"):
         # deep-copy once, store as list
         self._genes = [copy.deepcopy(p) for p in pieces]
         self.container = container
         self.fitness = None
         #self.calculate_fitness()
+
+
+        self.origin: str | None = origin          # NEW – who created me?
+        self.last_mutation: str | None = None     # NEW – which operator last ran?
 
     @property
     def genes(self) -> list[Piece]:
@@ -91,6 +95,7 @@ class Chromosome(Layout):
         mutation_types, weights = zip(*config.MUTATION_WEIGHTS.items())
 
         mutation = random.choices(mutation_types, weights=weights, k=1)[0]
+        self.last_mutation = mutation             
         #print(f"Selected mutation type: {mutation}")
 
         n = len(self.genes)

@@ -253,7 +253,6 @@ class PlacementEngine():
             full_hull = MultiPoint(pts).convex_hull
             hull = unary_union([hull, full_hull])
 
-
         self._last_hull = hull #cache
         return hull
 
@@ -482,7 +481,7 @@ class NFPDecoder(PlacementEngine):
                                           (x_translated == best_x and y_translated < best_y)):
                     
                         # check if we are intersecting with other placed pieces
-                        self.num_comparisons += 1
+                        #self.num_comparisons += 1
                         if self._fits(piece, x_translated, y_translated):
                             # update the best position
                             best_x = x_translated

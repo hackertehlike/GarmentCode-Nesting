@@ -79,6 +79,13 @@ class Evolution:
         self.remainder   = population_size - (self.n_elites + self.n_offspring + self.n_mutants + self.n_randoms)
         self.n_mutants  += self.remainder  # put leftovers into mutants
 
+        self._log(
+            f"Evolution initialized with {self.population_size} chromosomes, "
+            f"{self.n_elites} elites, {self.n_offspring} offspring, "
+            f"{self.n_mutants} mutants, {self.n_randoms} randoms.",
+            divider=True
+        )
+
         # run‑state flags
         self.early_stopped: bool = False
         self.extended_generations: int = 0
@@ -88,8 +95,9 @@ class Evolution:
         self.avg_child_fitnesses: list[float] = []
         self.best_fitness_history: list[float] = []
         self.delta_best: list[float] = []
-        #self.mean_offspring_gain: list[float] = []
-        #self.mean_mutant_gain: list[float] = []
+        self.pop_fitness_history: list[list[float]] = []
+        self.mean_offspring_gain: list[float] = []
+        self.mean_mutant_gain: list[float] = []
 
         ts            = time.strftime("%Y%m%d_%H%M%S")
         log_dir = config.SAVE_LOGS_PATH
@@ -100,11 +108,13 @@ class Evolution:
         
         self.log_path = Path(log_dir) / f"evolution_log_{ts}.txt"
         self.csv_path   = Path(log_dir) / f"evolution_metrics_{ts}.csv"
-        #self.pdf_path   = Path(log_dir) / f"evolution_metrics_report_{ts}.pdf"
+        
         plots_dir = Path(log_dir) / "plots"
         plots_dir.mkdir(exist_ok=True)
+
         self.plot_path      = plots_dir / f"fitness_curves_{ts}.png"
         self.gain_plot_path = plots_dir / f"mean_gains_{ts}.png"
+        self.swarm_plot_path = plots_dir / f"fitness_swarm_{ts}.png"
 
         self.log_lines       : list[str]          = []
         self._metrics_buffer : list[dict[str, float]] = []
@@ -149,7 +159,8 @@ class Evolution:
         #chrom.sync_order()
         chrom.calculate_fitness()
 
-        #self._log(f"Random chromosome generated with fitness: {chrom.fitness:.4f}")
+        if config.VERBOSE:
+            self._log(f"Random chromosome generated with fitness: {chrom.fitness:.4f}")
         return chrom
 
     def generate_population(self) -> None:
@@ -162,6 +173,8 @@ class Evolution:
                 self.population = [f.result() for f in futures]
         else:
             self.population = [self._generate_random_chromosome() for _ in range(self.population_size)]
+
+        self.pop_fitness_history.append([chrom.fitness for chrom in self.population])
             
         self._log(f"Initial population of {self.population_size} layouts generated.", divider=True)
         for i, chrom in enumerate(self.population):
@@ -332,6 +345,8 @@ class Evolution:
 
         mean_offspring_gain = sum(off_gains) / len(off_gains) if off_gains else 0.0
         mean_mutant_gain    = sum(mut_gains) / len(mut_gains) if mut_gains else 0.0
+        self.mean_offspring_gain.append(mean_offspring_gain)
+        self.mean_mutant_gain.append(mean_mutant_gain)
 
         self._log(
             f"Avg offspring gain vs parent: {mean_offspring_gain:+.4f};"
@@ -340,6 +355,7 @@ class Evolution:
 
         # 6) Finalize
         self.population = new_population
+        self.pop_fitness_history.append([chrom.fitness for chrom in self.population])
         self.generation += 1
 
         best = max(c.fitness for c in new_population)
@@ -510,7 +526,22 @@ class Evolution:
         plt.savefig(self.gain_plot_path)
         plt.close()
 
-        self._log(f"Updated plots: {self.plot_path.name}, {self.gain_plot_path.name}")
+        # ——— Swarm plot of fitnesses ———
+        plt.figure(figsize=(8,5))
+        plt.scatter(df['generation'], df['best_fit'], alpha=0.5, label='Best Fitness', color='blue')
+        for gen_idx, fitnesses in enumerate(self.pop_fitness_history):
+            x = [gen_idx] * len(fitnesses)
+            plt.scatter(x, fitnesses, alpha=0.6, s=10)
+        plt.xlabel("Generation")
+        plt.ylabel("Fitness")
+        plt.title("Swarm Plot of Fitnesses Over Generations")
+        plt.axhline(0, color='gray', linewidth=1)
+        plt.legend(loc="best")
+        plt.tight_layout()
+        plt.savefig(self.swarm_plot_path)
+        plt.close()
+
+        self._log(f"Updated plots: {self.plot_path.name}, {self.gain_plot_path.name}, {self.swarm_plot_path.name}")
 
 
     # def analyze_metrics(self) -> None:
