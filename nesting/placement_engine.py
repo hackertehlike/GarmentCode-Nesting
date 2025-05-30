@@ -80,8 +80,9 @@ class PlacementEngine():
         return start_x, start_y
     
     def usage_BB(self):
-        """ Returns the ratio of the used area of the bounding box of the placed pieces
-        to the area of the bounding box.
+        """
+        Returns the ratio of the used area of the bounding box of placed pieces
+        to the area of that bounding box.
 
         Call AFTER decode() to get the correct values.
         """
@@ -114,7 +115,8 @@ class PlacementEngine():
 
 
     def rest_length(self):
-        """ Returns the length of the rest of the container that is not used by the pieces.
+        """
+        Returns the length of the rest of the container that is not used by the pieces.
         Call AFTER decode() to get the correct values.
         """
         # the rightmost x coordinate of the bounding box
@@ -135,16 +137,23 @@ class PlacementEngine():
                 boundary_spacing: float = 1.0
                ) -> Polygon:
         """
-    Concave hull via Delaunay‐trimming, sampling:
-      • A coarse grid inside each piece (interior_spacing cm)
-      • A dense sampling along each piece’s boundary (boundary_spacing cm)
-    """
+        Compute the concave hull of a set of points using the alpha shape algorithm.
+        Args:
+            points (list[tuple[float, float]]): List of points to form the concave hull.
+            trim_ratio (float): Ratio to trim the edges of the Delaunay triangulation.
+            interior_spacing (float): Spacing for sampling points in the interior of the polygon.
+            boundary_spacing (float): Spacing for sampling points along the boundary of the polygon.
+        Returns:
+            Polygon: The concave hull of the points.
+        Raises:
+            ValueError: If the points list is empty or contains fewer than 4 points.
+        """
 
         # Ensure spacings are floats
         interior_spacing = float(interior_spacing)
         boundary_spacing = float(boundary_spacing)
 
-        # --- nested: sample a polygon’s interior sparsely ---
+        # --- helper: sample a polygon’s interior ---
         def sample_interior(poly: Polygon) -> list[tuple[float,float]]:
             minx, miny, maxx, maxy = poly.bounds
             # center the grid so we don't start exactly on the boundary
@@ -157,7 +166,7 @@ class PlacementEngine():
                         pts.append((float(x), float(y)))
             return pts
 
-        # --- nested: sample a polygon’s exterior at regular intervals ---
+        # --- helper: sample a polygon’s exterior ---
         def sample_boundary(poly: Polygon) -> list[tuple[float,float]]:
             coords = list(poly.exterior.coords)
             pts = []
@@ -170,7 +179,7 @@ class PlacementEngine():
                                 float(y0 + t * (y1 - y0))))
             return pts
 
-        # --- 1) build sampled point cloud over all placed pieces ---
+        # --- build sampled point cloud over all placed pieces ---
         all_pts: list[tuple[float, float]] = []
         for piece in self.placed:
             raw = piece.get_outer_path()
@@ -187,7 +196,7 @@ class PlacementEngine():
             self._last_hull = hull
             return hull
 
-        # --- 2) Delaunay + trim by edge-length ---
+        # --- Delaunay + trim by edge-length ---
         tri = Delaunay(pts)
         lengths = []
         for simplex in tri.simplices:
@@ -217,7 +226,7 @@ class PlacementEngine():
             self._last_hull = hull
             return hull
 
-        # --- 3) polygonize the kept edges ---
+        # --- polygonize the kept edges ---
         mls = MultiLineString([ (tuple(pts[i]), tuple(pts[j])) for i,j in kept ])
         regions = list(polygonize(unary_union(mls)))
         if not regions:
@@ -231,8 +240,7 @@ class PlacementEngine():
         else:
             hull = merged
 
-        # --- 4) cache & return ---
-        self._last_hull = hull
+        self._last_hull = hull #cache
         return hull
 
 
@@ -323,7 +331,6 @@ class BottomLeftDecoder(PlacementEngine):
             # piece.rotate(piece.rotation)
 
         return [(p.id, *p.translation, p.rotation) for p in self.placed]
-    
 
 @register_decoder("Greedy")
 
@@ -337,9 +344,6 @@ class GreedyBLDecoder(BottomLeftDecoder):
 
         # Update layout.order with the sorted list
         self.layout.order = dict(sorted_pieces)
-        # print (f"Sorted pieces by area: {[p.id for p in pieces]}")
-        # self.container = container
-        # self.placed = []
 
 @register_decoder("Random")
 class RandomDecoder(PlacementEngine):
@@ -380,6 +384,7 @@ class NFPDecoder(PlacementEngine):
         # self.placed = []  # (piece, x, y)
         self.container = container
         self._nfp_cache = {}
+        
 
     def decode(self):
        # go in layout order
@@ -417,16 +422,16 @@ class NFPDecoder(PlacementEngine):
             the best position for the piece. If no valid position is found, 
             returns (None, None).
         """
+
+
         best_x, best_y = None, None
 
         # get inner fit rectangle
         # for the piece in the container
-        # print (f"Piece {piece.id} finding best position")
-        # inner_fit = utils.inner_fit_rectangle(self.container, piece)
+        
         inner_fit = self.container.inner_fit_rectangle(piece)
-        # print("inner fit rectangle: ", inner_fit)
+
         if not inner_fit:
-            # print(f"Piece {piece.id} has no ifr")
             return None, None
 
         # iterate over nfps all previously placed pieces
@@ -463,6 +468,7 @@ class NFPDecoder(PlacementEngine):
                                           (x_translated == best_x and y_translated < best_y)):
                     
                         # check if we are intersecting with other placed pieces
+                        self.num_comparisons += 1
                         if self._fits(piece, x_translated, y_translated):
                             # update the best position
                             best_x = x_translated
@@ -484,6 +490,9 @@ class NFPDecoder(PlacementEngine):
 
 
     def _nfp(self, stationary, moving):
+        """
+        Returns the no-fit polygon (NFP) between two pieces.
+        """
         key = (stationary.id, moving.id)
         if key not in self._nfp_cache:
             self._nfp_cache[key] = utils.no_fit_polygon(stationary.get_outer_path(),
