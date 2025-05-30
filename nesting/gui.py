@@ -200,7 +200,18 @@ class NestingGUI:
         pe.placed = list(layout_cm.order.values())      # mark everything “placed”
 
         util = pe.usage_BB()
-        print(f"Calculated utilisation (current layout): {util:.2%}")
+        rest_length = pe.rest_length()
+        concave_hull_usage = pe.concave_hull_utilization()
+        concave_hull = pe.concave_hull_polygon
+        self._draw_alpha_shape(concave_hull)
+        # print(f"Calculated utilisation (current layout): {util:.2%}")
+        # print(f"Calculated rest length (current layout): {rest_length:.2f} cm")
+        # print(f"Calculated concave hull utilisation (current layout): {concave_hull_usage:.2%}")
+        # update labels
+        self.utilization_label.text = f"Utilization: {util:.2%}"
+        self.rest_length_label.text = f"Rest length: {rest_length:.2f} cm"
+        self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
+
         return util
 
 

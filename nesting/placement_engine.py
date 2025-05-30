@@ -41,6 +41,11 @@ class PlacementEngine():
     def decode(self):
         pass
 
+    @property
+    def concave_hull_polygon(self) -> Optional[Polygon]:
+        """Return the last computed concave hull, if any."""
+        return self._last_hull
+
     def _fits(self, piece: Piece, dx: float, dy: float) -> bool:
         """Return True iff piece can be put at (dx, dy) [cm]"""
         poly = utils._translate_polygon(piece.get_outer_path(), dx, dy)
@@ -181,6 +186,7 @@ class PlacementEngine():
 
         # --- build sampled point cloud over all placed pieces ---
         all_pts: list[tuple[float, float]] = []
+        centroids = []
         for piece in self.placed:
             raw = piece.get_outer_path()
             poly = Polygon([(x + piece.translation[0], y + piece.translation[1])
@@ -189,6 +195,7 @@ class PlacementEngine():
             all_pts.extend(sample_boundary(poly))
             # then a few interior points
             all_pts.extend(sample_interior(poly))
+            centroids.append(poly.centroid.coords[0])
 
         pts = np.array(all_pts, dtype=float)
         if pts.shape[0] < 4:
@@ -239,6 +246,13 @@ class PlacementEngine():
             hull = max(merged.geoms, key=lambda p: p.area)
         else:
             hull = merged
+
+        missing = [c for c in centroids if not hull.contains(Point(c))]
+        if missing:
+            # at least one centroid got cut off ⇒ merge with global convex hull
+            full_hull = MultiPoint(pts).convex_hull
+            hull = unary_union([hull, full_hull])
+
 
         self._last_hull = hull #cache
         return hull
@@ -361,16 +375,16 @@ class RandomDecoder(PlacementEngine):
         self.rotations_on = rotations_on
 
     def decode(self):
-        # 1) optional random rotations
+        # optional random rotations
         if self.rotations_on:
             for p in self.layout.order.values():
                 p.rotate(random.choice(config.ALLOWED_ROTATIONS))
 
-        # 2) bottom-left place on *this* layout
+        # bottom-left place on *this* layout
         bl = BottomLeftDecoder(self.layout, self.container, step=config.GRAVITATE_STEP)
         placements = bl.decode()
 
-        # 3) mirror the placed list so that usage_BB() sees it
+        # mirror the placed list so that usage_BB() sees it
         self.placed = bl.placed
 
         return placements
