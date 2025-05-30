@@ -260,7 +260,7 @@ class Evolution:
                         if random.random() < self.mutation_rate:
                             child.mutate()
                         child.calculate_fitness()
-                        if self.config.VERBOSE:
+                        if config.VERBOSE:
                             self._log(f"Offspring created with fitness: {child.fitness:.4f}")
                         return child, parent_f, None
                     except Exception as e:
@@ -278,7 +278,7 @@ class Evolution:
                         child = copy.deepcopy(parent)
                         child.mutate()
                         child.calculate_fitness()
-                        if self.config.VERBOSE:
+                        if config.VERBOSE:
                             self._log(f"Mutant created with fitness: {child.fitness:.4f}")
                         return child, parent_f, None
                     except Exception as e:
@@ -292,7 +292,7 @@ class Evolution:
                 def do_random():
                     try:
                         child = self._generate_random_chromosome()
-                        if self.config.VERBOSE:
+                        if config.VERBOSE:
                             self._log(f"Random chromosome created with fitness: {child.fitness:.4f}")
                         return child, 0.0, None
                     except Exception as e:
@@ -446,8 +446,6 @@ class Evolution:
         self._log("Evolution completed.", divider=True)
         end = time.time()
         self._log(f"Total time: {end - start:.2f} seconds")
-
-        self.analyze_metrics()
 
         if config.SAVE_LOGS:
             self._flush_log()  
