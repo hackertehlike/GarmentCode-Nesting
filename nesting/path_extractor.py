@@ -8,7 +8,7 @@ from pygarment.pattern.core import BasicPattern
 from nesting import utils
 from nesting import layout
 from nesting.layout import Piece
-
+from svgpathtools import Line
 
 class PatternPathExtractor(BasicPattern):
     """
@@ -41,11 +41,8 @@ class PatternPathExtractor(BasicPattern):
         # unaffected by the reflection, so keep them as they are.
         return base_curve
 
+    
     def _get_panel_outline(self, panel_name, samples_per_edge=10):
-        """
-        Returns the Piece object representing the given panel as a list of [x, y] points,
-        shifted so that its top-left vertex becomes (0,0).
-        """
         panel = self.pattern['panels'][panel_name]
         vertices = panel['vertices']
         outline = []
@@ -53,9 +50,17 @@ class PatternPathExtractor(BasicPattern):
         for edge in panel['edges']:
             curve = self._edge_as_curve(vertices, edge)
 
-            if not outline:
+            # If it's a straight‐line segment, only add start and end:
+            if isinstance(curve, Line):
                 p0 = curve.point(0)
+                p1 = curve.point(1)
                 outline.append([p0.real, -p0.imag])
+                outline.append([p1.real, -p1.imag])
+                continue
+
+            # Otherwise (Arc, CubicBezier, QuadraticBezier), sample normally:
+            p0 = curve.point(0)
+            outline.append([p0.real, -p0.imag])
 
             for t in np.linspace(0, 1, samples_per_edge, endpoint=False)[1:]:
                 p = curve.point(t)
@@ -64,26 +69,12 @@ class PatternPathExtractor(BasicPattern):
             p1 = curve.point(1)
             outline.append([p1.real, -p1.imag])
 
-        # shift the outline so that its TOP LEFT vertex of the bounding box is at (0,0)
-        # consistent with the canvas coordinate system
-        # xs = [pt[0] for pt in outline]
-        # ys = [pt[1] for pt in outline]
-        # min_x = float(min(xs))
-        # min_y = float(min(ys))
-        
-        # shifted_outline = [(x - min_x, y - min_y) for x, y in outline]
-
         shifted_outline = utils.shift_coordinates(outline)
-
-        if utils.signed_area(shifted_outline) < 0:        # currently CCW → reverse
-            # print(panel_name, "is CCW, reversing it")
+        if utils.signed_area(shifted_outline) < 0:
             shifted_outline.reverse()
-        # else:
-            # print(panel_name, "is CW, keeping it as is")
 
-        # Create a Piece object for the panel outline
-        piece = Piece(shifted_outline, id=panel_name)
-        return piece
+        return Piece(shifted_outline, id=panel_name)
+
 
 
     def get_all_panel_pieces(self, samples_per_edge=10) -> dict[str, Piece]:
