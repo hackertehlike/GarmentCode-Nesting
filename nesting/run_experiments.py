@@ -15,21 +15,19 @@ from itertools import product
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import nesting.config as config
 
 from nesting.path_extractor import PatternPathExtractor
 from .evolution import Evolution
 from .layout import Container
 
 # -----------------------------------------------------------------------------
-# Hyper‑parameter grid
+# Hyper-parameter grid
 # -----------------------------------------------------------------------------
-population_sizes   = [20, 50, 100]
-elite_sizes        = [3, 5, 10, 15]
-mutation_rates     = [0.1]
-#pmx_values         = [True, False]
-pmx_values         = [False]
-num_generations_ls = [150]
-duplicate_policy   = [False]
+population_sizes    = [20, 50, 100]
+elite_sizes         = [3, 5, 10, 15]
+mutation_rates      = [0.1]
+num_generations_ls  = [150]
 
 # -----------------------------------------------------------------------------
 # Helper: save a simple line or box plot
@@ -60,17 +58,16 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
     master_rows_gen:  list[dict] = []     # 1 row / generation
     master_rows_run:  list[dict] = []     # 1 row / run (final generation)
 
-    combinations = list(product(population_sizes, elite_sizes, mutation_rates,
-                                pmx_values, num_generations_ls, duplicate_policy))
+    combinations = list(product(population_sizes, elite_sizes,
+                                mutation_rates, crossover_methods, num_generations_ls))
 
     print(f"Total combinations to run: {len(combinations)}")
 
     # ------------------------------------------------------------------ sweep
-    for (pop, elite, mut_r, pmx, gens, allow_dups) in combinations:
+    for (pop, elite, mut_r, crossover, gens) in combinations:
         label = (
             f"pop{pop}_elite{elite}_mut{mut_r}_"
-            f"{'pmx' if pmx else 'ox'}_gen{gens}_"
-            f"dups_{'yes' if allow_dups else 'no'}"
+            f"cross{crossover}_gen{gens}"
         )
                 # ------------------------------------------------------------------ sweep (inside the for-each-combination loop)
 
@@ -79,8 +76,7 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
         os.makedirs(out_dir, exist_ok=True)        # ← create first!
 
         # ---------- rolling CSV & progress-plot folder ---------------------
-        header = ("Generation,BestFitness,AvgChildFitness,SurvivalRate,"
-                  "DeltaBest,SuccessRatio,CrossoverGain,MutationGain\n")
+        header = ("Generation,BestFitness,AvgChildFitness,DeltaBest\n")
 
         progress_csv = os.path.join(out_dir, "generation_progress.csv")
         with open(progress_csv, "w") as fh:        # write header once
@@ -97,19 +93,25 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
         evo = Evolution(
             pieces,
             container,
-            num_generations     = gens,
-            population_size     = pop,
-            #elite_population_size = elite,
-            mutation_rate       = mut_r,
-            pmx                 = pmx,
-            allow_duplicate_genes = allow_dups,
+            num_generations        = gens,
+            population_size        = pop,
+            elite_population_size  = elite,
+            mutation_rate          = mut_r,
+            crossover_method       = crossover,
+            enable_dynamic_stopping= config.ENABLE_DYNAMIC_STOPPING,
+            early_stop_window      = config.EARLY_STOP_WINDOW,
+            early_stop_tolerance   = config.EARLY_STOP_TOLERANCE,
+            enable_extension       = config.ENABLE_EXTENSION,
+            extend_window          = config.EXTEND_WINDOW,
+            extend_threshold       = config.EXTEND_THRESHOLD,
+            max_generations        = config.MAX_GENERATIONS,
         )
 
         evo.generate_population()
         per_gen_fitness: list[list[float]] = []
 
-        for g_idx in range(gens):                 # ← inner generation loop
-            evo.next_generation()                 # advance GA one step
+        for g_idx in range(gens):
+            evo.next_generation()
             per_gen_fitness.append([c.fitness for c in evo.population])
 
             # ──────────────────────────────────────────────────────────────
@@ -118,17 +120,12 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
             g = g_idx + 1                         # human-friendly generation number
 
             if (g % log_interval == 0) or (g == gens):
-                # ---- 3-A  append one-line snapshot to this run’s CSV ----
                 with open(progress_csv, "a") as fh:
                     fh.write(
                         f"{g},"
                         f"{evo.best_fitness_history[g]},"
                         f"{evo.avg_child_fitnesses[g_idx]},"
-                        f"{evo.survival_rates[g_idx]},"
-                        f"{evo.delta_best[g]},"
-                        f"{evo.child_parent_success_ratio[g]},"
-                        f"{evo.mean_crossover_gain[g]},"
-                        f"{evo.mean_mutation_gain[g]}\n"
+                        f"{evo.delta_best[g]}\n"
                     )
 
                 # ---- 3-B  brief console read-out ------------------------
@@ -180,28 +177,15 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
 
         line_plot(evo.avg_child_fitnesses, f"Avg Child Fitness – {label}",
                   "avg_child_fitness.png")
-        line_plot(evo.survival_rates, f"Survival Rate – {label}",
-                  "survival_rate.png", ylabel="Rate", marker="x")
         line_plot(evo.best_fitness_history[1:], f"Best Fitness – {label}",
                   "best_fitness.png")
         line_plot(evo.delta_best[1:], f"Δ‑Best – {label}",
                   "delta_best.png", ylabel="Δ‑Best")
 
-        fig, ax = plt.subplots()
-        ax.plot(range(1, gens + 1), evo.mean_crossover_gain[1:], marker="o",
-                label="Crossover gain")
-        ax.plot(range(1, gens + 1), evo.mean_mutation_gain[1:], marker="x",
-                label="Mutation gain")
-        ax.set(xlabel="Generation", ylabel="Mean gain",
-               title=f"Operator gains – {label}")
-        ax.legend(); ax.grid(True)
-        _save_plot(fig, out_dir, "operator_gains.png")
-
         # -------------------------------------------------------------------
         # 2. CSVs for this run
         # -------------------------------------------------------------------
-        header = ("Generation,BestFitness,AvgChildFitness,SurvivalRate,"
-                  "DeltaBest,SuccessRatio,CrossoverGain,MutationGain\n")
+        header = ("Generation,BestFitness,AvgChildFitness,DeltaBest\n")
         with open(os.path.join(out_dir, "generation_data.csv"), "w") as fh:
             fh.write(header)
             for g in range(gens):
@@ -209,11 +193,7 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
                     f"{g+1},"
                     f"{evo.best_fitness_history[g+1]},"
                     f"{evo.avg_child_fitnesses[g]},"
-                    f"{evo.survival_rates[g]},"
-                    f"{evo.delta_best[g+1]},"
-                    f"{evo.child_parent_success_ratio[g+1]},"
-                    f"{evo.mean_crossover_gain[g+1]},"
-                    f"{evo.mean_mutation_gain[g+1]}\n"
+                    f"{evo.delta_best[g+1]}\n"
                 )
 
         with open(os.path.join(out_dir, "run_log.txt"), "w") as fh:
@@ -224,7 +204,7 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
         # -------------------------------------------------------------------
         def _param_dict() -> dict:
             return dict(population_size=pop, elite_size=elite, mutation_rate=mut_r,
-                        pmx=pmx, generations=gens, allow_dups=allow_dups)
+                        crossover=crossover, generations=gens)
 
         # per‑generation rows
         for g in range(gens):
@@ -233,11 +213,7 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
                      generation        = g + 1,
                      best_fitness      = evo.best_fitness_history[g+1],
                      avg_child_fitness = evo.avg_child_fitnesses[g],
-                     survival_rate     = evo.survival_rates[g],
-                     delta_best        = evo.delta_best[g+1],
-                     success_ratio     = evo.child_parent_success_ratio[g+1],
-                     crossover_gain    = evo.mean_crossover_gain[g+1],
-                     mutation_gain     = evo.mean_mutation_gain[g+1])
+                     delta_best        = evo.delta_best[g+1])
             )
 
         # per‑run summary (final generation only)
@@ -245,11 +221,7 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
             dict(_param_dict(),
                  best_fitness      = evo.best_fitness_history[-1],
                  avg_child_fitness = evo.avg_child_fitnesses[-1],
-                 success_ratio     = evo.child_parent_success_ratio[-1],
-                 survival_rate     = evo.survival_rates[-1],
                  delta_best        = evo.delta_best[-1],
-                 crossover_gain    = evo.mean_crossover_gain[-1],
-                 mutation_gain     = evo.mean_mutation_gain[-1],
                  elapsed_sec       = time.time() - t0)
         )
 
@@ -278,7 +250,7 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
                 .unstack(level=-1))        # → rows: group signature, cols: generation
 
     param_columns = ["population_size", "elite_size", "mutation_rate",
-                     "pmx", "generations", "allow_dups"]
+                     "crossover", "generations"]
 
     for target_param in param_columns:
         other_params = [c for c in param_columns if c != target_param]

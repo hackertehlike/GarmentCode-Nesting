@@ -264,7 +264,7 @@ class Evolution:
         with ThreadPoolExecutor() as executor:
             # 1) Offspring
             for _ in range(self.n_offspring):
-                p1, p2 = random.sample(self.population, 2)
+                p1, p2 = random.sample(old_elite, 2)
                 parent_f = max(p1.fitness, p2.fitness)
                 def do_offspring(p1=p1, p2=p2, parent_f=parent_f):
                     try:
@@ -276,7 +276,7 @@ class Evolution:
                         child.calculate_fitness()
                         if config.VERBOSE:
                             self._log(f"Offspring created with fitness: {child.fitness:.4f}")
-                        child.origin = "offspring"           # NEW
+                        child.origin = "offspring"           
                         return child, parent_f, None, None   # extra return slot kept for symmetry
                     except Exception as e:
                         return None, parent_f, None, e           # 4 values
@@ -296,7 +296,7 @@ class Evolution:
                         child.calculate_fitness()
                         if config.VERBOSE:
                             self._log(f"Mutant created with fitness: {child.fitness:.4f}")
-                        child.origin = "mutant"              # NEW
+                        child.origin = "mutant"
                         return child, parent_f, child.last_mutation, None
                     except Exception as e:
                         return None, parent_f, None, e           # 4 values
@@ -499,22 +499,38 @@ class Evolution:
 
     
     def _flush_metrics(self) -> None:
+        """Thread-safe flush of buffered metrics to CSV."""
+        self._log("Flushing metrics to CSV…")
         if not self._metrics_buffer:
             return
+
+        # 1. Build a superset header
+        all_keys: set[str] = set().union(*self._metrics_buffer)
+        if self._csv_header_done:
+            # include any new keys discovered since the first header was written
+            all_keys.update(self._csv_fieldnames)
+        self._csv_fieldnames = sorted(all_keys)      # stable column order
+
         mode = "a" if self._csv_header_done else "w"
         with self.csv_path.open(mode, newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=self._metrics_buffer[0].keys())
+            writer = csv.DictWriter(
+                f,
+                fieldnames=self._csv_fieldnames,
+                extrasaction="ignore",   # 2. never raise on unseen keys
+            )
             if not self._csv_header_done:
                 writer.writeheader()
                 self._csv_header_done = True
             writer.writerows(self._metrics_buffer)
+
         self._metrics_buffer.clear()
+
 
     def update_plots(self) -> None:
         """
         Overwrite two PNGs in plots/:
-         - fitness_curves: avg_off, avg_mut, avg_rand, best_fit vs generation
-         - mean_gains:      mean_offspring_gain, mean_mutant_gain, mean_random_gain vs generation
+        - fitness_curves: avg_off, avg_mut, avg_rand, best_fit vs generation
+        - mean_gains:      mean_offspring_gain, mean_mutant_gain vs generation
         """
         if not self._all_metrics:
             return
@@ -528,7 +544,7 @@ class Evolution:
 
         self._log(f"Plotting {len(df)} generations of metrics.")
         # ——— Plot 1: fitness curves ———
-        plt.figure(figsize=(8,5))
+        plt.figure(figsize=(8, 5))
         for col in ['avg_off', 'avg_mut', 'avg_rand', 'best_fit']:
             plt.plot(df['generation'], df[col], label=col)
         plt.xlabel("Generation")
@@ -542,13 +558,12 @@ class Evolution:
         self._log(f"Fitness curves plot saved to {self.plot_path}")
 
         # ——— Plot 2: mean gains ———
-        plt.figure(figsize=(8,5))
+        plt.figure(figsize=(8, 5))
         for col in ['mean_offspring_gain', 'mean_mutant_gain']:
             plt.plot(df['generation'], df[col], marker='o', linestyle='--', label=col)
         plt.xlabel("Generation")
         plt.ylabel("Mean Gain")
         plt.title("Mean Gains Over Generations")
-        #plt.axhline(0, color='gray', linewidth=1)
         plt.legend(loc="best")
         plt.tight_layout()
         plt.savefig(self.gain_plot_path)
@@ -556,41 +571,44 @@ class Evolution:
 
         self._log(f"Mean gains plot saved to {self.gain_plot_path}")
 
-        mut_cols = [c for c in df.columns if c.startswith("mut_gain_")]
-        if mut_cols:
-            plt.figure(figsize=(8,5))
-            for col in mut_cols:
-                plt.plot(df['generation'], df[col], marker='o', linestyle='-',
-                        label=col.removeprefix("mut_gain_"))
-            plt.xlabel("Generation")
-            plt.ylabel("Δ Fitness vs parent")
-            plt.title("Average Fitness Gain per Mutation Operator")
-            plt.axhline(0, linewidth=1)
-            plt.legend(loc="best")
-            plt.tight_layout()
-            plt.savefig(self.mut_plot_path)   # overwrite the same file
-            plt.close()
+        # ——— Plot 3: mutation gains (only if there are any mutants) ———
+        # Note: In your case, self.n_mutants == 0, so this block is effectively skipped.
+        if self.n_mutants != 0:
+            mut_cols = [c for c in df.columns if c.startswith("mut_gain_")]
+            if mut_cols:
+                plt.figure(figsize=(8, 5))
+                for col in mut_cols:
+                    plt.plot(df['generation'], df[col], marker='o', linestyle='-', label=col.removeprefix("mut_gain_"))
+                plt.xlabel("Generation")
+                plt.ylabel("Δ Fitness vs parent")
+                plt.title("Average Fitness Gain per Mutation Operator")
+                plt.axhline(0, linewidth=1)
+                plt.legend(loc="best")
+                plt.tight_layout()
+                plt.savefig(self.mut_plot_path)
+                plt.close()
 
-        self._log(f"Mutation gains plot saved to {self.mut_plot_path}")
+            self._log(f"Mutation gains plot saved to {self.mut_plot_path}")
+
+        # ——— Swarm plot: fitness points per generation ———
+        # Ensure we always create `fig, ax` before calling swarmplot.
         fig, ax = plt.subplots(figsize=(10, 6))
 
         if self._swarm_df.empty:
-            raise ValueError("_swarm_df is empty – nothing to plot")
+            self._log("Swarm plot data is empty; skipping swarm plot.")
+            return
 
-        # Ensure numeric
-        df = self._swarm_df.copy()
-        df["generation"] = pd.to_numeric(df["generation"], errors="coerce")
-        df["fitness"]    = pd.to_numeric(df["fitness"],    errors="coerce")
-        df = df.dropna(subset=["generation", "fitness", "origin"])
+        # Prepare the data
+        df_swarm = self._swarm_df.copy()
+        df_swarm["generation"] = pd.to_numeric(df_swarm["generation"], errors="coerce")
+        df_swarm["fitness"]    = pd.to_numeric(df_swarm["fitness"], errors="coerce")
+        df_swarm = df_swarm.dropna(subset=["generation", "fitness", "origin"])
 
-        if df.empty:
-            raise ValueError("All x/y/origin values are NaN or missing – check data collection")
+        self._log(f"Swarm plot data: {len(df_swarm)} points")
 
-        self._log(f"Swarm plot data: {len(df)} points")
-
-        # Draw the swarmplot
+        # Draw the swarmplot on the (now guaranteed) `ax`
         sns.swarmplot(
-            data=df,
+            data=df_swarm,
             x="generation",
             y="fitness",
             hue="origin",
@@ -600,6 +618,7 @@ class Evolution:
             dodge=True   # separates the hue levels slightly
         )
 
+        self._log("Swarm plot created.")
 
         ax.set_xlabel("Generation")
         ax.set_ylabel("Fitness")
@@ -609,39 +628,6 @@ class Evolution:
         fig.savefig(self.swarm_plot_path)
         plt.close(fig)
 
-        # ——— Plot 4: density swarm ———
-        # fig, ax = plt.subplots(figsize=(10, 6))
-        # if self._swarm_df.empty:
-        #     raise ValueError("_swarm_df is empty – nothing to plot")
+        self._log(f"Swarm plot saved to {self.swarm_plot_path}")
+        self._log("Plots updated successfully.")
 
-        # # ensure numeric
-        # df = self._swarm_df.copy()
-        # df["generation"] = pd.to_numeric(df["generation"], errors="coerce")
-        # df["fitness"]    = pd.to_numeric(df["fitness"],    errors="coerce")
-        # mask = df["generation"].notna() & df["fitness"].notna()
-        # df = df.loc[mask]
-
-        # if df.empty:
-        #     raise ValueError("All x/y values are NaN – check data collection")
-
-        # # Draw swarmplot: one “swarm” per generation, colored by origin
-        # sns.swarmplot(
-        #     data=df,
-        #     x="generation",
-        #     y="fitness",
-        #     hue="origin",
-        #     ax=ax,
-        #     size=3,
-        #     alpha=0.6
-        # )
-
-        # ax.set_xlabel("Generation")
-        # ax.set_ylabel("Fitness")
-        # ax.set_title("Fitness swarm plot (points jittered), colored by origin")
-        # ax.legend(title="Origin", loc="upper left", bbox_to_anchor=(1, 1))
-        # fig.tight_layout()
-        # fig.savefig(self.swarm_plot_path)
-        # plt.close(fig)
-
-
-        self._log("Updated plots – including per-operator gains & coloured swarm.")

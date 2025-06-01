@@ -1,0 +1,1406 @@
+------------------------------------------------------------
+Evolution initialized with 100 chromosomes, 10 elites, 90 offspring, 0 mutants, 0 randoms.
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x128e39a00>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x128e39a00>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x103c73c30>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1', 'ox1k'], 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': False, 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1', 'ox1k'], 'SELECTED_DECODER': 'NFP', 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1k', 'GRAVITATE_STEP': 2, 'POPULATION_SIZE': 100, 'NUM_GENERATIONS': 100, 'MUTATION_RATE': 0.3, 'POPULATION_WEIGHTS': {'elites': 0.1, 'offspring': 0.9, 'mutants': 0, 'randoms': 0}, 'MUTATION_WEIGHTS': {'rotate': 0.3, 'swap': 0.2, 'inversion': 0, 'insertion': 0.1, 'scramble': 0.4, 'split': 0}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 20, 'EARLY_STOP_TOLERANCE': 0.0001, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 1, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs', 'LOG_TIME': False, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 10, 'SAMPLES_PER_EDGE': 5, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 500, 'CONTAINER_HEIGHT_CM': 500.0, 'SEAM_ALLOWANCE_CM': 1, '__dict__': <function __dict__ at 0x128e2f550>}
+Generating initial population...
+------------------------------------------------------------
+Initial population of 100 layouts generated.
+Layout 0: [('right_hood', 90), ('left_ftorso', 270), ('wb_front', 90), ('pant_f_r', 90), ('pant_r_cuff_f', 0), ('pant_l_cuff_b', 0), ('right_sleeve_f', 0), ('pant_f_l', 90), ('left_btorso', 180), ('pant_b_r', 0), ('pant_r_cuff_b', 0), ('right_sleeve_b', 180), ('pant_b_l', 90), ('right_ftorso', 0), ('right_btorso', 0), ('left_sleeve_f', 0), ('left_sleeve_b', 90), ('left_hood', 180), ('wb_back', 0), ('pant_l_cuff_f', 270)] | Fitness: 0.6748
+Layout 1: [('left_ftorso', 270), ('pant_r_cuff_f', 180), ('wb_back', 270), ('pant_r_cuff_b', 90), ('right_ftorso', 0), ('right_sleeve_f', 180), ('left_btorso', 0), ('left_hood', 0), ('right_btorso', 270), ('left_sleeve_f', 270), ('pant_f_r', 0), ('wb_front', 270), ('pant_l_cuff_b', 90), ('pant_b_r', 180), ('pant_f_l', 270), ('right_hood', 0), ('pant_l_cuff_f', 270), ('right_sleeve_b', 180), ('pant_b_l', 180), ('left_sleeve_b', 180)] | Fitness: 0.6874
+Layout 2: [('right_sleeve_b', 180), ('right_sleeve_f', 90), ('left_btorso', 180), ('pant_l_cuff_f', 90), ('left_ftorso', 270), ('pant_b_r', 0), ('right_btorso', 0), ('wb_back', 90), ('pant_b_l', 180), ('pant_f_l', 0), ('pant_r_cuff_b', 0), ('left_sleeve_b', 180), ('right_ftorso', 0), ('pant_r_cuff_f', 180), ('wb_front', 0), ('left_hood', 270), ('pant_l_cuff_b', 270), ('right_hood', 270), ('pant_f_r', 90), ('left_sleeve_f', 270)] | Fitness: 0.6514
+Layout 3: [('pant_r_cuff_f', 270), ('wb_back', 0), ('right_btorso', 180), ('right_sleeve_f', 180), ('pant_f_r', 0), ('left_sleeve_b', 180), ('pant_l_cuff_f', 270), ('pant_f_l', 90), ('pant_b_r', 0), ('right_sleeve_b', 90), ('pant_r_cuff_b', 180), ('pant_l_cuff_b', 180), ('pant_b_l', 0), ('wb_front', 180), ('left_ftorso', 90), ('right_ftorso', 270), ('left_hood', 90), ('left_sleeve_f', 0), ('left_btorso', 180), ('right_hood', 0)] | Fitness: 0.6642
+Layout 4: [('left_ftorso', 270), ('pant_r_cuff_b', 270), ('left_hood', 90), ('left_btorso', 90), ('pant_f_l', 0), ('left_sleeve_f', 0), ('right_ftorso', 90), ('pant_b_r', 180), ('pant_f_r', 270), ('pant_b_l', 90), ('right_hood', 270), ('wb_back', 270), ('pant_r_cuff_f', 0), ('right_sleeve_f', 90), ('pant_l_cuff_f', 270), ('right_sleeve_b', 0), ('right_btorso', 90), ('left_sleeve_b', 90), ('wb_front', 0), ('pant_l_cuff_b', 90)] | Fitness: 0.6597
+Layout 5: [('right_sleeve_b', 0), ('right_btorso', 0), ('pant_r_cuff_f', 180), ('pant_b_l', 90), ('right_sleeve_f', 0), ('pant_f_r', 0), ('pant_r_cuff_b', 180), ('pant_l_cuff_b', 0), ('right_hood', 0), ('pant_f_l', 0), ('left_ftorso', 90), ('pant_b_r', 180), ('wb_back', 270), ('pant_l_cuff_f', 0), ('left_sleeve_b', 90), ('wb_front', 0), ('left_btorso', 0), ('right_ftorso', 0), ('left_hood', 90), ('left_sleeve_f', 270)] | Fitness: 0.6412
+Layout 6: [('left_hood', 0), ('left_sleeve_f', 180), ('wb_front', 0), ('right_sleeve_f', 270), ('pant_l_cuff_f', 180), ('wb_back', 270), ('right_ftorso', 0), ('right_hood', 0), ('left_btorso', 0), ('pant_b_r', 180), ('right_sleeve_b', 90), ('left_sleeve_b', 180), ('pant_l_cuff_b', 0), ('left_ftorso', 270), ('pant_r_cuff_b', 90), ('right_btorso', 90), ('pant_f_l', 0), ('pant_r_cuff_f', 180), ('pant_f_r', 90), ('pant_b_l', 90)] | Fitness: 0.6788
+Layout 7: [('pant_f_l', 180), ('left_hood', 270), ('left_sleeve_b', 90), ('left_ftorso', 0), ('right_btorso', 90), ('pant_r_cuff_b', 180), ('pant_l_cuff_f', 0), ('left_sleeve_f', 90), ('right_sleeve_b', 180), ('wb_back', 270), ('pant_l_cuff_b', 90), ('pant_r_cuff_f', 180), ('right_ftorso', 90), ('pant_b_l', 180), ('right_hood', 180), ('left_btorso', 180), ('wb_front', 90), ('right_sleeve_f', 180), ('pant_f_r', 270), ('pant_b_r', 270)] | Fitness: 0.6893
+Layout 8: [('right_btorso', 270), ('right_sleeve_b', 270), ('pant_f_r', 270), ('left_btorso', 270), ('left_ftorso', 180), ('pant_f_l', 270), ('right_hood', 90), ('pant_r_cuff_f', 180), ('pant_l_cuff_f', 90), ('pant_r_cuff_b', 270), ('pant_b_l', 180), ('wb_front', 270), ('wb_back', 180), ('right_sleeve_f', 180), ('left_sleeve_f', 180), ('pant_b_r', 0), ('left_sleeve_b', 90), ('left_hood', 180), ('right_ftorso', 90), ('pant_l_cuff_b', 180)] | Fitness: 0.6366
+Layout 9: [('left_sleeve_b', 0), ('left_sleeve_f', 90), ('right_btorso', 90), ('pant_f_r', 90), ('pant_r_cuff_f', 0), ('left_btorso', 180), ('left_hood', 0), ('wb_front', 180), ('right_sleeve_f', 0), ('pant_l_cuff_f', 270), ('right_ftorso', 0), ('pant_b_r', 180), ('wb_back', 90), ('right_hood', 270), ('pant_l_cuff_b', 270), ('right_sleeve_b', 0), ('pant_r_cuff_b', 0), ('left_ftorso', 180), ('pant_b_l', 180), ('pant_f_l', 270)] | Fitness: 0.6207
+Layout 10: [('right_ftorso', 0), ('pant_b_l', 180), ('left_btorso', 0), ('right_btorso', 0), ('pant_l_cuff_f', 90), ('wb_front', 270), ('right_sleeve_b', 90), ('right_hood', 270), ('left_sleeve_f', 180), ('pant_r_cuff_f', 180), ('left_sleeve_b', 90), ('right_sleeve_f', 0), ('pant_f_r', 180), ('pant_b_r', 90), ('pant_r_cuff_b', 270), ('wb_back', 90), ('left_ftorso', 0), ('pant_l_cuff_b', 270), ('pant_f_l', 90), ('left_hood', 90)] | Fitness: 0.6697
+Layout 11: [('pant_r_cuff_f', 0), ('pant_l_cuff_f', 0), ('wb_front', 0), ('right_btorso', 270), ('left_btorso', 180), ('left_sleeve_b', 0), ('right_sleeve_b', 270), ('left_sleeve_f', 90), ('pant_r_cuff_b', 180), ('pant_f_l', 180), ('wb_back', 90), ('pant_f_r', 180), ('pant_b_l', 0), ('left_ftorso', 180), ('pant_l_cuff_b', 90), ('left_hood', 0), ('right_sleeve_f', 270), ('right_hood', 270), ('pant_b_r', 180), ('right_ftorso', 180)] | Fitness: 0.6387
+Layout 12: [('pant_r_cuff_f', 270), ('right_btorso', 180), ('left_sleeve_f', 0), ('wb_front', 270), ('pant_b_r', 180), ('right_sleeve_b', 90), ('pant_b_l', 270), ('left_sleeve_b', 270), ('pant_r_cuff_b', 0), ('right_ftorso', 0), ('pant_l_cuff_f', 90), ('right_hood', 0), ('right_sleeve_f', 270), ('wb_back', 90), ('pant_l_cuff_b', 180), ('pant_f_r', 90), ('pant_f_l', 90), ('left_ftorso', 0), ('left_hood', 180), ('left_btorso', 0)] | Fitness: 0.6610
+Layout 13: [('wb_back', 90), ('pant_l_cuff_b', 0), ('left_hood', 180), ('right_ftorso', 270), ('left_sleeve_f', 270), ('pant_r_cuff_f', 0), ('pant_l_cuff_f', 90), ('pant_f_l', 180), ('right_sleeve_b', 90), ('pant_r_cuff_b', 180), ('pant_b_r', 90), ('right_hood', 0), ('left_btorso', 270), ('pant_b_l', 270), ('pant_f_r', 270), ('left_sleeve_b', 270), ('right_btorso', 90), ('right_sleeve_f', 180), ('wb_front', 0), ('left_ftorso', 0)] | Fitness: 0.6762
+Layout 14: [('pant_b_r', 270), ('left_ftorso', 0), ('pant_l_cuff_f', 270), ('right_sleeve_f', 0), ('wb_front', 180), ('right_sleeve_b', 270), ('wb_back', 90), ('pant_b_l', 270), ('right_hood', 0), ('left_btorso', 180), ('pant_l_cuff_b', 270), ('left_sleeve_b', 90), ('left_hood', 270), ('pant_f_r', 270), ('left_sleeve_f', 90), ('right_btorso', 180), ('right_ftorso', 90), ('pant_r_cuff_b', 270), ('pant_f_l', 180), ('pant_r_cuff_f', 270)] | Fitness: 0.7201
+Layout 15: [('pant_l_cuff_b', 270), ('right_hood', 270), ('wb_back', 270), ('left_sleeve_b', 90), ('pant_b_l', 0), ('right_btorso', 270), ('right_sleeve_f', 180), ('pant_f_r', 90), ('pant_r_cuff_f', 0), ('left_sleeve_f', 270), ('right_sleeve_b', 0), ('right_ftorso', 270), ('left_hood', 180), ('pant_r_cuff_b', 270), ('left_btorso', 270), ('pant_f_l', 180), ('left_ftorso', 0), ('pant_l_cuff_f', 180), ('wb_front', 270), ('pant_b_r', 180)] | Fitness: 0.6336
+Layout 16: [('left_sleeve_b', 180), ('right_sleeve_f', 0), ('right_btorso', 0), ('pant_l_cuff_b', 270), ('wb_front', 0), ('right_sleeve_b', 90), ('left_ftorso', 90), ('left_btorso', 270), ('left_sleeve_f', 90), ('pant_f_l', 270), ('right_ftorso', 270), ('pant_b_l', 0), ('pant_b_r', 180), ('right_hood', 270), ('wb_back', 180), ('left_hood', 270), ('pant_r_cuff_b', 180), ('pant_r_cuff_f', 180), ('pant_f_r', 0), ('pant_l_cuff_f', 0)] | Fitness: 0.6225
+Layout 17: [('right_btorso', 180), ('left_ftorso', 0), ('wb_front', 180), ('pant_f_l', 180), ('right_ftorso', 90), ('pant_l_cuff_f', 90), ('wb_back', 0), ('right_hood', 90), ('left_hood', 270), ('pant_f_r', 180), ('pant_l_cuff_b', 180), ('pant_b_r', 270), ('pant_r_cuff_f', 270), ('right_sleeve_b', 180), ('pant_r_cuff_b', 0), ('pant_b_l', 270), ('right_sleeve_f', 90), ('left_sleeve_b', 90), ('left_sleeve_f', 0), ('left_btorso', 0)] | Fitness: 0.6836
+Layout 18: [('left_ftorso', 270), ('pant_b_r', 0), ('left_btorso', 180), ('right_sleeve_f', 0), ('left_hood', 90), ('left_sleeve_f', 180), ('pant_r_cuff_f', 90), ('pant_l_cuff_f', 180), ('pant_r_cuff_b', 90), ('left_sleeve_b', 270), ('right_btorso', 180), ('pant_b_l', 90), ('pant_f_r', 270), ('pant_f_l', 90), ('right_hood', 0), ('right_sleeve_b', 180), ('right_ftorso', 90), ('pant_l_cuff_b', 180), ('wb_back', 90), ('wb_front', 270)] | Fitness: 0.6123
+Layout 19: [('left_sleeve_b', 270), ('pant_r_cuff_f', 0), ('pant_f_r', 0), ('wb_front', 0), ('left_ftorso', 90), ('right_sleeve_b', 90), ('pant_r_cuff_b', 180), ('right_hood', 90), ('left_hood', 270), ('pant_b_l', 90), ('left_sleeve_f', 90), ('right_sleeve_f', 90), ('wb_back', 0), ('pant_l_cuff_f', 180), ('pant_l_cuff_b', 180), ('pant_b_r', 180), ('right_btorso', 90), ('left_btorso', 0), ('pant_f_l', 90), ('right_ftorso', 270)] | Fitness: 0.6600
+Layout 20: [('right_sleeve_f', 180), ('pant_b_r', 270), ('left_sleeve_f', 180), ('left_btorso', 180), ('wb_back', 0), ('right_sleeve_b', 270), ('pant_f_l', 0), ('left_sleeve_b', 90), ('right_hood', 90), ('wb_front', 270), ('pant_b_l', 270), ('right_ftorso', 270), ('pant_l_cuff_f', 180), ('pant_r_cuff_b', 180), ('right_btorso', 180), ('pant_r_cuff_f', 0), ('pant_l_cuff_b', 90), ('pant_f_r', 270), ('left_ftorso', 90), ('left_hood', 90)] | Fitness: 0.6631
+Layout 21: [('right_ftorso', 90), ('right_hood', 180), ('wb_front', 0), ('pant_l_cuff_f', 180), ('left_btorso', 0), ('left_hood', 90), ('pant_b_l', 180), ('pant_l_cuff_b', 0), ('pant_b_r', 0), ('left_ftorso', 180), ('right_sleeve_b', 180), ('right_btorso', 90), ('pant_f_r', 180), ('wb_back', 90), ('left_sleeve_f', 0), ('pant_r_cuff_b', 270), ('pant_r_cuff_f', 270), ('left_sleeve_b', 90), ('right_sleeve_f', 90), ('pant_f_l', 90)] | Fitness: 0.6895
+Layout 22: [('pant_r_cuff_b', 90), ('left_hood', 270), ('pant_f_r', 270), ('pant_b_r', 180), ('right_ftorso', 270), ('wb_front', 270), ('pant_l_cuff_b', 270), ('left_sleeve_b', 90), ('right_btorso', 0), ('left_ftorso', 90), ('left_btorso', 90), ('pant_l_cuff_f', 270), ('right_sleeve_b', 180), ('wb_back', 270), ('right_hood', 180), ('pant_b_l', 180), ('pant_r_cuff_f', 270), ('left_sleeve_f', 180), ('right_sleeve_f', 0), ('pant_f_l', 0)] | Fitness: 0.6892
+Layout 23: [('left_sleeve_f', 270), ('left_btorso', 180), ('pant_r_cuff_b', 0), ('pant_b_l', 270), ('left_hood', 270), ('right_hood', 270), ('right_ftorso', 180), ('pant_f_r', 180), ('right_sleeve_f', 270), ('left_ftorso', 270), ('right_sleeve_b', 180), ('wb_front', 0), ('pant_b_r', 90), ('pant_f_l', 90), ('pant_l_cuff_b', 90), ('right_btorso', 90), ('wb_back', 270), ('pant_r_cuff_f', 180), ('left_sleeve_b', 0), ('pant_l_cuff_f', 0)] | Fitness: 0.6656
+Layout 24: [('wb_front', 270), ('left_ftorso', 90), ('right_btorso', 0), ('pant_r_cuff_f', 180), ('right_ftorso', 0), ('right_sleeve_b', 270), ('left_sleeve_f', 270), ('pant_b_r', 90), ('right_hood', 0), ('left_hood', 180), ('pant_l_cuff_b', 90), ('pant_b_l', 90), ('pant_r_cuff_b', 90), ('wb_back', 0), ('left_btorso', 90), ('pant_f_l', 180), ('right_sleeve_f', 180), ('pant_l_cuff_f', 0), ('pant_f_r', 180), ('left_sleeve_b', 270)] | Fitness: 0.6682
+Layout 25: [('right_sleeve_b', 180), ('pant_r_cuff_b', 180), ('right_hood', 180), ('right_btorso', 270), ('pant_l_cuff_f', 270), ('right_ftorso', 90), ('left_sleeve_f', 0), ('pant_b_l', 0), ('right_sleeve_f', 0), ('wb_front', 180), ('pant_r_cuff_f', 270), ('left_hood', 180), ('wb_back', 0), ('left_btorso', 180), ('left_ftorso', 180), ('left_sleeve_b', 270), ('pant_f_l', 180), ('pant_l_cuff_b', 270), ('pant_b_r', 180), ('pant_f_r', 180)] | Fitness: 0.6112
+Layout 26: [('wb_back', 180), ('pant_f_l', 0), ('left_btorso', 270), ('left_sleeve_f', 270), ('pant_b_l', 90), ('left_ftorso', 90), ('pant_l_cuff_f', 270), ('right_sleeve_b', 180), ('wb_front', 0), ('right_ftorso', 0), ('left_sleeve_b', 90), ('left_hood', 90), ('pant_r_cuff_b', 0), ('pant_r_cuff_f', 90), ('right_hood', 270), ('right_btorso', 180), ('pant_f_r', 0), ('pant_l_cuff_b', 90), ('right_sleeve_f', 90), ('pant_b_r', 180)] | Fitness: 0.6875
+Layout 27: [('pant_f_l', 270), ('right_sleeve_b', 90), ('pant_r_cuff_b', 0), ('pant_l_cuff_b', 90), ('wb_back', 0), ('left_btorso', 0), ('pant_f_r', 0), ('left_hood', 270), ('pant_b_l', 90), ('right_ftorso', 90), ('right_sleeve_f', 0), ('right_hood', 270), ('right_btorso', 0), ('left_sleeve_f', 180), ('pant_r_cuff_f', 270), ('left_ftorso', 0), ('wb_front', 180), ('left_sleeve_b', 180), ('pant_l_cuff_f', 0), ('pant_b_r', 180)] | Fitness: 0.6525
+Layout 28: [('pant_r_cuff_b', 90), ('pant_f_r', 90), ('left_sleeve_f', 270), ('pant_r_cuff_f', 0), ('pant_f_l', 270), ('left_btorso', 270), ('pant_b_l', 180), ('right_sleeve_b', 0), ('right_sleeve_f', 270), ('right_ftorso', 90), ('pant_b_r', 180), ('right_hood', 180), ('pant_l_cuff_f', 270), ('right_btorso', 90), ('wb_back', 270), ('wb_front', 90), ('left_hood', 90), ('left_sleeve_b', 270), ('left_ftorso', 270), ('pant_l_cuff_b', 180)] | Fitness: 0.6960
+Layout 29: [('right_sleeve_b', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('pant_b_r', 270), ('left_sleeve_b', 180), ('pant_r_cuff_b', 270), ('right_hood', 90), ('left_hood', 180), ('left_sleeve_f', 90), ('pant_b_l', 270), ('pant_l_cuff_b', 0), ('pant_f_l', 270), ('pant_r_cuff_f', 90), ('right_btorso', 90), ('left_btorso', 90), ('wb_front', 270), ('pant_l_cuff_f', 180), ('wb_back', 180), ('right_sleeve_f', 180), ('pant_f_r', 0)] | Fitness: 0.6521
+Layout 30: [('pant_f_l', 0), ('left_btorso', 90), ('wb_back', 90), ('right_btorso', 90), ('pant_b_r', 270), ('left_sleeve_f', 0), ('pant_b_l', 90), ('left_ftorso', 270), ('wb_front', 90), ('right_ftorso', 90), ('pant_l_cuff_f', 90), ('pant_l_cuff_b', 0), ('pant_r_cuff_f', 270), ('right_sleeve_f', 0), ('right_sleeve_b', 180), ('left_hood', 180), ('left_sleeve_b', 0), ('right_hood', 180), ('pant_f_r', 90), ('pant_r_cuff_b', 180)] | Fitness: 0.7101
+Layout 31: [('pant_f_r', 0), ('wb_back', 90), ('left_sleeve_b', 90), ('right_btorso', 270), ('pant_r_cuff_f', 270), ('left_ftorso', 90), ('pant_b_l', 0), ('pant_l_cuff_f', 90), ('right_hood', 90), ('pant_l_cuff_b', 270), ('right_sleeve_f', 270), ('left_hood', 90), ('pant_r_cuff_b', 90), ('left_sleeve_f', 270), ('right_sleeve_b', 0), ('wb_front', 180), ('left_btorso', 270), ('right_ftorso', 90), ('pant_b_r', 90), ('pant_f_l', 270)] | Fitness: 0.6487
+Layout 32: [('pant_f_r', 270), ('right_sleeve_f', 270), ('pant_r_cuff_f', 0), ('left_btorso', 0), ('wb_front', 90), ('left_hood', 270), ('pant_b_l', 270), ('pant_l_cuff_b', 270), ('left_ftorso', 90), ('right_sleeve_b', 90), ('wb_back', 180), ('pant_b_r', 180), ('right_ftorso', 180), ('pant_l_cuff_f', 180), ('left_sleeve_f', 270), ('pant_f_l', 90), ('right_btorso', 90), ('pant_r_cuff_b', 270), ('right_hood', 90), ('left_sleeve_b', 180)] | Fitness: 0.6806
+Layout 33: [('right_sleeve_b', 0), ('pant_l_cuff_f', 270), ('pant_b_r', 180), ('right_sleeve_f', 270), ('pant_f_l', 180), ('pant_r_cuff_f', 0), ('pant_f_r', 0), ('left_btorso', 270), ('wb_back', 270), ('pant_r_cuff_b', 90), ('pant_l_cuff_b', 90), ('left_hood', 270), ('left_ftorso', 270), ('right_btorso', 0), ('pant_b_l', 90), ('left_sleeve_b', 90), ('wb_front', 180), ('left_sleeve_f', 180), ('right_ftorso', 0), ('right_hood', 270)] | Fitness: 0.6493
+Layout 34: [('pant_l_cuff_b', 0), ('pant_r_cuff_b', 0), ('pant_l_cuff_f', 90), ('left_sleeve_f', 180), ('left_ftorso', 0), ('left_hood', 90), ('pant_b_l', 0), ('left_sleeve_b', 90), ('pant_f_l', 0), ('right_sleeve_f', 270), ('right_btorso', 90), ('right_ftorso', 270), ('right_sleeve_b', 90), ('wb_front', 270), ('right_hood', 90), ('pant_f_r', 90), ('wb_back', 90), ('pant_b_r', 180), ('pant_r_cuff_f', 90), ('left_btorso', 180)] | Fitness: 0.6540
+Layout 35: [('left_sleeve_f', 180), ('pant_r_cuff_b', 0), ('pant_b_r', 180), ('pant_f_l', 90), ('left_hood', 270), ('left_ftorso', 90), ('left_btorso', 90), ('pant_f_r', 90), ('pant_r_cuff_f', 0), ('pant_l_cuff_f', 180), ('right_btorso', 270), ('right_sleeve_b', 180), ('left_sleeve_b', 180), ('right_sleeve_f', 270), ('wb_back', 270), ('right_ftorso', 270), ('pant_b_l', 180), ('pant_l_cuff_b', 90), ('wb_front', 180), ('right_hood', 270)] | Fitness: 0.6245
+Layout 36: [('wb_back', 90), ('left_ftorso', 90), ('pant_f_l', 270), ('right_btorso', 0), ('right_ftorso', 90), ('pant_f_r', 270), ('pant_l_cuff_f', 90), ('pant_r_cuff_f', 270), ('left_sleeve_b', 270), ('pant_b_r', 90), ('right_hood', 90), ('right_sleeve_b', 0), ('pant_r_cuff_b', 90), ('wb_front', 180), ('pant_b_l', 90), ('pant_l_cuff_b', 0), ('left_hood', 90), ('left_btorso', 90), ('right_sleeve_f', 270), ('left_sleeve_f', 270)] | Fitness: 0.7360
+Layout 37: [('wb_front', 270), ('right_ftorso', 0), ('right_sleeve_f', 0), ('pant_f_r', 0), ('pant_l_cuff_f', 0), ('left_hood', 270), ('left_sleeve_b', 0), ('pant_b_l', 0), ('right_sleeve_b', 180), ('wb_back', 180), ('pant_f_l', 0), ('left_btorso', 0), ('pant_r_cuff_f', 90), ('right_hood', 0), ('right_btorso', 270), ('pant_l_cuff_b', 90), ('left_ftorso', 270), ('pant_b_r', 0), ('pant_r_cuff_b', 0), ('left_sleeve_f', 90)] | Fitness: 0.6705
+Layout 38: [('left_btorso', 180), ('wb_front', 90), ('pant_l_cuff_b', 0), ('pant_r_cuff_f', 0), ('left_sleeve_b', 180), ('pant_f_l', 180), ('pant_r_cuff_b', 90), ('pant_b_r', 0), ('right_hood', 180), ('pant_f_r', 90), ('right_sleeve_f', 90), ('left_ftorso', 270), ('wb_back', 0), ('left_hood', 270), ('pant_b_l', 90), ('pant_l_cuff_f', 180), ('right_btorso', 180), ('right_sleeve_b', 90), ('right_ftorso', 0), ('left_sleeve_f', 180)] | Fitness: 0.6412
+Layout 39: [('left_hood', 270), ('wb_front', 90), ('right_sleeve_f', 180), ('pant_f_r', 270), ('pant_r_cuff_f', 270), ('pant_b_r', 0), ('left_sleeve_b', 0), ('right_hood', 270), ('pant_r_cuff_b', 0), ('wb_back', 180), ('left_btorso', 270), ('pant_l_cuff_b', 90), ('pant_l_cuff_f', 90), ('right_btorso', 90), ('right_sleeve_b', 270), ('right_ftorso', 90), ('pant_f_l', 0), ('left_ftorso', 90), ('left_sleeve_f', 180), ('pant_b_l', 180)] | Fitness: 0.6506
+Layout 40: [('wb_back', 0), ('right_btorso', 270), ('left_sleeve_b', 0), ('pant_b_l', 0), ('left_sleeve_f', 90), ('pant_l_cuff_b', 90), ('pant_f_l', 270), ('pant_f_r', 270), ('pant_r_cuff_b', 90), ('right_ftorso', 180), ('left_hood', 270), ('right_hood', 270), ('pant_l_cuff_f', 0), ('left_btorso', 270), ('right_sleeve_f', 90), ('pant_b_r', 90), ('left_ftorso', 90), ('wb_front', 90), ('pant_r_cuff_f', 0), ('right_sleeve_b', 90)] | Fitness: 0.6179
+Layout 41: [('pant_b_r', 180), ('pant_f_r', 270), ('pant_f_l', 270), ('pant_r_cuff_b', 180), ('left_sleeve_f', 180), ('left_btorso', 180), ('wb_front', 0), ('right_btorso', 270), ('wb_back', 0), ('pant_l_cuff_b', 270), ('pant_l_cuff_f', 90), ('pant_r_cuff_f', 180), ('left_hood', 270), ('right_ftorso', 90), ('left_sleeve_b', 0), ('right_sleeve_b', 270), ('left_ftorso', 90), ('right_sleeve_f', 0), ('pant_b_l', 180), ('right_hood', 180)] | Fitness: 0.6258
+Layout 42: [('pant_b_r', 0), ('wb_front', 180), ('pant_b_l', 180), ('right_sleeve_f', 180), ('right_btorso', 180), ('right_ftorso', 90), ('pant_f_l', 0), ('right_hood', 180), ('wb_back', 270), ('pant_l_cuff_f', 0), ('pant_r_cuff_b', 180), ('pant_f_r', 90), ('pant_l_cuff_b', 270), ('right_sleeve_b', 180), ('left_btorso', 0), ('left_sleeve_b', 270), ('left_sleeve_f', 0), ('left_ftorso', 0), ('left_hood', 0), ('pant_r_cuff_f', 180)] | Fitness: 0.7055
+Layout 43: [('pant_l_cuff_b', 270), ('left_sleeve_f', 270), ('pant_r_cuff_b', 270), ('right_btorso', 90), ('left_ftorso', 270), ('pant_r_cuff_f', 180), ('pant_l_cuff_f', 270), ('right_ftorso', 0), ('pant_f_l', 90), ('right_sleeve_f', 180), ('right_hood', 180), ('pant_b_r', 90), ('wb_front', 270), ('wb_back', 270), ('right_sleeve_b', 0), ('left_btorso', 90), ('pant_f_r', 180), ('pant_b_l', 90), ('left_hood', 180), ('left_sleeve_b', 90)] | Fitness: 0.6445
+Layout 44: [('left_sleeve_f', 0), ('pant_l_cuff_b', 180), ('right_sleeve_f', 180), ('pant_l_cuff_f', 270), ('pant_b_l', 180), ('right_hood', 180), ('pant_b_r', 90), ('left_btorso', 0), ('pant_r_cuff_b', 270), ('pant_f_r', 0), ('right_btorso', 90), ('pant_f_l', 270), ('left_ftorso', 0), ('left_sleeve_b', 0), ('wb_front', 270), ('pant_r_cuff_f', 270), ('right_ftorso', 90), ('right_sleeve_b', 270), ('left_hood', 270), ('wb_back', 0)] | Fitness: 0.6469
+Layout 45: [('right_hood', 180), ('pant_r_cuff_b', 90), ('pant_r_cuff_f', 90), ('pant_b_r', 0), ('pant_l_cuff_f', 0), ('wb_front', 270), ('left_sleeve_b', 270), ('pant_l_cuff_b', 90), ('pant_f_l', 270), ('right_sleeve_f', 90), ('left_btorso', 180), ('right_ftorso', 90), ('pant_f_r', 270), ('left_hood', 90), ('right_sleeve_b', 0), ('right_btorso', 270), ('wb_back', 90), ('pant_b_l', 90), ('left_sleeve_f', 180), ('left_ftorso', 180)] | Fitness: 0.6490
+Layout 46: [('right_sleeve_b', 270), ('left_ftorso', 270), ('wb_back', 180), ('pant_l_cuff_b', 270), ('left_sleeve_b', 180), ('left_hood', 0), ('right_btorso', 180), ('pant_f_r', 0), ('pant_b_l', 0), ('pant_r_cuff_b', 180), ('pant_f_l', 90), ('left_sleeve_f', 270), ('right_hood', 0), ('right_sleeve_f', 180), ('right_ftorso', 270), ('pant_l_cuff_f', 180), ('wb_front', 0), ('pant_b_r', 0), ('pant_r_cuff_f', 0), ('left_btorso', 270)] | Fitness: 0.6644
+Layout 47: [('pant_r_cuff_b', 0), ('left_hood', 270), ('right_sleeve_f', 0), ('pant_l_cuff_f', 0), ('right_hood', 90), ('pant_b_r', 180), ('left_btorso', 180), ('left_ftorso', 90), ('right_sleeve_b', 180), ('pant_b_l', 0), ('left_sleeve_b', 270), ('pant_f_l', 90), ('pant_f_r', 270), ('pant_l_cuff_b', 270), ('pant_r_cuff_f', 180), ('left_sleeve_f', 270), ('right_btorso', 90), ('wb_front', 180), ('right_ftorso', 180), ('wb_back', 90)] | Fitness: 0.6527
+Layout 48: [('left_btorso', 270), ('pant_r_cuff_b', 180), ('right_sleeve_b', 180), ('wb_front', 0), ('pant_r_cuff_f', 180), ('right_btorso', 90), ('right_hood', 180), ('pant_l_cuff_f', 90), ('left_ftorso', 90), ('wb_back', 270), ('pant_f_r', 270), ('pant_l_cuff_b', 270), ('pant_f_l', 180), ('pant_b_l', 270), ('left_sleeve_b', 270), ('right_sleeve_f', 180), ('left_sleeve_f', 270), ('left_hood', 270), ('pant_b_r', 180), ('right_ftorso', 180)] | Fitness: 0.6175
+Layout 49: [('pant_b_l', 270), ('pant_f_l', 0), ('left_ftorso', 90), ('left_sleeve_b', 0), ('wb_front', 270), ('right_sleeve_b', 270), ('pant_b_r', 180), ('right_ftorso', 270), ('right_hood', 0), ('pant_f_r', 90), ('left_sleeve_f', 270), ('left_hood', 270), ('wb_back', 270), ('right_btorso', 270), ('right_sleeve_f', 0), ('pant_l_cuff_b', 270), ('pant_r_cuff_f', 180), ('pant_r_cuff_b', 180), ('left_btorso', 90), ('pant_l_cuff_f', 0)] | Fitness: 0.7057
+Layout 50: [('left_hood', 0), ('left_ftorso', 180), ('right_hood', 0), ('right_ftorso', 270), ('wb_front', 180), ('left_btorso', 180), ('pant_f_r', 0), ('right_btorso', 90), ('right_sleeve_f', 90), ('pant_l_cuff_b', 180), ('pant_b_l', 90), ('wb_back', 180), ('pant_b_r', 270), ('pant_r_cuff_f', 0), ('left_sleeve_f', 270), ('left_sleeve_b', 270), ('pant_f_l', 270), ('pant_r_cuff_b', 90), ('pant_l_cuff_f', 180), ('right_sleeve_b', 270)] | Fitness: 0.7155
+Layout 51: [('pant_r_cuff_b', 270), ('pant_b_l', 90), ('right_hood', 90), ('pant_r_cuff_f', 180), ('pant_l_cuff_b', 180), ('wb_back', 180), ('wb_front', 0), ('pant_f_l', 0), ('left_sleeve_b', 0), ('pant_f_r', 180), ('right_btorso', 0), ('left_hood', 0), ('pant_b_r', 90), ('right_ftorso', 270), ('right_sleeve_b', 180), ('right_sleeve_f', 90), ('left_sleeve_f', 270), ('pant_l_cuff_f', 180), ('left_btorso', 270), ('left_ftorso', 270)] | Fitness: 0.7050
+Layout 52: [('pant_l_cuff_b', 90), ('left_sleeve_f', 270), ('left_hood', 180), ('left_ftorso', 90), ('pant_r_cuff_b', 0), ('pant_b_r', 180), ('left_btorso', 90), ('right_btorso', 90), ('pant_b_l', 0), ('pant_l_cuff_f', 270), ('right_sleeve_f', 90), ('pant_r_cuff_f', 270), ('wb_back', 90), ('left_sleeve_b', 180), ('pant_f_r', 90), ('right_sleeve_b', 270), ('wb_front', 180), ('pant_f_l', 180), ('right_hood', 270), ('right_ftorso', 270)] | Fitness: 0.6659
+Layout 53: [('pant_f_r', 270), ('pant_b_l', 270), ('pant_f_l', 0), ('left_btorso', 90), ('right_btorso', 0), ('pant_l_cuff_f', 270), ('pant_r_cuff_f', 180), ('left_sleeve_b', 90), ('wb_back', 180), ('right_sleeve_b', 180), ('left_sleeve_f', 90), ('pant_l_cuff_b', 90), ('right_ftorso', 180), ('pant_r_cuff_b', 180), ('left_ftorso', 270), ('pant_b_r', 270), ('right_hood', 270), ('right_sleeve_f', 0), ('left_hood', 270), ('wb_front', 270)] | Fitness: 0.6485
+Layout 54: [('pant_r_cuff_f', 180), ('left_sleeve_f', 0), ('right_sleeve_f', 90), ('pant_b_r', 270), ('pant_l_cuff_f', 180), ('pant_b_l', 180), ('wb_front', 180), ('wb_back', 0), ('pant_f_r', 90), ('pant_l_cuff_b', 0), ('left_sleeve_b', 90), ('right_btorso', 180), ('left_hood', 270), ('pant_r_cuff_b', 180), ('pant_f_l', 90), ('left_ftorso', 270), ('left_btorso', 180), ('right_hood', 0), ('right_ftorso', 270), ('right_sleeve_b', 180)] | Fitness: 0.6687
+Layout 55: [('pant_f_l', 270), ('wb_front', 270), ('left_sleeve_b', 270), ('right_sleeve_f', 180), ('pant_l_cuff_b', 90), ('pant_r_cuff_f', 90), ('pant_b_r', 270), ('left_btorso', 180), ('left_hood', 0), ('left_sleeve_f', 180), ('right_btorso', 90), ('pant_b_l', 90), ('pant_l_cuff_f', 180), ('wb_back', 0), ('left_ftorso', 180), ('right_sleeve_b', 180), ('pant_r_cuff_b', 180), ('pant_f_r', 90), ('right_hood', 0), ('right_ftorso', 90)] | Fitness: 0.6820
+Layout 56: [('pant_f_r', 180), ('pant_r_cuff_b', 0), ('pant_l_cuff_b', 180), ('pant_l_cuff_f', 180), ('pant_b_r', 270), ('right_ftorso', 0), ('wb_back', 180), ('left_ftorso', 180), ('right_btorso', 270), ('left_sleeve_f', 270), ('wb_front', 0), ('pant_f_l', 0), ('left_hood', 0), ('left_btorso', 0), ('right_hood', 270), ('pant_r_cuff_f', 180), ('pant_b_l', 90), ('right_sleeve_b', 270), ('right_sleeve_f', 90), ('left_sleeve_b', 90)] | Fitness: 0.6762
+Layout 57: [('pant_r_cuff_f', 180), ('pant_f_l', 180), ('pant_b_l', 180), ('wb_front', 90), ('right_sleeve_b', 0), ('right_btorso', 0), ('pant_b_r', 270), ('left_sleeve_f', 90), ('pant_f_r', 270), ('pant_l_cuff_f', 180), ('wb_back', 270), ('left_ftorso', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 0), ('pant_l_cuff_b', 270), ('left_hood', 180), ('pant_r_cuff_b', 270), ('left_sleeve_b', 270), ('right_sleeve_f', 270)] | Fitness: 0.6930
+Layout 58: [('pant_r_cuff_b', 180), ('wb_front', 270), ('left_sleeve_b', 270), ('left_btorso', 90), ('right_sleeve_b', 90), ('left_sleeve_f', 0), ('pant_b_l', 270), ('pant_b_r', 270), ('pant_f_l', 90), ('right_ftorso', 90), ('pant_r_cuff_f', 270), ('pant_f_r', 270), ('right_hood', 0), ('wb_back', 0), ('right_sleeve_f', 180), ('left_hood', 180), ('pant_l_cuff_f', 90), ('left_ftorso', 90), ('right_btorso', 90), ('pant_l_cuff_b', 0)] | Fitness: 0.6921
+Layout 59: [('pant_r_cuff_b', 0), ('pant_f_l', 90), ('right_hood', 90), ('right_ftorso', 0), ('pant_r_cuff_f', 270), ('pant_b_r', 180), ('pant_l_cuff_b', 180), ('right_btorso', 90), ('pant_l_cuff_f', 90), ('pant_f_r', 0), ('wb_front', 0), ('left_ftorso', 270), ('left_hood', 180), ('left_sleeve_f', 0), ('right_sleeve_b', 0), ('pant_b_l', 90), ('left_sleeve_b', 270), ('wb_back', 90), ('left_btorso', 270), ('right_sleeve_f', 0)] | Fitness: 0.6407
+Layout 60: [('pant_l_cuff_f', 270), ('pant_l_cuff_b', 90), ('left_ftorso', 270), ('right_ftorso', 270), ('wb_back', 90), ('wb_front', 180), ('left_hood', 270), ('left_sleeve_f', 270), ('left_sleeve_b', 180), ('left_btorso', 90), ('pant_r_cuff_f', 90), ('pant_f_l', 270), ('right_sleeve_f', 270), ('pant_b_r', 0), ('right_btorso', 270), ('right_hood', 270), ('pant_r_cuff_b', 270), ('pant_b_l', 270), ('right_sleeve_b', 180), ('pant_f_r', 270)] | Fitness: 0.6700
+Layout 61: [('pant_r_cuff_b', 90), ('pant_f_l', 270), ('right_sleeve_b', 270), ('wb_back', 90), ('left_sleeve_f', 90), ('left_sleeve_b', 180), ('right_hood', 0), ('right_sleeve_f', 180), ('pant_f_r', 270), ('pant_l_cuff_b', 180), ('left_btorso', 0), ('right_btorso', 0), ('wb_front', 0), ('pant_l_cuff_f', 0), ('pant_r_cuff_f', 270), ('left_hood', 90), ('left_ftorso', 270), ('right_ftorso', 180), ('pant_b_l', 90), ('pant_b_r', 0)] | Fitness: 0.5953
+Layout 62: [('pant_f_r', 0), ('left_btorso', 0), ('right_hood', 90), ('left_sleeve_f', 90), ('right_sleeve_b', 180), ('pant_b_l', 0), ('pant_r_cuff_b', 270), ('pant_f_l', 180), ('wb_back', 0), ('left_sleeve_b', 270), ('right_sleeve_f', 0), ('wb_front', 0), ('right_btorso', 270), ('pant_b_r', 90), ('left_ftorso', 0), ('right_ftorso', 90), ('pant_r_cuff_f', 90), ('pant_l_cuff_b', 270), ('left_hood', 90), ('pant_l_cuff_f', 180)] | Fitness: 0.6328
+Layout 63: [('pant_l_cuff_f', 180), ('pant_b_r', 270), ('left_btorso', 90), ('left_sleeve_f', 90), ('pant_l_cuff_b', 90), ('left_ftorso', 180), ('pant_r_cuff_f', 180), ('wb_front', 0), ('right_sleeve_b', 270), ('pant_f_l', 90), ('right_ftorso', 270), ('pant_b_l', 270), ('right_sleeve_f', 270), ('pant_r_cuff_b', 90), ('pant_f_r', 90), ('right_hood', 270), ('wb_back', 180), ('left_sleeve_b', 270), ('right_btorso', 0), ('left_hood', 90)] | Fitness: 0.6920
+Layout 64: [('left_sleeve_f', 180), ('pant_f_r', 270), ('pant_b_r', 270), ('left_sleeve_b', 180), ('wb_back', 180), ('pant_r_cuff_f', 270), ('pant_f_l', 0), ('pant_l_cuff_b', 270), ('pant_r_cuff_b', 90), ('left_hood', 270), ('right_btorso', 180), ('left_ftorso', 180), ('pant_b_l', 180), ('pant_l_cuff_f', 0), ('right_sleeve_b', 0), ('right_ftorso', 270), ('right_sleeve_f', 90), ('right_hood', 270), ('wb_front', 180), ('left_btorso', 180)] | Fitness: 0.6652
+Layout 65: [('pant_l_cuff_f', 270), ('right_sleeve_b', 0), ('wb_front', 270), ('right_ftorso', 180), ('left_sleeve_b', 270), ('right_btorso', 90), ('wb_back', 0), ('pant_b_l', 270), ('right_sleeve_f', 0), ('left_btorso', 270), ('pant_f_l', 90), ('pant_l_cuff_b', 90), ('left_ftorso', 180), ('pant_b_r', 180), ('pant_r_cuff_b', 90), ('left_hood', 180), ('pant_r_cuff_f', 180), ('pant_f_r', 90), ('right_hood', 0), ('left_sleeve_f', 270)] | Fitness: 0.6424
+Layout 66: [('left_hood', 90), ('left_sleeve_f', 0), ('pant_l_cuff_b', 90), ('pant_r_cuff_b', 180), ('pant_b_r', 0), ('pant_f_l', 180), ('right_btorso', 180), ('pant_b_l', 270), ('pant_f_r', 0), ('wb_back', 90), ('right_ftorso', 180), ('right_sleeve_f', 180), ('pant_r_cuff_f', 180), ('wb_front', 0), ('left_btorso', 270), ('right_hood', 270), ('right_sleeve_b', 0), ('left_ftorso', 270), ('pant_l_cuff_f', 0), ('left_sleeve_b', 270)] | Fitness: 0.6345
+Layout 67: [('left_sleeve_f', 0), ('pant_r_cuff_f', 180), ('right_hood', 270), ('pant_b_r', 0), ('wb_front', 270), ('wb_back', 270), ('right_btorso', 90), ('left_ftorso', 90), ('left_sleeve_b', 180), ('pant_b_l', 180), ('pant_l_cuff_b', 270), ('right_sleeve_b', 270), ('right_ftorso', 270), ('pant_l_cuff_f', 90), ('pant_f_r', 270), ('left_hood', 180), ('pant_r_cuff_b', 180), ('left_btorso', 270), ('pant_f_l', 180), ('right_sleeve_f', 180)] | Fitness: 0.6909
+Layout 68: [('left_sleeve_b', 0), ('pant_f_l', 180), ('left_sleeve_f', 0), ('pant_b_l', 0), ('right_btorso', 90), ('pant_b_r', 270), ('right_ftorso', 180), ('left_ftorso', 0), ('pant_r_cuff_f', 0), ('wb_back', 180), ('pant_r_cuff_b', 270), ('left_btorso', 270), ('left_hood', 270), ('pant_l_cuff_f', 0), ('right_hood', 180), ('right_sleeve_f', 180), ('pant_l_cuff_b', 180), ('right_sleeve_b', 90), ('pant_f_r', 90), ('wb_front', 180)] | Fitness: 0.6375
+Layout 69: [('right_sleeve_f', 270), ('pant_f_l', 0), ('pant_r_cuff_f', 180), ('wb_front', 270), ('pant_l_cuff_b', 0), ('pant_l_cuff_f', 180), ('right_hood', 270), ('pant_b_r', 270), ('left_btorso', 180), ('right_ftorso', 90), ('pant_r_cuff_b', 90), ('left_ftorso', 0), ('pant_f_r', 90), ('pant_b_l', 180), ('right_sleeve_b', 180), ('right_btorso', 180), ('left_sleeve_b', 270), ('wb_back', 180), ('left_sleeve_f', 90), ('left_hood', 270)] | Fitness: 0.6710
+Layout 70: [('pant_b_l', 90), ('left_sleeve_f', 180), ('left_hood', 90), ('wb_front', 180), ('right_btorso', 0), ('right_sleeve_f', 0), ('right_hood', 270), ('left_ftorso', 0), ('left_sleeve_b', 180), ('pant_f_l', 180), ('left_btorso', 90), ('pant_l_cuff_b', 0), ('wb_back', 0), ('pant_r_cuff_b', 0), ('pant_l_cuff_f', 270), ('pant_r_cuff_f', 270), ('pant_f_r', 180), ('right_sleeve_b', 180), ('right_ftorso', 180), ('pant_b_r', 180)] | Fitness: 0.6468
+Layout 71: [('wb_back', 180), ('left_ftorso', 90), ('pant_b_r', 180), ('pant_l_cuff_b', 0), ('pant_f_l', 270), ('pant_l_cuff_f', 90), ('pant_b_l', 90), ('right_hood', 90), ('pant_r_cuff_b', 0), ('wb_front', 270), ('left_sleeve_f', 270), ('right_ftorso', 270), ('pant_f_r', 180), ('right_btorso', 0), ('left_btorso', 0), ('right_sleeve_b', 270), ('pant_r_cuff_f', 90), ('left_hood', 0), ('left_sleeve_b', 0), ('right_sleeve_f', 0)] | Fitness: 0.6958
+Layout 72: [('pant_f_r', 0), ('left_hood', 270), ('right_ftorso', 180), ('wb_back', 180), ('pant_r_cuff_f', 0), ('left_ftorso', 0), ('left_sleeve_b', 180), ('right_sleeve_b', 180), ('pant_b_l', 270), ('pant_l_cuff_b', 270), ('right_hood', 270), ('left_sleeve_f', 270), ('right_sleeve_f', 270), ('pant_f_l', 180), ('pant_b_r', 0), ('wb_front', 180), ('pant_l_cuff_f', 270), ('right_btorso', 0), ('pant_r_cuff_b', 270), ('left_btorso', 180)] | Fitness: 0.6436
+Layout 73: [('pant_r_cuff_b', 180), ('right_ftorso', 270), ('left_btorso', 0), ('left_hood', 180), ('pant_b_r', 180), ('left_ftorso', 0), ('wb_back', 90), ('pant_b_l', 270), ('pant_r_cuff_f', 180), ('wb_front', 0), ('pant_l_cuff_f', 270), ('right_btorso', 90), ('left_sleeve_f', 90), ('right_hood', 0), ('pant_f_l', 90), ('pant_f_r', 0), ('pant_l_cuff_b', 0), ('right_sleeve_f', 90), ('left_sleeve_b', 270), ('right_sleeve_b', 0)] | Fitness: 0.6689
+Layout 74: [('wb_back', 90), ('left_btorso', 0), ('left_ftorso', 180), ('pant_b_l', 270), ('right_btorso', 0), ('pant_r_cuff_b', 180), ('pant_f_l', 180), ('pant_l_cuff_f', 90), ('left_sleeve_b', 0), ('left_sleeve_f', 180), ('right_sleeve_f', 90), ('left_hood', 270), ('pant_b_r', 90), ('right_sleeve_b', 0), ('right_ftorso', 0), ('wb_front', 90), ('pant_f_r', 90), ('pant_l_cuff_b', 270), ('pant_r_cuff_f', 270), ('right_hood', 90)] | Fitness: 0.7341
+Layout 75: [('pant_f_r', 270), ('pant_f_l', 0), ('right_ftorso', 180), ('wb_front', 0), ('wb_back', 0), ('left_ftorso', 0), ('right_sleeve_f', 180), ('left_hood', 270), ('pant_b_r', 180), ('left_sleeve_b', 270), ('pant_r_cuff_f', 0), ('pant_l_cuff_b', 90), ('left_btorso', 0), ('right_sleeve_b', 180), ('pant_b_l', 270), ('pant_l_cuff_f', 0), ('left_sleeve_f', 90), ('right_hood', 180), ('pant_r_cuff_b', 180), ('right_btorso', 270)] | Fitness: 0.6909
+Layout 76: [('right_ftorso', 90), ('pant_f_l', 0), ('pant_b_r', 270), ('right_btorso', 90), ('wb_front', 270), ('pant_b_l', 0), ('pant_r_cuff_b', 270), ('pant_r_cuff_f', 0), ('wb_back', 270), ('left_hood', 180), ('left_sleeve_b', 180), ('pant_l_cuff_f', 90), ('left_sleeve_f', 90), ('left_ftorso', 90), ('right_hood', 270), ('pant_f_r', 270), ('pant_l_cuff_b', 0), ('right_sleeve_b', 0), ('right_sleeve_f', 270), ('left_btorso', 90)] | Fitness: 0.6852
+Layout 77: [('pant_l_cuff_f', 0), ('left_ftorso', 270), ('wb_back', 0), ('left_btorso', 180), ('pant_f_r', 0), ('pant_f_l', 270), ('right_btorso', 180), ('right_hood', 0), ('pant_r_cuff_f', 180), ('pant_r_cuff_b', 90), ('wb_front', 180), ('left_hood', 180), ('left_sleeve_f', 90), ('pant_b_r', 270), ('right_sleeve_b', 0), ('left_sleeve_b', 270), ('right_sleeve_f', 0), ('pant_l_cuff_b', 90), ('right_ftorso', 180), ('pant_b_l', 90)] | Fitness: 0.6644
+Layout 78: [('pant_b_r', 90), ('left_ftorso', 270), ('right_btorso', 270), ('pant_b_l', 180), ('right_sleeve_f', 180), ('pant_l_cuff_b', 180), ('pant_r_cuff_f', 90), ('right_hood', 90), ('right_sleeve_b', 270), ('left_btorso', 90), ('pant_f_r', 180), ('left_sleeve_f', 90), ('wb_back', 270), ('left_sleeve_b', 270), ('pant_l_cuff_f', 0), ('right_ftorso', 180), ('pant_r_cuff_b', 0), ('left_hood', 0), ('pant_f_l', 90), ('wb_front', 90)] | Fitness: 0.6523
+Layout 79: [('pant_l_cuff_b', 270), ('left_btorso', 90), ('pant_r_cuff_b', 90), ('right_btorso', 0), ('left_sleeve_b', 180), ('pant_f_l', 180), ('left_sleeve_f', 0), ('pant_b_r', 270), ('right_sleeve_b', 180), ('right_sleeve_f', 270), ('pant_l_cuff_f', 0), ('left_ftorso', 180), ('left_hood', 270), ('right_ftorso', 180), ('right_hood', 0), ('pant_b_l', 0), ('wb_back', 180), ('pant_r_cuff_f', 90), ('pant_f_r', 270), ('wb_front', 180)] | Fitness: 0.6575
+Layout 80: [('pant_r_cuff_b', 0), ('pant_l_cuff_f', 270), ('left_sleeve_f', 180), ('pant_b_r', 0), ('right_btorso', 0), ('right_hood', 180), ('pant_f_r', 90), ('pant_r_cuff_f', 270), ('left_btorso', 0), ('right_sleeve_b', 270), ('left_ftorso', 180), ('pant_f_l', 90), ('left_sleeve_b', 270), ('right_ftorso', 90), ('left_hood', 0), ('wb_front', 0), ('pant_l_cuff_b', 270), ('pant_b_l', 90), ('right_sleeve_f', 90), ('wb_back', 180)] | Fitness: 0.6482
+Layout 81: [('pant_b_r', 270), ('wb_front', 270), ('pant_b_l', 90), ('pant_f_l', 90), ('right_btorso', 180), ('pant_r_cuff_b', 90), ('pant_r_cuff_f', 0), ('pant_f_r', 270), ('wb_back', 0), ('left_btorso', 90), ('right_sleeve_b', 0), ('pant_l_cuff_f', 270), ('right_ftorso', 270), ('right_sleeve_f', 180), ('left_sleeve_b', 180), ('left_ftorso', 90), ('right_hood', 90), ('pant_l_cuff_b', 0), ('left_sleeve_f', 270), ('left_hood', 270)] | Fitness: 0.6831
+Layout 82: [('pant_b_r', 90), ('pant_r_cuff_b', 0), ('right_hood', 180), ('wb_front', 90), ('left_hood', 180), ('right_sleeve_f', 0), ('pant_f_r', 0), ('pant_l_cuff_b', 90), ('wb_back', 270), ('left_sleeve_b', 90), ('pant_f_l', 90), ('right_ftorso', 180), ('pant_b_l', 270), ('left_sleeve_f', 90), ('right_btorso', 90), ('left_btorso', 270), ('left_ftorso', 270), ('pant_l_cuff_f', 90), ('right_sleeve_b', 270), ('pant_r_cuff_f', 90)] | Fitness: 0.7006
+Layout 83: [('left_btorso', 270), ('left_sleeve_f', 270), ('pant_l_cuff_f', 270), ('pant_f_r', 270), ('right_sleeve_f', 90), ('right_hood', 180), ('right_sleeve_b', 270), ('pant_b_r', 180), ('left_ftorso', 90), ('left_sleeve_b', 90), ('wb_front', 90), ('pant_l_cuff_b', 90), ('pant_r_cuff_f', 90), ('right_ftorso', 180), ('pant_r_cuff_b', 0), ('wb_back', 270), ('pant_b_l', 90), ('left_hood', 180), ('right_btorso', 180), ('pant_f_l', 90)] | Fitness: 0.6801
+Layout 84: [('right_ftorso', 90), ('pant_f_r', 270), ('left_ftorso', 0), ('pant_l_cuff_b', 90), ('left_sleeve_b', 180), ('pant_r_cuff_b', 0), ('pant_b_r', 180), ('right_hood', 0), ('wb_front', 0), ('pant_l_cuff_f', 90), ('pant_f_l', 270), ('right_btorso', 270), ('right_sleeve_f', 0), ('wb_back', 90), ('left_sleeve_f', 0), ('left_btorso', 0), ('pant_r_cuff_f', 180), ('pant_b_l', 270), ('left_hood', 270), ('right_sleeve_b', 90)] | Fitness: 0.7055
+Layout 85: [('pant_r_cuff_f', 270), ('pant_b_l', 180), ('pant_f_r', 270), ('pant_f_l', 180), ('pant_l_cuff_b', 180), ('wb_back', 180), ('left_hood', 90), ('pant_l_cuff_f', 270), ('right_ftorso', 0), ('right_hood', 180), ('left_btorso', 180), ('right_btorso', 180), ('left_ftorso', 0), ('left_sleeve_f', 270), ('wb_front', 0), ('pant_b_r', 0), ('pant_r_cuff_b', 180), ('right_sleeve_b', 0), ('left_sleeve_b', 270), ('right_sleeve_f', 90)] | Fitness: 0.6559
+Layout 86: [('pant_r_cuff_b', 180), ('left_hood', 180), ('right_hood', 90), ('pant_l_cuff_b', 180), ('left_sleeve_b', 270), ('wb_front', 270), ('wb_back', 90), ('pant_b_r', 180), ('pant_f_l', 270), ('left_sleeve_f', 0), ('pant_l_cuff_f', 180), ('pant_r_cuff_f', 180), ('left_btorso', 90), ('pant_b_l', 270), ('right_btorso', 0), ('pant_f_r', 90), ('left_ftorso', 0), ('right_sleeve_b', 270), ('right_sleeve_f', 270), ('right_ftorso', 270)] | Fitness: 0.6824
+Layout 87: [('right_sleeve_b', 90), ('right_ftorso', 0), ('left_sleeve_f', 0), ('pant_f_r', 90), ('right_hood', 90), ('pant_r_cuff_f', 180), ('wb_back', 270), ('pant_b_r', 0), ('left_hood', 0), ('right_sleeve_f', 0), ('right_btorso', 0), ('pant_b_l', 0), ('pant_l_cuff_b', 0), ('left_btorso', 90), ('wb_front', 0), ('pant_r_cuff_b', 270), ('left_sleeve_b', 270), ('left_ftorso', 0), ('pant_l_cuff_f', 90), ('pant_f_l', 0)] | Fitness: 0.6459
+Layout 88: [('left_sleeve_b', 0), ('pant_b_r', 90), ('wb_back', 270), ('pant_r_cuff_f', 90), ('pant_r_cuff_b', 270), ('right_btorso', 90), ('pant_f_l', 90), ('right_sleeve_b', 0), ('left_hood', 0), ('pant_l_cuff_f', 180), ('pant_f_r', 180), ('wb_front', 0), ('right_sleeve_f', 180), ('pant_l_cuff_b', 0), ('left_btorso', 180), ('left_ftorso', 180), ('right_hood', 180), ('left_sleeve_f', 0), ('right_ftorso', 90), ('pant_b_l', 0)] | Fitness: 0.6580
+Layout 89: [('left_btorso', 90), ('left_sleeve_f', 270), ('right_sleeve_f', 180), ('right_sleeve_b', 90), ('pant_l_cuff_b', 90), ('pant_l_cuff_f', 270), ('pant_b_l', 180), ('wb_front', 180), ('pant_b_r', 90), ('pant_r_cuff_f', 0), ('left_ftorso', 0), ('pant_f_r', 180), ('pant_f_l', 270), ('right_hood', 90), ('left_hood', 270), ('right_ftorso', 180), ('pant_r_cuff_b', 180), ('left_sleeve_b', 270), ('wb_back', 180), ('right_btorso', 180)] | Fitness: 0.6735
+Layout 90: [('left_sleeve_b', 0), ('right_ftorso', 0), ('right_sleeve_b', 0), ('left_ftorso', 0), ('left_sleeve_f', 0), ('pant_l_cuff_b', 270), ('pant_r_cuff_f', 270), ('right_btorso', 0), ('pant_r_cuff_b', 90), ('right_hood', 270), ('pant_l_cuff_f', 0), ('pant_f_l', 180), ('left_hood', 90), ('wb_front', 180), ('pant_f_r', 270), ('pant_b_l', 270), ('right_sleeve_f', 0), ('pant_b_r', 270), ('wb_back', 0), ('left_btorso', 180)] | Fitness: 0.6766
+Layout 91: [('left_ftorso', 0), ('left_btorso', 180), ('left_sleeve_f', 180), ('left_hood', 0), ('pant_r_cuff_b', 270), ('right_hood', 0), ('wb_front', 90), ('right_ftorso', 270), ('pant_f_l', 90), ('pant_b_r', 90), ('pant_l_cuff_b', 90), ('pant_b_l', 180), ('pant_f_r', 270), ('right_sleeve_b', 180), ('right_sleeve_f', 0), ('left_sleeve_b', 0), ('wb_back', 180), ('right_btorso', 90), ('pant_r_cuff_f', 270), ('pant_l_cuff_f', 90)] | Fitness: 0.7023
+Layout 92: [('wb_front', 270), ('pant_b_r', 180), ('left_btorso', 180), ('pant_f_r', 270), ('right_ftorso', 0), ('pant_r_cuff_b', 0), ('left_hood', 0), ('left_sleeve_f', 90), ('pant_f_l', 180), ('pant_l_cuff_f', 0), ('left_ftorso', 180), ('right_sleeve_f', 270), ('right_btorso', 180), ('wb_back', 180), ('right_sleeve_b', 180), ('left_sleeve_b', 180), ('right_hood', 0), ('pant_l_cuff_b', 0), ('pant_r_cuff_f', 90), ('pant_b_l', 180)] | Fitness: 0.6532
+Layout 93: [('pant_l_cuff_b', 0), ('right_btorso', 0), ('pant_l_cuff_f', 0), ('right_hood', 180), ('pant_b_l', 90), ('wb_back', 0), ('left_sleeve_b', 90), ('pant_b_r', 0), ('right_ftorso', 90), ('left_sleeve_f', 0), ('pant_r_cuff_b', 180), ('pant_r_cuff_f', 0), ('pant_f_l', 180), ('pant_f_r', 90), ('left_ftorso', 0), ('left_hood', 270), ('right_sleeve_f', 0), ('left_btorso', 180), ('right_sleeve_b', 270), ('wb_front', 0)] | Fitness: 0.6642
+Layout 94: [('pant_f_r', 0), ('right_ftorso', 270), ('pant_l_cuff_f', 90), ('left_sleeve_f', 0), ('wb_back', 0), ('left_hood', 90), ('right_hood', 90), ('right_sleeve_f', 0), ('pant_b_l', 180), ('left_sleeve_b', 0), ('pant_l_cuff_b', 90), ('wb_front', 180), ('left_ftorso', 90), ('right_sleeve_b', 0), ('pant_r_cuff_f', 180), ('right_btorso', 90), ('pant_r_cuff_b', 270), ('pant_f_l', 270), ('left_btorso', 180), ('pant_b_r', 90)] | Fitness: 0.6416
+Layout 95: [('pant_f_r', 90), ('right_hood', 180), ('pant_r_cuff_f', 90), ('wb_front', 90), ('pant_f_l', 0), ('left_hood', 0), ('right_btorso', 270), ('right_sleeve_f', 90), ('pant_b_r', 0), ('left_sleeve_f', 90), ('right_sleeve_b', 0), ('wb_back', 180), ('left_btorso', 90), ('pant_l_cuff_b', 270), ('pant_r_cuff_b', 180), ('pant_b_l', 90), ('pant_l_cuff_f', 90), ('left_sleeve_b', 90), ('left_ftorso', 270), ('right_ftorso', 90)] | Fitness: 0.6768
+Layout 96: [('pant_b_r', 90), ('left_btorso', 0), ('left_ftorso', 90), ('pant_r_cuff_f', 270), ('right_btorso', 180), ('right_sleeve_b', 90), ('left_sleeve_f', 0), ('right_sleeve_f', 180), ('pant_l_cuff_b', 90), ('wb_front', 0), ('pant_b_l', 180), ('left_sleeve_b', 270), ('pant_f_l', 270), ('pant_l_cuff_f', 90), ('pant_r_cuff_b', 270), ('wb_back', 90), ('left_hood', 270), ('right_hood', 180), ('pant_f_r', 180), ('right_ftorso', 90)] | Fitness: 0.6602
+Layout 97: [('pant_b_r', 0), ('wb_back', 180), ('pant_f_r', 0), ('left_hood', 270), ('wb_front', 0), ('left_sleeve_f', 180), ('right_sleeve_b', 0), ('right_hood', 90), ('right_sleeve_f', 180), ('pant_l_cuff_b', 0), ('right_ftorso', 0), ('left_ftorso', 180), ('pant_r_cuff_b', 180), ('left_sleeve_b', 0), ('pant_f_l', 0), ('right_btorso', 180), ('pant_r_cuff_f', 90), ('pant_b_l', 270), ('left_btorso', 180), ('pant_l_cuff_f', 90)] | Fitness: 0.6625
+Layout 98: [('left_ftorso', 270), ('pant_f_l', 270), ('pant_r_cuff_b', 180), ('pant_f_r', 0), ('pant_r_cuff_f', 270), ('wb_back', 0), ('pant_b_r', 180), ('left_sleeve_b', 0), ('right_hood', 180), ('pant_l_cuff_b', 180), ('pant_b_l', 180), ('left_sleeve_f', 0), ('right_ftorso', 0), ('pant_l_cuff_f', 180), ('left_hood', 90), ('wb_front', 90), ('right_btorso', 90), ('right_sleeve_f', 90), ('right_sleeve_b', 90), ('left_btorso', 180)] | Fitness: 0.6468
+Layout 99: [('left_sleeve_f', 0), ('pant_r_cuff_b', 0), ('left_hood', 270), ('pant_b_l', 180), ('right_sleeve_f', 180), ('right_btorso', 90), ('left_btorso', 180), ('pant_f_r', 180), ('pant_l_cuff_f', 0), ('wb_front', 270), ('wb_back', 90), ('right_ftorso', 90), ('pant_b_r', 0), ('pant_r_cuff_f', 0), ('right_sleeve_b', 0), ('right_hood', 0), ('pant_f_l', 270), ('pant_l_cuff_b', 270), ('left_ftorso', 270), ('left_sleeve_b', 180)] | Fitness: 0.6660
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7360
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0388; mutants: +0.0000
+------------------------------------------------------------
+Generation 1: best 0.7447 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 1 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 1 completed in 89.56s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7447
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7447
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0436; mutants: +0.0000
+------------------------------------------------------------
+Generation 2: best 0.7447 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 2 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 2 completed in 89.83s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7447
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7447
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0457; mutants: +0.0000
+------------------------------------------------------------
+Generation 3: best 0.7638 (Δ +0.0191)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 3 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 300 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 3 completed in 90.92s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7638
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7638
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0514; mutants: +0.0000
+------------------------------------------------------------
+Generation 4: best 0.7638 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 400 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 4 completed in 90.46s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7638
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7638
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0416; mutants: +0.0000
+------------------------------------------------------------
+Generation 5: best 0.7638 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 5 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 500 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 5 completed in 92.87s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7638
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7638
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0408; mutants: +0.0000
+------------------------------------------------------------
+Generation 6: best 0.7689 (Δ +0.0051)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 6 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 600 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 6 completed in 93.69s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7689
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7689
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0193; mutants: +0.0000
+------------------------------------------------------------
+Generation 7: best 0.7689 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 7 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 700 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 7 completed in 96.07s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7689
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7689
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0182; mutants: +0.0000
+------------------------------------------------------------
+Generation 8: best 0.7689 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 800 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 8 completed in 98.82s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7689
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7689
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0195; mutants: +0.0000
+------------------------------------------------------------
+Generation 9: best 0.7766 (Δ +0.0077)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 9 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 900 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 9 completed in 104.38s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0208; mutants: +0.0000
+------------------------------------------------------------
+Generation 10: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 10 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1000 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 10 completed in 99.63s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0127; mutants: +0.0000
+------------------------------------------------------------
+Generation 11: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 11 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 11 completed in 114.86s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0239; mutants: +0.0000
+------------------------------------------------------------
+Generation 12: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 12 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 12 completed in 102.55s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0233; mutants: +0.0000
+------------------------------------------------------------
+Generation 13: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 13 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1300 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 13 completed in 103.90s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0174; mutants: +0.0000
+------------------------------------------------------------
+Generation 14: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 14 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1400 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 14 completed in 115.43s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0162; mutants: +0.0000
+------------------------------------------------------------
+Generation 15: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 15 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1500 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 15 completed in 108.92s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0214; mutants: +0.0000
+------------------------------------------------------------
+Generation 16: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 16 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1600 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 16 completed in 112.08s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0154; mutants: +0.0000
+------------------------------------------------------------
+Generation 17: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 17 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1700 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 17 completed in 106.41s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0161; mutants: +0.0000
+------------------------------------------------------------
+Generation 18: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 18 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1800 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 18 completed in 111.73s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0200; mutants: +0.0000
+------------------------------------------------------------
+Generation 19: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 19 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 1900 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 19 completed in 107.60s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0085; mutants: +0.0000
+------------------------------------------------------------
+Generation 20: best 0.7766 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 20 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2000 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 20 completed in 107.23s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7766
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0163; mutants: +0.0000
+------------------------------------------------------------
+Generation 21: best 0.7853 (Δ +0.0087)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 21 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 21 completed in 103.38s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7853
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7853
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0236; mutants: +0.0000
+------------------------------------------------------------
+Generation 22: best 0.7853 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 22 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 22 completed in 104.15s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7853
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7853
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0191; mutants: +0.0000
+------------------------------------------------------------
+Generation 23: best 0.7892 (Δ +0.0039)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 23 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2300 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 23 completed in 107.87s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0261; mutants: +0.0000
+------------------------------------------------------------
+Generation 24: best 0.7892 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 24 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2400 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 24 completed in 106.05s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0240; mutants: +0.0000
+------------------------------------------------------------
+Generation 25: best 0.7892 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 25 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2500 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 25 completed in 107.57s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0233; mutants: +0.0000
+------------------------------------------------------------
+Generation 26: best 0.7892 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 26 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2600 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 26 completed in 109.32s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0302; mutants: +0.0000
+------------------------------------------------------------
+Generation 27: best 0.7892 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 27 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2700 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 27 completed in 110.22s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0242; mutants: +0.0000
+------------------------------------------------------------
+Generation 28: best 0.7892 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 28 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2800 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 28 completed in 107.13s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0309; mutants: +0.0000
+------------------------------------------------------------
+Generation 29: best 0.7892 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 29 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 2900 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 29 completed in 108.33s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7892
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0266; mutants: +0.0000
+------------------------------------------------------------
+Generation 30: best 0.7936 (Δ +0.0044)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 30 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3000 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 30 completed in 108.63s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0327; mutants: +0.0000
+------------------------------------------------------------
+Generation 31: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 31 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 31 completed in 107.45s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0371; mutants: +0.0000
+------------------------------------------------------------
+Generation 32: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 32 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 32 completed in 113.67s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0154; mutants: +0.0000
+------------------------------------------------------------
+Generation 33: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 33 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3300 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 33 completed in 85.22s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0198; mutants: +0.0000
+------------------------------------------------------------
+Generation 34: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 34 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3400 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 34 completed in 76.21s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0240; mutants: +0.0000
+------------------------------------------------------------
+Generation 35: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 35 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3500 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 35 completed in 76.22s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0209; mutants: +0.0000
+------------------------------------------------------------
+Generation 36: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 36 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3600 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 36 completed in 76.53s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0213; mutants: +0.0000
+------------------------------------------------------------
+Generation 37: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 37 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3700 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 37 completed in 76.64s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0189; mutants: +0.0000
+------------------------------------------------------------
+Generation 38: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 38 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3800 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 38 completed in 76.76s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0185; mutants: +0.0000
+------------------------------------------------------------
+Generation 39: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 39 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 3900 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 39 completed in 76.62s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0263; mutants: +0.0000
+------------------------------------------------------------
+Generation 40: best 0.7936 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 40 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4000 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 40 completed in 77.23s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7936
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0293; mutants: +0.0000
+------------------------------------------------------------
+Generation 41: best 0.7945 (Δ +0.0010)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 41 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 41 completed in 80.07s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0290; mutants: +0.0000
+------------------------------------------------------------
+Generation 42: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 42 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 42 completed in 80.51s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0247; mutants: +0.0000
+------------------------------------------------------------
+Generation 43: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 43 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4300 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 43 completed in 80.62s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0258; mutants: +0.0000
+------------------------------------------------------------
+Generation 44: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 44 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4400 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 44 completed in 80.37s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0168; mutants: +0.0000
+------------------------------------------------------------
+Generation 45: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 45 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4500 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 45 completed in 80.93s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0208; mutants: +0.0000
+------------------------------------------------------------
+Generation 46: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 46 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4600 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 46 completed in 80.19s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0246; mutants: +0.0000
+------------------------------------------------------------
+Generation 47: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 47 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4700 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 47 completed in 80.08s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0178; mutants: +0.0000
+------------------------------------------------------------
+Generation 48: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 48 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4800 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 48 completed in 80.03s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0218; mutants: +0.0000
+------------------------------------------------------------
+Generation 49: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 49 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 4900 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 49 completed in 80.76s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0328; mutants: +0.0000
+------------------------------------------------------------
+Generation 50: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 50 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5000 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 50 completed in 80.31s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0245; mutants: +0.0000
+------------------------------------------------------------
+Generation 51: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 51 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 51 completed in 81.02s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0286; mutants: +0.0000
+------------------------------------------------------------
+Generation 52: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 52 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 52 completed in 80.66s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0247; mutants: +0.0000
+------------------------------------------------------------
+Generation 53: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 53 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5300 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 53 completed in 81.88s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0262; mutants: +0.0000
+------------------------------------------------------------
+Generation 54: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 54 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5400 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 54 completed in 81.36s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0250; mutants: +0.0000
+------------------------------------------------------------
+Generation 55: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 55 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5500 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 55 completed in 80.72s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0215; mutants: +0.0000
+------------------------------------------------------------
+Generation 56: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 56 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5600 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 56 completed in 81.49s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0257; mutants: +0.0000
+------------------------------------------------------------
+Generation 57: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 57 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5700 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 57 completed in 82.62s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0238; mutants: +0.0000
+------------------------------------------------------------
+Generation 58: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 58 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5800 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 58 completed in 81.93s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0220; mutants: +0.0000
+------------------------------------------------------------
+Generation 59: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 59 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 5900 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 59 completed in 81.47s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0214; mutants: +0.0000
+------------------------------------------------------------
+Generation 60: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 60 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 6000 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 60 completed in 83.40s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7945
+Collecting results from tasks…
+Collected 90 offspring, 0 mutants, 0 randoms.
+Avg offspring gain vs parent: -0.0273; mutants: +0.0000
+------------------------------------------------------------
+Generation 61: best 0.7945 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 61 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250531_110252/plots/fitness_curves_20250531_110252.png
+Mean gains plot saved to nesting/run_logs_20250531_110252/plots/mean_gains_20250531_110252.png
+Swarm plot data: 6100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250531_110252/plots/fitness_swarm_20250531_110252.png
+Plots updated successfully.
+Generation 61 completed in 85.37s.
+------------------------------------------------------------
+Early‑stopping: fitness plateau for 20 generations.
+------------------------------------------------------------
+Evolution completed.
+Total time: 5749.99 seconds

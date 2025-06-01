@@ -1,0 +1,245 @@
+------------------------------------------------------------
+Evolution initialized with 50 chromosomes, 5 elites, 30 offspring, 5 mutants, 10 randoms.
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x11e2f56d0>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x11e2f56d0>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x103501930>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1', 'ox1k'], 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': False, 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1', 'ox1k'], 'SELECTED_DECODER': 'NFP', 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1k', 'GRAVITATE_STEP': 2, 'POPULATION_SIZE': 50, 'NUM_GENERATIONS': 10, 'MUTATION_RATE': 0.5, 'POPULATION_WEIGHTS': {'elites': 0.1, 'offspring': 0.6, 'mutants': 0.1, 'randoms': 0.2}, 'MUTATION_WEIGHTS': {'rotate': 0.3, 'swap': 0.2, 'inversion': 0, 'insertion': 0.1, 'scramble': 0.4, 'split': 0}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 20, 'EARLY_STOP_TOLERANCE': 0.0001, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 2, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs', 'LOG_TIME': False, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 10, 'SAMPLES_PER_EDGE': 5, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 500, 'CONTAINER_HEIGHT_CM': 500.0, 'SEAM_ALLOWANCE_CM': 1, '__dict__': <function __dict__ at 0x11e2e63a0>}
+Generating initial population...
+------------------------------------------------------------
+Initial population of 50 layouts generated.
+Layout 0: [('sl_right_cuff_skirt_f', 180), ('skirt_back', 270), ('ins_skirt_back_2', 180), ('ins_skirt_back_1', 90), ('ins_skirt_front_0', 270), ('wb_back', 90), ('left_ftorso', 0), ('ins_skirt_front_2', 180), ('ins_skirt_front_1', 270), ('skirt_front', 180), ('right_sleeve_b', 270), ('wb_front', 90), ('ins_skirt_back_0', 270), ('sl_right_cuff_skirt_b', 0), ('left_btorso', 270), ('right_sleeve_f', 0), ('right_ftorso', 90), ('right_btorso', 90)] | Fitness: 0.5984
+Layout 1: [('sl_right_cuff_skirt_f', 270), ('ins_skirt_front_2', 90), ('skirt_front', 0), ('right_sleeve_b', 0), ('right_btorso', 270), ('ins_skirt_front_1', 270), ('ins_skirt_back_0', 90), ('ins_skirt_back_2', 90), ('wb_front', 90), ('right_ftorso', 90), ('sl_right_cuff_skirt_b', 180), ('right_sleeve_f', 270), ('ins_skirt_front_0', 270), ('skirt_back', 270), ('ins_skirt_back_1', 90), ('wb_back', 180), ('left_ftorso', 270), ('left_btorso', 270)] | Fitness: 0.6302
+Layout 2: [('ins_skirt_back_2', 270), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_front_0', 0), ('ins_skirt_front_1', 180), ('right_ftorso', 270), ('ins_skirt_front_2', 90), ('right_sleeve_f', 270), ('left_ftorso', 90), ('wb_back', 90), ('ins_skirt_back_0', 180), ('sl_right_cuff_skirt_f', 270), ('right_sleeve_b', 90), ('skirt_back', 0), ('ins_skirt_back_1', 0), ('wb_front', 180), ('skirt_front', 0), ('left_btorso', 0), ('right_btorso', 0)] | Fitness: 0.6382
+Layout 3: [('ins_skirt_front_0', 0), ('skirt_front', 90), ('ins_skirt_front_1', 270), ('sl_right_cuff_skirt_b', 270), ('left_btorso', 0), ('ins_skirt_back_2', 90), ('ins_skirt_front_2', 90), ('right_sleeve_b', 180), ('ins_skirt_back_0', 180), ('ins_skirt_back_1', 0), ('skirt_back', 0), ('right_ftorso', 270), ('sl_right_cuff_skirt_f', 270), ('wb_back', 0), ('wb_front', 270), ('left_ftorso', 90), ('right_sleeve_f', 0), ('right_btorso', 180)] | Fitness: 0.6075
+Layout 4: [('ins_skirt_front_0', 180), ('skirt_front', 270), ('wb_front', 270), ('wb_back', 0), ('ins_skirt_back_1', 270), ('right_ftorso', 0), ('sl_right_cuff_skirt_f', 90), ('right_sleeve_f', 0), ('sl_right_cuff_skirt_b', 180), ('left_btorso', 180), ('ins_skirt_front_2', 180), ('left_ftorso', 0), ('right_btorso', 270), ('ins_skirt_back_0', 180), ('ins_skirt_front_1', 0), ('ins_skirt_back_2', 90), ('right_sleeve_b', 90), ('skirt_back', 90)] | Fitness: 0.6542
+Layout 5: [('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_front_1', 180), ('left_ftorso', 90), ('right_btorso', 90), ('ins_skirt_front_2', 90), ('right_sleeve_f', 0), ('wb_back', 90), ('ins_skirt_back_2', 180), ('ins_skirt_back_1', 90), ('left_btorso', 90), ('wb_front', 0), ('right_sleeve_b', 180), ('ins_skirt_front_0', 270), ('ins_skirt_back_0', 90), ('right_ftorso', 0), ('skirt_back', 180), ('skirt_front', 270)] | Fitness: 0.6733
+Layout 6: [('right_ftorso', 180), ('right_sleeve_b', 270), ('right_btorso', 180), ('skirt_front', 270), ('ins_skirt_back_0', 0), ('ins_skirt_back_1', 270), ('left_ftorso', 180), ('ins_skirt_front_0', 270), ('sl_right_cuff_skirt_b', 90), ('ins_skirt_front_2', 180), ('ins_skirt_front_1', 0), ('skirt_back', 0), ('wb_back', 270), ('wb_front', 0), ('right_sleeve_f', 90), ('ins_skirt_back_2', 180), ('left_btorso', 180), ('sl_right_cuff_skirt_f', 180)] | Fitness: 0.6336
+Layout 7: [('ins_skirt_front_2', 270), ('ins_skirt_back_2', 0), ('ins_skirt_back_0', 180), ('skirt_front', 0), ('right_ftorso', 180), ('right_btorso', 0), ('wb_front', 90), ('left_btorso', 90), ('skirt_back', 270), ('left_ftorso', 180), ('ins_skirt_front_0', 180), ('right_sleeve_b', 180), ('right_sleeve_f', 180), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_back_1', 180), ('sl_right_cuff_skirt_f', 270), ('ins_skirt_front_1', 180), ('wb_back', 270)] | Fitness: 0.6356
+Layout 8: [('sl_right_cuff_skirt_f', 90), ('ins_skirt_front_2', 90), ('left_ftorso', 270), ('right_ftorso', 180), ('ins_skirt_back_2', 0), ('right_sleeve_b', 0), ('skirt_front', 270), ('skirt_back', 90), ('ins_skirt_front_0', 90), ('ins_skirt_back_0', 270), ('wb_back', 270), ('ins_skirt_front_1', 90), ('wb_front', 270), ('right_sleeve_f', 270), ('ins_skirt_back_1', 90), ('right_btorso', 90), ('sl_right_cuff_skirt_b', 180), ('left_btorso', 90)] | Fitness: 0.6472
+Layout 9: [('ins_skirt_front_2', 180), ('skirt_front', 0), ('sl_right_cuff_skirt_b', 180), ('right_ftorso', 270), ('right_sleeve_f', 90), ('sl_right_cuff_skirt_f', 180), ('right_sleeve_b', 180), ('left_ftorso', 0), ('skirt_back', 0), ('left_btorso', 90), ('ins_skirt_front_1', 180), ('ins_skirt_back_1', 90), ('ins_skirt_front_0', 90), ('wb_front', 0), ('ins_skirt_back_2', 0), ('wb_back', 180), ('right_btorso', 180), ('ins_skirt_back_0', 180)] | Fitness: 0.6525
+Layout 10: [('right_ftorso', 0), ('ins_skirt_back_2', 270), ('wb_back', 90), ('ins_skirt_front_1', 90), ('left_ftorso', 180), ('sl_right_cuff_skirt_b', 180), ('right_sleeve_f', 90), ('ins_skirt_back_0', 180), ('left_btorso', 90), ('ins_skirt_front_2', 180), ('skirt_front', 0), ('right_sleeve_b', 90), ('sl_right_cuff_skirt_f', 0), ('skirt_back', 90), ('right_btorso', 0), ('ins_skirt_back_1', 270), ('wb_front', 90), ('ins_skirt_front_0', 90)] | Fitness: 0.5969
+Layout 11: [('ins_skirt_back_1', 90), ('ins_skirt_back_2', 180), ('left_ftorso', 0), ('wb_back', 180), ('wb_front', 270), ('right_btorso', 90), ('sl_right_cuff_skirt_b', 0), ('skirt_back', 0), ('left_btorso', 0), ('right_sleeve_b', 90), ('skirt_front', 0), ('ins_skirt_front_1', 180), ('ins_skirt_back_0', 180), ('ins_skirt_front_2', 90), ('sl_right_cuff_skirt_f', 0), ('ins_skirt_front_0', 180), ('right_sleeve_f', 270), ('right_ftorso', 0)] | Fitness: 0.6158
+Layout 12: [('ins_skirt_back_1', 180), ('wb_front', 0), ('ins_skirt_front_1', 270), ('right_ftorso', 180), ('ins_skirt_front_2', 0), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_back_0', 0), ('skirt_back', 0), ('wb_back', 270), ('left_ftorso', 90), ('ins_skirt_back_2', 90), ('sl_right_cuff_skirt_f', 0), ('right_sleeve_f', 0), ('right_sleeve_b', 0), ('ins_skirt_front_0', 0), ('left_btorso', 180), ('skirt_front', 90), ('right_btorso', 90)] | Fitness: 0.6904
+Layout 13: [('left_ftorso', 0), ('left_btorso', 180), ('ins_skirt_front_1', 0), ('skirt_front', 0), ('wb_front', 270), ('ins_skirt_back_2', 180), ('wb_back', 180), ('right_ftorso', 0), ('ins_skirt_front_2', 90), ('right_sleeve_f', 180), ('ins_skirt_front_0', 270), ('skirt_back', 90), ('ins_skirt_back_1', 180), ('ins_skirt_back_0', 180), ('sl_right_cuff_skirt_b', 0), ('right_sleeve_b', 270), ('sl_right_cuff_skirt_f', 270), ('right_btorso', 180)] | Fitness: 0.6573
+Layout 14: [('left_btorso', 90), ('skirt_back', 180), ('right_ftorso', 0), ('sl_right_cuff_skirt_b', 0), ('right_sleeve_b', 270), ('ins_skirt_front_1', 0), ('skirt_front', 0), ('ins_skirt_front_2', 90), ('ins_skirt_back_0', 90), ('wb_back', 90), ('ins_skirt_back_1', 90), ('ins_skirt_front_0', 0), ('wb_front', 90), ('right_btorso', 90), ('sl_right_cuff_skirt_f', 180), ('right_sleeve_f', 270), ('ins_skirt_back_2', 180), ('left_ftorso', 0)] | Fitness: 0.6320
+Layout 15: [('ins_skirt_back_2', 270), ('right_sleeve_b', 270), ('right_sleeve_f', 270), ('right_ftorso', 0), ('wb_front', 0), ('right_btorso', 270), ('ins_skirt_front_1', 270), ('ins_skirt_front_0', 270), ('wb_back', 90), ('ins_skirt_back_0', 180), ('skirt_front', 0), ('left_btorso', 270), ('skirt_back', 90), ('left_ftorso', 90), ('ins_skirt_back_1', 0), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_front_2', 180), ('sl_right_cuff_skirt_f', 180)] | Fitness: 0.6692
+Layout 16: [('ins_skirt_front_0', 90), ('right_sleeve_b', 180), ('ins_skirt_front_2', 180), ('skirt_back', 90), ('ins_skirt_back_2', 270), ('wb_back', 90), ('skirt_front', 90), ('right_sleeve_f', 270), ('right_ftorso', 180), ('right_btorso', 180), ('ins_skirt_back_1', 90), ('left_btorso', 180), ('left_ftorso', 0), ('wb_front', 270), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_back_0', 90), ('ins_skirt_front_1', 0), ('sl_right_cuff_skirt_f', 90)] | Fitness: 0.6208
+Layout 17: [('left_btorso', 90), ('ins_skirt_back_1', 270), ('skirt_back', 0), ('left_ftorso', 0), ('wb_back', 270), ('right_ftorso', 180), ('ins_skirt_back_2', 90), ('right_sleeve_f', 0), ('skirt_front', 90), ('right_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 270), ('right_btorso', 180), ('ins_skirt_front_0', 180), ('ins_skirt_back_0', 90), ('sl_right_cuff_skirt_f', 90), ('ins_skirt_front_1', 90), ('ins_skirt_front_2', 0)] | Fitness: 0.6781
+Layout 18: [('ins_skirt_back_2', 0), ('ins_skirt_back_1', 270), ('skirt_back', 90), ('left_btorso', 180), ('right_sleeve_f', 180), ('right_btorso', 180), ('right_sleeve_b', 0), ('wb_back', 90), ('left_ftorso', 90), ('skirt_front', 90), ('ins_skirt_back_0', 180), ('wb_front', 90), ('ins_skirt_front_1', 180), ('sl_right_cuff_skirt_b', 0), ('sl_right_cuff_skirt_f', 90), ('right_ftorso', 0), ('ins_skirt_front_0', 180), ('ins_skirt_front_2', 90)] | Fitness: 0.6040
+Layout 19: [('left_ftorso', 270), ('ins_skirt_front_2', 180), ('ins_skirt_front_1', 270), ('right_sleeve_f', 180), ('right_sleeve_b', 90), ('wb_front', 0), ('skirt_back', 180), ('ins_skirt_back_1', 270), ('sl_right_cuff_skirt_f', 270), ('wb_back', 0), ('ins_skirt_back_0', 0), ('right_ftorso', 90), ('right_btorso', 180), ('skirt_front', 270), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_back_2', 0), ('ins_skirt_front_0', 180), ('left_btorso', 90)] | Fitness: 0.6504
+Layout 20: [('wb_back', 90), ('right_sleeve_b', 180), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_back_2', 180), ('sl_right_cuff_skirt_f', 0), ('right_sleeve_f', 90), ('left_btorso', 90), ('ins_skirt_back_1', 0), ('ins_skirt_back_0', 90), ('ins_skirt_front_1', 270), ('left_ftorso', 180), ('right_btorso', 270), ('skirt_front', 90), ('right_ftorso', 180), ('ins_skirt_front_0', 270), ('ins_skirt_front_2', 90), ('wb_front', 270), ('skirt_back', 270)] | Fitness: 0.6488
+Layout 21: [('sl_right_cuff_skirt_b', 0), ('wb_back', 90), ('right_sleeve_b', 0), ('left_btorso', 0), ('left_ftorso', 270), ('skirt_front', 90), ('ins_skirt_back_0', 90), ('sl_right_cuff_skirt_f', 270), ('wb_front', 90), ('right_ftorso', 270), ('ins_skirt_front_1', 90), ('ins_skirt_back_1', 180), ('skirt_back', 270), ('ins_skirt_front_0', 270), ('ins_skirt_front_2', 0), ('right_btorso', 180), ('right_sleeve_f', 90), ('ins_skirt_back_2', 270)] | Fitness: 0.6443
+Layout 22: [('right_sleeve_b', 180), ('left_btorso', 0), ('ins_skirt_back_0', 90), ('skirt_back', 180), ('ins_skirt_front_1', 90), ('ins_skirt_back_2', 0), ('ins_skirt_front_2', 270), ('right_ftorso', 0), ('wb_front', 270), ('right_sleeve_f', 180), ('sl_right_cuff_skirt_b', 90), ('ins_skirt_back_1', 90), ('wb_back', 180), ('left_ftorso', 270), ('right_btorso', 90), ('ins_skirt_front_0', 270), ('skirt_front', 180), ('sl_right_cuff_skirt_f', 0)] | Fitness: 0.6413
+Layout 23: [('left_btorso', 180), ('ins_skirt_back_2', 270), ('ins_skirt_front_0', 90), ('ins_skirt_back_1', 0), ('sl_right_cuff_skirt_f', 180), ('left_ftorso', 180), ('skirt_front', 0), ('right_btorso', 270), ('right_ftorso', 270), ('skirt_back', 0), ('ins_skirt_front_2', 270), ('right_sleeve_f', 90), ('wb_back', 0), ('ins_skirt_front_1', 90), ('wb_front', 90), ('ins_skirt_back_0', 0), ('right_sleeve_b', 180), ('sl_right_cuff_skirt_b', 270)] | Fitness: 0.5919
+Layout 24: [('ins_skirt_back_2', 270), ('wb_front', 90), ('wb_back', 270), ('skirt_back', 180), ('ins_skirt_back_0', 0), ('left_btorso', 90), ('ins_skirt_back_1', 270), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_front_1', 0), ('ins_skirt_front_2', 0), ('left_ftorso', 0), ('right_btorso', 270), ('right_sleeve_f', 90), ('sl_right_cuff_skirt_f', 0), ('right_ftorso', 270), ('right_sleeve_b', 180), ('ins_skirt_front_0', 0), ('skirt_front', 270)] | Fitness: 0.6641
+Layout 25: [('wb_front', 270), ('right_ftorso', 270), ('right_sleeve_b', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 270), ('ins_skirt_front_0', 90), ('sl_right_cuff_skirt_b', 180), ('skirt_back', 270), ('ins_skirt_back_1', 0), ('ins_skirt_back_2', 0), ('left_btorso', 90), ('skirt_front', 270), ('right_sleeve_f', 0), ('right_btorso', 0), ('ins_skirt_back_0', 270), ('left_ftorso', 270), ('ins_skirt_front_2', 90), ('ins_skirt_front_1', 90)] | Fitness: 0.6136
+Layout 26: [('right_sleeve_b', 0), ('ins_skirt_back_0', 270), ('ins_skirt_front_1', 0), ('sl_right_cuff_skirt_b', 0), ('left_btorso', 0), ('skirt_back', 270), ('sl_right_cuff_skirt_f', 180), ('left_ftorso', 90), ('ins_skirt_front_2', 0), ('ins_skirt_back_1', 90), ('right_btorso', 90), ('ins_skirt_back_2', 180), ('right_sleeve_f', 180), ('skirt_front', 0), ('ins_skirt_front_0', 0), ('right_ftorso', 0), ('wb_front', 90), ('wb_back', 180)] | Fitness: 0.6117
+Layout 27: [('ins_skirt_back_0', 0), ('ins_skirt_back_2', 90), ('left_ftorso', 180), ('right_sleeve_f', 0), ('sl_right_cuff_skirt_f', 270), ('skirt_back', 180), ('left_btorso', 180), ('ins_skirt_front_1', 180), ('ins_skirt_back_1', 90), ('wb_front', 0), ('right_btorso', 180), ('ins_skirt_front_2', 0), ('right_ftorso', 270), ('skirt_front', 180), ('sl_right_cuff_skirt_b', 180), ('right_sleeve_b', 270), ('wb_back', 180), ('ins_skirt_front_0', 0)] | Fitness: 0.6182
+Layout 28: [('sl_right_cuff_skirt_f', 0), ('left_btorso', 0), ('ins_skirt_back_1', 90), ('right_sleeve_b', 90), ('ins_skirt_back_2', 180), ('ins_skirt_front_2', 180), ('ins_skirt_front_1', 270), ('right_sleeve_f', 0), ('wb_back', 90), ('wb_front', 90), ('skirt_back', 90), ('left_ftorso', 270), ('ins_skirt_back_0', 0), ('ins_skirt_front_0', 0), ('right_ftorso', 270), ('right_btorso', 180), ('sl_right_cuff_skirt_b', 0), ('skirt_front', 0)] | Fitness: 0.6797
+Layout 29: [('wb_front', 90), ('skirt_back', 270), ('left_ftorso', 90), ('ins_skirt_front_1', 270), ('wb_back', 90), ('left_btorso', 90), ('right_sleeve_b', 90), ('sl_right_cuff_skirt_b', 0), ('ins_skirt_back_0', 180), ('right_btorso', 0), ('ins_skirt_front_2', 270), ('sl_right_cuff_skirt_f', 180), ('ins_skirt_front_0', 90), ('right_ftorso', 180), ('ins_skirt_back_1', 180), ('skirt_front', 180), ('right_sleeve_f', 270), ('ins_skirt_back_2', 270)] | Fitness: 0.6761
+Layout 30: [('ins_skirt_back_2', 90), ('ins_skirt_front_2', 270), ('wb_front', 270), ('wb_back', 180), ('skirt_front', 270), ('right_ftorso', 0), ('left_btorso', 90), ('ins_skirt_back_1', 0), ('ins_skirt_front_0', 0), ('ins_skirt_front_1', 90), ('right_sleeve_f', 270), ('sl_right_cuff_skirt_f', 270), ('left_ftorso', 0), ('skirt_back', 270), ('ins_skirt_back_0', 0), ('right_btorso', 270), ('right_sleeve_b', 180), ('sl_right_cuff_skirt_b', 0)] | Fitness: 0.6261
+Layout 31: [('ins_skirt_front_2', 180), ('left_btorso', 0), ('right_sleeve_f', 180), ('left_ftorso', 0), ('ins_skirt_back_0', 90), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_back_2', 0), ('right_ftorso', 270), ('skirt_back', 0), ('skirt_front', 90), ('ins_skirt_back_1', 0), ('wb_front', 0), ('ins_skirt_front_0', 90), ('ins_skirt_front_1', 0), ('wb_back', 180), ('right_btorso', 90), ('right_sleeve_b', 0), ('sl_right_cuff_skirt_f', 90)] | Fitness: 0.5672
+Layout 32: [('wb_front', 180), ('ins_skirt_front_1', 0), ('right_sleeve_f', 0), ('right_ftorso', 180), ('ins_skirt_back_1', 90), ('sl_right_cuff_skirt_f', 180), ('ins_skirt_front_0', 90), ('wb_back', 0), ('ins_skirt_back_0', 270), ('left_ftorso', 0), ('skirt_back', 0), ('right_sleeve_b', 180), ('ins_skirt_front_2', 0), ('left_btorso', 0), ('ins_skirt_back_2', 270), ('right_btorso', 270), ('sl_right_cuff_skirt_b', 270), ('skirt_front', 0)] | Fitness: 0.6740
+Layout 33: [('right_btorso', 0), ('skirt_front', 0), ('ins_skirt_back_1', 0), ('wb_back', 270), ('sl_right_cuff_skirt_f', 0), ('sl_right_cuff_skirt_b', 0), ('ins_skirt_back_0', 270), ('right_ftorso', 180), ('right_sleeve_b', 90), ('ins_skirt_back_2', 0), ('left_btorso', 90), ('left_ftorso', 180), ('ins_skirt_front_2', 180), ('wb_front', 0), ('right_sleeve_f', 90), ('ins_skirt_front_1', 180), ('ins_skirt_front_0', 90), ('skirt_back', 270)] | Fitness: 0.5911
+Layout 34: [('ins_skirt_front_0', 270), ('left_btorso', 270), ('wb_front', 270), ('skirt_front', 180), ('ins_skirt_front_2', 90), ('ins_skirt_front_1', 270), ('ins_skirt_back_2', 270), ('right_sleeve_b', 270), ('left_ftorso', 270), ('ins_skirt_back_0', 0), ('sl_right_cuff_skirt_f', 270), ('right_sleeve_f', 0), ('skirt_back', 0), ('wb_back', 180), ('right_ftorso', 0), ('right_btorso', 270), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_back_1', 180)] | Fitness: 0.6382
+Layout 35: [('wb_front', 90), ('wb_back', 0), ('sl_right_cuff_skirt_b', 90), ('skirt_back', 180), ('right_sleeve_b', 180), ('ins_skirt_back_1', 270), ('skirt_front', 90), ('left_btorso', 0), ('right_ftorso', 270), ('right_sleeve_f', 0), ('left_ftorso', 180), ('ins_skirt_back_0', 180), ('ins_skirt_front_1', 90), ('sl_right_cuff_skirt_f', 270), ('ins_skirt_front_2', 180), ('ins_skirt_back_2', 270), ('ins_skirt_front_0', 0), ('right_btorso', 270)] | Fitness: 0.6238
+Layout 36: [('left_ftorso', 90), ('wb_back', 0), ('skirt_back', 0), ('right_sleeve_b', 270), ('sl_right_cuff_skirt_f', 0), ('ins_skirt_back_1', 0), ('ins_skirt_front_2', 270), ('skirt_front', 0), ('right_btorso', 180), ('right_ftorso', 180), ('ins_skirt_front_0', 270), ('left_btorso', 90), ('right_sleeve_f', 0), ('ins_skirt_front_1', 0), ('ins_skirt_back_0', 0), ('sl_right_cuff_skirt_b', 0), ('ins_skirt_back_2', 90), ('wb_front', 90)] | Fitness: 0.6707
+Layout 37: [('sl_right_cuff_skirt_b', 90), ('ins_skirt_back_2', 180), ('sl_right_cuff_skirt_f', 0), ('right_sleeve_b', 180), ('right_btorso', 180), ('ins_skirt_front_0', 270), ('ins_skirt_back_0', 90), ('left_ftorso', 0), ('right_sleeve_f', 270), ('ins_skirt_front_2', 90), ('wb_front', 90), ('wb_back', 270), ('ins_skirt_back_1', 0), ('ins_skirt_front_1', 0), ('right_ftorso', 270), ('left_btorso', 270), ('skirt_back', 180), ('skirt_front', 0)] | Fitness: 0.6235
+Layout 38: [('left_btorso', 0), ('ins_skirt_back_1', 270), ('ins_skirt_back_0', 180), ('right_btorso', 180), ('right_ftorso', 90), ('wb_front', 0), ('sl_right_cuff_skirt_b', 0), ('wb_back', 90), ('ins_skirt_back_2', 180), ('sl_right_cuff_skirt_f', 270), ('ins_skirt_front_1', 90), ('left_ftorso', 90), ('ins_skirt_front_2', 90), ('right_sleeve_b', 90), ('skirt_back', 90), ('right_sleeve_f', 90), ('ins_skirt_front_0', 90), ('skirt_front', 0)] | Fitness: 0.6539
+Layout 39: [('ins_skirt_back_0', 180), ('left_btorso', 180), ('wb_back', 90), ('ins_skirt_front_0', 0), ('right_ftorso', 180), ('skirt_front', 90), ('sl_right_cuff_skirt_b', 0), ('ins_skirt_front_1', 270), ('ins_skirt_front_2', 270), ('sl_right_cuff_skirt_f', 90), ('skirt_back', 180), ('ins_skirt_back_2', 0), ('right_sleeve_b', 90), ('right_sleeve_f', 90), ('right_btorso', 90), ('wb_front', 180), ('ins_skirt_back_1', 90), ('left_ftorso', 0)] | Fitness: 0.6134
+Layout 40: [('right_ftorso', 270), ('left_ftorso', 0), ('right_sleeve_f', 180), ('wb_front', 0), ('ins_skirt_back_2', 180), ('sl_right_cuff_skirt_f', 0), ('wb_back', 270), ('ins_skirt_front_1', 0), ('ins_skirt_front_2', 180), ('right_btorso', 270), ('left_btorso', 270), ('skirt_back', 270), ('right_sleeve_b', 90), ('ins_skirt_front_0', 90), ('skirt_front', 90), ('ins_skirt_back_0', 270), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_back_1', 90)] | Fitness: 0.6157
+Layout 41: [('right_btorso', 90), ('left_ftorso', 90), ('ins_skirt_back_1', 90), ('wb_front', 90), ('wb_back', 270), ('ins_skirt_back_2', 270), ('right_sleeve_f', 270), ('ins_skirt_front_1', 270), ('right_sleeve_b', 180), ('ins_skirt_front_0', 90), ('sl_right_cuff_skirt_f', 270), ('skirt_back', 270), ('sl_right_cuff_skirt_b', 0), ('ins_skirt_back_0', 270), ('skirt_front', 90), ('right_ftorso', 180), ('left_btorso', 0), ('ins_skirt_front_2', 270)] | Fitness: 0.6031
+Layout 42: [('skirt_front', 0), ('skirt_back', 0), ('right_sleeve_f', 270), ('right_ftorso', 270), ('left_btorso', 270), ('ins_skirt_back_0', 180), ('wb_back', 90), ('right_btorso', 180), ('ins_skirt_front_2', 90), ('left_ftorso', 0), ('ins_skirt_front_0', 270), ('right_sleeve_b', 270), ('wb_front', 90), ('ins_skirt_front_1', 0), ('ins_skirt_back_1', 180), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_back_2', 0), ('sl_right_cuff_skirt_f', 0)] | Fitness: 0.6746
+Layout 43: [('skirt_back', 270), ('ins_skirt_back_1', 270), ('ins_skirt_front_1', 180), ('ins_skirt_front_0', 0), ('wb_front', 180), ('wb_back', 270), ('ins_skirt_back_0', 180), ('left_ftorso', 180), ('right_btorso', 180), ('ins_skirt_front_2', 270), ('ins_skirt_back_2', 0), ('sl_right_cuff_skirt_f', 180), ('sl_right_cuff_skirt_b', 90), ('right_sleeve_b', 180), ('right_ftorso', 90), ('skirt_front', 0), ('right_sleeve_f', 180), ('left_btorso', 0)] | Fitness: 0.6221
+Layout 44: [('left_btorso', 90), ('ins_skirt_front_0', 90), ('ins_skirt_front_2', 270), ('right_sleeve_b', 270), ('skirt_front', 180), ('right_ftorso', 90), ('right_sleeve_f', 90), ('ins_skirt_back_1', 90), ('left_ftorso', 0), ('sl_right_cuff_skirt_f', 270), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('wb_back', 270), ('ins_skirt_back_2', 90), ('ins_skirt_front_1', 90), ('right_btorso', 90), ('ins_skirt_back_0', 0), ('skirt_back', 90)] | Fitness: 0.6703
+Layout 45: [('right_ftorso', 90), ('wb_back', 270), ('right_btorso', 0), ('ins_skirt_front_2', 90), ('ins_skirt_front_0', 0), ('skirt_back', 90), ('skirt_front', 180), ('ins_skirt_back_2', 0), ('left_btorso', 180), ('right_sleeve_b', 0), ('sl_right_cuff_skirt_f', 0), ('wb_front', 270), ('ins_skirt_back_0', 90), ('ins_skirt_back_1', 180), ('ins_skirt_front_1', 180), ('left_ftorso', 0), ('sl_right_cuff_skirt_b', 0), ('right_sleeve_f', 90)] | Fitness: 0.6165
+Layout 46: [('right_ftorso', 270), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_back_2', 270), ('sl_right_cuff_skirt_f', 270), ('wb_back', 180), ('right_sleeve_b', 90), ('ins_skirt_front_1', 0), ('right_sleeve_f', 180), ('skirt_front', 90), ('wb_front', 90), ('left_ftorso', 90), ('ins_skirt_back_0', 0), ('ins_skirt_front_2', 270), ('left_btorso', 90), ('ins_skirt_front_0', 270), ('skirt_back', 90), ('ins_skirt_back_1', 90), ('right_btorso', 90)] | Fitness: 0.6258
+Layout 47: [('ins_skirt_front_1', 0), ('skirt_back', 270), ('right_ftorso', 90), ('ins_skirt_front_2', 0), ('left_btorso', 0), ('sl_right_cuff_skirt_b', 90), ('sl_right_cuff_skirt_f', 270), ('right_sleeve_b', 270), ('ins_skirt_front_0', 0), ('skirt_front', 90), ('ins_skirt_back_2', 0), ('left_ftorso', 180), ('ins_skirt_back_1', 270), ('wb_front', 90), ('right_btorso', 90), ('wb_back', 0), ('ins_skirt_back_0', 90), ('right_sleeve_f', 270)] | Fitness: 0.6405
+Layout 48: [('ins_skirt_front_0', 0), ('ins_skirt_front_2', 0), ('ins_skirt_front_1', 180), ('right_btorso', 270), ('ins_skirt_back_1', 270), ('sl_right_cuff_skirt_f', 180), ('right_sleeve_f', 180), ('wb_front', 270), ('left_btorso', 180), ('right_ftorso', 180), ('skirt_front', 270), ('wb_back', 0), ('ins_skirt_back_0', 180), ('ins_skirt_back_2', 180), ('left_ftorso', 180), ('skirt_back', 0), ('right_sleeve_b', 90), ('sl_right_cuff_skirt_b', 90)] | Fitness: 0.5918
+Layout 49: [('sl_right_cuff_skirt_f', 0), ('right_sleeve_b', 180), ('skirt_back', 0), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_back_2', 0), ('ins_skirt_back_1', 180), ('skirt_front', 90), ('ins_skirt_front_0', 90), ('ins_skirt_front_1', 180), ('wb_back', 90), ('right_sleeve_f', 270), ('right_ftorso', 180), ('ins_skirt_back_0', 270), ('right_btorso', 0), ('ins_skirt_front_2', 90), ('left_ftorso', 90), ('wb_front', 270), ('left_btorso', 90)] | Fitness: 0.6294
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.6904
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0391; mutants: -0.0372
+------------------------------------------------------------
+Generation 1: best 0.6980 (Δ +0.0000)
+Generation 1 completed in 23.26s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.6980
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.6980
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0367; mutants: -0.0487
+------------------------------------------------------------
+Generation 2: best 0.7088 (Δ +0.0108)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 2 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250601_143806/plots/fitness_curves_20250601_143806.png
+Mean gains plot saved to nesting/run_logs_20250601_143806/plots/mean_gains_20250601_143806.png
+Mutation gains plot saved to nesting/run_logs_20250601_143806/plots/mutation_gains.png
+Swarm plot data: 100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250601_143806/plots/fitness_swarm_20250601_143806.png
+Plots updated successfully.
+Generation 2 completed in 24.00s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7088
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7088
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0405; mutants: -0.0360
+------------------------------------------------------------
+Generation 3: best 0.7284 (Δ +0.0196)
+Generation 3 completed in 23.21s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7284
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7284
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0531; mutants: -0.0356
+------------------------------------------------------------
+Generation 4: best 0.7284 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250601_143806/plots/fitness_curves_20250601_143806.png
+Mean gains plot saved to nesting/run_logs_20250601_143806/plots/mean_gains_20250601_143806.png
+Mutation gains plot saved to nesting/run_logs_20250601_143806/plots/mutation_gains.png
+Swarm plot data: 200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250601_143806/plots/fitness_swarm_20250601_143806.png
+Plots updated successfully.
+Generation 4 completed in 24.19s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7284
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7284
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0651; mutants: -0.0428
+------------------------------------------------------------
+Generation 5: best 0.7284 (Δ +0.0000)
+Generation 5 completed in 24.30s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7284
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7284
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0554; mutants: -0.0274
+------------------------------------------------------------
+Generation 6: best 0.7284 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 6 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250601_143806/plots/fitness_curves_20250601_143806.png
+Mean gains plot saved to nesting/run_logs_20250601_143806/plots/mean_gains_20250601_143806.png
+Mutation gains plot saved to nesting/run_logs_20250601_143806/plots/mutation_gains.png
+Swarm plot data: 300 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250601_143806/plots/fitness_swarm_20250601_143806.png
+Plots updated successfully.
+Generation 6 completed in 24.28s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7284
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7284
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0427; mutants: -0.0372
+------------------------------------------------------------
+Generation 7: best 0.7292 (Δ +0.0008)
+Generation 7 completed in 25.20s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7292
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7292
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0784; mutants: -0.0560
+------------------------------------------------------------
+Generation 8: best 0.7292 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250601_143806/plots/fitness_curves_20250601_143806.png
+Mean gains plot saved to nesting/run_logs_20250601_143806/plots/mean_gains_20250601_143806.png
+Mutation gains plot saved to nesting/run_logs_20250601_143806/plots/mutation_gains.png
+Swarm plot data: 400 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250601_143806/plots/fitness_swarm_20250601_143806.png
+Plots updated successfully.
+Generation 8 completed in 24.37s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7292
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7292
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0340; mutants: -0.0505
+------------------------------------------------------------
+Generation 9: best 0.7292 (Δ +0.0000)
+Generation 9 completed in 22.82s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7292
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7292
+Collecting results from tasks…
+Collected 30 offspring, 5 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0515; mutants: -0.0636
+------------------------------------------------------------
+Generation 10: best 0.7373 (Δ +0.0081)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 10 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250601_143806/plots/fitness_curves_20250601_143806.png
+Mean gains plot saved to nesting/run_logs_20250601_143806/plots/mean_gains_20250601_143806.png
+Mutation gains plot saved to nesting/run_logs_20250601_143806/plots/mutation_gains.png
+Swarm plot data: 500 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250601_143806/plots/fitness_swarm_20250601_143806.png
+Plots updated successfully.
+Generation 10 completed in 23.86s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7373
+------------------------------------------------------------
+Evolution completed.
+Total time: 265.69 seconds

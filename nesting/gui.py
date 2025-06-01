@@ -855,15 +855,10 @@ class NestingGUI:
             #      print(f"Placing {name} at ({dx:.2f}, {dy:.2f}) cm with rotation {rot}")
 
             await self._apply_placements(placements)
-            try:
-                concave_hull_usage = decoder.concave_hull_utilization()
-                self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
-            except Exception as err:
-                ui.notify(f"Concave hull utilization skipped: {err}", type="warning")
-                concave_hull_usage = "n/a"
+            concave_hull_usage = decoder.concave_hull_utilization()
+            self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
 
-            if concave_hull_usage != "n/a":
-                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
+            self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
 
             ui.notify('Auto placement completed ', type='positive')
 

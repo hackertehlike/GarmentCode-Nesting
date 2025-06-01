@@ -22,14 +22,14 @@ GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
 POPULATION_SIZE       = 100
-NUM_GENERATIONS       = 100
-MUTATION_RATE         = 0.1
+NUM_GENERATIONS       = 50
+MUTATION_RATE         = 0.2
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
     "elites": 0.1,  # weight for elite population
-    "offspring": 0.2,  # weight for offspring population
+    "offspring": 0.4,  # weight for offspring population
     "mutants": 0.4,  # weight for mutants population
-    "randoms": 0.3,  # weight for random population
+    "randoms": 0.1,  # weight for random population
 }
 
 
@@ -45,9 +45,9 @@ MUTATION_WEIGHTS = {
 
 
 # dynamic stopping and extension for GA
-ENABLE_DYNAMIC_STOPPING: bool = False
+ENABLE_DYNAMIC_STOPPING: bool = True
 EARLY_STOP_WINDOW: int         = 10
-EARLY_STOP_TOLERANCE: float    = 1e-4
+EARLY_STOP_TOLERANCE: float    = 0.01
 ENABLE_EXTENSION: bool         = True
 EXTEND_WINDOW: int             = 10
 EXTEND_THRESHOLD: float        = 0.1
@@ -63,21 +63,21 @@ LOG_TIME = True
 HULL_TRIM_RATIO = 10 # higher number -> more convex
 INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
 BOUNDARY_SAMPLE_SPACING = 3 # how many cm between sampled boundary points, tradeoff between speed and accuracy of the hull
+SNAP = False
 SNAP_TOLERANCE = 10 # how close points must be to snap to the hull, in cm
 
 
 # ——— sampling (path extractor) —————————————————————————————————————
-SAMPLES_PER_EDGE  = 10
+SAMPLES_PER_EDGE  = 4
 ENABLE_ROTATIONS  = True
 ALLOWED_ROTATIONS = [0, 90, 180, 270]
 
 
 # GUI STUFF
-SAMPLES_PER_EDGE = 5
 NUM_COPIES = 0
 
-CONTAINER_WIDTH_CM  = 500
-CONTAINER_HEIGHT_CM = 500.0
+CONTAINER_WIDTH_CM  = 250
+CONTAINER_HEIGHT_CM = 100.0
 
 SEAM_ALLOWANCE_CM = 1
 
