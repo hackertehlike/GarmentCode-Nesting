@@ -431,7 +431,7 @@ class NestingGUI:
         """
         So I don't have to load something in every time I change code... 
         """
-        default_path = "/Users/aysegulbarlas/codestuff/GarmentCode/nesting-assets/Configured_design_specification_asym_dress.json"
+        default_path = config.DEFAULT_PATTERN_PATH
         self._load_pattern_core(Path(default_path))
 
     def _update_scale_factors(self):
@@ -546,6 +546,7 @@ class NestingGUI:
         """Clear the scene and redraw **all** panels."""
         # Reset scene
         self.scene.clear()
+        self.hull_path = None
 
         all_px = []
         for piece in self.pieces.values():
@@ -819,6 +820,7 @@ class NestingGUI:
                     extend_window=config.EXTEND_WINDOW,
                     extend_threshold=config.EXTEND_THRESHOLD,
                     max_generations=config.MAX_GENERATIONS,
+                    crossover_method= config.SELECTED_CROSSOVER,
                 )
                 best_chromosome = evo.run()
                 if best_chromosome is None:

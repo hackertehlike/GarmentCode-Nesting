@@ -6,24 +6,25 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = True
 VERBOSE: bool = True
-
+DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_pieces_scaled.json"
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
 CrossoverName = Literal["pmx", "ox1", "ox1k"]
 # ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
+PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"
 SELECTED_CROSSOVER      : CrossoverName = "ox1k"
-
 
 # ——— placement settings —————————————————————————————————————
 GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 100
-NUM_GENERATIONS       = 50
+POPULATION_SIZE       = 50
+NUM_GENERATIONS       = 5
 MUTATION_RATE         = 0.2
+
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
     "elites": 0.1,  # weight for elite population
@@ -56,7 +57,7 @@ GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 
 # log
 SAVE_LOGS = True
-SAVE_LOGS_PATH = "nesting/run_logs"
+SAVE_LOGS_PATH = "nesting/run_logs/"
 LOG_TIME = True
 
 # ——— concave hull —————————————————————————————————————
@@ -70,7 +71,7 @@ SNAP_TOLERANCE = 10 # how close points must be to snap to the hull, in cm
 # ——— sampling (path extractor) —————————————————————————————————————
 SAMPLES_PER_EDGE  = 4
 ENABLE_ROTATIONS  = True
-ALLOWED_ROTATIONS = [0, 90, 180, 270]
+ALLOWED_ROTATIONS = [0, 180]
 
 
 # GUI STUFF

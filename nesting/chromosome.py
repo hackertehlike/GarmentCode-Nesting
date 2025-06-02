@@ -1,23 +1,18 @@
+# chromosome.py
+
 from __future__ import annotations
 from collections import OrderedDict
-# from functools import cached_property
-# from typing import Generic, List, Sequence, TypeVar
 from itertools import chain
 import time
-from typing import Callable, List
-import random
-from itertools import chain
-import copy
-
-
-from .layout import *
-from .placement_engine import *
-import nesting.config as config
-# from .config import SELECTED_FITNESS_METRIC  # use selected metric from central config
 import random
 import copy
+from typing import Callable
 
+from .layout import Piece, Container, Layout, LayoutView
 from .placement_engine import DECODER_REGISTRY
+import nesting.config as config
+
+# ── Metric Registration ─────────────────────────────────────────────────────────
 
 METRIC_REGISTRY: dict[str, Callable] = {}
 
@@ -27,7 +22,7 @@ def register_metric(name: str):
         return fn
     return deco
 
-def _run_decoder(chromosome, decoder_name: str):
+def _run_decoder(chromosome: Chromosome, decoder_name: str):
     view = LayoutView(chromosome.genes)
     Decoder = DECODER_REGISTRY[decoder_name]
     decoder = Decoder(view, chromosome.container)
@@ -35,265 +30,240 @@ def _run_decoder(chromosome, decoder_name: str):
     return decoder
 
 @register_metric("usage_bb")
-def fitness_usage_bb(chromosome, decoder: str):
+def fitness_usage_bb(chromosome: Chromosome, decoder: str):
     dec = _run_decoder(chromosome, decoder)
     return dec.usage_BB()
 
 @register_metric("concave_hull")
-def fitness_concave_hull(chromosome, decoder: str):
+def fitness_concave_hull(chromosome: Chromosome, decoder: str):
     dec = _run_decoder(chromosome, decoder)
     return dec.concave_hull_utilization()
 
 @register_metric("rest_length")
-def fitness_rest_length(chromosome, decoder: str):
+def fitness_rest_length(chromosome: Chromosome, decoder: str):
     dec = _run_decoder(chromosome, decoder)
     return dec.rest_length()
+
+
+# ── Chromosome Definition ───────────────────────────────────────────────────────
+
 class Chromosome(Layout):
-    
-    def __init__(self, pieces: list[Piece], container: Container, origin: str = "random"):
-        # deep-copy once, store as list
+
+    def __init__(
+        self,
+        pieces: list[Piece],
+        container: Container,
+        origin: str = "random"
+    ):
+        # Store a deep copy of each piece
         self._genes = [copy.deepcopy(p) for p in pieces]
         self.container = container
-        self.fitness = None
-        #self.calculate_fitness()
+        self.fitness: float | None = None
 
-
-        self.origin: str | None = origin          # NEW – who created me?
-        self.last_mutation: str | None = None     # NEW – which operator last ran?
+        # Track origin and last mutation type
+        self.origin: str | None = origin
+        self.last_mutation: str | None = None
 
     @property
     def genes(self) -> list[Piece]:
         return self._genes
 
-
-    def calculate_fitness(self):
+    def calculate_fitness(self) -> None:
+        """Compute fitness via the registered metric and decoder."""
         metric_fn = METRIC_REGISTRY[config.SELECTED_FITNESS_METRIC]
-        # pass in the selected decoder name, too
         self.fitness = metric_fn(self, config.SELECTED_DECODER)
 
-    def mutate(self) -> "Chromosome":
-        
-        # TODO: add more mutation types
+    def mutate(self) -> Chromosome:
         """
-        Perform mutation on the chromosome.
-        Available mutation types (configurable via config.MUTATION_WEIGHTS):
-        - split      : (not yet implemented)
-        - rotate     : rotate one piece by 90/180/270°
-        - swap       : swap two genes
-        - inversion  : reverse the subsequence between two cut points
-        - insertion  : remove one gene and re-insert it elsewhere
-        - scramble   : randomly shuffle the genes within a subsequence
+        Perform a single mutation on the chromosome. Mutation types and
+        their probabilities are read from config.MUTATION_WEIGHTS.
         """
         start = time.time()
-        # print()
-        # print("!" * 50)
-        # print("MUTATION OCCURRED")
-        # print("!" * 50)
-        # print()
-        
-        # randomly select a mutation type: either split, rotate, or swap (with different probabilities)
-        mutation_types, weights = zip(*config.MUTATION_WEIGHTS.items())
 
+        # Choose mutation type according to weights
+        mutation_types, weights = zip(*config.MUTATION_WEIGHTS.items())
         mutation = random.choices(mutation_types, weights=weights, k=1)[0]
-        self.last_mutation = mutation             
-        #print(f"Selected mutation type: {mutation}")
+        self.last_mutation = mutation
 
         n = len(self.genes)
 
         if mutation == "split":
-            # placeholder
+            # Placeholder for future split‐type mutation
             pass
 
         elif mutation == "rotate":
-            # pick how many genes to rotate
+            # Pick how many genes to rotate (1..n), then apply in batch
             num_genes = random.randint(1, n)
-            for _ in range(num_genes):
-            # pick a random gene and rotate it by 90, 180, or 270 degrees
-                idx = random.randrange(n)
-                angle = random.choice(config.ALLOWED_ROTATIONS)
-                #print(f"[mutate] Rotating gene at {idx} by {angle}°")
+            # Pre‐generate (idx, angle) pairs via comprehension
+            indices_and_angles = [
+                (random.randrange(n), random.choice(config.ALLOWED_ROTATIONS))
+                for _ in range(num_genes)
+            ]
+            for idx, angle in indices_and_angles:
                 self.genes[idx].rotate(angle)
 
         elif mutation == "swap":
             i, j = random.sample(range(n), 2)
-            #print(f"[mutate] Swapping genes at {i} and {j}")
             self.genes[i], self.genes[j] = self.genes[j], self.genes[i]
 
         elif mutation == "inversion":
-            # pick two cut points and reverse the slice
             i, j = sorted(random.sample(range(n), 2))
-            #print(f"[mutate] Inverting subsequence [{i}:{j}]")
-            self.genes[i:j+1] = reversed(self.genes[i:j+1])
+            # Reverse the slice [i:j+1] in one step
+            self.genes[i : j + 1] = self.genes[i : j + 1][::-1]
 
         elif mutation == "insertion":
-            # remove one gene and insert it at a random other position
             i = random.randrange(n)
             gene = self.genes.pop(i)
             j = random.randrange(n)
-            #print(f"[mutate] Moving gene from {i} to {j}")
             self.genes.insert(j, gene)
 
         elif mutation == "scramble":
-            # pick a slice and shuffle it
             i, j = sorted(random.sample(range(n), 2))
-            sub = self.genes[i:j+1]
-            #print(f"[mutate] Scrambling subsequence [{i}:{j}]")
+            sub = self.genes[i : j + 1]
             random.shuffle(sub)
-            self.genes[i:j+1] = sub
+            self.genes[i : j + 1] = sub
 
         else:
             raise ValueError(f"Unknown mutation type: {mutation}")
 
         end = time.time()
         if config.LOG_TIME:
-            print(f"Mutation took {end - start:.4f} seconds")
-
+            print(f"[Chromosome.mutate] '{mutation}' took {end - start:.4f} s")
         return self
 
-        
-    def crossover_ox1_k(self, other: "Chromosome") -> "Chromosome":
-        """Order Crossover (OX1) with *k* randomly chosen segments.
-
-        Allows an arbitrary (random) number of non‑overlapping segments to be copied from the
-        first parent (self) to the child.  The missing genes are then
-        inserted in their relative order taken from the other parent
+    def crossover_ox1_k(self, other: Chromosome) -> Chromosome:
+        """
+        Order Crossover (OX1) with k randomly chosen segments.
+        Copies k disjoint segments from self into child, then fills
+        remaining slots in order from other.
         """
         start = time.time()
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
-        # decide how many segments to copy (at least 1, at most 3)
-        max_segments_reasonable = max(1, min(3, size // 3))  # conservative upper bound
-        n_segments = random.randint(1, max_segments_reasonable)
+        # Determine number of segments (1 .. min(3, size//3))
+        max_segments = max(1, min(3, size // 3))
+        n_segments = random.randint(1, max_segments)
 
-        # pick 2·n unique cut points and turn them into ordered pairs (segments)
+        # Choose 2*n cut points and group into segments
         cut_points = sorted(random.sample(range(size), 2 * n_segments))
-        segments: list[tuple[int, int]] = []
-        for a, b in zip(cut_points[::2], cut_points[1::2]):
-            start, end = (a, b) if a <= b else (b, a)
-            segments.append((start, end))
+        segments = [
+            (a, b) if a <= b else (b, a)
+            for a, b in zip(cut_points[::2], cut_points[1::2])
+        ]
 
-        # build the child and copy slices from *self*
-        child: List[Piece | None] = [None] * size
-        placed_ids: set[str] = set()
-        for start, end in segments:
-            for idx in range(start, end + 1):
-                gene = copy.deepcopy(self.genes[idx])
-                child[idx] = gene
-                placed_ids.add(gene.id)
+        # Prepare child skeleton and a set of placed IDs
+        child: list[Piece | None] = [None] * size
 
-        # fill the remaining slots with genes from *other* in order
+        # Copy each segment from self into child using a comprehension
+        placed_ids = set()
+        for seg_start, seg_end in segments:
+            chunk = [copy.deepcopy(self.genes[i]) for i in range(seg_start, seg_end + 1)]
+            child[seg_start : seg_end + 1] = chunk
+            placed_ids.update(p.id for p in chunk)
+
+        # Fill remaining slots from other.genes in order
         other_iter = (g for g in other.genes if g.id not in placed_ids)
         for idx in range(size):
             if child[idx] is None:
                 child[idx] = copy.deepcopy(next(other_iter))
 
         end = time.time()
-        
         if config.LOG_TIME:
-            print(f"OX1-k crossover took {end - start:.4f} seconds with {n_segments} segments")
-
+            print(f"[Chromosome.crossover_ox1_k] took {end - start:.4f} s, segments={n_segments}")
         return Chromosome(child, self.container)
-    
-    def crossover_ox1(self, other: "Chromosome") -> "Chromosome":
-        """Order Crossover (OX1).
 
-        Algorithm steps:
-        1. Choose two random crossover points (c1, c2).
-        2. Copy the slice between c1 and c2 from *this* parent into the child.
-        3. Starting from the position after c2 in *other* parent, copy genes in order
-           that are not yet present in the child, wrapping around until the child is full.
+    def crossover_ox1(self, other: Chromosome) -> Chromosome:
         """
-
+        Standard OX1 crossover:
+          1. Pick two cut points c1 < c2 (avoid copying entire sequence).
+          2. Copy slice [c1:c2+1] from self into child.
+          3. Fill in remaining slots from other (wrapping around) in order.
+        """
         start = time.time()
-
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
-        # 1. choose crossover points ensuring we do not copy the whole chromosome
+        # 1. Choose c1, c2 such that we don’t copy the entire chromosome
         c1, c2 = sorted(random.sample(range(size), 2))
-        while c1 == 0 and c2 == size - 1:  # avoid trivial copy
+        while c1 == 0 and c2 == size - 1:
             c1, c2 = sorted(random.sample(range(size), 2))
 
-        # 2. create child and insert slice from parent 1 (self)
+        # 2. Build child and copy slice from parent1
         child: list[Piece | None] = [None] * size
-        child[c1 : c2 + 1] = [copy.deepcopy(p) for p in self.genes[c1 : c2 + 1]]
+        child_slice = [copy.deepcopy(p) for p in self.genes[c1 : c2 + 1]]
+        child[c1 : c2 + 1] = child_slice
 
-        # helper: set of ids already placed in child
-        placed_ids = {p.id for p in child[c1 : c2 + 1] if p is not None}
+        # Track which IDs are already placed
+        placed_ids = {p.id for p in child_slice}
 
-        # 3. fill remaining positions with genes from parent 2 (other)
-        current_idx = (c2 + 1) % size  # first position to fill
+        # 3. Fill in remaining positions from parent2 (wrapping)
+        current_idx = (c2 + 1) % size
         for gene in chain(other.genes[c2 + 1 :], other.genes[: c2 + 1]):
-            if gene.id in placed_ids:
-                continue  # skip duplicates
-            child[current_idx] = copy.deepcopy(gene)
-            placed_ids.add(gene.id)
-            current_idx = (current_idx + 1) % size
+            if gene.id not in placed_ids:
+                child[current_idx] = copy.deepcopy(gene)
+                placed_ids.add(gene.id)
+                current_idx = (current_idx + 1) % size
+                if current_idx == c1:
+                    # Once we return to index c1, the child is full
+                    break
 
         end = time.time()
-        
         if config.LOG_TIME:
-            print(f"OX1 crossover took {end - start:.4f} seconds")
-
-        # 4. return new chromosome instance
+            print(f"[Chromosome.crossover_ox1] took {end - start:.4f} s")
         return Chromosome(child, self.container)
 
-    def crossover_pmx(self, other: "Chromosome") -> "Chromosome":
-        """Partially‑Mapped Crossover (PMX) that matches pieces by *id*."""
+    def crossover_pmx(self, other: Chromosome) -> Chromosome:
+        """
+        Partially Mapped Crossover (PMX). For each position outside the chosen
+        window [c1:c2], map according to the slice from self, resolving conflicts.
+        """
         start = time.time()
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
-        # 1. crossover window (avoid copying the whole chromosome)
+        # 1. Choose c1, c2 (avoid trivial full‐copy)
         c1, c2 = sorted(random.sample(range(size), 2))
         while c1 == c2 or (c1 == 0 and c2 == size - 1):
             c1, c2 = sorted(random.sample(range(size), 2))
 
-        # 2. start the child with the slice from parent 1
+        # 2. Initialize child array and copy the middle slice from parent1
         child: list[Piece | None] = [None] * size
         child[c1 : c2 + 1] = self.genes[c1 : c2 + 1]
 
-        # helper structures for ID‑based look‑ups
-        slice_ids        = {p.id for p in child[c1 : c2 + 1]}
+        # Prepare lookups for piece IDs
+        slice_ids = {p.id for p in child[c1 : c2 + 1]}
         id_to_index_self = {p.id: idx for idx, p in enumerate(self.genes)}
 
-        # 3. fill the remaining positions from parent 2
+        # 3. Fill remaining slots from parent2, resolving conflicts
         for i in chain(range(0, c1), range(c2 + 1, size)):
             candidate = other.genes[i]
-
-            # follow the mapping chain until we find a piece *not* in the slice
+            # Follow mapping until we find an ID not in slice_ids
             while candidate.id in slice_ids:
                 idx_in_parent1 = id_to_index_self[candidate.id]
-                candidate      = other.genes[idx_in_parent1]
-
-            child[i] = copy.deepcopy(candidate)      # independent gene
+                candidate = other.genes[idx_in_parent1]
+            child[i] = copy.deepcopy(candidate)
 
         end = time.time()
-        
         if config.LOG_TIME:
-            print(f"PMX crossover took {end - start:.4f} seconds")
-
-        # 4. build and return the child chromosome
+            print(f"[Chromosome.crossover_pmx] took {end - start:.4f} s")
         return Chromosome(child, self.container)
-    
-    def sync_order(self) -> None:
-        """Sync the order of the genes with the order dict."""
-        self.order = OrderedDict((p.id, p) for p in self.genes)
-    
-    def _signature(self) -> tuple:
-        """Immutable fingerprint: ((id, rotation), …) in gene order."""
+
+    # def sync_order(self) -> None:
+    #     """Sync the order dict to reflect the current gene sequence."""
+    #     self.order = OrderedDict((p.id, p) for p in self.genes)
+
+    def _signature(self) -> tuple[tuple[str, int], ...]:
+        """An immutable fingerprint: ((id, rotation), …) in gene order."""
         return tuple((p.id, p.rotation) for p in self.genes)
 
-    # equality by value
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Chromosome):
             return NotImplemented
         return self._signature() == other._signature()
 
-    # hash to allow membership tests in sets / dict keys
     def __hash__(self) -> int:
         return hash(self._signature())
-    
+
     def __repr__(self) -> str:
         return f"Chromosome({self._signature()})"

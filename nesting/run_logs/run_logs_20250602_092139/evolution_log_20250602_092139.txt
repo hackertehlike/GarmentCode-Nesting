@@ -1,0 +1,2695 @@
+------------------------------------------------------------
+Evolution initialized with 50 chromosomes, 5 elites, 20 offspring, 20 mutants, 5 randoms.
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x146e7c700>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x146e7c700>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x105ac1960>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1', 'ox1k'], 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1', 'ox1k'], 'SELECTED_DECODER': 'NFP', 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1k', 'GRAVITATE_STEP': 2, 'POPULATION_SIZE': 50, 'NUM_GENERATIONS': 100, 'MUTATION_RATE': 0.2, 'POPULATION_WEIGHTS': {'elites': 0.1, 'offspring': 0.4, 'mutants': 0.4, 'randoms': 0.1}, 'MUTATION_WEIGHTS': {'rotate': 0.3, 'swap': 0.2, 'inversion': 0, 'insertion': 0.1, 'scramble': 0.4, 'split': 0}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 2, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs', 'LOG_TIME': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 10, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 250, 'CONTAINER_HEIGHT_CM': 100.0, 'SEAM_ALLOWANCE_CM': 1, '__dict__': <function __dict__ at 0x146e6f5e0>}
+Generating initial population...
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_0: 0°
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_btorso: 0°
+Random rotation for piece ins_skirt_back_1: 270°
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece wb_back: 0°
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_2: 90°
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_back: 90°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_front: 180°
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_back: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_front: 270°
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_front: 0°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece right_sleeve_b: 0°
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_front: 180°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece left_btorso: 270°
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece wb_back: 180°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece wb_back: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece wb_back: 90°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece wb_back: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece wb_back: 270°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece wb_front: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece wb_back: 0°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece wb_front: 0°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece wb_front: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece wb_front: 0°
+Random rotation for piece wb_back: 180°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece wb_front: 0°
+Random rotation for piece wb_back: 180°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece wb_back: 180°
+Random rotation for piece wb_front: 270°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece wb_back: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece wb_back: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece wb_front: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece wb_front: 90°
+Random rotation for piece wb_front: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_front_1: 90°
+Random chromosome generated with fitness: 0.6897
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece wb_front: 270°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_front_0: 180°
+Random chromosome generated with fitness: 0.7005
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece wb_front: 180°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random chromosome generated with fitness: 0.6705
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece wb_back: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece wb_front: 270°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece skirt_back: 270°
+Random chromosome generated with fitness: 0.7397
+Random chromosome generated with 18 pieces.
+Random rotation for piece left_btorso: 0°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece wb_back: 180°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece wb_front: 180°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random chromosome generated with fitness: 0.6911
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece wb_front: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece wb_back: 0°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random chromosome generated with fitness: 0.7071
+Random chromosome generated with 18 pieces.
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece wb_back: 0°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random chromosome generated with fitness: 0.6546
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece wb_back: 180°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random chromosome generated with fitness: 0.6915
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece wb_back: 0°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece right_sleeve_f: 90°
+Random chromosome generated with fitness: 0.7313
+Random rotation for piece skirt_back: 180°
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_front: 270°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece wb_front: 180°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece wb_back: 0°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece ins_skirt_back_0: 90°
+Random chromosome generated with fitness: 0.6996
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_back: 0°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece wb_front: 90°
+Random chromosome generated with fitness: 0.6889
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece wb_front: 180°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece wb_back: 0°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece skirt_back: 270°
+Random chromosome generated with fitness: 0.7269
+Random chromosome generated with 18 pieces.
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece wb_front: 180°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_back_2: 270°
+Random chromosome generated with fitness: 0.6796
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece wb_back: 90°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece wb_front: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece skirt_front: 180°
+Random chromosome generated with fitness: 0.7094
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_back: 90°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece wb_front: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_ftorso: 270°
+Random chromosome generated with fitness: 0.6831
+Random chromosome generated with 18 pieces.
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece wb_back: 270°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_front_0: 180°
+Random chromosome generated with fitness: 0.6835
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece wb_back: 180°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece left_ftorso: 270°
+Random chromosome generated with fitness: 0.6833
+Random chromosome generated with 18 pieces.
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece wb_back: 0°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece wb_front: 180°
+Random chromosome generated with fitness: 0.6725
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece wb_back: 270°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random chromosome generated with fitness: 0.7125
+Random chromosome generated with 18 pieces.
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece wb_front: 0°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece wb_back: 180°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_back_1: 270°
+Random chromosome generated with fitness: 0.6791
+Random chromosome generated with 18 pieces.
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece wb_back: 270°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece wb_front: 0°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece right_btorso: 90°
+Random chromosome generated with fitness: 0.6850
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece wb_back: 90°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_front_0: 0°
+Random chromosome generated with fitness: 0.7087
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece wb_front: 180°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece wb_back: 90°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece ins_skirt_back_2: 90°
+Random chromosome generated with fitness: 0.6797
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_front: 180°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece ins_skirt_front_1: 90°
+Random chromosome generated with fitness: 0.6892
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece wb_front: 270°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece wb_back: 90°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random chromosome generated with fitness: 0.6993
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece wb_back: 180°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece wb_front: 90°
+Random chromosome generated with fitness: 0.6595
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece wb_front: 180°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece right_btorso: 270°
+Random chromosome generated with fitness: 0.0000
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece wb_back: 90°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece left_ftorso: 180°
+Random chromosome generated with fitness: 0.6741
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece wb_back: 270°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_back_2: 270°
+Random chromosome generated with fitness: 0.6858
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece wb_front: 270°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece wb_back: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece ins_skirt_front_0: 90°
+Random chromosome generated with fitness: 0.6757
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_back: 180°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece wb_front: 270°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece left_ftorso: 270°
+Random chromosome generated with fitness: 0.6874
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_back: 180°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece left_ftorso: 180°
+Random chromosome generated with fitness: 0.6378
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_front: 0°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece wb_back: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece wb_front: 270°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Random chromosome generated with fitness: 0.6924
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_front: 270°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece wb_back: 180°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_front_1: 0°
+Random chromosome generated with fitness: 0.7007
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece wb_back: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece wb_front: 90°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_back_0: 90°
+Random chromosome generated with fitness: 0.6780
+Random chromosome generated with 18 pieces.
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece wb_front: 270°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece left_btorso: 0°
+Random chromosome generated with fitness: 0.6981
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece wb_back: 0°
+Random rotation for piece wb_front: 0°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece ins_skirt_front_0: 270°
+Random chromosome generated with fitness: 0.6846
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_btorso: 180°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece wb_back: 180°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece left_ftorso: 270°
+Random chromosome generated with fitness: 0.6825
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece wb_back: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece ins_skirt_back_0: 0°
+Random chromosome generated with fitness: 0.6640
+Random chromosome generated with fitness: 0.6941
+Random chromosome generated with fitness: 0.6949
+Random chromosome generated with fitness: 0.6512
+Random chromosome generated with fitness: 0.7127
+Random chromosome generated with fitness: 0.6963
+Random chromosome generated with fitness: 0.7278
+Random chromosome generated with fitness: 0.7283
+Random chromosome generated with fitness: 0.6885
+Random chromosome generated with fitness: 0.7162
+Random chromosome generated with fitness: 0.7257
+Random chromosome generated with fitness: 0.6781
+------------------------------------------------------------
+Initial population of 50 layouts generated.
+Layout 0: [('ins_skirt_back_0', 0), ('right_sleeve_f', 0), ('ins_skirt_front_1', 180), ('left_btorso', 90), ('sl_right_cuff_skirt_b', 90), ('ins_skirt_front_0', 180), ('sl_right_cuff_skirt_f', 90), ('skirt_back', 90), ('right_sleeve_b', 270), ('wb_front', 0), ('wb_back', 180), ('skirt_front', 90), ('ins_skirt_front_2', 270), ('left_ftorso', 0), ('ins_skirt_back_1', 180), ('right_btorso', 270), ('right_ftorso', 180), ('ins_skirt_back_2', 90)] | Fitness: 0.6705
+Layout 1: [('right_btorso', 0), ('ins_skirt_back_1', 270), ('skirt_back', 90), ('sl_right_cuff_skirt_f', 270), ('ins_skirt_back_2', 90), ('ins_skirt_front_0', 0), ('skirt_front', 180), ('wb_back', 90), ('right_sleeve_f', 0), ('wb_front', 270), ('right_ftorso', 90), ('sl_right_cuff_skirt_b', 180), ('left_ftorso', 270), ('left_btorso', 90), ('ins_skirt_front_1', 0), ('ins_skirt_front_2', 180), ('ins_skirt_back_0', 0), ('right_sleeve_b', 270)] | Fitness: 0.7313
+Layout 2: [('ins_skirt_back_0', 0), ('wb_back', 0), ('ins_skirt_front_1', 0), ('right_sleeve_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_skirt_b', 90), ('ins_skirt_back_2', 270), ('right_ftorso', 0), ('left_ftorso', 180), ('right_sleeve_b', 180), ('skirt_back', 90), ('ins_skirt_front_2', 0), ('right_btorso', 180), ('ins_skirt_back_1', 180), ('skirt_front', 180), ('left_btorso', 270), ('ins_skirt_front_0', 90), ('wb_front', 180)] | Fitness: 0.6911
+Layout 3: [('ins_skirt_front_2', 90), ('skirt_back', 180), ('right_sleeve_b', 0), ('ins_skirt_back_0', 270), ('right_sleeve_f', 180), ('skirt_front', 180), ('left_btorso', 270), ('wb_front', 0), ('wb_back', 180), ('sl_right_cuff_skirt_f', 180), ('ins_skirt_front_0', 90), ('right_ftorso', 270), ('right_btorso', 90), ('ins_skirt_back_2', 270), ('left_ftorso', 270), ('ins_skirt_back_1', 0), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_front_1', 90)] | Fitness: 0.7269
+Layout 4: [('ins_skirt_front_1', 180), ('wb_back', 180), ('ins_skirt_front_2', 270), ('ins_skirt_back_0', 180), ('skirt_front', 0), ('ins_skirt_back_2', 0), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_back_1', 180), ('left_ftorso', 180), ('right_sleeve_f', 270), ('left_btorso', 180), ('right_sleeve_b', 180), ('ins_skirt_front_0', 270), ('skirt_back', 180), ('right_btorso', 270), ('right_ftorso', 270), ('wb_front', 90), ('sl_right_cuff_skirt_f', 270)] | Fitness: 0.6915
+Layout 5: [('skirt_front', 270), ('left_ftorso', 90), ('ins_skirt_back_0', 0), ('ins_skirt_back_2', 0), ('ins_skirt_front_1', 270), ('ins_skirt_front_2', 180), ('wb_front', 0), ('right_ftorso', 270), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_back_1', 270), ('wb_back', 180), ('left_btorso', 270), ('right_btorso', 180), ('skirt_back', 0), ('ins_skirt_front_0', 270), ('right_sleeve_f', 180), ('right_sleeve_b', 0), ('sl_right_cuff_skirt_f', 0)] | Fitness: 0.6889
+Layout 6: [('skirt_front', 180), ('ins_skirt_back_1', 270), ('sl_right_cuff_skirt_b', 0), ('sl_right_cuff_skirt_f', 270), ('wb_back', 90), ('left_ftorso', 270), ('ins_skirt_back_0', 270), ('wb_front', 180), ('ins_skirt_front_1', 180), ('left_btorso', 90), ('skirt_back', 90), ('ins_skirt_back_2', 90), ('right_btorso', 180), ('ins_skirt_front_0', 90), ('ins_skirt_front_2', 90), ('right_ftorso', 0), ('right_sleeve_f', 0), ('right_sleeve_b', 0)] | Fitness: 0.7397
+Layout 7: [('skirt_back', 0), ('left_btorso', 270), ('ins_skirt_front_1', 270), ('wb_back', 180), ('left_ftorso', 270), ('ins_skirt_front_0', 270), ('right_sleeve_f', 0), ('right_ftorso', 0), ('ins_skirt_front_2', 0), ('right_btorso', 270), ('sl_right_cuff_skirt_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_f', 180), ('skirt_front', 0), ('right_sleeve_b', 0), ('ins_skirt_back_2', 90), ('ins_skirt_back_1', 180), ('ins_skirt_back_0', 270)] | Fitness: 0.7005
+Layout 8: [('ins_skirt_back_0', 0), ('sl_right_cuff_skirt_b', 270), ('right_ftorso', 270), ('ins_skirt_back_1', 270), ('right_sleeve_f', 0), ('right_sleeve_b', 0), ('ins_skirt_front_2', 0), ('wb_back', 270), ('skirt_back', 0), ('ins_skirt_front_1', 180), ('right_btorso', 270), ('sl_right_cuff_skirt_f', 270), ('left_btorso', 0), ('ins_skirt_back_2', 270), ('ins_skirt_front_0', 180), ('wb_front', 90), ('skirt_front', 90), ('left_ftorso', 270)] | Fitness: 0.6996
+Layout 9: [('skirt_front', 0), ('right_sleeve_f', 90), ('ins_skirt_front_2', 180), ('skirt_back', 270), ('right_sleeve_b', 0), ('left_btorso', 270), ('wb_back', 180), ('ins_skirt_front_0', 180), ('ins_skirt_back_2', 90), ('ins_skirt_back_1', 270), ('right_btorso', 90), ('ins_skirt_front_1', 0), ('sl_right_cuff_skirt_f', 180), ('ins_skirt_back_0', 90), ('sl_right_cuff_skirt_b', 180), ('left_ftorso', 0), ('wb_front', 90), ('right_ftorso', 180)] | Fitness: 0.7071
+Layout 10: [('ins_skirt_front_1', 0), ('right_ftorso', 270), ('sl_right_cuff_skirt_b', 180), ('right_sleeve_b', 180), ('skirt_back', 90), ('wb_back', 0), ('ins_skirt_back_1', 180), ('ins_skirt_front_2', 0), ('skirt_front', 270), ('ins_skirt_back_0', 90), ('left_btorso', 270), ('wb_front', 90), ('right_sleeve_f', 90), ('right_btorso', 0), ('ins_skirt_front_0', 0), ('sl_right_cuff_skirt_f', 0), ('ins_skirt_back_2', 270), ('left_ftorso', 0)] | Fitness: 0.6897
+Layout 11: [('wb_front', 180), ('right_sleeve_b', 180), ('sl_right_cuff_skirt_f', 270), ('left_ftorso', 0), ('skirt_front', 270), ('skirt_back', 90), ('right_ftorso', 180), ('ins_skirt_back_1', 90), ('ins_skirt_front_1', 0), ('ins_skirt_front_0', 180), ('ins_skirt_back_2', 180), ('left_btorso', 0), ('ins_skirt_front_2', 180), ('sl_right_cuff_skirt_b', 180), ('right_btorso', 270), ('ins_skirt_back_0', 0), ('right_sleeve_f', 180), ('wb_back', 270)] | Fitness: 0.6546
+Layout 12: [('right_sleeve_f', 180), ('ins_skirt_back_1', 180), ('right_sleeve_b', 180), ('sl_right_cuff_skirt_b', 270), ('right_ftorso', 0), ('skirt_back', 270), ('wb_back', 270), ('ins_skirt_front_2', 180), ('ins_skirt_back_0', 270), ('wb_front', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front', 270), ('ins_skirt_back_2', 270), ('sl_right_cuff_skirt_f', 270), ('ins_skirt_front_1', 90), ('right_btorso', 180), ('ins_skirt_front_0', 180)] | Fitness: 0.6796
+Layout 13: [('right_sleeve_b', 0), ('skirt_back', 90), ('ins_skirt_front_0', 270), ('ins_skirt_front_1', 270), ('right_ftorso', 90), ('skirt_front', 270), ('right_btorso', 90), ('ins_skirt_back_0', 90), ('sl_right_cuff_skirt_b', 90), ('wb_front', 180), ('right_sleeve_f', 0), ('wb_back', 90), ('left_ftorso', 180), ('left_btorso', 180), ('ins_skirt_front_2', 180), ('ins_skirt_back_2', 90), ('ins_skirt_back_1', 270), ('sl_right_cuff_skirt_f', 90)] | Fitness: 0.7094
+Layout 14: [('ins_skirt_front_1', 180), ('ins_skirt_front_0', 90), ('ins_skirt_back_2', 90), ('left_btorso', 180), ('sl_right_cuff_skirt_b', 0), ('skirt_front', 180), ('left_ftorso', 0), ('ins_skirt_back_1', 180), ('wb_back', 0), ('sl_right_cuff_skirt_f', 270), ('right_btorso', 0), ('ins_skirt_front_2', 0), ('right_sleeve_f', 0), ('right_ftorso', 0), ('right_sleeve_b', 0), ('wb_front', 270), ('ins_skirt_back_0', 0), ('skirt_back', 270)] | Fitness: 0.6831
+Layout 15: [('left_btorso', 0), ('right_ftorso', 270), ('ins_skirt_back_2', 180), ('wb_back', 180), ('skirt_front', 0), ('ins_skirt_back_1', 180), ('ins_skirt_back_0', 270), ('right_btorso', 0), ('ins_skirt_front_0', 90), ('wb_front', 180), ('ins_skirt_front_1', 270), ('left_ftorso', 90), ('right_sleeve_f', 180), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_front_2', 180), ('skirt_back', 180), ('right_sleeve_b', 0), ('sl_right_cuff_skirt_f', 0)] | Fitness: 0.6833
+Layout 16: [('ins_skirt_front_1', 270), ('wb_front', 0), ('skirt_front', 180), ('right_ftorso', 270), ('left_ftorso', 270), ('right_btorso', 180), ('ins_skirt_back_2', 270), ('right_sleeve_b', 270), ('ins_skirt_front_0', 180), ('left_btorso', 0), ('ins_skirt_back_0', 90), ('right_sleeve_f', 90), ('ins_skirt_back_1', 0), ('ins_skirt_front_2', 270), ('wb_back', 0), ('skirt_back', 90), ('sl_right_cuff_skirt_b', 180), ('sl_right_cuff_skirt_f', 0)] | Fitness: 0.7125
+Layout 17: [('left_btorso', 90), ('ins_skirt_front_0', 270), ('wb_front', 0), ('ins_skirt_front_2', 180), ('skirt_front', 270), ('wb_back', 0), ('ins_skirt_front_1', 270), ('right_sleeve_f', 90), ('skirt_back', 180), ('ins_skirt_back_1', 270), ('right_btorso', 90), ('ins_skirt_back_0', 90), ('right_sleeve_b', 0), ('right_ftorso', 180), ('ins_skirt_back_2', 180), ('left_ftorso', 270), ('sl_right_cuff_skirt_f', 0), ('sl_right_cuff_skirt_b', 0)] | Fitness: 0.6835
+Layout 18: [('ins_skirt_front_0', 180), ('ins_skirt_front_1', 270), ('sl_right_cuff_skirt_b', 0), ('ins_skirt_back_0', 180), ('left_ftorso', 0), ('right_ftorso', 90), ('wb_front', 90), ('right_sleeve_f', 0), ('skirt_front', 270), ('right_sleeve_b', 90), ('right_btorso', 90), ('left_btorso', 90), ('ins_skirt_back_2', 180), ('wb_back', 180), ('skirt_back', 180), ('ins_skirt_back_1', 0), ('ins_skirt_front_2', 90), ('sl_right_cuff_skirt_f', 0)] | Fitness: 0.6725
+Layout 19: [('ins_skirt_back_0', 270), ('right_sleeve_b', 90), ('ins_skirt_back_2', 180), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_front_0', 270), ('skirt_front', 180), ('ins_skirt_back_1', 90), ('wb_back', 0), ('left_btorso', 90), ('sl_right_cuff_skirt_f', 270), ('ins_skirt_front_2', 270), ('right_sleeve_f', 90), ('skirt_back', 180), ('wb_front', 270), ('right_btorso', 180), ('right_ftorso', 90), ('left_ftorso', 0), ('ins_skirt_front_1', 0)] | Fitness: 0.6850
+Layout 20: [('ins_skirt_front_2', 0), ('wb_front', 180), ('ins_skirt_back_1', 270), ('left_btorso', 90), ('wb_back', 0), ('right_sleeve_f', 90), ('ins_skirt_front_1', 0), ('ins_skirt_back_2', 90), ('sl_right_cuff_skirt_b', 180), ('left_ftorso', 270), ('right_btorso', 90), ('skirt_back', 90), ('right_sleeve_b', 180), ('skirt_front', 180), ('right_ftorso', 270), ('sl_right_cuff_skirt_f', 180), ('ins_skirt_front_0', 270), ('ins_skirt_back_0', 90)] | Fitness: 0.7087
+Layout 21: [('wb_back', 0), ('right_btorso', 0), ('ins_skirt_back_2', 0), ('right_sleeve_b', 270), ('ins_skirt_back_1', 0), ('left_btorso', 90), ('ins_skirt_front_2', 90), ('skirt_back', 270), ('ins_skirt_front_1', 90), ('sl_right_cuff_skirt_f', 0), ('left_ftorso', 0), ('ins_skirt_back_0', 90), ('right_ftorso', 90), ('sl_right_cuff_skirt_b', 90), ('ins_skirt_front_0', 0), ('skirt_front', 0), ('right_sleeve_f', 0), ('wb_front', 90)] | Fitness: 0.6791
+Layout 22: [('ins_skirt_back_2', 90), ('ins_skirt_front_0', 0), ('ins_skirt_front_2', 270), ('ins_skirt_front_1', 0), ('right_ftorso', 90), ('wb_front', 180), ('ins_skirt_back_1', 180), ('right_btorso', 90), ('left_ftorso', 180), ('sl_right_cuff_skirt_f', 0), ('wb_back', 0), ('right_sleeve_f', 180), ('right_sleeve_b', 270), ('skirt_front', 90), ('sl_right_cuff_skirt_b', 90), ('left_btorso', 90), ('ins_skirt_back_0', 90), ('skirt_back', 270)] | Fitness: 0.6797
+Layout 23: [('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_skirt_b', 90), ('skirt_back', 180), ('wb_front', 180), ('right_sleeve_f', 0), ('ins_skirt_front_1', 0), ('right_ftorso', 180), ('right_sleeve_b', 90), ('left_ftorso', 180), ('ins_skirt_front_2', 270), ('skirt_front', 270), ('left_btorso', 90), ('right_btorso', 0), ('ins_skirt_back_1', 90), ('ins_skirt_back_0', 0), ('ins_skirt_front_0', 270), ('wb_back', 270), ('ins_skirt_back_2', 270)] | Fitness: 0.6892
+Layout 24: [('ins_skirt_front_1', 90), ('sl_right_cuff_skirt_b', 90), ('left_btorso', 90), ('right_btorso', 180), ('skirt_back', 270), ('sl_right_cuff_skirt_f', 0), ('ins_skirt_back_1', 180), ('wb_back', 90), ('ins_skirt_front_2', 180), ('ins_skirt_front_0', 270), ('right_sleeve_b', 0), ('right_ftorso', 0), ('ins_skirt_back_0', 180), ('left_ftorso', 270), ('wb_front', 180), ('ins_skirt_back_2', 0), ('right_sleeve_f', 0), ('skirt_front', 180)] | Fitness: 0.6993
+Layout 25: [('skirt_back', 90), ('ins_skirt_back_1', 90), ('ins_skirt_front_0', 90), ('right_sleeve_b', 270), ('ins_skirt_front_1', 270), ('right_btorso', 270), ('sl_right_cuff_skirt_f', 0), ('skirt_front', 180), ('sl_right_cuff_skirt_b', 90), ('left_btorso', 180), ('wb_front', 0), ('wb_back', 90), ('left_ftorso', 180), ('ins_skirt_back_2', 0), ('right_sleeve_f', 180), ('ins_skirt_front_2', 270), ('ins_skirt_back_0', 90), ('right_ftorso', 270)] | Fitness: 0.6858
+Layout 26: [('sl_right_cuff_skirt_b', 270), ('ins_skirt_back_1', 180), ('right_sleeve_b', 0), ('right_btorso', 180), ('left_btorso', 0), ('skirt_back', 270), ('ins_skirt_back_2', 0), ('right_sleeve_f', 0), ('left_ftorso', 180), ('ins_skirt_front_1', 270), ('ins_skirt_back_0', 0), ('ins_skirt_front_2', 270), ('wb_back', 270), ('wb_front', 90), ('right_ftorso', 90), ('skirt_front', 270), ('sl_right_cuff_skirt_f', 90), ('ins_skirt_front_0', 180)] | Fitness: 0.6741
+Layout 27: [('ins_skirt_front_0', 180), ('left_btorso', 180), ('right_sleeve_f', 90), ('right_ftorso', 0), ('right_sleeve_b', 0), ('wb_front', 0), ('ins_skirt_back_2', 180), ('skirt_back', 90), ('sl_right_cuff_skirt_b', 180), ('skirt_front', 90), ('sl_right_cuff_skirt_f', 180), ('ins_skirt_back_1', 180), ('right_btorso', 90), ('wb_back', 180), ('ins_skirt_front_1', 0), ('ins_skirt_front_2', 0), ('ins_skirt_back_0', 0), ('left_ftorso', 270)] | Fitness: 0.7007
+Layout 28: [('left_ftorso', 90), ('right_sleeve_b', 270), ('ins_skirt_back_2', 180), ('skirt_front', 270), ('left_btorso', 90), ('sl_right_cuff_skirt_b', 90), ('right_btorso', 0), ('right_ftorso', 90), ('ins_skirt_back_1', 180), ('ins_skirt_front_0', 270), ('ins_skirt_back_0', 0), ('wb_back', 0), ('skirt_back', 0), ('sl_right_cuff_skirt_f', 180), ('right_sleeve_f', 180), ('ins_skirt_front_1', 270), ('ins_skirt_front_2', 270), ('wb_front', 180)] | Fitness: 0.6595
+Layout 29: [('ins_skirt_front_0', 270), ('sl_right_cuff_skirt_b', 180), ('skirt_front', 270), ('ins_skirt_back_2', 90), ('left_btorso', 0), ('skirt_back', 0), ('right_sleeve_b', 90), ('right_sleeve_f', 90), ('right_ftorso', 90), ('wb_back', 270), ('left_ftorso', 90), ('ins_skirt_back_0', 90), ('ins_skirt_back_1', 270), ('wb_front', 90), ('right_btorso', 270), ('ins_skirt_front_2', 0), ('ins_skirt_front_1', 180), ('sl_right_cuff_skirt_f', 270)] | Fitness: 0.0000
+Layout 30: [('left_ftorso', 270), ('ins_skirt_back_2', 0), ('ins_skirt_front_0', 90), ('right_sleeve_f', 270), ('left_btorso', 270), ('right_sleeve_b', 270), ('sl_right_cuff_skirt_b', 180), ('sl_right_cuff_skirt_f', 0), ('wb_front', 0), ('right_btorso', 180), ('skirt_back', 180), ('ins_skirt_front_1', 0), ('ins_skirt_front_2', 270), ('wb_back', 180), ('ins_skirt_back_0', 180), ('skirt_front', 90), ('right_ftorso', 0), ('ins_skirt_back_1', 270)] | Fitness: 0.6924
+Layout 31: [('left_ftorso', 180), ('wb_back', 270), ('right_sleeve_b', 90), ('ins_skirt_front_0', 270), ('sl_right_cuff_skirt_f', 270), ('ins_skirt_front_1', 180), ('right_sleeve_f', 90), ('ins_skirt_back_1', 0), ('ins_skirt_back_2', 270), ('ins_skirt_back_0', 180), ('ins_skirt_front_2', 90), ('sl_right_cuff_skirt_b', 0), ('skirt_front', 90), ('right_ftorso', 0), ('left_btorso', 180), ('wb_front', 0), ('skirt_back', 180), ('right_btorso', 90)] | Fitness: 0.6874
+Layout 32: [('wb_front', 0), ('ins_skirt_front_2', 180), ('ins_skirt_front_1', 0), ('ins_skirt_back_0', 90), ('sl_right_cuff_skirt_f', 180), ('skirt_back', 0), ('skirt_front', 180), ('sl_right_cuff_skirt_b', 270), ('left_ftorso', 180), ('right_sleeve_b', 180), ('left_btorso', 90), ('wb_back', 90), ('ins_skirt_back_1', 0), ('ins_skirt_back_2', 180), ('right_sleeve_f', 0), ('right_ftorso', 270), ('right_btorso', 90), ('ins_skirt_front_0', 0)] | Fitness: 0.6757
+Layout 33: [('ins_skirt_back_0', 180), ('right_btorso', 180), ('wb_front', 180), ('ins_skirt_front_0', 90), ('right_sleeve_b', 270), ('right_ftorso', 0), ('ins_skirt_front_1', 270), ('right_sleeve_f', 180), ('left_btorso', 180), ('sl_right_cuff_skirt_f', 0), ('sl_right_cuff_skirt_b', 90), ('skirt_back', 180), ('wb_back', 90), ('skirt_front', 90), ('left_ftorso', 270), ('ins_skirt_back_1', 0), ('ins_skirt_front_2', 90), ('ins_skirt_back_2', 90)] | Fitness: 0.6846
+Layout 34: [('wb_front', 180), ('right_btorso', 90), ('left_ftorso', 90), ('right_sleeve_f', 0), ('right_ftorso', 270), ('ins_skirt_back_2', 0), ('wb_back', 270), ('ins_skirt_front_0', 0), ('ins_skirt_front_2', 0), ('sl_right_cuff_skirt_f', 270), ('right_sleeve_b', 270), ('sl_right_cuff_skirt_b', 0), ('skirt_front', 90), ('left_btorso', 0), ('ins_skirt_back_1', 180), ('skirt_back', 90), ('ins_skirt_back_0', 0), ('ins_skirt_front_1', 90)] | Fitness: 0.6378
+Layout 35: [('right_sleeve_b', 90), ('left_ftorso', 180), ('ins_skirt_front_2', 90), ('right_ftorso', 0), ('right_btorso', 0), ('sl_right_cuff_skirt_b', 90), ('wb_front', 270), ('right_sleeve_f', 270), ('ins_skirt_back_0', 90), ('ins_skirt_front_1', 180), ('ins_skirt_back_2', 0), ('skirt_back', 0), ('ins_skirt_back_1', 270), ('wb_back', 90), ('skirt_front', 180), ('left_btorso', 90), ('ins_skirt_front_0', 90), ('sl_right_cuff_skirt_f', 180)] | Fitness: 0.6981
+Layout 36: [('ins_skirt_front_0', 0), ('sl_right_cuff_skirt_b', 0), ('sl_right_cuff_skirt_f', 0), ('skirt_back', 180), ('right_ftorso', 180), ('ins_skirt_front_2', 0), ('skirt_front', 270), ('left_btorso', 180), ('ins_skirt_back_2', 0), ('wb_back', 180), ('right_btorso', 0), ('left_ftorso', 270), ('right_sleeve_b', 270), ('right_sleeve_f', 90), ('ins_skirt_back_1', 180), ('ins_skirt_back_0', 90), ('ins_skirt_front_1', 0), ('wb_front', 90)] | Fitness: 0.6780
+Layout 37: [('ins_skirt_back_0', 90), ('left_ftorso', 90), ('ins_skirt_back_1', 90), ('sl_right_cuff_skirt_b', 180), ('skirt_front', 0), ('ins_skirt_front_1', 270), ('left_btorso', 180), ('ins_skirt_back_2', 270), ('wb_front', 180), ('right_ftorso', 90), ('ins_skirt_front_2', 0), ('sl_right_cuff_skirt_f', 180), ('right_sleeve_f', 270), ('ins_skirt_front_0', 0), ('wb_back', 90), ('right_sleeve_b', 270), ('skirt_back', 270), ('right_btorso', 270)] | Fitness: 0.6640
+Layout 38: [('wb_front', 90), ('right_sleeve_b', 180), ('ins_skirt_front_1', 90), ('skirt_back', 270), ('ins_skirt_back_0', 180), ('ins_skirt_back_2', 0), ('ins_skirt_back_1', 0), ('ins_skirt_front_2', 180), ('wb_back', 90), ('skirt_front', 270), ('right_ftorso', 0), ('left_btorso', 0), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_skirt_b', 180), ('right_sleeve_f', 180), ('ins_skirt_front_0', 0), ('right_btorso', 90), ('left_ftorso', 180)] | Fitness: 0.6512
+Layout 39: [('ins_skirt_back_1', 90), ('left_btorso', 270), ('skirt_front', 90), ('right_btorso', 270), ('ins_skirt_front_0', 180), ('wb_back', 270), ('right_sleeve_f', 180), ('ins_skirt_front_2', 90), ('ins_skirt_front_1', 90), ('wb_front', 90), ('right_sleeve_b', 0), ('sl_right_cuff_skirt_b', 270), ('ins_skirt_back_0', 270), ('left_ftorso', 0), ('right_ftorso', 270), ('sl_right_cuff_skirt_f', 180), ('skirt_back', 270), ('ins_skirt_back_2', 270)] | Fitness: 0.6941
+Layout 40: [('ins_skirt_front_2', 0), ('right_sleeve_b', 180), ('skirt_front', 90), ('right_ftorso', 270), ('skirt_back', 90), ('ins_skirt_front_1', 0), ('ins_skirt_back_0', 180), ('left_ftorso', 0), ('wb_front', 270), ('ins_skirt_back_1', 0), ('right_sleeve_f', 0), ('sl_right_cuff_skirt_f', 90), ('right_btorso', 270), ('wb_back', 90), ('sl_right_cuff_skirt_b', 0), ('left_btorso', 270), ('ins_skirt_back_2', 0), ('ins_skirt_front_0', 90)] | Fitness: 0.6825
+Layout 41: [('wb_back', 180), ('ins_skirt_front_0', 90), ('right_ftorso', 270), ('wb_front', 270), ('ins_skirt_back_1', 90), ('sl_right_cuff_skirt_f', 270), ('skirt_back', 270), ('ins_skirt_front_1', 270), ('right_sleeve_f', 90), ('ins_skirt_back_0', 0), ('skirt_front', 270), ('ins_skirt_front_2', 270), ('left_btorso', 0), ('right_btorso', 270), ('ins_skirt_back_2', 180), ('right_sleeve_b', 180), ('sl_right_cuff_skirt_b', 270), ('left_ftorso', 270)] | Fitness: 0.6949
+Layout 42: [('wb_back', 180), ('right_ftorso', 0), ('ins_skirt_back_2', 180), ('right_btorso', 0), ('skirt_front', 0), ('right_sleeve_f', 180), ('sl_right_cuff_skirt_b', 90), ('skirt_back', 0), ('right_sleeve_b', 270), ('sl_right_cuff_skirt_f', 90), ('ins_skirt_front_2', 270), ('ins_skirt_front_1', 180), ('ins_skirt_back_1', 90), ('left_btorso', 0), ('ins_skirt_front_0', 180), ('wb_front', 0), ('ins_skirt_back_0', 90), ('left_ftorso', 180)] | Fitness: 0.7127
+Layout 43: [('skirt_front', 0), ('ins_skirt_front_1', 270), ('ins_skirt_front_0', 270), ('right_ftorso', 90), ('sl_right_cuff_skirt_f', 180), ('left_btorso', 270), ('ins_skirt_back_2', 180), ('right_sleeve_b', 180), ('wb_back', 90), ('sl_right_cuff_skirt_b', 90), ('wb_front', 270), ('right_btorso', 180), ('ins_skirt_back_0', 270), ('ins_skirt_back_1', 0), ('skirt_back', 180), ('right_sleeve_f', 270), ('left_ftorso', 90), ('ins_skirt_front_2', 90)] | Fitness: 0.7278
+Layout 44: [('wb_front', 270), ('left_btorso', 0), ('sl_right_cuff_skirt_f', 180), ('right_sleeve_b', 0), ('wb_back', 180), ('right_ftorso', 0), ('ins_skirt_back_2', 180), ('skirt_front', 180), ('ins_skirt_front_0', 0), ('sl_right_cuff_skirt_b', 270), ('right_btorso', 90), ('right_sleeve_f', 90), ('left_ftorso', 270), ('ins_skirt_back_0', 0), ('ins_skirt_back_1', 0), ('skirt_back', 180), ('ins_skirt_front_2', 180), ('ins_skirt_front_1', 0)] | Fitness: 0.6885
+Layout 45: [('right_sleeve_b', 90), ('skirt_front', 180), ('wb_back', 270), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_front_0', 180), ('right_btorso', 90), ('right_ftorso', 0), ('ins_skirt_back_2', 90), ('wb_front', 90), ('left_btorso', 90), ('sl_right_cuff_skirt_f', 90), ('ins_skirt_back_1', 270), ('left_ftorso', 0), ('ins_skirt_front_2', 270), ('ins_skirt_front_1', 180), ('skirt_back', 0), ('right_sleeve_f', 180), ('ins_skirt_back_0', 90)] | Fitness: 0.7283
+Layout 46: [('left_ftorso', 0), ('wb_back', 90), ('skirt_back', 0), ('ins_skirt_back_1', 180), ('skirt_front', 90), ('right_btorso', 180), ('wb_front', 270), ('right_sleeve_f', 180), ('sl_right_cuff_skirt_b', 180), ('ins_skirt_front_1', 270), ('right_sleeve_b', 90), ('ins_skirt_back_2', 180), ('right_ftorso', 90), ('ins_skirt_front_2', 0), ('ins_skirt_front_0', 90), ('sl_right_cuff_skirt_f', 90), ('ins_skirt_back_0', 90), ('left_btorso', 0)] | Fitness: 0.6963
+Layout 47: [('ins_skirt_back_0', 180), ('ins_skirt_back_1', 0), ('ins_skirt_front_1', 90), ('ins_skirt_front_2', 90), ('right_sleeve_f', 270), ('sl_right_cuff_skirt_f', 180), ('skirt_front', 0), ('skirt_back', 270), ('sl_right_cuff_skirt_b', 270), ('wb_back', 0), ('wb_front', 0), ('right_btorso', 180), ('right_ftorso', 270), ('ins_skirt_back_2', 0), ('left_ftorso', 180), ('left_btorso', 270), ('right_sleeve_b', 180), ('ins_skirt_front_0', 270)] | Fitness: 0.7162
+Layout 48: [('right_btorso', 180), ('left_btorso', 0), ('ins_skirt_back_0', 90), ('ins_skirt_front_0', 180), ('ins_skirt_front_2', 180), ('sl_right_cuff_skirt_b', 270), ('right_ftorso', 180), ('wb_front', 90), ('right_sleeve_f', 0), ('ins_skirt_front_1', 270), ('wb_back', 180), ('ins_skirt_back_1', 0), ('right_sleeve_b', 0), ('sl_right_cuff_skirt_f', 270), ('skirt_back', 180), ('skirt_front', 270), ('ins_skirt_back_2', 0), ('left_ftorso', 270)] | Fitness: 0.7257
+Layout 49: [('right_sleeve_b', 90), ('ins_skirt_front_1', 0), ('left_btorso', 0), ('right_ftorso', 0), ('ins_skirt_front_0', 270), ('skirt_back', 180), ('wb_back', 0), ('sl_right_cuff_skirt_b', 180), ('right_sleeve_f', 0), ('right_btorso', 0), ('ins_skirt_back_2', 270), ('ins_skirt_front_2', 0), ('sl_right_cuff_skirt_f', 180), ('wb_front', 0), ('ins_skirt_back_1', 0), ('left_ftorso', 0), ('skirt_front', 0), ('ins_skirt_back_0', 0)] | Fitness: 0.6781
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7397
+Collecting results from tasks…
+Offspring created with fitness: 0.0000
+Offspring created with fitness: 0.6762
+Offspring created with fitness: 0.6995
+Offspring created with fitness: 0.7028
+Offspring created with fitness: 0.6815
+Offspring created with fitness: 0.7012
+Offspring created with fitness: 0.6932
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7396
+Offspring created with fitness: 0.7004
+Offspring created with fitness: 0.7173
+Offspring created with fitness: 0.6776
+Offspring created with fitness: 0.7179
+Mutant created with fitness: 0.7310
+Offspring created with fitness: 0.7057
+Offspring created with fitness: 0.6916
+Mutant created with fitness: 0.6689
+Mutant created with fitness: 0.6879
+Offspring created with fitness: 0.7072
+Offspring created with fitness: 0.6719
+Offspring created with fitness: 0.7095
+Offspring created with fitness: 0.6774
+Offspring created with fitness: 0.7597
+Mutant created with fitness: 0.7269
+Mutant created with fitness: 0.7023
+Mutant created with fitness: 0.7204
+Mutant created with fitness: 0.7116
+Mutant created with fitness: 0.6977
+Mutant created with fitness: 0.7141
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece ins_skirt_back_0: 270°
+Mutant created with fitness: 0.7034
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_front: 0°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Mutant created with fitness: 0.7101
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece wb_back: 180°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece skirt_back: 270°
+Mutant created with fitness: 0.6599
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_back: 270°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece wb_front: 0°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_back_2: 0°
+Mutant created with fitness: 0.6360
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece wb_back: 90°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece wb_front: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Mutant created with fitness: 0.7229
+Mutant created with fitness: 0.7269
+Mutant created with fitness: 0.7144
+Mutant created with fitness: 0.6871
+Mutant created with fitness: 0.7313
+Mutant created with fitness: 0.7399
+Mutant created with fitness: 0.7397
+Random chromosome generated with fitness: 0.6480
+Random chromosome created with fitness: 0.6480
+Random chromosome generated with fitness: 0.6724
+Random chromosome created with fitness: 0.6724
+Random chromosome generated with fitness: 0.7000
+Random chromosome created with fitness: 0.7000
+Random chromosome generated with fitness: 0.6847
+Random chromosome created with fitness: 0.6847
+Random chromosome generated with fitness: 0.7089
+Random chromosome created with fitness: 0.7089
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0664; mutants: -0.0242
+------------------------------------------------------------
+Generation 1: best 0.7597 (Δ +0.0000)
+Generation 1 completed in 16.76s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7597
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7597
+Collecting results from tasks…
+Offspring created with fitness: 0.6586
+Offspring created with fitness: 0.7195
+Offspring created with fitness: 0.7309
+Offspring created with fitness: 0.7397
+Offspring created with fitness: 0.7109
+Offspring created with fitness: 0.7058
+Offspring created with fitness: 0.6826
+Offspring created with fitness: 0.7190
+Offspring created with fitness: 0.6832
+Offspring created with fitness: 0.7274
+Offspring created with fitness: 0.7190
+Offspring created with fitness: 0.7015
+Offspring created with fitness: 0.6658
+Offspring created with fitness: 0.7020
+Offspring created with fitness: 0.6802
+Offspring created with fitness: 0.7331
+Mutant created with fitness: 0.7036
+Offspring created with fitness: 0.6895
+Offspring created with fitness: 0.6810
+Offspring created with fitness: 0.7290
+Offspring created with fitness: 0.6732
+Mutant created with fitness: 0.7086
+Mutant created with fitness: 0.6867
+Mutant created with fitness: 0.6643
+Mutant created with fitness: 0.6761
+Mutant created with fitness: 0.7399
+Mutant created with fitness: 0.7410
+Mutant created with fitness: 0.7399
+Mutant created with fitness: 0.6918
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece wb_front: 0°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece wb_back: 180°
+Mutant created with fitness: 0.7588
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece wb_back: 270°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece wb_front: 0°
+Mutant created with fitness: 0.7397
+Random chromosome generated with 18 pieces.
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece wb_back: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece wb_front: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece right_ftorso: 270°
+Mutant created with fitness: 0.7497
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece wb_back: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece wb_front: 90°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_btorso: 270°
+Mutant created with fitness: 0.7251
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece wb_back: 270°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece skirt_front: 90°
+Mutant created with fitness: 0.6821
+Mutant created with fitness: 0.7236
+Mutant created with fitness: 0.7324
+Mutant created with fitness: 0.6864
+Mutant created with fitness: 0.7497
+Random chromosome generated with fitness: 0.6525
+Random chromosome created with fitness: 0.6525
+Mutant created with fitness: 0.7015
+Mutant created with fitness: 0.6917
+Random chromosome generated with fitness: 0.6905
+Random chromosome created with fitness: 0.6905
+Random chromosome generated with fitness: 0.6802
+Random chromosome created with fitness: 0.6802
+Random chromosome generated with fitness: 0.0000
+Random chromosome created with fitness: 0.0000
+Random chromosome generated with fitness: 0.7150
+Random chromosome created with fitness: 0.7150
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0527; mutants: -0.0310
+------------------------------------------------------------
+Generation 2: best 0.7597 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 2 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250602_092139/plots/fitness_curves_20250602_092139.png
+Mean gains plot saved to nesting/run_logs_20250602_092139/plots/mean_gains_20250602_092139.png
+Mutation gains plot saved to nesting/run_logs_20250602_092139/plots/mutation_gains.png
+Swarm plot data: 100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250602_092139/plots/fitness_swarm_20250602_092139.png
+Plots updated successfully.
+Generation 2 completed in 16.84s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7597
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7597
+Collecting results from tasks…
+Offspring created with fitness: 0.6863
+Offspring created with fitness: 0.7497
+Offspring created with fitness: 0.7417
+Offspring created with fitness: 0.6640
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.6955
+Offspring created with fitness: 0.7443
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7204
+Offspring created with fitness: 0.7497
+Offspring created with fitness: 0.7497
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7069
+Offspring created with fitness: 0.6808
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7567
+Mutant created with fitness: 0.7588
+Offspring created with fitness: 0.7597
+Mutant created with fitness: 0.7192
+Mutant created with fitness: 0.7109
+Offspring created with fitness: 0.7013
+Mutant created with fitness: 0.6708
+Mutant created with fitness: 0.7326
+Mutant created with fitness: 0.7433
+Mutant created with fitness: 0.7098
+Mutant created with fitness: 0.7588
+Mutant created with fitness: 0.7327
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece wb_back: 0°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece wb_front: 90°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Mutant created with fitness: 0.7064
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece wb_front: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece wb_back: 90°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece skirt_front: 0°
+Mutant created with fitness: 0.7497
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_back: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece wb_front: 270°
+Random rotation for piece wb_back: 0°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece skirt_front: 270°
+Mutant created with fitness: 0.6901
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece wb_front: 180°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece wb_back: 0°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece right_ftorso: 0°
+Mutant created with fitness: 0.6780
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece wb_back: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece wb_front: 90°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Mutant created with fitness: 0.6890
+Mutant created with fitness: 0.7227
+Mutant created with fitness: 0.6901
+Mutant created with fitness: 0.7033
+Mutant created with fitness: 0.7588
+Random chromosome generated with fitness: 0.6219
+Random chromosome created with fitness: 0.6219
+Random chromosome generated with fitness: 0.6898
+Random chromosome created with fitness: 0.6898
+Mutant created with fitness: 0.7470
+Mutant created with fitness: 0.7467
+Random chromosome generated with fitness: 0.6844
+Random chromosome created with fitness: 0.6844
+Random chromosome generated with fitness: 0.6850
+Random chromosome created with fitness: 0.6850
+Random chromosome generated with fitness: 0.6956
+Random chromosome created with fitness: 0.6956
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0252; mutants: -0.0340
+------------------------------------------------------------
+Generation 3: best 0.7597 (Δ +0.0000)
+Generation 3 completed in 17.60s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7597
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7597
+Collecting results from tasks…
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.6961
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.6691
+Offspring created with fitness: 0.7177
+Offspring created with fitness: 0.6934
+Offspring created with fitness: 0.7173
+Offspring created with fitness: 0.6922
+Offspring created with fitness: 0.7058
+Offspring created with fitness: 0.6678
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.6703
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7400
+Offspring created with fitness: 0.7036
+Mutant created with fitness: 0.7588
+Offspring created with fitness: 0.6935
+Mutant created with fitness: 0.7474
+Mutant created with fitness: 0.7170
+Mutant created with fitness: 0.6940
+Mutant created with fitness: 0.7313
+Mutant created with fitness: 0.7588
+Mutant created with fitness: 0.7151
+Mutant created with fitness: 0.7245
+Mutant created with fitness: 0.6709
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece wb_back: 180°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece left_ftorso: 90°
+Mutant created with fitness: 0.7230
+Random chromosome generated with 18 pieces.
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece wb_back: 270°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece wb_front: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece ins_skirt_front_0: 270°
+Mutant created with fitness: 0.7117
+Random chromosome generated with 18 pieces.
+Random rotation for piece left_btorso: 0°
+Random rotation for piece wb_front: 270°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece wb_back: 0°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece skirt_back: 0°
+Mutant created with fitness: 0.6551
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece wb_back: 180°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece wb_front: 0°
+Mutant created with fitness: 0.7253
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Mutant created with fitness: 0.7560
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece wb_front: 270°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_front_2: 0°
+Mutant created with fitness: 0.7267
+Mutant created with fitness: 0.7629
+Mutant created with fitness: 0.6928
+Mutant created with fitness: 0.7359
+Mutant created with fitness: 0.7310
+Mutant created with fitness: 0.7236
+Random chromosome generated with fitness: 0.6419
+Random chromosome created with fitness: 0.6419
+Random chromosome generated with fitness: 0.6618
+Random chromosome created with fitness: 0.6618
+Random chromosome generated with fitness: 0.6459
+Random chromosome created with fitness: 0.6459
+Random chromosome generated with fitness: 0.6792
+Random chromosome created with fitness: 0.6792
+Random chromosome generated with fitness: 0.6916
+Random chromosome created with fitness: 0.6916
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0375; mutants: -0.0361
+------------------------------------------------------------
+Generation 4: best 0.7629 (Δ +0.0031)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250602_092139/plots/fitness_curves_20250602_092139.png
+Mean gains plot saved to nesting/run_logs_20250602_092139/plots/mean_gains_20250602_092139.png
+Mutation gains plot saved to nesting/run_logs_20250602_092139/plots/mutation_gains.png
+Swarm plot data: 200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250602_092139/plots/fitness_swarm_20250602_092139.png
+Plots updated successfully.
+Generation 4 completed in 17.27s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+Collecting results from tasks…
+Offspring created with fitness: 0.6976
+Offspring created with fitness: 0.6529
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7035
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7216
+Mutant created with fitness: 0.7273
+Offspring created with fitness: 0.7288
+Offspring created with fitness: 0.7058
+Offspring created with fitness: 0.6716
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7597
+Mutant created with fitness: 0.7309
+Offspring created with fitness: 0.7597
+Mutant created with fitness: 0.7083
+Offspring created with fitness: 0.7597
+Mutant created with fitness: 0.7015
+Mutant created with fitness: 0.6768
+Mutant created with fitness: 0.7140
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.6875
+Mutant created with fitness: 0.6963
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_front: 0°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece wb_back: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_back_1: 90°
+Mutant created with fitness: 0.7157
+Mutant created with fitness: 0.7187
+Random chromosome generated with 18 pieces.
+Mutant created with fitness: 0.6942
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece wb_back: 180°
+Random chromosome generated with 18 pieces.
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece wb_front: 90°
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece wb_back: 270°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece wb_front: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Mutant created with fitness: 0.7366
+Random rotation for piece right_sleeve_f: 180°
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece right_ftorso: 180°
+Mutant created with fitness: 0.7067
+Random rotation for piece wb_front: 90°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Mutant created with fitness: 0.7092
+Random rotation for piece wb_front: 270°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_btorso: 270°
+Mutant created with fitness: 0.7116
+Mutant created with fitness: 0.6959
+Mutant created with fitness: 0.7103
+Mutant created with fitness: 0.7193
+Random chromosome generated with fitness: 0.6977
+Random chromosome created with fitness: 0.6977
+Random chromosome generated with fitness: 0.7250
+Random chromosome created with fitness: 0.7250
+Mutant created with fitness: 0.7075
+Random chromosome generated with fitness: 0.6684
+Random chromosome created with fitness: 0.6684
+Random chromosome generated with fitness: 0.6467
+Random chromosome created with fitness: 0.6467
+Random chromosome generated with fitness: 0.6674
+Random chromosome created with fitness: 0.6674
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0225; mutants: -0.0508
+------------------------------------------------------------
+Generation 5: best 0.7629 (Δ +0.0000)
+Generation 5 completed in 16.91s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+Collecting results from tasks…
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7130
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7597
+Mutant created with fitness: 0.7196
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7597
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7003
+Mutant created with fitness: 0.7424
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7387
+Mutant created with fitness: 0.7518
+Mutant created with fitness: 0.7597
+Mutant created with fitness: 0.7244
+Mutant created with fitness: 0.6912
+Mutant created with fitness: 0.7597
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece wb_back: 270°
+Random rotation for piece wb_front: 180°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece skirt_front: 270°
+Mutant created with fitness: 0.7597
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece wb_front: 270°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece right_sleeve_b: 90°
+Mutant created with fitness: 0.7030
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_front: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece right_sleeve_b: 0°
+Mutant created with fitness: 0.7629
+Random chromosome generated with 18 pieces.
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece wb_front: 0°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_front_1: 180°
+Mutant created with fitness: 0.7461
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece wb_front: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Mutant created with fitness: 0.7117
+Mutant created with fitness: 0.7629
+Mutant created with fitness: 0.7280
+Mutant created with fitness: 0.7373
+Random chromosome generated with fitness: 0.6721
+Random chromosome created with fitness: 0.6721
+Random chromosome generated with fitness: 0.6749
+Random chromosome created with fitness: 0.6749
+Random chromosome generated with fitness: 0.6511
+Random chromosome created with fitness: 0.6511
+Mutant created with fitness: 0.7149
+Mutant created with fitness: 0.7342
+Random chromosome generated with fitness: 0.6939
+Random chromosome created with fitness: 0.6939
+Mutant created with fitness: 0.6861
+Random chromosome generated with fitness: 0.6874
+Random chromosome created with fitness: 0.6874
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0036; mutants: -0.0299
+------------------------------------------------------------
+Generation 6: best 0.7629 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 6 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250602_092139/plots/fitness_curves_20250602_092139.png
+Mean gains plot saved to nesting/run_logs_20250602_092139/plots/mean_gains_20250602_092139.png
+Mutation gains plot saved to nesting/run_logs_20250602_092139/plots/mutation_gains.png
+Swarm plot data: 300 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250602_092139/plots/fitness_swarm_20250602_092139.png
+Plots updated successfully.
+Generation 6 completed in 17.53s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+Collecting results from tasks…
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7454
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7200
+Mutant created with fitness: 0.6983
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7424
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.6904
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7629
+Mutant created with fitness: 0.7629
+Mutant created with fitness: 0.6986
+Mutant created with fitness: 0.7329
+Mutant created with fitness: 0.6933
+Mutant created with fitness: 0.7191
+Mutant created with fitness: 0.7627
+Random chromosome generated with 18 pieces.
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece wb_front: 270°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece wb_back: 0°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_back_0: 90°
+Mutant created with fitness: 0.7238
+Random chromosome generated with 18 pieces.
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece ins_skirt_front_2: 90°
+Mutant created with fitness: 0.7211
+Random chromosome generated with 18 pieces.
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece wb_front: 270°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Mutant created with fitness: 0.7234
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Mutant created with fitness: 0.7364
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece wb_front: 90°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece wb_back: 0°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Mutant created with fitness: 0.7108
+Mutant created with fitness: 0.6977
+Mutant created with fitness: 0.6675
+Mutant created with fitness: 0.7505
+Mutant created with fitness: 0.7142
+Mutant created with fitness: 0.7428
+Random chromosome generated with fitness: 0.7157
+Random chromosome created with fitness: 0.7157
+Mutant created with fitness: 0.7629
+Random chromosome generated with fitness: 0.7294
+Random chromosome created with fitness: 0.7294
+Random chromosome generated with fitness: 0.6734
+Random chromosome created with fitness: 0.6734
+Random chromosome generated with fitness: 0.7075
+Random chromosome created with fitness: 0.7075
+Random chromosome generated with fitness: 0.6923
+Random chromosome created with fitness: 0.6923
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0066; mutants: -0.0367
+------------------------------------------------------------
+Generation 7: best 0.7629 (Δ +0.0000)
+Generation 7 completed in 17.02s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+Collecting results from tasks…
+Offspring created with fitness: 0.7043
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7319
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7315
+Mutant created with fitness: 0.7369
+Offspring created with fitness: 0.7279
+Mutant created with fitness: 0.7044
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7295
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7124
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7297
+Mutant created with fitness: 0.7042
+Mutant created with fitness: 0.7290
+Mutant created with fitness: 0.7334
+Mutant created with fitness: 0.7629
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece wb_back: 180°
+Random rotation for piece wb_front: 0°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Mutant created with fitness: 0.7209
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece wb_front: 90°
+Random rotation for piece wb_back: 270°
+Mutant created with fitness: 0.7629
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece left_btorso: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece wb_back: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece wb_front: 270°
+Mutant created with fitness: 0.7035
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_1: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_back_1: 180°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece wb_front: 180°
+Mutant created with fitness: 0.6715
+Random chromosome generated with 18 pieces.
+Random rotation for piece skirt_front: 0°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_back_0: 180°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece wb_back: 270°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece wb_front: 180°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_front_2: 180°
+Mutant created with fitness: 0.7261
+Mutant created with fitness: 0.7117
+Mutant created with fitness: 0.7132
+Mutant created with fitness: 0.6912
+Mutant created with fitness: 0.7070
+Mutant created with fitness: 0.7629
+Mutant created with fitness: 0.7304
+Random chromosome generated with fitness: 0.0000
+Random chromosome created with fitness: 0.0000
+Random chromosome generated with fitness: 0.6609
+Random chromosome created with fitness: 0.6609
+Random chromosome generated with fitness: 0.7295
+Random chromosome created with fitness: 0.7295
+Random chromosome generated with fitness: 0.7090
+Random chromosome created with fitness: 0.7090
+Random chromosome generated with fitness: 0.6690
+Random chromosome created with fitness: 0.6690
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0078; mutants: -0.0407
+------------------------------------------------------------
+Generation 8: best 0.7629 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250602_092139/plots/fitness_curves_20250602_092139.png
+Mean gains plot saved to nesting/run_logs_20250602_092139/plots/mean_gains_20250602_092139.png
+Mutation gains plot saved to nesting/run_logs_20250602_092139/plots/mutation_gains.png
+Swarm plot data: 400 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250602_092139/plots/fitness_swarm_20250602_092139.png
+Plots updated successfully.
+Generation 8 completed in 17.61s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7629
+Collecting results from tasks…
+Offspring created with fitness: 0.7263
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7209
+Mutant created with fitness: 0.7464
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7632
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7258
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7369
+Mutant created with fitness: 0.6963
+Mutant created with fitness: 0.6575
+Mutant created with fitness: 0.7509
+Mutant created with fitness: 0.7228
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece wb_front: 180°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_ftorso: 270°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece right_sleeve_b: 90°
+Mutant created with fitness: 0.7158
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece wb_front: 180°
+Random rotation for piece right_sleeve_f: 0°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece wb_back: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_front_1: 180°
+Mutant created with fitness: 0.7232
+Random chromosome generated with 18 pieces.
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_ftorso: 0°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece ins_skirt_back_1: 270°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece left_btorso: 270°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece wb_back: 270°
+Mutant created with fitness: 0.7087
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_0: 0°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece sl_right_cuff_skirt_b: 0°
+Random rotation for piece wb_back: 180°
+Random rotation for piece wb_front: 270°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece skirt_front: 180°
+Random rotation for piece ins_skirt_front_1: 270°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece right_btorso: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_back_1: 270°
+Mutant created with fitness: 0.7371
+Random chromosome generated with 18 pieces.
+Random rotation for piece right_btorso: 180°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece skirt_back: 270°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece wb_front: 90°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece right_sleeve_b: 90°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_back_1: 90°
+Random rotation for piece right_sleeve_f: 90°
+Mutant created with fitness: 0.7231
+Mutant created with fitness: 0.6982
+Mutant created with fitness: 0.7136
+Mutant created with fitness: 0.7081
+Mutant created with fitness: 0.7505
+Random chromosome generated with fitness: 0.6664
+Random chromosome created with fitness: 0.6664
+Mutant created with fitness: 0.7216
+Mutant created with fitness: 0.7032
+Random chromosome generated with fitness: 0.6778
+Random chromosome created with fitness: 0.6778
+Random chromosome generated with fitness: 0.6672
+Random chromosome created with fitness: 0.6672
+Random chromosome generated with fitness: 0.6935
+Random chromosome created with fitness: 0.6935
+Random chromosome generated with fitness: 0.6902
+Random chromosome created with fitness: 0.6902
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0018; mutants: -0.0417
+------------------------------------------------------------
+Generation 9: best 0.7632 (Δ +0.0003)
+Generation 9 completed in 16.79s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7632
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7632
+Collecting results from tasks…
+Offspring created with fitness: 0.7327
+Offspring created with fitness: 0.7327
+Offspring created with fitness: 0.7424
+Offspring created with fitness: 0.6454
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.6730
+Offspring created with fitness: 0.7355
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7339
+Offspring created with fitness: 0.6904
+Mutant created with fitness: 0.7360
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Offspring created with fitness: 0.7629
+Mutant created with fitness: 0.7632
+Mutant created with fitness: 0.7404
+Mutant created with fitness: 0.7054
+Mutant created with fitness: 0.6587
+Mutant created with fitness: 0.7120
+Mutant created with fitness: 0.7042
+Mutant created with fitness: 0.7064
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_2: 180°
+Random rotation for piece wb_front: 180°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece right_btorso: 270°
+Random rotation for piece skirt_back: 90°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece left_ftorso: 270°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece ins_skirt_front_0: 0°
+Random rotation for piece ins_skirt_front_2: 180°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece skirt_front: 270°
+Mutant created with fitness: 0.7577
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_back_2: 90°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_front_2: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece wb_back: 180°
+Random rotation for piece right_sleeve_b: 0°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece wb_front: 0°
+Random rotation for piece skirt_front: 90°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece left_ftorso: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece ins_skirt_back_0: 90°
+Mutant created with fitness: 0.7629
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece skirt_front: 270°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece right_sleeve_f: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 90°
+Random rotation for piece ins_skirt_front_0: 180°
+Random rotation for piece right_sleeve_b: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece wb_front: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 270°
+Random rotation for piece skirt_back: 180°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece wb_back: 90°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece right_ftorso: 90°
+Random rotation for piece ins_skirt_front_2: 90°
+Mutant created with fitness: 0.6975
+Random chromosome generated with 18 pieces.
+Random rotation for piece ins_skirt_front_2: 90°
+Random rotation for piece left_btorso: 0°
+Random rotation for piece wb_front: 0°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_back_2: 0°
+Random rotation for piece ins_skirt_back_0: 90°
+Random rotation for piece right_btorso: 90°
+Random rotation for piece skirt_back: 0°
+Random rotation for piece sl_right_cuff_skirt_f: 90°
+Random rotation for piece left_ftorso: 90°
+Random rotation for piece ins_skirt_front_1: 90°
+Random rotation for piece sl_right_cuff_skirt_b: 270°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece wb_back: 90°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece ins_skirt_front_0: 270°
+Random rotation for piece right_sleeve_f: 270°
+Random rotation for piece skirt_front: 90°
+Mutant created with fitness: 0.7104
+Random chromosome generated with 18 pieces.
+Random rotation for piece wb_back: 270°
+Random rotation for piece ins_skirt_front_2: 270°
+Random rotation for piece wb_front: 90°
+Random rotation for piece ins_skirt_front_0: 90°
+Random rotation for piece left_btorso: 180°
+Random rotation for piece right_btorso: 180°
+Random rotation for piece sl_right_cuff_skirt_b: 180°
+Random rotation for piece skirt_front: 0°
+Random rotation for piece ins_skirt_back_0: 270°
+Random rotation for piece right_ftorso: 180°
+Random rotation for piece ins_skirt_back_2: 270°
+Random rotation for piece ins_skirt_front_1: 0°
+Random rotation for piece ins_skirt_back_1: 0°
+Random rotation for piece left_ftorso: 180°
+Random rotation for piece sl_right_cuff_skirt_f: 180°
+Random rotation for piece right_sleeve_f: 180°
+Random rotation for piece right_sleeve_b: 270°
+Random rotation for piece skirt_back: 0°
+Mutant created with fitness: 0.7597
+Mutant created with fitness: 0.7382
+Mutant created with fitness: 0.7107
+Mutant created with fitness: 0.7453
+Mutant created with fitness: 0.7128
+Mutant created with fitness: 0.7360
+Random chromosome generated with fitness: 0.6532
+Random chromosome created with fitness: 0.6532
+Random chromosome generated with fitness: 0.6680
+Random chromosome created with fitness: 0.6680
+Random chromosome generated with fitness: 0.6692
+Random chromosome created with fitness: 0.6692
+Random chromosome generated with fitness: 0.6698
+Random chromosome created with fitness: 0.6698
+Random chromosome generated with fitness: 0.6976
+Random chromosome created with fitness: 0.6976
+Mutant created with fitness: 0.6977
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0195; mutants: -0.0385
+------------------------------------------------------------
+Generation 10: best 0.7632 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 10 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250602_092139/plots/fitness_curves_20250602_092139.png
+Mean gains plot saved to nesting/run_logs_20250602_092139/plots/mean_gains_20250602_092139.png
+Mutation gains plot saved to nesting/run_logs_20250602_092139/plots/mutation_gains.png
+Swarm plot data: 500 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250602_092139/plots/fitness_swarm_20250602_092139.png
+Plots updated successfully.
+Generation 10 completed in 16.88s.
+------------------------------------------------------------
+Early‑stopping: fitness plateau for 10 generations.
+------------------------------------------------------------
+Evolution completed.
+Total time: 190.22 seconds

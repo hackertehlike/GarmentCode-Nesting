@@ -1,0 +1,2365 @@
+------------------------------------------------------------
+Evolution initialized with 20 chromosomes, 2 elites, 8 offspring, 8 mutants, 2 randoms.
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x15ebbc640>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x15ebbc640>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x106665930>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1', 'ox1k'], 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1', 'ox1k'], 'SELECTED_DECODER': 'BL', 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1k', 'GRAVITATE_STEP': 2, 'POPULATION_SIZE': 20, 'NUM_GENERATIONS': 10, 'MUTATION_RATE': 0.2, 'POPULATION_WEIGHTS': {'elites': 0.1, 'offspring': 0.4, 'mutants': 0.4, 'randoms': 0.1}, 'MUTATION_WEIGHTS': {'rotate': 0.3, 'swap': 0.2, 'inversion': 0, 'insertion': 0.1, 'scramble': 0.4, 'split': 0}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 5, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs', 'LOG_TIME': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 10, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 250, 'CONTAINER_HEIGHT_CM': 100.0, 'SEAM_ALLOWANCE_CM': 1, '__dict__': <function __dict__ at 0x15ebaf4c0>}
+Generating initial population...
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece3_6: 180°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece3_4: 0°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece6_2: 90°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece10_2: 180°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece2_4: 90°
+Random rotation for piece piece2_3: 90°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece2_6: 90°
+Random rotation for piece piece2_2: 270°
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece8_3: 270°
+Random rotation for piece piece5_5: 90°
+Random rotation for piece piece9_6: 90°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece7_2: 0°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece9_6: 180°
+Random chromosome generated with 48 pieces.
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece2_1: 180°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece10_1: 90°
+Random rotation for piece piece10_1: 270°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece8_1: 270°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece2_3: 270°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece7_2: 90°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece2_5: 270°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece1_1: 90°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece3_2: 90°
+Random rotation for piece piece2_2: 0°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece7_2: 90°
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece9_1: 180°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece8_1: 0°
+Random rotation for piece piece5_2: 270°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece5_1: 0°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece10_1: 180°
+Random rotation for piece piece8_6: 0°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece3_4: 0°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece2_4: 180°
+Random rotation for piece piece4_6: 180°
+Random rotation for piece piece1_3: 180°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece3_5: 270°
+Random rotation for piece piece8_2: 90°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece6_1: 0°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece9_1: 0°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece10_3: 90°
+Random rotation for piece piece9_2: 270°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece4_1: 270°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece5_5: 0°
+Random rotation for piece piece2_1: 0°
+Random rotation for piece piece8_1: 90°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece4_2: 90°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece5_3: 0°
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece8_5: 0°
+Random rotation for piece piece3_2: 0°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece5_6: 90°
+Random rotation for piece piece2_3: 0°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece4_1: 0°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece7_2: 90°
+Random rotation for piece piece4_5: 180°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece5_1: 0°
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece10_1: 180°
+Random rotation for piece piece9_5: 0°
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece9_4: 180°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece6_2: 90°
+Random rotation for piece piece1_2: 90°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece2_4: 180°
+Random rotation for piece piece7_1: 90°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece9_5: 0°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece3_3: 270°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece9_6: 90°
+Random rotation for piece piece5_2: 270°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece8_5: 180°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece4_2: 90°
+Random rotation for piece piece5_1: 270°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece3_1: 90°
+Random rotation for piece piece2_2: 0°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece3_6: 180°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece6_2: 180°
+Random rotation for piece piece5_4: 180°
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece4_3: 180°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece9_3: 180°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece8_6: 180°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece1_1: 0°
+Random rotation for piece piece2_4: 90°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece9_2: 90°
+Random rotation for piece piece8_6: 0°
+Random rotation for piece piece7_3: 270°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece1_3: 180°
+Random rotation for piece piece9_4: 180°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece9_6: 270°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece8_6: 0°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece9_6: 180°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece5_2: 270°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece2_5: 180°
+Random rotation for piece piece9_2: 90°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece8_3: 270°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece7_2: 90°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece9_6: 90°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece2_3: 180°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece5_1: 180°
+Random rotation for piece piece2_3: 180°
+Random rotation for piece piece6_2: 180°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece3_1: 90°
+Random rotation for piece piece2_1: 0°
+Random rotation for piece piece1_1: 270°
+Random rotation for piece piece2_6: 180°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece6_1: 90°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece10_3: 90°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece3_5: 270°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece2_2: 0°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece8_1: 90°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece4_1: 0°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece5_5: 0°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece8_5: 180°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece3_4: 0°
+Random rotation for piece piece4_4: 0°
+Random rotation for piece piece7_2: 0°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece3_2: 0°
+Random rotation for piece piece8_1: 90°
+Random rotation for piece piece3_6: 180°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece2_4: 90°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece5_1: 270°
+Random rotation for piece piece9_2: 270°
+Random rotation for piece piece3_2: 90°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece5_1: 0°
+Random rotation for piece piece4_4: 0°
+Random rotation for piece piece2_3: 0°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece4_3: 180°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece4_6: 180°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece5_5: 0°
+Random rotation for piece piece2_1: 90°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece6_1: 0°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece5_5: 0°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece8_1: 90°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece9_6: 180°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece4_1: 0°
+Random rotation for piece piece3_2: 270°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece4_1: 270°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece2_1: 90°
+Random rotation for piece piece9_4: 180°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece1_2: 90°
+Random rotation for piece piece5_5: 0°
+Random rotation for piece piece9_4: 0°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece8_6: 180°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece2_5: 180°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece2_1: 0°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece2_5: 90°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece7_3: 270°
+Random rotation for piece piece3_5: 90°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece8_1: 180°
+Random rotation for piece piece3_4: 90°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece3_5: 270°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece4_2: 90°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece4_3: 180°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece3_1: 90°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece8_1: 180°
+Random rotation for piece piece3_2: 270°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece9_4: 180°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece3_4: 0°
+Random rotation for piece piece4_1: 270°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece8_1: 0°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece7_2: 90°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece7_2: 0°
+Random rotation for piece piece5_1: 270°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece1_3: 180°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece6_1: 90°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece3_2: 90°
+Random rotation for piece piece10_2: 180°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece1_1: 90°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece4_5: 180°
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece2_2: 270°
+Random rotation for piece piece10_2: 180°
+Random rotation for piece piece8_6: 0°
+Random rotation for piece piece1_1: 90°
+Random rotation for piece piece8_4: 0°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece5_5: 90°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece8_6: 0°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece6_1: 90°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece8_6: 180°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece6_2: 180°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece4_5: 270°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece8_3: 270°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece5_5: 0°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece2_3: 0°
+Random rotation for piece piece8_2: 0°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece1_3: 90°
+Random rotation for piece piece10_1: 90°
+Random rotation for piece piece3_5: 90°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece3_1: 0°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece2_5: 90°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece1_1: 270°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece5_1: 180°
+Random rotation for piece piece8_1: 90°
+Random rotation for piece piece3_5: 270°
+Random rotation for piece piece8_6: 180°
+Random rotation for piece piece4_2: 270°
+Random rotation for piece piece4_4: 0°
+Random rotation for piece piece8_3: 270°
+Random rotation for piece piece6_2: 90°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece7_3: 270°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece8_4: 270°
+Random chromosome generated with fitness: 0.4789
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece8_5: 180°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece5_5: 0°
+Random rotation for piece piece9_2: 270°
+Random rotation for piece piece3_4: 90°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece6_1: 0°
+Random rotation for piece piece9_6: 180°
+Random rotation for piece piece3_3: 270°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece10_3: 90°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece1_1: 0°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece7_2: 90°
+Random rotation for piece piece3_5: 90°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece4_1: 270°
+Random rotation for piece piece2_1: 0°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece7_1: 90°
+Random rotation for piece piece7_3: 270°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece5_4: 270°
+Random chromosome generated with fitness: 0.4746
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece2_1: 0°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece5_2: 270°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece5_6: 90°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece1_1: 270°
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece1_2: 90°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece2_2: 0°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece9_4: 180°
+Random rotation for piece piece8_5: 0°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece3_3: 270°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece1_3: 90°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece2_3: 0°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece5_5: 90°
+Random rotation for piece piece4_1: 0°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece7_1: 270°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece3_2: 0°
+Random chromosome generated with fitness: 0.4590
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece5_3: 0°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece6_3: 0°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece2_3: 90°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece5_1: 180°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece1_3: 180°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece4_1: 0°
+Random rotation for piece piece7_2: 270°
+Random rotation for piece piece3_6: 180°
+Random rotation for piece piece2_4: 90°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece5_5: 0°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece9_4: 180°
+Random rotation for piece piece3_2: 0°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece3_3: 270°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece4_4: 0°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece9_3: 180°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece4_2: 90°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece9_6: 90°
+Random rotation for piece piece6_2: 180°
+Random rotation for piece piece2_5: 180°
+Random rotation for piece piece9_2: 90°
+Random rotation for piece piece9_5: 270°
+Random chromosome generated with fitness: 0.4871
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece9_6: 270°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece4_2: 270°
+Random rotation for piece piece1_1: 90°
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece8_5: 180°
+Random rotation for piece piece7_2: 0°
+Random rotation for piece piece1_3: 180°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece9_2: 270°
+Random rotation for piece piece8_3: 270°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece3_5: 270°
+Random rotation for piece piece7_3: 270°
+Random rotation for piece piece10_1: 90°
+Random rotation for piece piece2_4: 90°
+Random rotation for piece piece7_1: 90°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece2_5: 90°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece5_1: 180°
+Random rotation for piece piece8_6: 180°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece2_3: 180°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece3_2: 270°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece2_6: 90°
+Random rotation for piece piece5_3: 90°
+Random chromosome generated with fitness: 0.4914
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece5_6: 90°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece3_1: 0°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece4_4: 0°
+Random rotation for piece piece5_1: 270°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece9_6: 270°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece2_1: 90°
+Random rotation for piece piece6_3: 0°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece8_6: 180°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece3_2: 90°
+Random rotation for piece piece10_1: 90°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece9_4: 180°
+Random rotation for piece piece3_6: 180°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece10_3: 90°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece1_1: 90°
+Random rotation for piece piece8_5: 270°
+Random chromosome generated with fitness: 0.5047
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece3_3: 270°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece1_3: 180°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece10_1: 180°
+Random rotation for piece piece3_5: 90°
+Random rotation for piece piece2_3: 0°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece6_1: 90°
+Random rotation for piece piece6_2: 90°
+Random rotation for piece piece8_5: 180°
+Random rotation for piece piece9_1: 0°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece5_1: 0°
+Random rotation for piece piece5_5: 90°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece6_3: 0°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece7_1: 270°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece9_6: 90°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece3_2: 90°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece7_2: 0°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece5_4: 180°
+Random rotation for piece piece1_1: 0°
+Random rotation for piece piece9_2: 90°
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece2_5: 270°
+Random chromosome generated with fitness: 0.5082
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece6_1: 90°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece4_2: 270°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece5_1: 270°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece5_5: 90°
+Random rotation for piece piece5_6: 90°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece1_1: 0°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece7_2: 90°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece9_6: 270°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece8_3: 270°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece9_1: 0°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece3_4: 0°
+Random rotation for piece piece8_1: 180°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece3_5: 90°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece9_2: 0°
+Random chromosome generated with fitness: 0.4475
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece8_2: 0°
+Random rotation for piece piece3_3: 270°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece1_3: 90°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece9_6: 180°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece8_5: 180°
+Random rotation for piece piece3_4: 0°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece6_3: 0°
+Random rotation for piece piece1_1: 0°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece5_2: 270°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece6_1: 0°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece10_3: 90°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece5_1: 270°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece6_2: 180°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece2_5: 180°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece2_3: 90°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece9_3: 180°
+Random rotation for piece piece7_2: 270°
+Random chromosome generated with fitness: 0.4742
+Random chromosome generated with fitness: 0.4123
+Random chromosome generated with fitness: 0.4759
+Random chromosome generated with fitness: 0.4774
+Random chromosome generated with fitness: 0.4490
+Random chromosome generated with fitness: 0.5103
+Random chromosome generated with fitness: 0.4794
+Random chromosome generated with fitness: 0.5043
+Random chromosome generated with fitness: 0.4891
+Random chromosome generated with fitness: 0.4158
+Random chromosome generated with fitness: 0.3863
+Random chromosome generated with fitness: 0.5291
+------------------------------------------------------------
+Initial population of 20 layouts generated.
+Layout 0: [('piece3_1', 270), ('piece5_6', 270), ('piece3_6', 180), ('piece10_1', 0), ('piece1_1', 180), ('piece9_5', 270), ('piece3_4', 0), ('piece9_4', 90), ('piece5_4', 0), ('piece7_3', 90), ('piece5_2', 90), ('piece1_2', 270), ('piece9_1', 90), ('piece7_1', 180), ('piece9_3', 0), ('piece9_2', 180), ('piece6_1', 180), ('piece4_5', 0), ('piece6_2', 90), ('piece4_4', 90), ('piece3_5', 0), ('piece7_2', 180), ('piece8_4', 180), ('piece1_3', 0), ('piece10_3', 180), ('piece10_2', 180), ('piece5_3', 270), ('piece8_6', 90), ('piece6_3', 180), ('piece4_1', 180), ('piece4_6', 270), ('piece2_4', 90), ('piece2_3', 90), ('piece5_1', 90), ('piece3_3', 90), ('piece2_6', 90), ('piece2_2', 270), ('piece8_2', 90), ('piece8_5', 90), ('piece4_2', 0), ('piece8_3', 270), ('piece5_5', 90), ('piece9_6', 90), ('piece2_1', 180), ('piece8_1', 270), ('piece2_5', 270), ('piece3_2', 90), ('piece4_3', 270)] | Fitness: 0.4742
+Layout 1: [('piece7_2', 0), ('piece7_3', 0), ('piece9_6', 180), ('piece10_1', 90), ('piece8_5', 90), ('piece9_1', 180), ('piece5_1', 0), ('piece7_1', 180), ('piece10_3', 180), ('piece2_4', 270), ('piece3_3', 90), ('piece5_2', 270), ('piece3_6', 180), ('piece9_3', 270), ('piece4_6', 180), ('piece5_5', 0), ('piece2_1', 90), ('piece2_3', 270), ('piece5_4', 90), ('piece8_1', 180), ('piece3_4', 90), ('piece8_4', 180), ('piece8_3', 0), ('piece9_5', 90), ('piece8_2', 180), ('piece2_6', 270), ('piece1_3', 180), ('piece3_2', 90), ('piece1_2', 180), ('piece10_2', 180), ('piece9_2', 180), ('piece9_4', 90), ('piece6_3', 90), ('piece5_3', 270), ('piece8_6', 180), ('piece4_1', 180), ('piece4_5', 90), ('piece3_5', 90), ('piece3_1', 180), ('piece2_2', 180), ('piece2_5', 90), ('piece6_2', 270), ('piece4_3', 0), ('piece5_6', 0), ('piece1_1', 270), ('piece4_2', 270), ('piece4_4', 270), ('piece6_1', 180)] | Fitness: 0.5082
+Layout 2: [('piece3_3', 0), ('piece2_1', 270), ('piece2_6', 270), ('piece3_4', 180), ('piece6_1', 180), ('piece1_1', 180), ('piece8_5', 0), ('piece2_3', 0), ('piece7_1', 180), ('piece2_5', 180), ('piece9_2', 90), ('piece7_2', 90), ('piece2_4', 270), ('piece10_3', 270), ('piece9_1', 180), ('piece5_6', 0), ('piece5_3', 90), ('piece8_6', 180), ('piece10_2', 90), ('piece4_3', 90), ('piece1_3', 270), ('piece8_1', 0), ('piece3_6', 0), ('piece5_2', 180), ('piece9_3', 0), ('piece3_2', 180), ('piece4_5', 270), ('piece8_3', 270), ('piece5_5', 0), ('piece8_2', 0), ('piece6_3', 90), ('piece10_1', 90), ('piece9_4', 270), ('piece3_1', 0), ('piece4_6', 90), ('piece4_2', 0), ('piece5_4', 90), ('piece9_5', 90), ('piece5_1', 180), ('piece3_5', 270), ('piece4_4', 0), ('piece6_2', 90), ('piece2_2', 90), ('piece1_2', 180), ('piece7_3', 270), ('piece9_6', 0), ('piece4_1', 90), ('piece8_4', 270)] | Fitness: 0.4789
+Layout 3: [('piece1_1', 90), ('piece2_3', 270), ('piece3_4', 180), ('piece6_1', 0), ('piece7_1', 0), ('piece4_3', 90), ('piece5_3', 90), ('piece9_5', 270), ('piece5_2', 90), ('piece5_6', 90), ('piece5_1', 0), ('piece8_4', 90), ('piece9_4', 180), ('piece1_3', 0), ('piece8_2', 180), ('piece2_2', 180), ('piece5_5', 270), ('piece9_2', 90), ('piece9_6', 270), ('piece5_4', 270), ('piece3_6', 90), ('piece3_2', 0), ('piece1_2', 0), ('piece2_1', 180), ('piece4_5', 0), ('piece4_4', 270), ('piece4_6', 270), ('piece4_2', 90), ('piece3_1', 90), ('piece9_1', 90), ('piece4_1', 270), ('piece10_1', 0), ('piece2_5', 270), ('piece7_2', 0), ('piece10_2', 180), ('piece7_3', 180), ('piece3_3', 0), ('piece6_2', 180), ('piece8_5', 90), ('piece2_6', 270), ('piece2_4', 270), ('piece3_5', 180), ('piece10_3', 180), ('piece6_3', 270), ('piece9_3', 0), ('piece8_1', 90), ('piece8_6', 180), ('piece8_3', 270)] | Fitness: 0.4871
+Layout 4: [('piece6_2', 270), ('piece6_1', 270), ('piece9_2', 0), ('piece9_4', 270), ('piece5_1', 90), ('piece7_1', 0), ('piece5_4', 0), ('piece4_6', 180), ('piece10_3', 90), ('piece2_6', 0), ('piece4_1', 270), ('piece5_6', 0), ('piece9_3', 0), ('piece7_2', 90), ('piece9_5', 0), ('piece5_5', 180), ('piece2_4', 180), ('piece2_5', 0), ('piece3_6', 0), ('piece2_2', 0), ('piece4_2', 180), ('piece8_2', 90), ('piece1_3', 270), ('piece1_2', 270), ('piece8_6', 0), ('piece8_5', 270), ('piece8_3', 0), ('piece5_3', 270), ('piece3_3', 0), ('piece4_5', 90), ('piece8_4', 270), ('piece8_1', 90), ('piece9_6', 0), ('piece6_3', 180), ('piece9_1', 270), ('piece2_3', 0), ('piece7_3', 0), ('piece4_3', 180), ('piece1_1', 180), ('piece2_1', 90), ('piece3_2', 180), ('piece10_1', 0), ('piece3_5', 270), ('piece5_2', 90), ('piece4_4', 270), ('piece3_1', 270), ('piece3_4', 270), ('piece10_2', 90)] | Fitness: 0.4914
+Layout 5: [('piece10_1', 270), ('piece2_6', 0), ('piece8_4', 270), ('piece2_4', 180), ('piece4_4', 180), ('piece5_3', 0), ('piece9_1', 270), ('piece1_3', 0), ('piece5_2', 180), ('piece3_3', 0), ('piece7_3', 90), ('piece3_6', 90), ('piece6_3', 180), ('piece4_5', 90), ('piece9_4', 180), ('piece10_3', 270), ('piece4_1', 180), ('piece9_3', 0), ('piece3_2', 180), ('piece9_2', 0), ('piece3_1', 90), ('piece6_1', 90), ('piece4_2', 0), ('piece8_5', 180), ('piece5_1', 270), ('piece2_3', 270), ('piece8_2', 180), ('piece1_2', 180), ('piece5_5', 0), ('piece8_3', 0), ('piece2_2', 180), ('piece8_1', 90), ('piece7_2', 180), ('piece9_5', 180), ('piece3_4', 180), ('piece10_2', 90), ('piece6_2', 270), ('piece9_6', 0), ('piece2_1', 0), ('piece7_1', 0), ('piece2_5', 90), ('piece3_5', 90), ('piece5_4', 270), ('piece4_3', 180), ('piece8_6', 90), ('piece4_6', 0), ('piece5_6', 0), ('piece1_1', 180)] | Fitness: 0.4123
+Layout 6: [('piece8_5', 270), ('piece2_4', 0), ('piece4_3', 90), ('piece10_1', 180), ('piece10_3', 0), ('piece3_4', 0), ('piece8_1', 270), ('piece3_6', 270), ('piece9_3', 0), ('piece3_5', 270), ('piece9_2', 270), ('piece10_2', 0), ('piece3_1', 180), ('piece2_1', 270), ('piece1_2', 90), ('piece9_1', 270), ('piece9_5', 0), ('piece3_2', 180), ('piece1_3', 270), ('piece2_2', 0), ('piece4_1', 90), ('piece5_3', 180), ('piece7_2', 0), ('piece8_2', 270), ('piece6_3', 180), ('piece3_3', 90), ('piece2_3', 270), ('piece5_2', 90), ('piece4_4', 270), ('piece8_4', 180), ('piece2_5', 0), ('piece9_6', 180), ('piece7_3', 270), ('piece8_3', 180), ('piece4_2', 0), ('piece6_2', 0), ('piece9_4', 180), ('piece5_6', 180), ('piece5_1', 270), ('piece6_1', 90), ('piece4_5', 180), ('piece5_4', 90), ('piece1_1', 90), ('piece5_5', 270), ('piece7_1', 180), ('piece8_6', 0), ('piece4_6', 270), ('piece2_6', 0)] | Fitness: 0.4774
+Layout 7: [('piece2_2', 0), ('piece4_5', 0), ('piece7_2', 180), ('piece4_3', 0), ('piece8_3', 0), ('piece5_4', 180), ('piece9_3', 180), ('piece5_2', 270), ('piece6_3', 270), ('piece4_4', 270), ('piece4_1', 0), ('piece3_1', 270), ('piece3_5', 0), ('piece10_3', 180), ('piece4_6', 90), ('piece8_1', 270), ('piece5_1', 0), ('piece8_2', 270), ('piece9_4', 270), ('piece3_3', 90), ('piece5_6', 0), ('piece9_1', 270), ('piece7_3', 90), ('piece7_1', 180), ('piece10_2', 0), ('piece9_2', 180), ('piece6_2', 0), ('piece9_5', 270), ('piece4_2', 0), ('piece2_5', 270), ('piece8_6', 0), ('piece2_1', 270), ('piece9_6', 0), ('piece3_4', 180), ('piece3_6', 90), ('piece5_5', 180), ('piece10_1', 270), ('piece2_3', 0), ('piece8_4', 270), ('piece1_3', 90), ('piece5_3', 180), ('piece8_5', 270), ('piece1_1', 180), ('piece1_2', 0), ('piece2_4', 0), ('piece2_6', 270), ('piece3_2', 180), ('piece6_1', 270)] | Fitness: 0.4475
+Layout 8: [('piece5_3', 180), ('piece3_1', 180), ('piece8_2', 180), ('piece9_6', 90), ('piece4_2', 90), ('piece5_1', 270), ('piece9_5', 180), ('piece2_1', 270), ('piece1_1', 0), ('piece2_4', 90), ('piece8_6', 0), ('piece3_6', 0), ('piece3_4', 270), ('piece7_2', 180), ('piece7_3', 180), ('piece2_3', 180), ('piece6_2', 180), ('piece2_6', 180), ('piece8_5', 270), ('piece3_3', 180), ('piece5_6', 180), ('piece9_1', 270), ('piece10_3', 180), ('piece4_1', 180), ('piece4_4', 0), ('piece8_1', 90), ('piece1_3', 0), ('piece4_5', 90), ('piece6_3', 270), ('piece10_1', 270), ('piece3_5', 0), ('piece4_6', 90), ('piece9_4', 180), ('piece1_2', 90), ('piece2_5', 180), ('piece5_4', 270), ('piece3_2', 270), ('piece5_2', 180), ('piece8_3', 180), ('piece4_3', 0), ('piece10_2', 0), ('piece9_3', 90), ('piece2_2', 270), ('piece8_4', 0), ('piece7_1', 180), ('piece5_5', 90), ('piece9_2', 180), ('piece6_1', 90)] | Fitness: 0.4746
+Layout 9: [('piece7_2', 90), ('piece10_3', 270), ('piece6_1', 270), ('piece7_1', 180), ('piece8_4', 90), ('piece5_3', 270), ('piece9_3', 0), ('piece1_2', 270), ('piece8_2', 90), ('piece4_2', 90), ('piece4_5', 0), ('piece8_3', 90), ('piece9_4', 90), ('piece10_1', 180), ('piece6_2', 0), ('piece3_6', 180), ('piece4_3', 180), ('piece10_2', 270), ('piece8_6', 180), ('piece2_3', 270), ('piece2_5', 0), ('piece1_3', 180), ('piece9_6', 180), ('piece5_1', 180), ('piece2_1', 0), ('piece1_1', 270), ('piece8_5', 270), ('piece5_2', 0), ('piece3_5', 270), ('piece9_5', 90), ('piece5_5', 0), ('piece3_1', 180), ('piece3_4', 0), ('piece2_4', 90), ('piece6_3', 270), ('piece3_3', 0), ('piece4_4', 0), ('piece2_2', 90), ('piece4_1', 0), ('piece3_2', 270), ('piece7_3', 90), ('piece5_4', 270), ('piece8_1', 180), ('piece5_6', 270), ('piece9_2', 0), ('piece2_6', 270), ('piece9_1', 90), ('piece4_6', 0)] | Fitness: 0.4759
+Layout 10: [('piece9_2', 180), ('piece9_1', 0), ('piece2_1', 0), ('piece8_1', 90), ('piece1_2', 270), ('piece8_2', 90), ('piece4_5', 180), ('piece4_3', 270), ('piece6_2', 90), ('piece7_1', 90), ('piece3_1', 180), ('piece7_3', 90), ('piece5_4', 90), ('piece8_3', 270), ('piece9_6', 90), ('piece5_6', 270), ('piece2_3', 180), ('piece2_6', 0), ('piece3_2', 90), ('piece8_5', 90), ('piece5_2', 0), ('piece8_4', 270), ('piece10_3', 0), ('piece9_3', 0), ('piece4_1', 270), ('piece5_5', 0), ('piece9_4', 0), ('piece1_3', 270), ('piece10_2', 0), ('piece3_5', 180), ('piece6_1', 270), ('piece3_4', 0), ('piece7_2', 90), ('piece5_3', 180), ('piece1_1', 90), ('piece9_5', 180), ('piece4_6', 90), ('piece3_6', 270), ('piece4_2', 180), ('piece6_3', 180), ('piece4_4', 180), ('piece5_1', 90), ('piece2_2', 180), ('piece8_6', 90), ('piece10_1', 0), ('piece2_4', 270), ('piece2_5', 270), ('piece3_3', 180)] | Fitness: 0.5047
+Layout 11: [('piece2_3', 270), ('piece4_4', 90), ('piece7_2', 90), ('piece8_1', 0), ('piece5_2', 270), ('piece5_4', 90), ('piece8_6', 0), ('piece2_5', 270), ('piece1_3', 180), ('piece9_3', 90), ('piece3_6', 0), ('piece4_2', 180), ('piece5_5', 0), ('piece2_1', 180), ('piece8_2', 270), ('piece3_2', 0), ('piece5_1', 90), ('piece4_1', 0), ('piece7_1', 0), ('piece4_3', 0), ('piece3_3', 270), ('piece9_6', 0), ('piece8_5', 180), ('piece9_1', 270), ('piece3_1', 90), ('piece6_2', 180), ('piece10_1', 0), ('piece4_6', 270), ('piece9_4', 90), ('piece1_2', 180), ('piece5_6', 270), ('piece7_3', 270), ('piece9_5', 90), ('piece8_4', 180), ('piece2_6', 270), ('piece2_2', 180), ('piece4_5', 90), ('piece2_4', 0), ('piece10_3', 90), ('piece3_5', 0), ('piece8_3', 180), ('piece9_2', 270), ('piece6_1', 0), ('piece5_3', 270), ('piece10_2', 90), ('piece1_1', 180), ('piece3_4', 270), ('piece6_3', 270)] | Fitness: 0.4590
+Layout 12: [('piece9_4', 90), ('piece8_5', 180), ('piece8_4', 180), ('piece2_2', 90), ('piece6_2', 270), ('piece2_3', 270), ('piece8_3', 90), ('piece9_5', 180), ('piece5_5', 0), ('piece9_2', 270), ('piece3_4', 90), ('piece1_2', 0), ('piece6_1', 0), ('piece9_6', 180), ('piece3_3', 270), ('piece8_1', 270), ('piece10_2', 270), ('piece10_3', 90), ('piece5_2', 90), ('piece2_4', 270), ('piece2_5', 270), ('piece5_1', 90), ('piece4_3', 270), ('piece3_6', 0), ('piece2_6', 270), ('piece1_1', 0), ('piece9_1', 90), ('piece5_3', 90), ('piece1_3', 0), ('piece8_6', 270), ('piece4_2', 180), ('piece7_2', 90), ('piece3_5', 90), ('piece4_5', 0), ('piece8_2', 90), ('piece10_1', 270), ('piece4_6', 90), ('piece4_1', 270), ('piece2_1', 0), ('piece5_6', 180), ('piece3_2', 180), ('piece6_3', 90), ('piece7_1', 90), ('piece7_3', 270), ('piece4_4', 90), ('piece3_1', 180), ('piece9_3', 90), ('piece5_4', 270)] | Fitness: 0.4490
+Layout 13: [('piece2_1', 0), ('piece8_2', 270), ('piece5_2', 270), ('piece6_1', 180), ('piece5_6', 90), ('piece2_6', 270), ('piece5_1', 90), ('piece6_2', 270), ('piece10_2', 270), ('piece9_6', 0), ('piece10_3', 0), ('piece4_6', 270), ('piece1_1', 270), ('piece8_3', 90), ('piece1_2', 90), ('piece8_1', 270), ('piece2_2', 0), ('piece3_6', 270), ('piece4_3', 0), ('piece9_4', 180), ('piece8_5', 0), ('piece5_4', 270), ('piece3_3', 270), ('piece2_4', 270), ('piece10_1', 0), ('piece9_5', 90), ('piece2_5', 270), ('piece8_4', 180), ('piece1_3', 90), ('piece7_2', 180), ('piece9_2', 180), ('piece5_3', 270), ('piece9_1', 90), ('piece4_2', 180), ('piece2_3', 0), ('piece7_3', 0), ('piece9_3', 270), ('piece8_6', 270), ('piece3_5', 180), ('piece5_5', 90), ('piece4_1', 0), ('piece3_1', 270), ('piece7_1', 270), ('piece4_5', 0), ('piece3_4', 180), ('piece6_3', 270), ('piece4_4', 90), ('piece3_2', 0)] | Fitness: 0.4794
+Layout 14: [('piece8_3', 90), ('piece5_3', 0), ('piece3_5', 180), ('piece2_1', 180), ('piece6_3', 0), ('piece1_1', 180), ('piece4_6', 90), ('piece8_6', 270), ('piece5_2', 0), ('piece8_2', 180), ('piece10_3', 180), ('piece2_3', 90), ('piece4_3', 90), ('piece5_1', 180), ('piece10_1', 0), ('piece8_1', 270), ('piece1_3', 180), ('piece2_6', 270), ('piece4_1', 0), ('piece7_2', 270), ('piece3_6', 180), ('piece2_4', 90), ('piece9_1', 90), ('piece8_4', 90), ('piece5_5', 0), ('piece4_5', 90), ('piece9_4', 180), ('piece3_2', 0), ('piece5_4', 270), ('piece6_1', 270), ('piece3_3', 270), ('piece7_3', 90), ('piece7_1', 180), ('piece1_2', 0), ('piece10_2', 90), ('piece3_1', 180), ('piece4_4', 0), ('piece2_2', 90), ('piece8_5', 90), ('piece9_3', 180), ('piece5_6', 180), ('piece4_2', 90), ('piece3_4', 180), ('piece9_6', 90), ('piece6_2', 180), ('piece2_5', 180), ('piece9_2', 90), ('piece9_5', 270)] | Fitness: 0.5103
+Layout 15: [('piece4_4', 180), ('piece3_3', 0), ('piece9_5', 270), ('piece8_4', 270), ('piece9_6', 270), ('piece9_1', 90), ('piece4_2', 270), ('piece1_1', 90), ('piece4_1', 180), ('piece3_4', 180), ('piece9_3', 90), ('piece8_2', 90), ('piece8_5', 180), ('piece7_2', 0), ('piece1_3', 180), ('piece2_2', 90), ('piece10_3', 180), ('piece9_2', 270), ('piece8_3', 270), ('piece4_3', 0), ('piece3_5', 270), ('piece7_3', 270), ('piece10_1', 90), ('piece2_4', 90), ('piece7_1', 90), ('piece3_1', 180), ('piece8_1', 270), ('piece4_6', 0), ('piece3_6', 0), ('piece2_5', 90), ('piece1_2', 270), ('piece4_5', 90), ('piece5_1', 180), ('piece8_6', 180), ('piece6_3', 90), ('piece5_2', 0), ('piece2_1', 180), ('piece2_3', 180), ('piece5_5', 180), ('piece6_1', 180), ('piece6_2', 0), ('piece5_6', 180), ('piece10_2', 90), ('piece9_4', 270), ('piece3_2', 270), ('piece5_4', 90), ('piece2_6', 90), ('piece5_3', 90)] | Fitness: 0.5043
+Layout 16: [('piece4_1', 180), ('piece5_6', 90), ('piece8_2', 180), ('piece3_1', 0), ('piece4_5', 90), ('piece5_5', 180), ('piece5_2', 90), ('piece7_1', 180), ('piece7_2', 180), ('piece4_3', 90), ('piece4_4', 0), ('piece5_1', 270), ('piece8_4', 270), ('piece9_3', 270), ('piece2_6', 270), ('piece9_6', 270), ('piece4_2', 180), ('piece5_3', 90), ('piece3_3', 90), ('piece8_3', 0), ('piece2_1', 90), ('piece6_3', 0), ('piece2_3', 270), ('piece4_6', 90), ('piece8_6', 180), ('piece2_2', 90), ('piece6_1', 270), ('piece1_2', 0), ('piece2_4', 0), ('piece9_2', 180), ('piece3_2', 90), ('piece10_1', 90), ('piece8_1', 270), ('piece9_4', 180), ('piece3_6', 180), ('piece3_5', 180), ('piece9_1', 180), ('piece1_3', 270), ('piece10_3', 90), ('piece9_5', 270), ('piece3_4', 270), ('piece7_3', 90), ('piece5_4', 90), ('piece10_2', 270), ('piece6_2', 0), ('piece2_5', 270), ('piece1_1', 90), ('piece8_5', 270)] | Fitness: 0.4891
+Layout 17: [('piece3_1', 270), ('piece3_3', 270), ('piece5_6', 0), ('piece2_4', 0), ('piece1_3', 180), ('piece4_4', 90), ('piece10_1', 180), ('piece3_5', 90), ('piece2_3', 0), ('piece8_6', 90), ('piece8_1', 270), ('piece6_1', 90), ('piece6_2', 90), ('piece8_5', 180), ('piece9_1', 0), ('piece3_6', 90), ('piece8_3', 180), ('piece4_2', 0), ('piece5_1', 0), ('piece5_5', 90), ('piece4_3', 90), ('piece4_5', 90), ('piece4_6', 90), ('piece6_3', 0), ('piece9_5', 90), ('piece3_4', 180), ('piece7_1', 270), ('piece9_3', 270), ('piece8_2', 270), ('piece1_2', 180), ('piece8_4', 180), ('piece2_1', 270), ('piece2_2', 90), ('piece9_6', 90), ('piece7_3', 90), ('piece10_2', 90), ('piece3_2', 90), ('piece9_4', 90), ('piece7_2', 0), ('piece4_1', 90), ('piece2_6', 270), ('piece5_2', 0), ('piece5_4', 180), ('piece1_1', 0), ('piece9_2', 90), ('piece10_3', 0), ('piece5_3', 270), ('piece2_5', 270)] | Fitness: 0.4158
+Layout 18: [('piece4_3', 0), ('piece6_1', 90), ('piece10_3', 270), ('piece4_2', 270), ('piece10_2', 270), ('piece8_6', 270), ('piece4_6', 90), ('piece4_5', 0), ('piece2_2', 180), ('piece5_1', 270), ('piece5_3', 90), ('piece6_3', 90), ('piece9_4', 90), ('piece9_3', 270), ('piece5_5', 90), ('piece5_6', 90), ('piece5_4', 0), ('piece2_1', 180), ('piece1_1', 0), ('piece2_3', 270), ('piece7_2', 90), ('piece5_2', 90), ('piece10_1', 270), ('piece8_2', 90), ('piece3_2', 180), ('piece4_1', 90), ('piece9_6', 270), ('piece3_1', 180), ('piece9_5', 270), ('piece7_3', 180), ('piece8_3', 270), ('piece4_4', 270), ('piece9_1', 0), ('piece8_5', 270), ('piece3_4', 0), ('piece8_1', 180), ('piece1_2', 0), ('piece1_3', 0), ('piece8_4', 270), ('piece3_5', 90), ('piece6_2', 0), ('piece3_3', 90), ('piece2_4', 0), ('piece2_6', 270), ('piece7_1', 0), ('piece2_5', 270), ('piece3_6', 0), ('piece9_2', 0)] | Fitness: 0.3863
+Layout 19: [('piece8_4', 90), ('piece8_2', 0), ('piece3_3', 270), ('piece10_2', 270), ('piece1_3', 90), ('piece9_4', 90), ('piece9_6', 180), ('piece9_1', 90), ('piece8_5', 180), ('piece3_4', 0), ('piece5_3', 90), ('piece9_2', 0), ('piece6_3', 0), ('piece1_1', 0), ('piece5_4', 90), ('piece8_1', 270), ('piece2_2', 180), ('piece2_6', 0), ('piece3_2', 180), ('piece1_2', 180), ('piece5_2', 270), ('piece2_4', 270), ('piece10_1', 0), ('piece5_5', 180), ('piece6_1', 0), ('piece4_4', 90), ('piece3_6', 270), ('piece4_2', 180), ('piece7_1', 180), ('piece7_3', 180), ('piece4_3', 270), ('piece9_5', 90), ('piece10_3', 90), ('piece3_5', 180), ('piece5_1', 270), ('piece5_6', 180), ('piece4_6', 270), ('piece4_5', 0), ('piece6_2', 180), ('piece8_3', 180), ('piece2_5', 180), ('piece3_1', 270), ('piece2_3', 90), ('piece8_6', 90), ('piece4_1', 180), ('piece2_1', 270), ('piece9_3', 180), ('piece7_2', 270)] | Fitness: 0.5291
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5291
+Collecting results from tasks…
+Offspring created with fitness: 0.4948
+Offspring created with fitness: 0.4981
+Offspring created with fitness: 0.5153
+Mutant created with fitness: 0.4964
+Offspring created with fitness: 0.4827
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece5_4: 180°
+Random rotation for piece piece8_4: 0°
+Random rotation for piece piece7_1: 270°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece8_2: 0°
+Random rotation for piece piece9_5: 0°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece2_3: 0°
+Random rotation for piece piece7_3: 270°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece8_1: 90°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece3_2: 0°
+Random rotation for piece piece7_2: 90°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece5_1: 0°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece8_5: 180°
+Random rotation for piece piece1_3: 90°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece2_1: 90°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece10_1: 180°
+Mutant created with fitness: 0.4850
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece3_1: 0°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece9_6: 90°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece8_4: 0°
+Random rotation for piece piece10_2: 180°
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece1_1: 0°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece8_6: 0°
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece6_3: 0°
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece2_6: 90°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece2_3: 180°
+Random rotation for piece piece3_2: 0°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece4_2: 270°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece7_3: 270°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece2_4: 90°
+Random rotation for piece piece9_4: 270°
+Offspring created with fitness: 0.4862
+Offspring created with fitness: 0.4284
+Mutant created with fitness: 0.4857
+Offspring created with fitness: 0.5052
+Offspring created with fitness: 0.5179
+Mutant created with fitness: 0.5010
+Mutant created with fitness: 0.4652
+Random chromosome generated with fitness: 0.4421
+Random chromosome created with fitness: 0.4421
+Mutant created with fitness: 0.4508
+Mutant created with fitness: 0.4967
+Random chromosome generated with fitness: 0.4617
+Random chromosome created with fitness: 0.4617
+Mutant created with fitness: 0.5014
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: -0.0380; mutants: -0.0321
+------------------------------------------------------------
+Generation 1: best 0.5291 (Δ +0.0000)
+Generation 1 completed in 43.90s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5291
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5291
+Collecting results from tasks…
+Offspring created with fitness: 0.4875
+Offspring created with fitness: 0.5117
+Mutant created with fitness: 0.4884
+Offspring created with fitness: 0.5043
+Offspring created with fitness: 0.4790
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece5_1: 180°
+Random rotation for piece piece2_5: 90°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece4_6: 180°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece7_2: 0°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece8_3: 270°
+Random rotation for piece piece10_3: 90°
+Random rotation for piece piece9_4: 180°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece3_6: 180°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece8_1: 0°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece2_3: 90°
+Random rotation for piece piece2_4: 180°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece4_2: 90°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece3_2: 270°
+Random rotation for piece piece3_1: 0°
+Random rotation for piece piece1_3: 90°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece4_1: 270°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece3_4: 90°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece6_3: 270°
+Offspring created with fitness: 0.4949
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece1_2: 90°
+Random rotation for piece piece6_1: 0°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece7_2: 270°
+Random rotation for piece piece3_4: 0°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece3_6: 180°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece7_3: 270°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece10_1: 180°
+Random rotation for piece piece8_2: 0°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece10_3: 90°
+Random rotation for piece piece6_3: 0°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece5_1: 180°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece4_3: 180°
+Random rotation for piece piece1_1: 90°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece9_6: 180°
+Random rotation for piece piece2_3: 90°
+Random rotation for piece piece2_1: 0°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece2_2: 270°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece8_1: 0°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece4_2: 90°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece5_4: 0°
+Offspring created with fitness: 0.5009
+Offspring created with fitness: 0.3915
+Mutant created with fitness: 0.5016
+Mutant created with fitness: 0.5029
+Offspring created with fitness: 0.4826
+Mutant created with fitness: 0.5043
+Mutant created with fitness: 0.5133
+Random chromosome generated with fitness: 0.4841
+Random chromosome created with fitness: 0.4841
+Mutant created with fitness: 0.4493
+Mutant created with fitness: 0.4565
+Random chromosome generated with fitness: 0.4798
+Random chromosome created with fitness: 0.4798
+Mutant created with fitness: 0.4785
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: -0.0475; mutants: -0.0352
+------------------------------------------------------------
+Generation 2: best 0.5291 (Δ +0.0000)
+Generation 2 completed in 45.10s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5291
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5291
+Collecting results from tasks…
+Offspring created with fitness: 0.4925
+Mutant created with fitness: 0.4845
+Offspring created with fitness: 0.5154
+Mutant created with fitness: 0.4968
+Offspring created with fitness: 0.4916
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece5_1: 0°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece7_1: 270°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece1_1: 90°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece8_1: 0°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece9_4: 0°
+Random rotation for piece piece7_2: 270°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece2_1: 90°
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece2_2: 270°
+Random rotation for piece piece9_2: 90°
+Random rotation for piece piece4_2: 90°
+Random rotation for piece piece6_1: 0°
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece2_5: 180°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece4_5: 90°
+Offspring created with fitness: 0.5023
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece1_2: 90°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece9_5: 0°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece4_2: 270°
+Random rotation for piece piece2_3: 180°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece4_1: 270°
+Random rotation for piece piece3_2: 270°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece2_4: 180°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece2_6: 90°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece3_5: 90°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece8_1: 180°
+Random rotation for piece piece2_5: 90°
+Random rotation for piece piece5_5: 90°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece5_1: 0°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece7_1: 90°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece8_5: 0°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece1_1: 90°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece5_3: 0°
+Offspring created with fitness: 0.4822
+Offspring created with fitness: 0.5126
+Mutant created with fitness: 0.5179
+Offspring created with fitness: 0.4628
+Offspring created with fitness: 0.4559
+Mutant created with fitness: 0.5067
+Random chromosome generated with fitness: 0.5306
+Random chromosome created with fitness: 0.5306
+Mutant created with fitness: 0.4860
+Random chromosome generated with fitness: 0.4450
+Random chromosome created with fitness: 0.4450
+Mutant created with fitness: 0.4629
+Mutant created with fitness: 0.4934
+Mutant created with fitness: 0.5159
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: -0.0396; mutants: -0.0280
+------------------------------------------------------------
+Generation 3: best 0.5306 (Δ +0.0015)
+Generation 3 completed in 46.30s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5306
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5306
+Collecting results from tasks…
+Offspring created with fitness: 0.4882
+Offspring created with fitness: 0.5081
+Mutant created with fitness: 0.4921
+Offspring created with fitness: 0.4357
+Mutant created with fitness: 0.4361
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece2_3: 90°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece9_4: 0°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece3_5: 270°
+Random rotation for piece piece3_6: 180°
+Random rotation for piece piece9_3: 180°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece5_6: 90°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece3_2: 0°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece8_1: 180°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece9_2: 270°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece10_1: 90°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece3_1: 0°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece2_6: 180°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece1_1: 270°
+Mutant created with fitness: 0.4826
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece8_5: 180°
+Random rotation for piece piece9_3: 180°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece7_2: 90°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece4_2: 270°
+Random rotation for piece piece5_5: 90°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece1_1: 270°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece4_5: 180°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece5_3: 0°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece3_1: 0°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece8_6: 0°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece4_6: 180°
+Random rotation for piece piece3_6: 180°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece5_1: 180°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece2_2: 270°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece8_1: 0°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece3_4: 270°
+Offspring created with fitness: 0.4841
+Offspring created with fitness: 0.5032
+Mutant created with fitness: 0.5270
+Offspring created with fitness: 0.4959
+Offspring created with fitness: 0.5125
+Offspring created with fitness: 0.4637
+Mutant created with fitness: 0.4890
+Mutant created with fitness: 0.4967
+Mutant created with fitness: 0.4661
+Random chromosome generated with fitness: 0.4717
+Random chromosome created with fitness: 0.4717
+Mutant created with fitness: 0.5350
+Random chromosome generated with fitness: 0.4846
+Random chromosome created with fitness: 0.4846
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: -0.0441; mutants: -0.0394
+------------------------------------------------------------
+Generation 4: best 0.5350 (Δ +0.0044)
+Generation 4 completed in 43.92s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5350
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5350
+Collecting results from tasks…
+Mutant created with fitness: 0.4820
+Mutant created with fitness: 0.5053
+Offspring created with fitness: 0.4402
+Offspring created with fitness: 0.4675
+Offspring created with fitness: 0.5019
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece3_2: 90°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece3_1: 90°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece4_6: 180°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece7_2: 0°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece2_6: 180°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece5_6: 90°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece9_6: 90°
+Random rotation for piece piece7_1: 90°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece8_5: 180°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece5_2: 270°
+Random rotation for piece piece9_4: 0°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece4_2: 90°
+Random rotation for piece piece2_3: 180°
+Random rotation for piece piece10_1: 180°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece3_4: 0°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece6_3: 0°
+Offspring created with fitness: 0.5040
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece10_1: 180°
+Random rotation for piece piece4_6: 180°
+Random rotation for piece piece3_5: 90°
+Random rotation for piece piece6_1: 0°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece9_6: 270°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece6_2: 90°
+Random rotation for piece piece5_5: 0°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece2_3: 0°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece4_2: 270°
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece2_6: 90°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece1_1: 270°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece3_2: 270°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece4_4: 0°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece9_5: 0°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece3_1: 0°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece9_3: 180°
+Random rotation for piece piece8_4: 0°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece4_5: 270°
+Random rotation for piece piece2_5: 180°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece1_3: 0°
+Offspring created with fitness: 0.5173
+Offspring created with fitness: 0.5308
+Offspring created with fitness: 0.5239
+Mutant created with fitness: 0.4706
+Mutant created with fitness: 0.4947
+Offspring created with fitness: 0.5182
+Mutant created with fitness: 0.4751
+Mutant created with fitness: 0.5108
+Mutant created with fitness: 0.5535
+Mutant created with fitness: 0.4821
+Random chromosome generated with fitness: 0.5027
+Random chromosome created with fitness: 0.5027
+Random chromosome generated with fitness: 0.4891
+Random chromosome created with fitness: 0.4891
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: -0.0345; mutants: -0.0371
+------------------------------------------------------------
+Generation 5: best 0.5535 (Δ +0.0185)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 5 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250601_225548/plots/fitness_curves_20250601_225548.png
+Mean gains plot saved to nesting/run_logs_20250601_225548/plots/mean_gains_20250601_225548.png
+Mutation gains plot saved to nesting/run_logs_20250601_225548/plots/mutation_gains.png
+Swarm plot data: 100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250601_225548/plots/fitness_swarm_20250601_225548.png
+Plots updated successfully.
+Generation 5 completed in 44.79s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+Collecting results from tasks…
+Offspring created with fitness: 0.5350
+Offspring created with fitness: 0.5350
+Mutant created with fitness: 0.4959
+Offspring created with fitness: 0.5350
+Offspring created with fitness: 0.5350
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece4_6: 90°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece6_2: 0°
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece3_2: 90°
+Random rotation for piece piece8_1: 90°
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece1_3: 180°
+Random rotation for piece piece3_5: 270°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece10_2: 180°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece4_3: 180°
+Random rotation for piece piece9_2: 90°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece5_4: 180°
+Random rotation for piece piece6_1: 0°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece1_1: 270°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece2_3: 90°
+Offspring created with fitness: 0.5350
+Random rotation for piece piece4_1: 0°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece10_1: 90°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece9_1: 90°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece5_1: 0°
+Random rotation for piece piece7_2: 270°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece8_4: 0°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece3_1: 90°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece8_3: 270°
+Random rotation for piece piece5_5: 90°
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece5_1: 270°
+Random rotation for piece piece1_3: 90°
+Random rotation for piece piece2_2: 270°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece6_2: 90°
+Random rotation for piece piece4_4: 0°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece4_5: 90°
+Random rotation for piece piece2_3: 0°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece9_2: 270°
+Random rotation for piece piece3_4: 90°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece3_2: 270°
+Random rotation for piece piece9_6: 180°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece2_5: 90°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece7_1: 0°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece6_1: 0°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece9_4: 180°
+Mutant created with fitness: 0.5097
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Mutant created with fitness: 0.4485
+Mutant created with fitness: 0.5340
+Offspring created with fitness: 0.5535
+Mutant created with fitness: 0.5150
+Mutant created with fitness: 0.4853
+Random chromosome generated with fitness: 0.4508
+Random chromosome created with fitness: 0.4508
+Random chromosome generated with fitness: 0.4995
+Random chromosome created with fitness: 0.4995
+Mutant created with fitness: 0.4704
+Mutant created with fitness: 0.5104
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: -0.0116; mutants: -0.0504
+------------------------------------------------------------
+Generation 6: best 0.5535 (Δ +0.0000)
+Generation 6 completed in 44.12s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+Collecting results from tasks…
+Offspring created with fitness: 0.4968
+Mutant created with fitness: 0.4885
+Offspring created with fitness: 0.5535
+Mutant created with fitness: 0.4878
+Offspring created with fitness: 0.5535
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece5_2: 270°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece2_4: 90°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece9_1: 0°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece6_1: 90°
+Random rotation for piece piece8_1: 180°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece4_5: 180°
+Random rotation for piece piece3_5: 270°
+Random rotation for piece piece3_3: 270°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece9_6: 180°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece2_3: 180°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece3_2: 0°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece8_3: 270°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece5_5: 90°
+Random rotation for piece piece2_5: 180°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece4_1: 0°
+Offspring created with fitness: 0.5535
+Random rotation for piece piece9_3: 270°
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece7_1: 90°
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece3_4: 0°
+Random rotation for piece piece10_1: 180°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece1_1: 270°
+Random rotation for piece piece7_3: 0°
+Random rotation for piece piece7_1: 90°
+Random rotation for piece piece2_2: 270°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece4_1: 0°
+Random rotation for piece piece5_1: 270°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece8_2: 270°
+Random rotation for piece piece3_1: 180°
+Random rotation for piece piece5_3: 90°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece2_4: 180°
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece1_3: 180°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece9_5: 270°
+Random rotation for piece piece4_5: 180°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece9_6: 270°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece1_1: 90°
+Random rotation for piece piece9_4: 0°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece5_2: 270°
+Random rotation for piece piece2_1: 90°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece7_2: 270°
+Random rotation for piece piece8_5: 0°
+Random rotation for piece piece10_3: 180°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece9_2: 270°
+Random rotation for piece piece1_2: 270°
+Mutant created with fitness: 0.5508
+Mutant created with fitness: 0.5075
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Mutant created with fitness: 0.4531
+Random chromosome generated with fitness: 0.4872
+Random chromosome created with fitness: 0.4872
+Random chromosome generated with fitness: 0.4880
+Random chromosome created with fitness: 0.4880
+Mutant created with fitness: 0.4665
+Mutant created with fitness: 0.4873
+Mutant created with fitness: 0.5376
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: -0.0071; mutants: -0.0561
+------------------------------------------------------------
+Generation 7: best 0.5535 (Δ +0.0000)
+Generation 7 completed in 43.70s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+Collecting results from tasks…
+Mutant created with fitness: 0.4425
+Mutant created with fitness: 0.4727
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece2_4: 180°
+Random rotation for piece piece2_2: 180°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece5_3: 0°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece9_6: 270°
+Random rotation for piece piece3_2: 90°
+Random rotation for piece piece1_3: 0°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece8_5: 0°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece1_1: 270°
+Random rotation for piece piece10_1: 180°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece4_5: 180°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece8_6: 180°
+Random rotation for piece piece3_3: 0°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece4_2: 270°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece9_2: 90°
+Random rotation for piece piece2_5: 90°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece3_4: 180°
+Random rotation for piece piece6_2: 180°
+Random rotation for piece piece7_1: 90°
+Random rotation for piece piece10_3: 270°
+Mutant created with fitness: 0.5220
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece4_1: 0°
+Random rotation for piece piece5_3: 270°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece2_5: 180°
+Random rotation for piece piece5_1: 0°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece7_2: 270°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece7_1: 270°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece4_2: 270°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece2_3: 180°
+Random rotation for piece piece9_2: 90°
+Random rotation for piece piece10_3: 0°
+Random rotation for piece piece4_5: 270°
+Random rotation for piece piece6_3: 270°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece5_4: 180°
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece8_5: 270°
+Random rotation for piece piece5_6: 90°
+Random rotation for piece piece2_6: 180°
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece9_5: 90°
+Random rotation for piece piece2_1: 90°
+Random rotation for piece piece3_2: 270°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece2_4: 90°
+Random rotation for piece piece8_4: 0°
+Random rotation for piece piece2_2: 270°
+Random rotation for piece piece8_6: 270°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece8_1: 270°
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Mutant created with fitness: 0.5050
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Mutant created with fitness: 0.4588
+Random chromosome generated with fitness: 0.3677
+Random chromosome created with fitness: 0.3677
+Mutant created with fitness: 0.4629
+Random chromosome generated with fitness: 0.4753
+Random chromosome created with fitness: 0.4753
+Mutant created with fitness: 0.4691
+Mutant created with fitness: 0.5354
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: -0.0700
+------------------------------------------------------------
+Generation 8: best 0.5535 (Δ +0.0000)
+Generation 8 completed in 43.90s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+Collecting results from tasks…
+Mutant created with fitness: 0.3725
+Mutant created with fitness: 0.4694
+Offspring created with fitness: 0.4945
+Mutant created with fitness: 0.5379
+Offspring created with fitness: 0.5012
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece3_6: 0°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece6_3: 180°
+Random rotation for piece piece2_4: 0°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece5_2: 180°
+Random rotation for piece piece9_3: 0°
+Random rotation for piece piece4_3: 270°
+Random rotation for piece piece4_2: 0°
+Random rotation for piece piece2_6: 270°
+Random rotation for piece piece2_2: 0°
+Random rotation for piece piece8_1: 270°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece5_6: 180°
+Random rotation for piece piece7_3: 270°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece7_2: 0°
+Random rotation for piece piece8_2: 0°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece10_2: 90°
+Random rotation for piece piece8_5: 0°
+Random rotation for piece piece8_6: 180°
+Random rotation for piece piece4_5: 180°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece1_2: 0°
+Random rotation for piece piece1_1: 0°
+Random rotation for piece piece6_2: 90°
+Random rotation for piece piece9_5: 0°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece5_4: 180°
+Random rotation for piece piece9_6: 0°
+Random rotation for piece piece3_2: 0°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece10_1: 0°
+Random rotation for piece piece5_1: 90°
+Random rotation for piece piece2_3: 0°
+Offspring created with fitness: 0.5535
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece9_2: 180°
+Random rotation for piece piece9_4: 90°
+Random rotation for piece piece8_3: 180°
+Random rotation for piece piece2_1: 270°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece1_1: 270°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece3_1: 0°
+Random rotation for piece piece8_5: 90°
+Random rotation for piece piece2_6: 0°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece2_3: 180°
+Random rotation for piece piece2_5: 270°
+Random rotation for piece piece5_1: 270°
+Random rotation for piece piece1_3: 270°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece8_1: 0°
+Random rotation for piece piece6_3: 0°
+Random rotation for piece piece9_1: 0°
+Random rotation for piece piece4_5: 270°
+Random rotation for piece piece5_4: 270°
+Random rotation for piece piece9_3: 90°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece2_2: 90°
+Random rotation for piece piece3_3: 90°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece4_4: 90°
+Random rotation for piece piece6_1: 180°
+Random rotation for piece piece4_3: 90°
+Random rotation for piece piece5_3: 0°
+Random rotation for piece piece3_2: 0°
+Random rotation for piece piece5_2: 270°
+Random rotation for piece piece8_4: 270°
+Random rotation for piece piece4_1: 90°
+Random rotation for piece piece9_6: 180°
+Random rotation for piece piece4_6: 180°
+Random rotation for piece piece6_2: 90°
+Random rotation for piece piece10_1: 90°
+Random rotation for piece piece1_2: 270°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece8_2: 180°
+Random rotation for piece piece5_5: 180°
+Random rotation for piece piece4_2: 90°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece3_5: 270°
+Random rotation for piece piece7_2: 270°
+Random rotation for piece piece7_1: 270°
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Mutant created with fitness: 0.5144
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5233
+Mutant created with fitness: 0.4572
+Random chromosome generated with fitness: 0.4866
+Random chromosome created with fitness: 0.4866
+Mutant created with fitness: 0.4571
+Mutant created with fitness: 0.5422
+Mutant created with fitness: 0.5202
+Random chromosome generated with fitness: 0.4705
+Random chromosome created with fitness: 0.4705
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: -0.0177; mutants: -0.0696
+------------------------------------------------------------
+Generation 9: best 0.5535 (Δ +0.0000)
+Generation 9 completed in 44.17s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+Collecting results from tasks…
+Offspring created with fitness: 0.5535
+Mutant created with fitness: 0.4543
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Offspring created with fitness: 0.5535
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece2_6: 180°
+Random rotation for piece piece4_5: 0°
+Random rotation for piece piece4_1: 270°
+Random rotation for piece piece7_2: 90°
+Random rotation for piece piece9_2: 270°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece5_4: 90°
+Random rotation for piece piece8_2: 0°
+Random rotation for piece piece4_4: 270°
+Random rotation for piece piece3_4: 90°
+Random rotation for piece piece8_5: 0°
+Random rotation for piece piece4_3: 180°
+Random rotation for piece piece2_3: 90°
+Random rotation for piece piece5_1: 180°
+Random rotation for piece piece5_2: 0°
+Random rotation for piece piece8_4: 180°
+Random rotation for piece piece9_4: 270°
+Random rotation for piece piece9_5: 180°
+Random rotation for piece piece2_1: 90°
+Random rotation for piece piece10_3: 270°
+Random rotation for piece piece2_4: 270°
+Random rotation for piece piece9_3: 180°
+Random rotation for piece piece8_6: 180°
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece6_1: 90°
+Random rotation for piece piece10_1: 270°
+Random rotation for piece piece3_5: 0°
+Random rotation for piece piece8_1: 90°
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece9_6: 270°
+Random rotation for piece piece1_1: 180°
+Random rotation for piece piece7_1: 180°
+Random rotation for piece piece3_6: 90°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece8_3: 0°
+Random rotation for piece piece5_6: 0°
+Random rotation for piece piece1_3: 180°
+Random rotation for piece piece6_2: 270°
+Random rotation for piece piece3_3: 180°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece9_1: 180°
+Random rotation for piece piece10_2: 0°
+Random rotation for piece piece2_2: 0°
+Random rotation for piece piece7_3: 180°
+Random rotation for piece piece4_6: 0°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece3_1: 270°
+Offspring created with fitness: 0.5535
+Random chromosome generated with 48 pieces.
+Random rotation for piece piece5_5: 270°
+Random rotation for piece piece8_1: 90°
+Random rotation for piece piece3_3: 270°
+Random rotation for piece piece6_2: 90°
+Random rotation for piece piece3_2: 180°
+Random rotation for piece piece1_3: 90°
+Random rotation for piece piece8_4: 90°
+Random rotation for piece piece4_4: 180°
+Random rotation for piece piece5_1: 180°
+Random rotation for piece piece2_4: 180°
+Random rotation for piece piece10_1: 90°
+Random rotation for piece piece5_2: 90°
+Random rotation for piece piece2_2: 270°
+Random rotation for piece piece7_2: 180°
+Random rotation for piece piece9_4: 180°
+Random rotation for piece piece9_3: 270°
+Random rotation for piece piece8_6: 90°
+Random rotation for piece piece2_1: 180°
+Random rotation for piece piece8_2: 90°
+Random rotation for piece piece4_6: 270°
+Random rotation for piece piece9_2: 0°
+Random rotation for piece piece6_1: 270°
+Random rotation for piece piece7_1: 270°
+Random rotation for piece piece4_1: 180°
+Random rotation for piece piece3_5: 180°
+Random rotation for piece piece1_2: 180°
+Random rotation for piece piece8_3: 90°
+Random rotation for piece piece5_4: 0°
+Random rotation for piece piece5_3: 180°
+Random rotation for piece piece4_3: 0°
+Random rotation for piece piece4_2: 180°
+Random rotation for piece piece4_5: 180°
+Random rotation for piece piece3_4: 270°
+Random rotation for piece piece9_6: 90°
+Random rotation for piece piece2_5: 0°
+Random rotation for piece piece3_6: 270°
+Random rotation for piece piece8_5: 0°
+Random rotation for piece piece5_6: 270°
+Random rotation for piece piece9_1: 270°
+Random rotation for piece piece3_1: 270°
+Random rotation for piece piece1_1: 0°
+Random rotation for piece piece6_3: 90°
+Random rotation for piece piece7_3: 90°
+Random rotation for piece piece10_2: 270°
+Random rotation for piece piece2_6: 180°
+Random rotation for piece piece9_5: 0°
+Random rotation for piece piece2_3: 270°
+Random rotation for piece piece10_3: 180°
+Offspring created with fitness: 0.5535
+Mutant created with fitness: 0.4905
+Mutant created with fitness: 0.5387
+Offspring created with fitness: 0.5275
+Mutant created with fitness: 0.4429
+Offspring created with fitness: 0.5232
+Random chromosome generated with fitness: 0.4166
+Random chromosome created with fitness: 0.4166
+Random chromosome generated with fitness: 0.4994
+Random chromosome created with fitness: 0.4994
+Mutant created with fitness: 0.5481
+Mutant created with fitness: 0.4868
+Mutant created with fitness: 0.4918
+Mutant created with fitness: 0.5092
+Collected 8 offspring, 8 mutants, 2 randoms.
+Avg offspring gain vs parent: -0.0070; mutants: -0.0582
+------------------------------------------------------------
+Generation 10: best 0.5535 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 10 generations of metrics.
+Fitness curves plot saved to nesting/run_logs_20250601_225548/plots/fitness_curves_20250601_225548.png
+Mean gains plot saved to nesting/run_logs_20250601_225548/plots/mean_gains_20250601_225548.png
+Mutation gains plot saved to nesting/run_logs_20250601_225548/plots/mutation_gains.png
+Swarm plot data: 200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs_20250601_225548/plots/fitness_swarm_20250601_225548.png
+Plots updated successfully.
+Generation 10 completed in 45.10s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.5535
+------------------------------------------------------------
+Evolution completed.
+Total time: 496.03 seconds
