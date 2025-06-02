@@ -36,7 +36,8 @@ class PlacementEngine():
         self.layout = layout
         self.container = container
         self.placed: list[Piece] = []
-        self._last_hull: Optional[Polygon] = None  # for concave hull utilization
+        #self._last_hull: Optional[Polygon] = None  # for concave hull utilization
+        self._exterior_contour: Optional[Polygon] = None
 
     def decode(self):
         pass
@@ -347,6 +348,25 @@ class PlacementEngine():
         else:
             return 0.0
 
+    def _update_exterior_contour(self, new_piece: Piece) -> None:
+        """
+        Merge the polygon of new_piece into the existing exterior contour,
+        discarding any interior holes.
+        """
+        # build the Shapely Polygon of the newly placed piece
+        raw = new_piece.get_outer_path()
+        x0, y0 = new_piece.translation
+        shifted = [(x + x0, y + y0) for x, y in raw]
+        piece_poly = Polygon(shifted)
+
+        # if no contour exists yet, this piece becomes the exterior_contour
+        if self._exterior_contour is None:
+            # Discard any holes (simply wrap piece_poly.exterior)
+            self._exterior_contour = Polygon(piece_poly)
+            return
+
+        self._exterior_contour = self._exterior_contour.union(piece_poly)
+
 
     def gravitate(self, piece, x, y, step=config.GRAVITATE_STEP):
         """Slide left as far as possible, then down; repeat until jammed."""
@@ -466,104 +486,120 @@ class NFPDecoder(PlacementEngine):
     def decode(self):
        # go in layout order
         for piece in self.layout.order.values():
-            # find the best position for the piece
-            # print(f"Placing piece {piece.id}...")
             best_x, best_y = self._find_best_position(piece)
-            # print(f"Placing piece {piece.id} at ({best_x}, {best_y})")
-            self.placed.append((piece))
+            if best_x is None:
+                continue
+
             piece.translation = (best_x, best_y)
-        
-        # print pieces
-        # print([piece.translation for piece in self.layout.order.values()])
+            self.placed.append(piece)
+
+            # ← Call the incremental update, not a full recompute
+            self._update_exterior_contour(piece)
 
         return [(p.id, *p.translation, p.rotation) for p in self.placed]
 
 
-    def _find_best_position(self, piece: Piece, gravitate_on = False):
+
+    def _find_best_position(self, piece: Piece, gravitate_on: bool = False):
         """
-        Finds the best position to place a given piece within the container.
-        This method determines the optimal position for a piece by evaluating 
-        potential placements based on the no-fit polygon (NFP) and the inner 
-        fit rectangle of the container. It ensures that the piece does not 
-        overlap with already placed pieces and adheres to the container's 
-        boundaries.
-        If no valid position is found with the NFP, it defaults to gravitating
-        the piece to the bottom-left corner of the container.
-        Args:
-            piece (Piece): The piece to be placed in the container.
-            gravitate_on (bool, optional): If True, the piece will be 
-                gravitated towards the bottom-left corner after determining 
-                the best position. Defaults to False.
-        Returns:
-            tuple: A tuple (best_x, best_y) representing the coordinates of 
-            the best position for the piece. If no valid position is found, 
-            returns (None, None).
+        Place 'piece' by generating NFP candidates against every exterior boundary
+        of `self._exterior_contour`, whether it is a Polygon or MultiPolygon.
+        Score each candidate by overlapping bounding‐box area, and choose the maximum.
         """
 
-
-        best_x, best_y = None, None
-
-        # get inner fit rectangle
-        # for the piece in the container
-        
-        inner_fit = self.container.inner_fit_rectangle(piece)
-
-        if not inner_fit:
-            return None, None
-
-        # iterate over nfps all previously placed pieces
-        # choose the bottom leftest point out of all vertices that
-        # are inside the inner fit rectangle and on one of the nfp edges
-        # note: y grows down, x grows right
-
-        # if first piece, place it at the bottom left corner
+        # If no pieces placed yet, bottom-left is default
         if not self.placed:
-            best_x = 0
-            best_y = self.container.height - piece.height
-            return best_x, best_y
+            return 0.0, self.container.height - piece.height
 
-        for other in self.placed:
-            ox, oy = other.translation
-            # print(f"Checking piece {piece.id} with {other.id}")
-            nfp = self._nfp(other, piece)
-            # print(f"Piece {piece.id} nfp with {other.id}: {nfp}")
-            for x, y in nfp:
-                # translate the nfp wrt the stationary piece
-                x_translated = x + ox
-                y_translated = y + oy
-                # check if the translated nfp is inside the inner fit rectangle
-                
-                
-                x0 = min(p[0] for p in inner_fit)
-                x1 = max(p[0] for p in inner_fit)
-                y0 = min(p[1] for p in inner_fit)
-                y1 = max(p[1] for p in inner_fit)
-
-                if x0 <= x_translated <= x1 and y0 <= y_translated <= y1:
-                    # check if the translated nfp is inside the container
-                    if best_x is None or (x_translated < best_x or
-                                          (x_translated == best_x and y_translated < best_y)):
-                    
-                        # check if we are intersecting with other placed pieces
-                        #self.num_comparisons += 1
-                        if self._fits(piece, x_translated, y_translated):
-                            # update the best position
-                            best_x = x_translated
-                            best_y = y_translated
-                            # print(f"Piece {piece.id} best position: ({best_x}, {best_y})")
-
-        # if no position was found
-        if best_x is None or best_y is None:
-            # Could not place via NFP → behave like Bottom‑Left
+        # Ensure an exterior contour exists
+        contour = self._exterior_contour
+        if contour is None or contour.is_empty:
+            # Fall back to bottom-left + gravitate
             ax, ay = self.anchor(piece)
-            best_x, best_y = (self.gravitate(piece, ax, ay))
-        
-        # gravitate the piece to the bottom left corner
-        if gravitate_on:
+            return self.gravitate(piece, ax, ay)
+
+        # 1) Collect every exterior ring’s coordinates
+        exterior_rings: list[list[tuple[float, float]]] = []
+        if isinstance(contour, Polygon):
+            exterior_rings.append(list(contour.exterior.coords))
+        else:
+            # MultiPolygon case: iterate over each sub-polygon
+            for subpoly in contour.geoms:
+                exterior_rings.append(list(subpoly.exterior.coords))
+
+        # 2) Compute all NFP candidates across every exterior ring
+        moving_path = piece.get_outer_path()
+        all_nfp_pts: list[tuple[float, float]] = []
+        for ring_coords in exterior_rings:
+            # ring_coords is a list of (x,y) around one exterior boundary
+            nfp_pts = utils.no_fit_polygon(ring_coords, moving_path)
+            all_nfp_pts.extend(nfp_pts)
+
+        # 3) Precompute bounding‐box of all placed pieces (global coords)
+        flattened = [
+            (x + p.translation[0], y + p.translation[1])
+            for p in self.placed
+            for x, y in p.get_outer_path()
+        ]
+        xs_placed = [v[0] for v in flattened]
+        ys_placed = [v[1] for v in flattened]
+        min_px, max_px = min(xs_placed), max(xs_placed)
+        min_py, max_py = min(ys_placed), max(ys_placed)
+
+        best_score = -1.0
+        best_x = best_y = None
+
+        # 4) Evaluate each candidate (x_cand, y_cand)
+        for dx_rel, dy_rel in all_nfp_pts:
+            x_cand = dx_rel
+            y_cand = dy_rel
+
+            # 4.a) Quick container‐bounds check on piece vertices
+            candidate_vertices = [
+                (x + x_cand, y + y_cand) for x, y in moving_path
+            ]
+            xs_cand = [v[0] for v in candidate_vertices]
+            ys_cand = [v[1] for v in candidate_vertices]
+            if (
+                min(xs_cand) < 0
+                or max(xs_cand) > self.container.width
+                or min(ys_cand) < 0
+                or max(ys_cand) > self.container.height
+            ):
+                continue
+
+            # 4.b) Precise overlap‐test against already placed pieces
+            if not self._fits(piece, x_cand, y_cand):
+                continue
+
+            # 4.c) Compute bounding‐box overlap area
+            cand_min_x = min(xs_cand)
+            cand_max_x = max(xs_cand)
+            cand_min_y = min(ys_cand)
+            cand_max_y = max(ys_cand)
+
+            overlap_w = min(max_px, cand_max_x) - max(min_px, cand_min_x)
+            overlap_h = min(max_py, cand_max_y) - max(min_py, cand_min_y)
+            if overlap_w <= 0 or overlap_h <= 0:
+                score = 0.0
+            else:
+                score = overlap_w * overlap_h
+
+            if score > best_score:
+                best_score = score
+                best_x = x_cand
+                best_y = y_cand
+
+        # 5) Fallback if no valid candidate was found
+        if best_x is None or best_y is None:
+            ax, ay = self.anchor(piece)
+            best_x, best_y = self.gravitate(piece, ax, ay)
+        elif gravitate_on:
             best_x, best_y = self.gravitate(piece, best_x, best_y)
-        
-        # print(f"Piece {piece.id} placed at ({best_x}, {best_y})")
+
         return best_x, best_y
+
+
 
 
     def _nfp(self, stationary, moving):
