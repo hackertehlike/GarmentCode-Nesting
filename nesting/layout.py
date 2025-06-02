@@ -2,6 +2,8 @@ import math
 from types import MappingProxyType
 from typing import Dict, Tuple
 from nesting import utils
+from shapely.geometry import Polygon, LineString
+from shapely.ops import split as shapely_split
 
 from collections import OrderedDict
 class Piece:
@@ -149,6 +151,45 @@ class Piece:
             print(f"Piece {self.id} rotation reset to 0 degrees")
         else:
             print(f"Piece {self.id} is already at 0 degrees")
+
+    def split(self) -> Tuple["Piece", "Piece"]:
+        """Split the piece into two Piece objects by a vertical line through the middle of its bounding box."""
+        # Build polygons from current paths
+        poly_outer = Polygon(self.outer_path)
+        poly_inner = Polygon(self.inner_path)
+        minx, miny, maxx, maxy = poly_outer.bounds
+        midx = (minx + maxx) / 2.0
+        # Create vertical split line slightly beyond bounds
+        line = LineString([(midx, miny - 1.0), (midx, maxy + 1.0)])
+        # Split both outer and inner polygons
+        result_outer = shapely_split(poly_outer, line)
+        result_inner = shapely_split(poly_inner, line)
+        parts_outer = [g for g in result_outer.geoms if isinstance(g, Polygon)]
+        parts_inner = [g for g in result_inner.geoms if isinstance(g, Polygon)]
+        if len(parts_outer) != 2 or len(parts_inner) != 2:
+            raise ValueError(
+                f"Expected 2 parts after splitting, got outer={len(parts_outer)}, inner={len(parts_inner)}"
+            )
+        # Sort halves by x-coordinate of centroid (left vs right)
+        sorted_outer = sorted(parts_outer, key=lambda g: g.centroid.x)
+        sorted_inner = sorted(parts_inner, key=lambda g: g.centroid.x)
+        new_pieces = []
+        for idx, (o_geom, i_geom) in enumerate(zip(sorted_outer, sorted_inner), start=1):
+            # Determine local origin for this half from outer bounds
+            ox_min, oy_min, _, _ = o_geom.bounds
+            # Local coordinates for outer and inner paths
+            o_coords_local = [(x - ox_min, y - oy_min) for x, y in o_geom.exterior.coords]
+            i_coords_local = [(x - ox_min, y - oy_min) for x, y in i_geom.exterior.coords]
+            # Create new piece with inner as base
+            new_piece = Piece(i_coords_local, id=f"{self.id}_{idx}")
+            new_piece.outer_path = o_coords_local
+            # Set translation to original translation plus local origin offset
+            tx, ty = self.translation
+            new_piece.translation = (tx + ox_min, ty + oy_min)
+            new_piece.rotation = self.rotation
+            new_piece.update_bbox()
+            new_pieces.append(new_piece)
+        return (new_pieces[0], new_pieces[1])
 
 
 class Layout:

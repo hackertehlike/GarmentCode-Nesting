@@ -291,8 +291,6 @@ class PlacementEngine:
         self._last_hull = hull
         return hull
 
-    # ── UNIFIED EXTERIOR‐CONTOUR UPDATE (USES alpha_shape) ───────────────────────
-
     def _update_exterior_contour(self, new_piece: Piece) -> None:
         """
         Merge `new_piece` into the running exterior contour.  
@@ -308,7 +306,8 @@ class PlacementEngine:
             self._exterior_contour = piece_poly
             return
 
-        self._exterior_contour = self._exterior_contour.union(piece_poly)
+        merged = self._exterior_contour.union(piece_poly)
+        self._exterior_contour = merged
         return
 
     def concave_hull_utilization(self) -> float:
