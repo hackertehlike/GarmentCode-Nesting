@@ -22,9 +22,9 @@ OX_K = 1
 GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 20
-NUM_GENERATIONS       = 5
-MUTATION_RATE         = 1
+POPULATION_SIZE       = 50
+NUM_GENERATIONS       = 10
+MUTATION_RATE         = 0.5
 
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
@@ -37,12 +37,12 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
 
 # mutation weights
 MUTATION_WEIGHTS = {
-    "rotate":    0,
-    "swap":      0,
-    "inversion": 0,
-    "insertion": 0,
-    "scramble":  0,
-    "split":     1,   # keep zero until you implement it
+    "rotate":    0.1,
+    "swap":      0.1,
+    "inversion": 0.1,
+    "insertion": 0.1,
+    "scramble":  0.1,
+    "split":     0.5,   # keep zero until you implement it
 }
 
 
