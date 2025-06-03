@@ -1,6 +1,8 @@
 import math
 from types import MappingProxyType
 from typing import Dict, Tuple
+
+from shapely import MultiPolygon, unary_union
 from nesting import utils
 from shapely.geometry import Polygon, LineString
 from shapely.ops import split as shapely_split
@@ -153,43 +155,104 @@ class Piece:
             print(f"Piece {self.id} is already at 0 degrees")
 
     def split(self) -> Tuple["Piece", "Piece"]:
-        """Split the piece into two Piece objects by a vertical line through the middle of its bounding box."""
-        # Build polygons from current paths
-        poly_outer = Polygon(self.outer_path)
-        poly_inner = Polygon(self.inner_path)
-        minx, miny, maxx, maxy = poly_outer.bounds
-        midx = (minx + maxx) / 2.0
-        # Create vertical split line slightly beyond bounds
-        line = LineString([(midx, miny - 1.0), (midx, maxy + 1.0)])
-        # Split both outer and inner polygons
-        result_outer = shapely_split(poly_outer, line)
-        result_inner = shapely_split(poly_inner, line)
-        parts_outer = [g for g in result_outer.geoms if isinstance(g, Polygon)]
-        parts_inner = [g for g in result_inner.geoms if isinstance(g, Polygon)]
-        if len(parts_outer) != 2 or len(parts_inner) != 2:
-            raise ValueError(
-                f"Expected 2 parts after splitting, got outer={len(parts_outer)}, inner={len(parts_inner)}"
-            )
-        # Sort halves by x-coordinate of centroid (left vs right)
-        sorted_outer = sorted(parts_outer, key=lambda g: g.centroid.x)
-        sorted_inner = sorted(parts_inner, key=lambda g: g.centroid.x)
-        new_pieces = []
-        for idx, (o_geom, i_geom) in enumerate(zip(sorted_outer, sorted_inner), start=1):
-            # Determine local origin for this half from outer bounds
-            ox_min, oy_min, _, _ = o_geom.bounds
-            # Local coordinates for outer and inner paths
-            o_coords_local = [(x - ox_min, y - oy_min) for x, y in o_geom.exterior.coords]
-            i_coords_local = [(x - ox_min, y - oy_min) for x, y in i_geom.exterior.coords]
-            # Create new piece with inner as base
-            new_piece = Piece(i_coords_local, id=f"{self.id}_{idx}")
-            new_piece.outer_path = o_coords_local
-            # Set translation to original translation plus local origin offset
-            tx, ty = self.translation
-            new_piece.translation = (tx + ox_min, ty + oy_min)
-            new_piece.rotation = self.rotation
-            new_piece.update_bbox()
-            new_pieces.append(new_piece)
-        return (new_pieces[0], new_pieces[1])
+            """
+            Split this piece into two new Piece objects by a vertical line through the
+            middle of its bounding box. This version handles cases where the inner
+            polygon may break into more than two fragments. We group those fragments
+            into “left” vs. “right” halves by centroid-x, then union them back.
+            """
+            # 1) Build Shapely geometries for outer and inner polygons
+            poly_outer = Polygon(self.outer_path)
+            poly_inner = Polygon(self.inner_path)
+
+            # 2) Compute vertical split‐line at mid‐x of outer bounding box
+            minx, miny, maxx, maxy = poly_outer.bounds
+            midx = (minx + maxx) / 2.0
+            split_line = LineString([(midx, miny - 1.0), (midx, maxy + 1.0)])
+
+            # 3) Split both outer and inner polygons
+            result_outer = shapely_split(poly_outer, split_line)
+            result_inner = shapely_split(poly_inner, split_line)
+
+            # 4) Collect only the Polygon fragments
+            parts_outer: list[Polygon] = [g for g in result_outer.geoms if isinstance(g, Polygon)]
+            parts_inner: list[Polygon] = [g for g in result_inner.geoms if isinstance(g, Polygon)]
+
+            # 5) At this point, parts_outer should be exactly 2, but parts_inner may be ≥ 2.
+            if len(parts_outer) != 2:
+                raise ValueError(f"Expected 2 outer parts after splitting, got outer={len(parts_outer)}")
+
+            # 6) Sort the two outer halves by centroid.x to identify left vs. right
+            parts_outer_sorted = sorted(parts_outer, key=lambda g: g.centroid.x)
+            left_outer, right_outer = parts_outer_sorted
+
+            # 7) Group all inner fragments into “left” or “right” by centroid.x < or > midx
+            inner_left_list: list[Polygon] = []
+            inner_right_list: list[Polygon] = []
+            for frag in parts_inner:
+                if frag.centroid.x <= midx:
+                    inner_left_list.append(frag)
+                else:
+                    inner_right_list.append(frag)
+
+            # 8) After grouping, ensure we have at least one fragment in each side;
+            #    if one side ended up empty, that means the inner polygon didn’t straddle
+            #    the split line. In that case, assign all inner fragments to the appropriate side
+            #    purely by their relationship to the corresponding outer half’s polygon.
+            #
+            #    (For example, if inner_left_list is empty, but left_outer contains
+            #     some of the inner geometry, assign those fragments accordingly.)
+            if not inner_left_list:
+                # Look for any inner fragment whose centroid is inside left_outer
+                inner_left_list = [frag for frag in parts_inner if frag.centroid.within(left_outer)]
+            if not inner_right_list:
+                inner_right_list = [frag for frag in parts_inner if frag.centroid.within(right_outer)]
+
+            # 9) Now union each side’s inner fragments into exactly one Polygon/MultiPolygon
+            #    If union returns a MultiPolygon, we pick only the largest piece (by area)
+            def union_to_single_polygon(fragments: list[Polygon]) -> Polygon:
+                combined = unary_union(fragments)
+                if isinstance(combined, Polygon):
+                    return combined
+                elif isinstance(combined, MultiPolygon):
+                    # pick the largest polygon by area
+                    largest = max(combined.geoms, key=lambda p: p.area)
+                    return largest
+                else:
+                    raise ValueError(f"Unexpected geometry type after union: {type(combined)}")
+
+            inner_left  = union_to_single_polygon(inner_left_list)
+            inner_right = union_to_single_polygon(inner_right_list)
+
+            # 10) Now we have left_outer, right_outer, and the corresponding inner_left, inner_right.
+            #     Convert each pair back into two new Piece objects.
+            new_pieces: list[Piece] = []
+            for idx, (outer_geom, inner_geom) in enumerate(
+                [(left_outer, inner_left), (right_outer, inner_right)], start=1
+            ):
+                # 10a) Determine local origin for this half from its outer bounding box
+                ox_min, oy_min, _, _ = outer_geom.bounds
+
+                # 10b) Convert outer_geom.exterior and inner_geom.exterior into local‐coordinate paths
+                o_coords_local = [(x - ox_min, y - oy_min) for x, y in outer_geom.exterior.coords]
+                i_coords_local = [(x - ox_min, y - oy_min) for x, y in inner_geom.exterior.coords]
+
+                # 10c) Create a new Piece with “inner” path as its base polygon
+                #      We append a numeric suffix so its ID is unique (e.g. "origID1" and "origID2").
+                new_id = f"{self.id}{idx}"
+                new_piece = Piece(i_coords_local, id=new_id)
+
+                # 10d) Copy over outer_path, parent_id, translation, rotation, and update bbox
+                new_piece.parent_id   = self.id
+                new_piece.outer_path  = o_coords_local
+                tx, ty                = self.translation
+                new_piece.translation = (tx + ox_min, ty + oy_min)
+                new_piece.rotation    = self.rotation
+                new_piece.update_bbox()
+
+                new_pieces.append(new_piece)
+
+            return new_pieces[0], new_pieces[1]
 
 
 class Layout:
