@@ -6,7 +6,7 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = True
 VERBOSE: bool = True
-DEFAULT_PATTERN_PATH: str = "nesting-assets/Configured_design_specification.json"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/shirts.json"
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
@@ -22,9 +22,9 @@ OX_K = 1
 GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 100
-NUM_GENERATIONS       = 20
-MUTATION_RATE         = 0.2
+POPULATION_SIZE       = 20
+NUM_GENERATIONS       = 5
+MUTATION_RATE         = 1
 
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
@@ -38,11 +38,11 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
 # mutation weights
 MUTATION_WEIGHTS = {
     "rotate":    0,
-    "swap":      0.4,
-    "inversion": 0.2,
+    "swap":      0,
+    "inversion": 0,
     "insertion": 0,
     "scramble":  0,
-    "split":     0.4,   # keep zero until you implement it
+    "split":     1,   # keep zero until you implement it
 }
 
 
@@ -72,16 +72,16 @@ SNAP_TOLERANCE = 0.1 # how close points must be to snap to the hull, in percenta
 # ——— sampling (path extractor) —————————————————————————————————————
 SAMPLES_PER_EDGE  = 4
 ENABLE_ROTATIONS  = True
-ALLOWED_ROTATIONS = [0, 180]
+ALLOWED_ROTATIONS = [180]
 
 
 # GUI STUFF
-NUM_COPIES = 1
+NUM_COPIES = 0
 
 CONTAINER_WIDTH_CM  = 700
 CONTAINER_HEIGHT_CM = 200.0
 
-SEAM_ALLOWANCE_CM = 1
+SEAM_ALLOWANCE_CM = 0
 
 def __dict__() -> dict:
     """

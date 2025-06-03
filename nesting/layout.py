@@ -25,6 +25,7 @@ class Piece:
         self.rotation = 0 # wrt to the original piece
         self._translation = (0, 0)
         self.locked = False
+        self.parent_id = None  # ID of the parent piece, if this is a child piece
         #self.scale = 1.0
 
         #bounding box

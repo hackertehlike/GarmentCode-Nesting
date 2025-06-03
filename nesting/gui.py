@@ -833,6 +833,12 @@ class NestingGUI:
                 if best_chromosome is None:
                     ui.notify("No valid solution found by the Genetic Algorithm", type="negative")
                     return
+                
+                self.pieces = {p.id: copy.deepcopy(p) for p in best_chromosome.genes}
+                self.layout = Layout(self.pieces)          # keep layout in sync
+                self._rebuild_panel_outlines()             # add seam allowance etc.
+                self._draw_outlines()                      # paint them on the canvas
+            
                 view    = LayoutView(best_chromosome.genes)
                 decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
   

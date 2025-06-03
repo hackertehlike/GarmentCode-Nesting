@@ -94,6 +94,9 @@ class Chromosome(Layout):
             new_genes = piece.split()
             self.genes.pop(idx)
             self.genes[idx:idx] = new_genes
+            print(f"[Chromosome.mutate] split {piece.id} into {new_genes[0].id} and {new_genes[1].id}")
+            # final chromosome print
+            print(f"[Chromosome.mutate] new genes: {[p.id for p in self.genes]}")
 
         elif mutation == "rotate":
             # Pick how many genes to rotate (1..n), then apply in batch
@@ -139,111 +142,76 @@ class Chromosome(Layout):
     
     def crossover_ox1(self, other: "Chromosome", k: int = 1) -> "Chromosome":
         """
-        Generalised OX1 crossover that respects component split trees.
+        Component-completion OX1 crossover (CC-OX1).
 
-        Rules
-        -----
-        • Parents may contain different numbers of leaves (genes).
-        • The child inherits complete split-trees: every original component
-        (root_id) is taken entirely from *one* parent, never mixed.
-        • Step 1 is still “OX1 style”: pick 2·k cut points on *self* and copy
-        those segments (plus any additional leaves that belong to the same
-        components) into the child, preserving order.
-
-        Parameters
-        ----------
-        other : Chromosome
-            The second parent.
-        k : int
-            Number of OX1 segments (default 1).
-
-        Returns
-        -------
-        Chromosome
-            The offspring chromosome.
+        Parents may differ in length.
+        A split-tree (root_id) is inherited wholesale from exactly one parent.
         """
-
         t0 = time.time()
 
-        # ------------------------------------------------------------------
-        # helpers -----------------------------------------------------------
-        # ------------------------------------------------------------------
-        def get_root_id(piece):
-            """Return the identifier of the original (pre-split) component."""
-            return getattr(piece, "root_id", None) or piece.id.split("_")[0]
+        # ---------- helper -------------------------------------------------
+        def get_root(p: Piece) -> str:
+            return getattr(p, "root_id", None) or p.id.split("_")[0]
 
-        def copy_all_leaves(src_genes, root_id, placed):
-            """
-            Copy *all* leaves of `root_id` from `src_genes` into child_genes,
-            preserving their order in `src_genes`.  Uses deep-copies and
-            updates `placed`.
-            """
-            copied = []
-            for g in src_genes:
-                if get_root_id(g) == root_id and g.id not in placed:
-                    child_genes.append(copy.deepcopy(g))
-                    placed.add(g.id)
-                    copied.append(g.id)
-            return copied
+        # Build ORDER-PRESERVING index  root_id → [Piece, Piece, …]  for both parents
+        def build_index(genes):
+            idx: "OrderedDict[str, list[Piece]]" = OrderedDict()
+            for g in genes:
+                idx.setdefault(get_root(g), []).append(g)
+            return idx
 
-        # ------------------------------------------------------------------
-        # 1) choose 2·k cut points on *self* and create first draft segment --
-        # ------------------------------------------------------------------
+        idx_self  = build_index(self.genes)
+        idx_other = build_index(other.genes)
+
+        # ---------- step 1: choose segments on self ------------------------
         size_self = len(self.genes)
         if size_self == 0:
             raise ValueError("Parent 1 has no genes")
-
         if 2 * k > size_self:
             raise ValueError("2·k cut points exceed chromosome length")
 
-        cut_points = sorted(random.sample(range(size_self), 2 * k))
-        segments = [(a, b) if a <= b else (b, a)
-                    for a, b in zip(cut_points[::2], cut_points[1::2])]
+        cuts = sorted(random.sample(range(size_self), 2 * k))
+        segs = [(a, b) if a <= b else (b, a) for a, b in zip(cuts[::2], cuts[1::2])]
 
-        child_genes: list["Piece"] = []
-        placed_ids: set[str] = set()
+        # Which indices fall into any chosen segment?
+        within = [False] * size_self
+        for a, b in segs:
+            within[a : b + 1] = [True] * (b - a + 1)
+
         chosen_source: dict[str, str] = {}     # root_id → "self" | "other"
+        child_genes: list[Piece] = []
 
-        # Copy the chosen segments from self (plus all leaves of their components)
-        for seg_start, seg_end in segments:
-            for idx in range(seg_start, seg_end + 1):
-                g = self.genes[idx]
-                rid = get_root_id(g)
-                if rid in chosen_source:
-                    # This component was already taken earlier in this loop
-                    continue
-                chosen_source[rid] = "self"
-                copy_all_leaves(self.genes, rid, placed_ids)
+        # Copy components if *any* of their leaves lie inside a selected position
+        seen_roots: set[str] = set()
+        for pos, g in enumerate(self.genes):
+            if within[pos]:
+                rid = get_root(g)
+                if rid not in seen_roots:
+                    seen_roots.add(rid)
+                    chosen_source[rid] = "self"
+                    # extend with deep-copies (no duplicates, preserved order)
+                    child_genes.extend(copy.deepcopy(p) for p in idx_self[rid])
 
-        # ------------------------------------------------------------------
-        # 2) walk through parent 2 and take components not chosen yet --------
-        # ------------------------------------------------------------------
-        for g in other.genes:
-            rid = get_root_id(g)
-            if rid in chosen_source:                # competing tree → skip
+        # ---------- step 2: fill gaps with components from parent 2 --------
+        for rid, plist in idx_other.items():
+            if rid in chosen_source:
                 continue
             chosen_source[rid] = "other"
-            copy_all_leaves(other.genes, rid, placed_ids)
+            child_genes.extend(copy.deepcopy(p) for p in plist)
 
-        # ------------------------------------------------------------------
-        # 3) finally, copy any still-missing components from parent 1 --------
-        # ------------------------------------------------------------------
-        for g in self.genes:
-            rid = get_root_id(g)
-            if rid in chosen_source:                # already taken
+        # ---------- step 3: finally add any leftover self components -------
+        for rid, plist in idx_self.items():
+            if rid in chosen_source:
                 continue
             chosen_source[rid] = "self"
-            copy_all_leaves(self.genes, rid, placed_ids)
+            child_genes.extend(copy.deepcopy(p) for p in plist)
 
-        # ------------------------------------------------------------------
-        # 4) finished -------------------------------------------------------
-        # ------------------------------------------------------------------
         if config.LOG_TIME:
-            dt = time.time() - t0
-            print(f"[Chromosome.crossover_ox1] k={k} produced "
-                f"{len(child_genes)} genes in {dt:.4f} s, segments={segments}")
+            print(f"[Chromosome.crossover_ox1] k={k} → {len(child_genes)} genes "
+                f"in {time.time()-t0:.4f}s, segments={segs}")
 
         return Chromosome(child_genes, self.container)
+
 
     # def sync_order(self) -> None:
     #     """Sync the order dict to reflect the current gene sequence."""
