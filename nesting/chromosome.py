@@ -133,81 +133,117 @@ class Chromosome(Layout):
         end = time.time()
         if config.LOG_TIME:
             print(f"[Chromosome.mutate] '{mutation}' took {end - start:.4f} s")
+        
         return self
 
-    def crossover_ox1(self, other: Chromosome, k: int = 1) -> Chromosome:
+    
+    def crossover_ox1(self, other: "Chromosome", k: int = 1) -> "Chromosome":
         """
-        Generalized OX1 crossover with k segments.
-        1. Pick 2*k cut points.
-        2. Copy each of the k segments from self into child.
-        3. Fill remaining slots from other in order.
+        Generalised OX1 crossover that respects component split trees.
+
+        Rules
+        -----
+        • Parents may contain different numbers of leaves (genes).
+        • The child inherits complete split-trees: every original component
+        (root_id) is taken entirely from *one* parent, never mixed.
+        • Step 1 is still “OX1 style”: pick 2·k cut points on *self* and copy
+        those segments (plus any additional leaves that belong to the same
+        components) into the child, preserving order.
+
+        Parameters
+        ----------
+        other : Chromosome
+            The second parent.
+        k : int
+            Number of OX1 segments (default 1).
+
+        Returns
+        -------
+        Chromosome
+            The offspring chromosome.
         """
-        start = time.time()
-        assert len(self.genes) == len(other.genes), "Parents must be equal length"
-        size = len(self.genes)
 
-        # Choose 2*k cut points and build segments
-        cut_points = sorted(random.sample(range(size), 2 * k))
-        segments = [(a, b) if a <= b else (b, a) for a, b in zip(cut_points[::2], cut_points[1::2])]
+        t0 = time.time()
 
-        # Prepare child skeleton and track placed IDs
-        child: list[Piece | None] = [None] * size
+        # ------------------------------------------------------------------
+        # helpers -----------------------------------------------------------
+        # ------------------------------------------------------------------
+        def get_root_id(piece):
+            """Return the identifier of the original (pre-split) component."""
+            return getattr(piece, "root_id", None) or piece.id.split("_")[0]
+
+        def copy_all_leaves(src_genes, root_id, placed):
+            """
+            Copy *all* leaves of `root_id` from `src_genes` into child_genes,
+            preserving their order in `src_genes`.  Uses deep-copies and
+            updates `placed`.
+            """
+            copied = []
+            for g in src_genes:
+                if get_root_id(g) == root_id and g.id not in placed:
+                    child_genes.append(copy.deepcopy(g))
+                    placed.add(g.id)
+                    copied.append(g.id)
+            return copied
+
+        # ------------------------------------------------------------------
+        # 1) choose 2·k cut points on *self* and create first draft segment --
+        # ------------------------------------------------------------------
+        size_self = len(self.genes)
+        if size_self == 0:
+            raise ValueError("Parent 1 has no genes")
+
+        if 2 * k > size_self:
+            raise ValueError("2·k cut points exceed chromosome length")
+
+        cut_points = sorted(random.sample(range(size_self), 2 * k))
+        segments = [(a, b) if a <= b else (b, a)
+                    for a, b in zip(cut_points[::2], cut_points[1::2])]
+
+        child_genes: list["Piece"] = []
         placed_ids: set[str] = set()
-        # Copy segments from parent1
+        chosen_source: dict[str, str] = {}     # root_id → "self" | "other"
+
+        # Copy the chosen segments from self (plus all leaves of their components)
         for seg_start, seg_end in segments:
-            chunk = [copy.deepcopy(self.genes[i]) for i in range(seg_start, seg_end + 1)]
-            child[seg_start : seg_end + 1] = chunk
-            placed_ids.update(p.id for p in chunk)
+            for idx in range(seg_start, seg_end + 1):
+                g = self.genes[idx]
+                rid = get_root_id(g)
+                if rid in chosen_source:
+                    # This component was already taken earlier in this loop
+                    continue
+                chosen_source[rid] = "self"
+                copy_all_leaves(self.genes, rid, placed_ids)
 
-        # Fill in remaining positions from parent2
-        for idx in range(size):
-            if child[idx] is None:
-                for g in other.genes:
-                    if g.id not in placed_ids:
-                        child[idx] = copy.deepcopy(g)
-                        placed_ids.add(g.id)
-                        break
+        # ------------------------------------------------------------------
+        # 2) walk through parent 2 and take components not chosen yet --------
+        # ------------------------------------------------------------------
+        for g in other.genes:
+            rid = get_root_id(g)
+            if rid in chosen_source:                # competing tree → skip
+                continue
+            chosen_source[rid] = "other"
+            copy_all_leaves(other.genes, rid, placed_ids)
 
-        end = time.time()
+        # ------------------------------------------------------------------
+        # 3) finally, copy any still-missing components from parent 1 --------
+        # ------------------------------------------------------------------
+        for g in self.genes:
+            rid = get_root_id(g)
+            if rid in chosen_source:                # already taken
+                continue
+            chosen_source[rid] = "self"
+            copy_all_leaves(self.genes, rid, placed_ids)
+
+        # ------------------------------------------------------------------
+        # 4) finished -------------------------------------------------------
+        # ------------------------------------------------------------------
         if config.LOG_TIME:
-            print(f"[Chromosome.crossover_ox1] k={k} took {end - start:.4f} s, segments={segments}")
-        return Chromosome(child, self.container)
+            dt = time.time() - t0
+            print(f"[Chromosome.crossover_ox1] k={k} produced "
+                f"{len(child_genes)} genes in {dt:.4f} s, segments={segments}")
 
-    def crossover_pmx(self, other: Chromosome) -> Chromosome:
-        """
-        Partially Mapped Crossover (PMX). For each position outside the chosen
-        window [c1:c2], map according to the slice from self, resolving conflicts.
-        """
-        start = time.time()
-        assert len(self.genes) == len(other.genes), "Parents must be equal length"
-        size = len(self.genes)
-
-        # 1. Choose c1, c2 (avoid trivial full‐copy)
-        c1, c2 = sorted(random.sample(range(size), 2))
-        while c1 == c2 or (c1 == 0 and c2 == size - 1):
-            c1, c2 = sorted(random.sample(range(size), 2))
-
-        # 2. Initialize child array and copy the middle slice from parent1
-        child: list[Piece | None] = [None] * size
-        child[c1 : c2 + 1] = self.genes[c1 : c2 + 1]
-
-        # Prepare lookups for piece IDs
-        slice_ids = {p.id for p in child[c1 : c2 + 1]}
-        id_to_index_self = {p.id: idx for idx, p in enumerate(self.genes)}
-
-        # 3. Fill remaining slots from parent2, resolving conflicts
-        for i in chain(range(0, c1), range(c2 + 1, size)):
-            candidate = other.genes[i]
-            # Follow mapping until we find an ID not in slice_ids
-            while candidate.id in slice_ids:
-                idx_in_parent1 = id_to_index_self[candidate.id]
-                candidate = other.genes[idx_in_parent1]
-            child[i] = copy.deepcopy(candidate)
-
-        end = time.time()
-        if config.LOG_TIME:
-            print(f"[Chromosome.crossover_pmx] took {end - start:.4f} s")
-        return Chromosome(child, self.container)
+        return Chromosome(child_genes, self.container)
 
     # def sync_order(self) -> None:
     #     """Sync the order dict to reflect the current gene sequence."""

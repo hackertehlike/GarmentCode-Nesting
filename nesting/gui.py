@@ -383,13 +383,13 @@ class NestingGUI:
             f"{piece.id}": copy.deepcopy(piece) for piece in panel_pieces.values()
         })
 
-        # split the first piece into two halves
-        if self.pieces:
-            first_id = next(iter(self.pieces))
-            original_piece = self.pieces.pop(first_id)
-            left_piece, right_piece = original_piece.split()
-            self.pieces[left_piece.id] = left_piece
-            self.pieces[right_piece.id] = right_piece
+        # # split the first piece into two halves
+        # if self.pieces:
+        #     first_id = next(iter(self.pieces))
+        #     original_piece = self.pieces.pop(first_id)
+        #     left_piece, right_piece = original_piece.split()
+        #     self.pieces[left_piece.id] = left_piece
+        #     self.pieces[right_piece.id] = right_piece
 
         self.layout = Layout(self.pieces)
 

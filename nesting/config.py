@@ -6,23 +6,24 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = True
 VERBOSE: bool = True
-DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_pieces_scaled.json"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/Configured_design_specification.json"
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
-CrossoverName = Literal["pmx", "ox1", "ox1k"]
+CrossoverName = Literal["pmx", "ox1"]
 # ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"
-SELECTED_CROSSOVER      : CrossoverName = "ox1k"
+SELECTED_CROSSOVER      : CrossoverName = "ox1"
+OX_K = 1
 
 # ——— placement settings —————————————————————————————————————
 GRAVITATE_STEP = 2
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 50
-NUM_GENERATIONS       = 5
+POPULATION_SIZE       = 100
+NUM_GENERATIONS       = 20
 MUTATION_RATE         = 0.2
 
 
@@ -36,12 +37,12 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
 
 # mutation weights
 MUTATION_WEIGHTS = {
-    "rotate":    0.3,
-    "swap":      0.2,
-    "inversion": 0,
-    "insertion": 0.1,
-    "scramble":  0.4,
-    "split":     0,   # keep zero until you implement it
+    "rotate":    0,
+    "swap":      0.4,
+    "inversion": 0.2,
+    "insertion": 0,
+    "scramble":  0,
+    "split":     0.4,   # keep zero until you implement it
 }
 
 
@@ -65,7 +66,7 @@ HULL_TRIM_RATIO = 10 # higher number -> more convex
 INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
 BOUNDARY_SAMPLE_SPACING = 3 # how many cm between sampled boundary points, tradeoff between speed and accuracy of the hull
 SNAP = False
-SNAP_TOLERANCE = 10 # how close points must be to snap to the hull, in cm
+SNAP_TOLERANCE = 0.1 # how close points must be to snap to the hull, in percentage of the container size
 
 
 # ——— sampling (path extractor) —————————————————————————————————————
@@ -75,10 +76,10 @@ ALLOWED_ROTATIONS = [0, 180]
 
 
 # GUI STUFF
-NUM_COPIES = 0
+NUM_COPIES = 1
 
-CONTAINER_WIDTH_CM  = 250
-CONTAINER_HEIGHT_CM = 100.0
+CONTAINER_WIDTH_CM  = 700
+CONTAINER_HEIGHT_CM = 200.0
 
 SEAM_ALLOWANCE_CM = 1
 

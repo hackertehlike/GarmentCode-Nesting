@@ -242,7 +242,6 @@ class PlacementEngine:
 
         if config.SNAP:
             w, h = self.container.width, self.container.height
-            # distinct tolerances for x (width) and y (height)
             tol_x = config.SNAP_TOLERANCE * w
             tol_y = config.SNAP_TOLERANCE * h
             coords = list(hull.exterior.coords)

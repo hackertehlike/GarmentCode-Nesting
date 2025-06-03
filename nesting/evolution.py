@@ -204,6 +204,10 @@ class Evolution:
             divider=True
         )
 
+        # print the top 5 elite chromosomes
+        for chrom in viable[:self.n_elites]:
+            self._log(f"Elite: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
+
         return viable[: self.n_elites]  # return top n_elites chromosomes
 
 
@@ -225,9 +229,7 @@ class Evolution:
         if self.crossover_method == "pmx":
             child = p1.crossover_pmx(p2)
         elif self.crossover_method == "ox1":
-            child = p1.crossover_ox1(p2)
-        elif self.crossover_method == "ox1k":
-            child = p1.crossover_ox1_k(p2)
+            child = p1.crossover_ox1(p2, config.OX_K)
         else:
             raise ValueError(f"Unknown crossover method: {self.crossover_method}")
 
@@ -244,6 +246,7 @@ class Evolution:
         return child
 
 
+    
     def next_generation(self) -> None:
         self._log("Next generation…", divider=True)
         start = time.time()
@@ -257,38 +260,60 @@ class Evolution:
         new_population = list(old_elite)
         avg_elite = sum(c.fitness for c in old_elite) / self.n_elites
 
-        # 2) Fire off ALL tasks in one ThreadPool:
-        from concurrent.futures import ThreadPoolExecutor, as_completed
-        jobs: dict = {}
+        # Prepare containers for the three groups
+        offspring, mutants, randoms = [], [], []
+        off_gains, mut_gains = [], []
 
-        with ThreadPoolExecutor() as executor:
-            # 1) Offspring
+        # ────────────────
+        # Phase A: Offspring
+        # ────────────────
+        self._log("Phase A: submitting offspring tasks…")
+        offspring_jobs = {}
+        with ThreadPoolExecutor() as offspring_executor:
             for _ in range(self.n_offspring):
                 p1, p2 = random.sample(old_elite, 2)
                 parent_f = max(p1.fitness, p2.fitness)
+
                 def do_offspring(p1=p1, p2=p2, parent_f=parent_f):
                     try:
-                        child = (p1.crossover_pmx(p2)
-                                 if self.crossover_method=='pmx'
-                                 else p1.crossover_ox1(p2))
+                        if self.crossover_method == 'pmx':
+                            child = p1.crossover_pmx(p2)
+                        else:
+                            child = p1.crossover_ox1(p2)
                         if random.random() < self.mutation_rate:
                             child.mutate()
                         child.calculate_fitness()
                         if config.VERBOSE:
                             self._log(f"Offspring created with fitness: {child.fitness:.4f}")
-                        child.origin = "offspring"           
-                        return child, parent_f, None, None   # extra return slot kept for symmetry
+                        child.origin = "offspring"
+                        return child, parent_f, None, None
                     except Exception as e:
-                        return None, parent_f, None, e           # 4 values
+                        return None, parent_f, None, e
 
+                fut = offspring_executor.submit(do_offspring)
+                offspring_jobs[fut] = None  # marker for offspring phase
 
-                fut = executor.submit(do_offspring)
-                jobs[fut] = "offspring"
+            self._log("Phase A: collecting offspring results…")
+            for fut in as_completed(offspring_jobs):
+                child, parent_f, _, err = fut.result()
+                if err is not None:
+                    self._log(f"‼ offspring task failed: {err}")
+                    continue
+                gain = child.fitness - parent_f
+                offspring.append(child)
+                off_gains.append(gain)
+                new_population.append(child)
 
-            # 2) Mutants
+        # ────────────────
+        # Phase B: Mutants
+        # ────────────────
+        self._log("Phase B: submitting mutant tasks…")
+        mutant_jobs = {}
+        with ThreadPoolExecutor() as mutant_executor:
             for _ in range(self.n_mutants):
                 parent = random.choice(old_elite)
                 parent_f = parent.fitness
+
                 def do_mutant(parent=parent, parent_f=parent_f):
                     try:
                         child = copy.deepcopy(parent)
@@ -299,57 +324,60 @@ class Evolution:
                         child.origin = "mutant"
                         return child, parent_f, child.last_mutation, None
                     except Exception as e:
-                        return None, parent_f, None, e           # 4 values
-                    
-                fut = executor.submit(do_mutant)
-                jobs[fut] = "mutant"
+                        return None, parent_f, None, e
 
-            # 3) Randoms
+                fut = mutant_executor.submit(do_mutant)
+                mutant_jobs[fut] = None  # marker for mutant phase
+
+            self._log("Phase B: collecting mutant results…")
+            for fut in as_completed(mutant_jobs):
+                child, parent_f, op_used, err = fut.result()
+                if err is not None:
+                    self._log(f"‼ mutant task failed: {err}")
+                    continue
+                gain = child.fitness - parent_f
+                mutants.append(child)
+                mut_gains.append(gain)
+                if op_used is not None:
+                    self.mutation_perf.setdefault(op_used, []).append(gain)
+                new_population.append(child)
+
+        # ───────────────────
+        # Phase C: Randoms
+        # ───────────────────
+        self._log("Phase C: submitting random-chromosome tasks…")
+        random_jobs = {}
+        with ThreadPoolExecutor() as random_executor:
             for _ in range(self.n_randoms):
                 def do_random():
                     try:
                         child = self._generate_random_chromosome()
                         if config.VERBOSE:
                             self._log(f"Random chromosome created with fitness: {child.fitness:.4f}")
-                        return child, 0.0, None, None        # 4 values
+                        child.origin = "random"
+                        return child, 0.0, None, None
                     except Exception as e:
                         return None, 0.0, None, e
 
-                fut = executor.submit(do_random)
-                jobs[fut] = "random"
+                fut = random_executor.submit(do_random)
+                random_jobs[fut] = None  # marker for random phase
 
-            # 4) collect results into three lists
-            offspring, mutants, randoms = [], [], []
-            off_gains, mut_gains = [], []
-
-            self._log("Collecting results from tasks…")
-
-            for fut in as_completed(jobs):
-                child, parent_f, op_used, err = fut.result()
-                kind = jobs[fut]
+            self._log("Phase C: collecting random-chromosome results…")
+            for fut in as_completed(random_jobs):
+                child, _, _, err = fut.result()
                 if err is not None:
-                    self._log(f"‼ {kind} task failed: {err}")
+                    self._log(f"‼ random task failed: {err}")
                     continue
-
-                gain = child.fitness - parent_f
-
-                if kind == "offspring":
-                    offspring.append(child)
-                    off_gains.append(gain)
-                elif kind == "mutant":
-                    mutants.append(child)
-                    mut_gains.append(gain)
-                    if op_used is not None:
-                        self.mutation_perf.setdefault(op_used, []).append(gain)
-                else:
-                    randoms.append(child)
-
+                randoms.append(child)
                 new_population.append(child)
 
-            self._log(f"Collected {len(offspring)} offspring, {len(mutants)} mutants, "
-                  f"{len(randoms)} randoms.")
+        # Summary of collected results
+        self._log(
+            f"Collected {len(offspring)} offspring, "
+            f"{len(mutants)} mutants, {len(randoms)} randoms."
+        )
 
-        # 5) Compute per-operator stats
+        # 5) Compute per‐operator statistics
         avg_off  = sum(c.fitness for c in offspring) / len(offspring) if offspring else 0.0
         avg_mut  = sum(c.fitness for c in mutants)   / len(mutants)   if mutants else 0.0
         avg_rand = sum(c.fitness for c in randoms)   / len(randoms)   if randoms else 0.0
@@ -360,14 +388,15 @@ class Evolution:
         self.mean_mutant_gain.append(mean_mutant_gain)
 
         self._log(
-            f"Avg offspring gain vs parent: {mean_offspring_gain:+.4f};"
-            f" mutants: {mean_mutant_gain:+.4f}"
+            f"Avg offspring gain vs parent: {mean_offspring_gain:+.4f}; "
+            f"mutants: {mean_mutant_gain:+.4f}"
         )
 
-        # 6) Finalize
+        # 6) Finalize population and record history
         self.population = new_population
         self.pop_fitness_history.append([chrom.fitness for chrom in self.population])
         self.generation += 1
+
         frame = pd.DataFrame([{
             "generation": self.generation,
             "fitness":   c.fitness,
@@ -394,22 +423,22 @@ class Evolution:
             'mean_offspring_gain': mean_offspring_gain,
             'mean_mutant_gain': mean_mutant_gain,
         }
-        row_mut = {f"mut_gain_{k}": (sum(v)/len(v) if v else 0.0)
-           for k, v in self.mutation_perf.items()}
+        row_mut = {
+            f"mut_gain_{k}": (sum(v) / len(v) if v else 0.0)
+            for k, v in self.mutation_perf.items()
+        }
         row.update(row_mut)
-        self.mutation_perf.clear()          # reset for next generation
+        self.mutation_perf.clear()  # reset for next generation
 
         self._metrics_buffer.append(row)
         self._all_metrics.append(row)
-        
 
         if (len(self._metrics_buffer) >= config.GENERATION_PER_FLUSH
-            or self.generation == self.num_generations) and config.SAVE_LOGS:
+                or self.generation == self.num_generations) and config.SAVE_LOGS:
             self._flush_metrics()
             self.update_plots()
 
-        self._log(f"Generation {self.generation} completed in {time.time()-start:.2f}s.")
-
+        self._log(f"Generation {self.generation} completed in {time.time() - start:.2f}s.")
 
     def run(self) -> Chromosome:
         """Evolve the population, applying dynamic‑stopping logic if enabled."""
