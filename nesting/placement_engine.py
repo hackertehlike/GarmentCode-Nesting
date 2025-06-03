@@ -54,17 +54,38 @@ class PlacementEngine:
     # ── EXISTING UTILITY METHODS (unchanged) ──────────────────────────────────────
 
     def _fits(self, piece: Piece, dx: float, dy: float) -> bool:
-        """Return True if piece at (dx,dy) lies fully inside container and does not overlap."""
-        poly = utils._translate_polygon(piece.get_outer_path(), dx, dy)
-        xs, ys = zip(*poly)
+        """Return True if piece at ``(dx, dy)`` lies inside container and does not overlap."""
+
+        # ---- bounding box check against container ----
+        cand_min_x = piece.min_x + dx
+        cand_max_x = piece.max_x + dx
+        cand_min_y = piece.min_y + dy
+        cand_max_y = piece.max_y + dy
+
         if (
-            min(xs) < 0 or max(xs) > self.container.width
-            or min(ys) < 0 or max(ys) > self.container.height
+            cand_min_x < 0 or cand_max_x > self.container.width
+            or cand_min_y < 0 or cand_max_y > self.container.height
         ):
             return False
 
+        poly = utils._translate_polygon(piece.get_outer_path(), dx, dy)
+
+        # ---- overlap checks ----
         for other in self.placed:
             ox, oy = other.translation
+
+            other_min_x = other.min_x + ox
+            other_max_x = other.max_x + ox
+            other_min_y = other.min_y + oy
+            other_max_y = other.max_y + oy
+
+            if (
+                cand_max_x <= other_min_x or cand_min_x >= other_max_x
+                or cand_max_y <= other_min_y or cand_min_y >= other_max_y
+            ):
+                # Bounding boxes do not intersect → cannot overlap.
+                continue
+
             other_poly = utils._translate_polygon(other.get_outer_path(), ox, oy)
             if utils.polygons_overlap(poly, other_poly):
                 return False
