@@ -178,13 +178,33 @@ class Piece:
             parts_outer: list[Polygon] = [g for g in result_outer.geoms if isinstance(g, Polygon)]
             parts_inner: list[Polygon] = [g for g in result_inner.geoms if isinstance(g, Polygon)]
 
-            # 5) At this point, parts_outer should be exactly 2, but parts_inner may be ≥ 2.
+            # 5) Handle cases where outer split yields more fragments than expected
             if len(parts_outer) != 2:
-                raise ValueError(f"Expected 2 outer parts after splitting, got outer={len(parts_outer)}")
+                print(f"[split] Warning: expected 2 outer parts, got {len(parts_outer)}; grouping by centroid and unioning")
+                # group outer fragments by centroid relative to midx
+                outer_left_list = [g for g in parts_outer if g.centroid.x <= midx]
+                outer_right_list = [g for g in parts_outer if g.centroid.x > midx]
+                # ensure non-empty lists
+                if not outer_left_list:
+                    outer_left_list = parts_outer[:1]
+                if not outer_right_list:
+                    outer_right_list = parts_outer[-1:]
+                # inline union helper
+                def _union_polygons(frags):
+                    cmb = unary_union(frags)
+                    if isinstance(cmb, Polygon):
+                        return cmb
+                    if isinstance(cmb, MultiPolygon):
+                        return max(cmb.geoms, key=lambda p: p.area)
+                    raise ValueError(f"Unexpected geometry type after outer union: {type(cmb)}")
+                left_outer = _union_polygons(outer_left_list)
+                right_outer = _union_polygons(outer_right_list)
+            else:
+                # exactly two parts: sort by centroid.x
+                parts_outer_sorted = sorted(parts_outer, key=lambda g: g.centroid.x)
+                left_outer, right_outer = parts_outer_sorted
 
-            # 6) Sort the two outer halves by centroid.x to identify left vs. right
-            parts_outer_sorted = sorted(parts_outer, key=lambda g: g.centroid.x)
-            left_outer, right_outer = parts_outer_sorted
+            print(f"[split] Outer halves centroids: left={left_outer.centroid.x}, right={right_outer.centroid.x}")
 
             # 7) Group all inner fragments into “left” or “right” by centroid.x < or > midx
             inner_left_list: list[Polygon] = []
