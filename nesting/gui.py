@@ -202,7 +202,7 @@ class NestingGUI:
         util = pe.usage_BB()
         rest_length = pe.rest_length()
         concave_hull_usage = pe.concave_hull_utilization()
-        concave_hull = pe.concave_hull_polygon
+        concave_hull = pe._last_hull
         self._draw_alpha_shape(concave_hull)
         # print(f"Calculated utilisation (current layout): {util:.2%}")
         # print(f"Calculated rest length (current layout): {rest_length:.2f} cm")

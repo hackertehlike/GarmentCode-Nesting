@@ -46,6 +46,11 @@ class PlacementEngine:
         # Last computed concave hull (for utilization, via alpha_shape)
         self._last_hull: Optional[Polygon] = None
 
+    @property
+    def last_hull(self) -> Optional[Polygon]:
+        """Return the last computed concave hull, or None if not computed yet."""
+        return self._last_hull
+
     # ── EXISTING UTILITY METHODS (unchanged) ──────────────────────────────────────
 
     def _fits(self, piece: Piece, dx: float, dy: float) -> bool:
@@ -236,42 +241,50 @@ class PlacementEngine:
             hull = unary_union([hull, full_hull])
 
         if config.SNAP:
-            tol = config.SNAP_TOLERANCE
             w, h = self.container.width, self.container.height
+            # distinct tolerances for x (width) and y (height)
+            tol_x = config.SNAP_TOLERANCE * w
+            tol_y = config.SNAP_TOLERANCE * h
             coords = list(hull.exterior.coords)
             snapped: List[Tuple[float, float]] = []
             n = len(coords)
 
             def is_on_horiz(pt: Tuple[float, float]) -> bool:
-                return abs(pt[1]) < tol or abs(pt[1] - h) < tol
+                return abs(pt[1]) < tol_y or abs(pt[1] - h) < tol_y
 
             def is_on_vert(pt: Tuple[float, float]) -> bool:
-                return abs(pt[0]) < tol or abs(pt[0] - w) < tol
+                return abs(pt[0]) < tol_x or abs(pt[0] - w) < tol_x
 
             for i, (x, y) in enumerate(coords):
                 prev = coords[i - 1]
                 nxt = coords[(i + 1) % n]
 
-                if abs(x) < tol or (abs(prev[0]) < tol and abs(nxt[0]) < tol):
+                if abs(x) < tol_x or (abs(prev[0]) < tol_x and abs(nxt[0]) < tol_x):
                     x = 0.0
-                elif abs(x - w) < tol or (abs(prev[0] - w) < tol and abs(nxt[0] - w) < tol):
+                elif abs(x - w) < tol_x or (abs(prev[0] - w) < tol_x and abs(nxt[0] - w) < tol_x):
                     x = w
+                # snap if adjacent to vertical boundary segment
+                elif is_on_vert(prev) and is_on_vert(nxt):
+                    x = 0.0 if abs(x) < abs(x - w) else w
 
-                if abs(y) < tol or (abs(prev[1]) < tol and abs(nxt[1]) < tol):
+                if abs(y) < tol_y or (abs(prev[1]) < tol_y and abs(nxt[1]) < tol_y):
                     y = 0.0
-                elif abs(y - h) < tol or (abs(prev[1] - h) < tol and abs(nxt[1] - h) < tol):
+                elif abs(y - h) < tol_y or (abs(prev[1] - h) < tol_y and abs(nxt[1] - h) < tol_y):
                     y = h
+                # snap if adjacent to horizontal boundary segment
+                elif is_on_horiz(prev) and is_on_horiz(nxt):
+                    y = 0.0 if abs(y) < abs(y - h) else h
 
                 curr = (x, y)
                 snapped.append(curr)
                 x2, y2 = coords[(i + 1) % n]
-                if abs(x2) < tol:
+                if abs(x2) < tol_x:
                     x2 = 0.0
-                elif abs(x2 - w) < tol:
+                elif abs(x2 - w) < tol_x:
                     x2 = w
-                if abs(y2) < tol:
+                if abs(y2) < tol_y:
                     y2 = 0.0
-                elif abs(y2 - h) < tol:
+                elif abs(y2 - h) < tol_y:
                     y2 = h
                 nxt_snapped = (x2, y2)
 
