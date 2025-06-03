@@ -88,8 +88,12 @@ class Chromosome(Layout):
         n = len(self.genes)
 
         if mutation == "split":
-            # Placeholder for future split‐type mutation
-            pass
+            # Split a random gene into two new genes
+            idx = random.randrange(n)
+            piece = self.genes[idx]
+            new_genes = piece.split()
+            self.genes.pop(idx)
+            self.genes[idx:idx] = new_genes
 
         elif mutation == "rotate":
             # Pick how many genes to rotate (1..n), then apply in batch
@@ -131,86 +135,42 @@ class Chromosome(Layout):
             print(f"[Chromosome.mutate] '{mutation}' took {end - start:.4f} s")
         return self
 
-    def crossover_ox1_k(self, other: Chromosome) -> Chromosome:
+    def crossover_ox1(self, other: Chromosome, k: int = 1) -> Chromosome:
         """
-        Order Crossover (OX1) with k randomly chosen segments.
-        Copies k disjoint segments from self into child, then fills
-        remaining slots in order from other.
+        Generalized OX1 crossover with k segments.
+        1. Pick 2*k cut points.
+        2. Copy each of the k segments from self into child.
+        3. Fill remaining slots from other in order.
         """
         start = time.time()
         assert len(self.genes) == len(other.genes), "Parents must be equal length"
         size = len(self.genes)
 
-        # Determine number of segments (1 .. min(3, size//3))
-        max_segments = max(1, min(3, size // 3))
-        n_segments = random.randint(1, max_segments)
+        # Choose 2*k cut points and build segments
+        cut_points = sorted(random.sample(range(size), 2 * k))
+        segments = [(a, b) if a <= b else (b, a) for a, b in zip(cut_points[::2], cut_points[1::2])]
 
-        # Choose 2*n cut points and group into segments
-        cut_points = sorted(random.sample(range(size), 2 * n_segments))
-        segments = [
-            (a, b) if a <= b else (b, a)
-            for a, b in zip(cut_points[::2], cut_points[1::2])
-        ]
-
-        # Prepare child skeleton and a set of placed IDs
+        # Prepare child skeleton and track placed IDs
         child: list[Piece | None] = [None] * size
-
-        # Copy each segment from self into child using a comprehension
-        placed_ids = set()
+        placed_ids: set[str] = set()
+        # Copy segments from parent1
         for seg_start, seg_end in segments:
             chunk = [copy.deepcopy(self.genes[i]) for i in range(seg_start, seg_end + 1)]
             child[seg_start : seg_end + 1] = chunk
             placed_ids.update(p.id for p in chunk)
 
-        # Fill remaining slots from other.genes in order
-        other_iter = (g for g in other.genes if g.id not in placed_ids)
+        # Fill in remaining positions from parent2
         for idx in range(size):
             if child[idx] is None:
-                child[idx] = copy.deepcopy(next(other_iter))
+                for g in other.genes:
+                    if g.id not in placed_ids:
+                        child[idx] = copy.deepcopy(g)
+                        placed_ids.add(g.id)
+                        break
 
         end = time.time()
         if config.LOG_TIME:
-            print(f"[Chromosome.crossover_ox1_k] took {end - start:.4f} s, segments={n_segments}")
-        return Chromosome(child, self.container)
-
-    def crossover_ox1(self, other: Chromosome) -> Chromosome:
-        """
-        Standard OX1 crossover:
-          1. Pick two cut points c1 < c2 (avoid copying entire sequence).
-          2. Copy slice [c1:c2+1] from self into child.
-          3. Fill in remaining slots from other (wrapping around) in order.
-        """
-        start = time.time()
-        assert len(self.genes) == len(other.genes), "Parents must be equal length"
-        size = len(self.genes)
-
-        # 1. Choose c1, c2 such that we don’t copy the entire chromosome
-        c1, c2 = sorted(random.sample(range(size), 2))
-        while c1 == 0 and c2 == size - 1:
-            c1, c2 = sorted(random.sample(range(size), 2))
-
-        # 2. Build child and copy slice from parent1
-        child: list[Piece | None] = [None] * size
-        child_slice = [copy.deepcopy(p) for p in self.genes[c1 : c2 + 1]]
-        child[c1 : c2 + 1] = child_slice
-
-        # Track which IDs are already placed
-        placed_ids = {p.id for p in child_slice}
-
-        # 3. Fill in remaining positions from parent2 (wrapping)
-        current_idx = (c2 + 1) % size
-        for gene in chain(other.genes[c2 + 1 :], other.genes[: c2 + 1]):
-            if gene.id not in placed_ids:
-                child[current_idx] = copy.deepcopy(gene)
-                placed_ids.add(gene.id)
-                current_idx = (current_idx + 1) % size
-                if current_idx == c1:
-                    # Once we return to index c1, the child is full
-                    break
-
-        end = time.time()
-        if config.LOG_TIME:
-            print(f"[Chromosome.crossover_ox1] took {end - start:.4f} s")
+            print(f"[Chromosome.crossover_ox1] k={k} took {end - start:.4f} s, segments={segments}")
         return Chromosome(child, self.container)
 
     def crossover_pmx(self, other: Chromosome) -> Chromosome:
