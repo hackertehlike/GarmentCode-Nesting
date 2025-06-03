@@ -16,6 +16,7 @@ class Piece:
 
     def __init__(self, original_path, id=None):
         self.id = id
+        self.root_id     = id
 
         self.inner_path = original_path     # original inner geometry (in cm)
         self.outer_path = original_path.copy()     # original outer geometry (in cm)
@@ -98,11 +99,12 @@ class Piece:
         self.rotation += angle
         self.rotation = self.rotation % 360
         # update the bounding box
-        self.update_bbox()
         # shift
         # utils.shift_coordinates(self.outer_path)
         self.outer_path = utils.shift_coordinates(self.outer_path)
         self.inner_path = utils.shift_coordinates(self.inner_path)
+
+        self.update_bbox()
 
     def translate(self, dx: float, dy: float):
         """Translate the piece *in place* by (dx, dy)."""
@@ -265,6 +267,7 @@ class Piece:
 
                 # 10d) Copy over outer_path, parent_id, translation, rotation, and update bbox
                 new_piece.parent_id   = self.id
+                new_piece.root_id     = getattr(self, "root_id", self.id)
                 new_piece.outer_path  = o_coords_local
                 tx, ty                = self.translation
                 new_piece.translation = (tx + ox_min, ty + oy_min)

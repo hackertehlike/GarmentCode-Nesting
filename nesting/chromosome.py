@@ -137,16 +137,121 @@ class Chromosome(Layout):
         if config.LOG_TIME:
             print(f"[Chromosome.mutate] '{mutation}' took {end - start:.4f} s")
         
+        
         return self
 
     
     def crossover_ox1(self, other: "Chromosome", k: int = 1) -> "Chromosome":
         """
+        Generalised OX1 crossover that respects component split trees.
+
+        Rules
+        -----
+        • Parents may contain different numbers of leaves (genes).
+        • The child inherits complete split-trees: every original component
+        (root_id) is taken entirely from *one* parent, never mixed.
+        • Step 1 is still “OX1 style”: pick 2·k cut points on *self* and copy
+        those segments (plus any additional leaves that belong to the same
+        components) into the child, preserving order.
+
+        Parameters
+        ----------
+        other : Chromosome
+            The second parent.
+        k : int
+            Number of OX1 segments (default 1).
+
+        Returns
+        -------
+        Chromosome
+            The offspring chromosome.
         Component-completion OX1 crossover (CC-OX1).
 
         Parents may differ in length.
         A split-tree (root_id) is inherited wholesale from exactly one parent.
         """
+
+        t0 = time.time()
+
+        # ------------------------------------------------------------------
+        # helpers -----------------------------------------------------------
+        # ------------------------------------------------------------------
+        def get_root_id(piece):
+            """Return the identifier of the original (pre-split) component."""
+            return getattr(piece, "root_id", None) or piece.id.split("_")[0]
+
+        def copy_all_leaves(src_genes, root_id, placed):
+            """
+            Copy *all* leaves of `root_id` from `src_genes` into child_genes,
+            preserving their order in `src_genes`.  Uses deep-copies and
+            updates `placed`.
+            """
+            copied = []
+            for g in src_genes:
+                if get_root_id(g) == root_id and g.id not in placed:
+                    child_genes.append(copy.deepcopy(g))
+                    placed.add(g.id)
+                    copied.append(g.id)
+            return copied
+
+        # ------------------------------------------------------------------
+        # 1) choose 2·k cut points on *self* and create first draft segment --
+        # ------------------------------------------------------------------
+        size_self = len(self.genes)
+        if size_self == 0:
+            raise ValueError("Parent 1 has no genes")
+
+        if 2 * k > size_self:
+            raise ValueError("2·k cut points exceed chromosome length")
+
+        cut_points = sorted(random.sample(range(size_self), 2 * k))
+        segments = [(a, b) if a <= b else (b, a)
+                    for a, b in zip(cut_points[::2], cut_points[1::2])]
+
+        child_genes: list["Piece"] = []
+        placed_ids: set[str] = set()
+        chosen_source: dict[str, str] = {}     # root_id → "self" | "other"
+
+        # Copy the chosen segments from self (plus all leaves of their components)
+        for seg_start, seg_end in segments:
+            for idx in range(seg_start, seg_end + 1):
+                g = self.genes[idx]
+                rid = get_root_id(g)
+                if rid in chosen_source:
+                    # This component was already taken earlier in this loop
+                    continue
+                chosen_source[rid] = "self"
+                copy_all_leaves(self.genes, rid, placed_ids)
+
+        # ------------------------------------------------------------------
+        # 2) walk through parent 2 and take components not chosen yet --------
+        # ------------------------------------------------------------------
+        for g in other.genes:
+            rid = get_root_id(g)
+            if rid in chosen_source:                # competing tree → skip
+                continue
+            chosen_source[rid] = "other"
+            copy_all_leaves(other.genes, rid, placed_ids)
+
+        # ------------------------------------------------------------------
+        # 3) finally, copy any still-missing components from parent 1 --------
+        # ------------------------------------------------------------------
+        for g in self.genes:
+            rid = get_root_id(g)
+            if rid in chosen_source:                # already taken
+                continue
+            chosen_source[rid] = "self"
+            copy_all_leaves(self.genes, rid, placed_ids)
+
+        # ------------------------------------------------------------------
+        # 4) finished -------------------------------------------------------
+        # ------------------------------------------------------------------
+        if config.LOG_TIME:
+            dt = time.time() - t0
+            print(f"[Chromosome.crossover_ox1] k={k} produced "
+                f"{len(child_genes)} genes in {dt:.4f} s, segments={segments}")
+
+        return Chromosome(child_genes, self.container)
         t0 = time.time()
 
         # ---------- helper -------------------------------------------------
