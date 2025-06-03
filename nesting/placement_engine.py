@@ -335,11 +335,22 @@ class PlacementEngine:
         shifted = [(x + x0, y + y0) for x, y in raw]
         piece_poly = Polygon(shifted)
 
+        # Invalid geometries can cause GEOS TopologyExceptions when unions are
+        # performed.  Buffering by zero is a cheap way to clean up minor
+        # self-intersections that may arise from floating point artifacts.
+        if not piece_poly.is_valid:
+            piece_poly = piece_poly.buffer(0)
+
+        if self._exterior_contour is not None and not self._exterior_contour.is_valid:
+            self._exterior_contour = self._exterior_contour.buffer(0)
+
         if self._exterior_contour is None:
             self._exterior_contour = piece_poly
             return
 
         merged = self._exterior_contour.union(piece_poly)
+        if not merged.is_valid:
+            merged = merged.buffer(0)
         self._exterior_contour = merged
         return
 

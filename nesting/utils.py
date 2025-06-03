@@ -12,7 +12,7 @@ import pyclipper
 
 # Point_2 = CGAL_Kernel.Point_2
 
-from shapely.geometry import MultiPoint
+from shapely.geometry import MultiPoint, Polygon, MultiPolygon
 from shapely.ops import unary_union
 
 
@@ -223,14 +223,28 @@ def compute_offset_path(contour: list[tuple[float, float]],
     delta = int(round(allowance * _SCALE))
     solution = pco.Execute(delta)
 
-    offset_paths = []
-    for path in solution:
-        outline = from_clipper(path)
-        xs = [pt[0] for pt in outline]
-        ys = [pt[1] for pt in outline]
-        min_x = min(xs)
-        min_y = min(ys)
-        shifted_outline = [(x - min_x, y - min_y) for x, y in outline]
-        offset_paths += shifted_outline
+    # Convert each returned path to a Shapely polygon
+    polygons = [Polygon(from_clipper(path)) for path in solution]
 
-    return offset_paths
+    # Merge all polygons.  When Pyclipper returns multiple paths for a concave
+    # shape, combining them avoids self‑intersections later on.
+    merged = unary_union(polygons)
+
+    # If the union produced multiple polygons, pick the largest one.  Seam
+    # allowances are expected to be single closed contours.
+    if isinstance(merged, MultiPolygon):
+        merged = max(merged.geoms, key=lambda p: p.area)
+
+    # Occasionally the union may result in an invalid polygon due to self
+    # intersections.  Buffering by ``0`` is a common trick to clean it up.
+    if not merged.is_valid:
+        merged = merged.buffer(0)
+
+    outline = list(merged.exterior.coords)[:-1]
+    xs = [pt[0] for pt in outline]
+    ys = [pt[1] for pt in outline]
+    min_x = min(xs)
+    min_y = min(ys)
+    shifted_outline = [(x - min_x, y - min_y) for x, y in outline]
+
+    return shifted_outline
