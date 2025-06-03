@@ -1,0 +1,1685 @@
+------------------------------------------------------------
+Evolution initialized with 100 chromosomes, 10 elites, 40 offspring, 40 mutants, 10 randoms.
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x1489fd940>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x1489fd940>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x1084ee8a0>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'DEFAULT_PATTERN_PATH': <class 'str'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'PRESERVE_HOLES': <class 'bool'>, 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1'], 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DEFAULT_PATTERN_PATH': 'nesting-assets/Configured_design_specification.json', 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1'], 'SELECTED_DECODER': 'NFP', 'PRESERVE_HOLES': True, 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1', 'OX_K': 1, 'GRAVITATE_STEP': 2, 'POPULATION_SIZE': 100, 'NUM_GENERATIONS': 20, 'MUTATION_RATE': 0.2, 'POPULATION_WEIGHTS': {'elites': 0.1, 'offspring': 0.4, 'mutants': 0.4, 'randoms': 0.1}, 'MUTATION_WEIGHTS': {'rotate': 0, 'swap': 0.4, 'inversion': 0.2, 'insertion': 0, 'scramble': 0, 'split': 0.4}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 1, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs/', 'LOG_TIME': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 0.1, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 180], 'NUM_COPIES': 1, 'CONTAINER_WIDTH_CM': 700, 'CONTAINER_HEIGHT_CM': 200.0, 'SEAM_ALLOWANCE_CM': 1, '__dict__': <function __dict__ at 0x14a51d040>}
+Generating initial population...
+Random chromosome generated with fitness: 0.7515
+Random chromosome generated with fitness: 0.7624
+Random chromosome generated with fitness: 0.7219
+Random chromosome generated with fitness: 0.6987
+Random chromosome generated with fitness: 0.7748
+Random chromosome generated with fitness: 0.7159
+Random chromosome generated with fitness: 0.7280
+Random chromosome generated with fitness: 0.7338
+Random chromosome generated with fitness: 0.7214
+Random chromosome generated with fitness: 0.7072
+Random chromosome generated with fitness: 0.7499
+Random chromosome generated with fitness: 0.6703
+Random chromosome generated with fitness: 0.6740
+Random chromosome generated with fitness: 0.7661
+Random chromosome generated with fitness: 0.7395
+Random chromosome generated with fitness: 0.7703
+Random chromosome generated with fitness: 0.7367
+Random chromosome generated with fitness: 0.7380
+Random chromosome generated with fitness: 0.6837
+Random chromosome generated with fitness: 0.7149
+Random chromosome generated with fitness: 0.7272
+Random chromosome generated with fitness: 0.7630
+Random chromosome generated with fitness: 0.6757
+Random chromosome generated with fitness: 0.7647
+Random chromosome generated with fitness: 0.7302
+Random chromosome generated with fitness: 0.7537
+Random chromosome generated with fitness: 0.7662
+Random chromosome generated with fitness: 0.7089
+Random chromosome generated with fitness: 0.7742
+Random chromosome generated with fitness: 0.6992
+Random chromosome generated with fitness: 0.6908
+Random chromosome generated with fitness: 0.7158
+Random chromosome generated with fitness: 0.7214
+Random chromosome generated with fitness: 0.7778
+Random chromosome generated with fitness: 0.7176
+Random chromosome generated with fitness: 0.7840
+Random chromosome generated with fitness: 0.7148
+Random chromosome generated with fitness: 0.7067
+Random chromosome generated with fitness: 0.7118
+Random chromosome generated with fitness: 0.7531
+Random chromosome generated with fitness: 0.7021
+Random chromosome generated with fitness: 0.7713
+Random chromosome generated with fitness: 0.7566
+Random chromosome generated with fitness: 0.7136
+Random chromosome generated with fitness: 0.7126
+Random chromosome generated with fitness: 0.7414
+Random chromosome generated with fitness: 0.7158
+Random chromosome generated with fitness: 0.7711
+Random chromosome generated with fitness: 0.7316
+Random chromosome generated with fitness: 0.7347
+Random chromosome generated with fitness: 0.6857
+Random chromosome generated with fitness: 0.7584
+Random chromosome generated with fitness: 0.7302
+Random chromosome generated with fitness: 0.7239
+Random chromosome generated with fitness: 0.6763
+Random chromosome generated with fitness: 0.7197
+Random chromosome generated with fitness: 0.7187
+Random chromosome generated with fitness: 0.7339
+Random chromosome generated with fitness: 0.7003
+Random chromosome generated with fitness: 0.7324
+Random chromosome generated with fitness: 0.7320
+Random chromosome generated with fitness: 0.7180
+Random chromosome generated with fitness: 0.7599
+Random chromosome generated with fitness: 0.7558
+Random chromosome generated with fitness: 0.8240
+Random chromosome generated with fitness: 0.7304
+Random chromosome generated with fitness: 0.7377
+Random chromosome generated with fitness: 0.7481
+Random chromosome generated with fitness: 0.7587
+Random chromosome generated with fitness: 0.7409
+Random chromosome generated with fitness: 0.7751
+Random chromosome generated with fitness: 0.7449
+Random chromosome generated with fitness: 0.7184
+Random chromosome generated with fitness: 0.7911
+Random chromosome generated with fitness: 0.6950
+Random chromosome generated with fitness: 0.7476
+Random chromosome generated with fitness: 0.7174
+Random chromosome generated with fitness: 0.7598
+Random chromosome generated with fitness: 0.7083
+Random chromosome generated with fitness: 0.7280
+Random chromosome generated with fitness: 0.7394
+Random chromosome generated with fitness: 0.7143
+Random chromosome generated with fitness: 0.7484
+Random chromosome generated with fitness: 0.6836
+Random chromosome generated with fitness: 0.7076
+Random chromosome generated with fitness: 0.7835
+Random chromosome generated with fitness: 0.7512
+Random chromosome generated with fitness: 0.7246
+Random chromosome generated with fitness: 0.7204
+Random chromosome generated with fitness: 0.7321
+Random chromosome generated with fitness: 0.7063
+Random chromosome generated with fitness: 0.7171
+Random chromosome generated with fitness: 0.7428
+Random chromosome generated with fitness: 0.7415
+Random chromosome generated with fitness: 0.7247
+Random chromosome generated with fitness: 0.7853
+Random chromosome generated with fitness: 0.6839
+Random chromosome generated with fitness: 0.7480
+Random chromosome generated with fitness: 0.7078
+Random chromosome generated with fitness: 0.7899
+------------------------------------------------------------
+Initial population of 100 layouts generated.
+Layout 0: [('right_ftorso_copy1', 90), ('skirt_front', 180), ('right_btorso_copy1', 270), ('left_ftorso_copy1', 90), ('right_btorso', 270), ('left_btorso_copy1', 270), ('left_ftorso', 270), ('skirt_back_copy1', 0), ('skirt_front_copy1', 90), ('right_ftorso', 270), ('skirt_back', 90), ('left_btorso', 90)] | Fitness: 0.7280
+Layout 1: [('left_btorso_copy1', 270), ('right_ftorso_copy1', 270), ('skirt_back_copy1', 180), ('right_ftorso', 90), ('right_btorso_copy1', 0), ('skirt_back', 0), ('skirt_front', 90), ('right_btorso', 270), ('left_ftorso_copy1', 180), ('skirt_front_copy1', 270), ('left_btorso', 180), ('left_ftorso', 90)] | Fitness: 0.7338
+Layout 2: [('left_ftorso_copy1', 0), ('skirt_front_copy1', 180), ('left_btorso_copy1', 0), ('skirt_back', 0), ('right_ftorso', 270), ('skirt_front', 270), ('right_btorso', 0), ('skirt_back_copy1', 270), ('right_btorso_copy1', 270), ('left_btorso', 180), ('right_ftorso_copy1', 270), ('left_ftorso', 0)] | Fitness: 0.7748
+Layout 3: [('right_btorso', 90), ('right_ftorso_copy1', 180), ('skirt_back', 180), ('left_btorso_copy1', 0), ('left_btorso', 0), ('right_ftorso', 270), ('skirt_back_copy1', 0), ('left_ftorso_copy1', 0), ('skirt_front_copy1', 270), ('left_ftorso', 0), ('right_btorso_copy1', 0), ('skirt_front', 0)] | Fitness: 0.6987
+Layout 4: [('right_ftorso_copy1', 0), ('skirt_front', 180), ('right_btorso_copy1', 270), ('left_btorso', 90), ('skirt_back_copy1', 180), ('right_ftorso', 270), ('left_ftorso', 180), ('skirt_back', 180), ('right_btorso', 270), ('left_btorso_copy1', 0), ('skirt_front_copy1', 90), ('left_ftorso_copy1', 90)] | Fitness: 0.7072
+Layout 5: [('left_btorso_copy1', 270), ('skirt_front_copy1', 270), ('left_ftorso_copy1', 270), ('right_btorso', 0), ('skirt_back_copy1', 180), ('left_btorso', 90), ('right_ftorso', 0), ('skirt_front', 180), ('right_ftorso_copy1', 270), ('skirt_back', 270), ('right_btorso_copy1', 0), ('left_ftorso', 270)] | Fitness: 0.7499
+Layout 6: [('skirt_front', 270), ('right_btorso', 90), ('left_ftorso', 180), ('right_ftorso', 0), ('left_btorso_copy1', 270), ('skirt_back', 180), ('right_btorso_copy1', 0), ('right_ftorso_copy1', 180), ('skirt_front_copy1', 270), ('left_ftorso_copy1', 0), ('skirt_back_copy1', 180), ('left_btorso', 270)] | Fitness: 0.7515
+Layout 7: [('skirt_back_copy1', 270), ('left_btorso', 90), ('right_ftorso_copy1', 180), ('left_btorso_copy1', 270), ('skirt_front_copy1', 180), ('skirt_back', 90), ('left_ftorso_copy1', 180), ('left_ftorso', 0), ('right_btorso', 90), ('skirt_front', 90), ('right_btorso_copy1', 270), ('right_ftorso', 180)] | Fitness: 0.7159
+Layout 8: [('right_btorso', 270), ('right_btorso_copy1', 270), ('left_btorso', 0), ('skirt_back_copy1', 90), ('skirt_front_copy1', 270), ('skirt_back', 0), ('right_ftorso_copy1', 180), ('left_ftorso_copy1', 270), ('right_ftorso', 180), ('left_ftorso', 180), ('skirt_front', 180), ('left_btorso_copy1', 180)] | Fitness: 0.7214
+Layout 9: [('right_btorso_copy1', 0), ('skirt_back_copy1', 0), ('left_ftorso_copy1', 0), ('right_ftorso_copy1', 90), ('skirt_front', 270), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 180), ('skirt_front_copy1', 270), ('skirt_back', 0), ('right_ftorso', 90), ('left_btorso_copy1', 0)] | Fitness: 0.6703
+Layout 10: [('left_btorso', 90), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('skirt_front_copy1', 90), ('left_ftorso', 90), ('right_btorso', 270), ('left_ftorso_copy1', 0), ('skirt_front', 180), ('right_ftorso_copy1', 0), ('skirt_back', 0), ('skirt_back_copy1', 0), ('right_ftorso', 90)] | Fitness: 0.7624
+Layout 11: [('skirt_back', 180), ('left_btorso_copy1', 0), ('right_ftorso_copy1', 270), ('skirt_front_copy1', 0), ('left_btorso', 180), ('right_btorso_copy1', 0), ('skirt_front', 0), ('right_ftorso', 90), ('skirt_back_copy1', 0), ('left_ftorso_copy1', 270), ('right_btorso', 0), ('left_ftorso', 0)] | Fitness: 0.7219
+Layout 12: [('left_ftorso_copy1', 270), ('skirt_back', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('skirt_front_copy1', 90), ('left_ftorso', 270), ('left_btorso', 180), ('skirt_back_copy1', 270), ('right_btorso', 0), ('skirt_front', 90), ('right_ftorso_copy1', 180), ('right_ftorso', 180)] | Fitness: 0.7661
+Layout 13: [('left_btorso', 270), ('skirt_front', 270), ('skirt_front_copy1', 270), ('right_ftorso', 90), ('left_ftorso', 0), ('left_btorso_copy1', 180), ('right_btorso_copy1', 270), ('left_ftorso_copy1', 0), ('skirt_back', 180), ('right_btorso', 180), ('skirt_back_copy1', 270), ('right_ftorso_copy1', 180)] | Fitness: 0.7703
+Layout 14: [('skirt_back', 0), ('right_ftorso_copy1', 180), ('right_btorso', 0), ('right_btorso_copy1', 0), ('skirt_front_copy1', 270), ('right_ftorso', 0), ('left_ftorso_copy1', 0), ('skirt_front', 0), ('left_btorso_copy1', 270), ('left_ftorso', 90), ('skirt_back_copy1', 90), ('left_btorso', 270)] | Fitness: 0.7367
+Layout 15: [('right_ftorso', 180), ('left_btorso', 270), ('skirt_front', 180), ('skirt_back', 0), ('left_ftorso', 180), ('left_ftorso_copy1', 0), ('right_btorso', 90), ('skirt_front_copy1', 180), ('left_btorso_copy1', 90), ('skirt_back_copy1', 180), ('right_ftorso_copy1', 270), ('right_btorso_copy1', 180)] | Fitness: 0.7272
+Layout 16: [('skirt_back', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('right_btorso', 90), ('left_ftorso', 270), ('right_ftorso', 0), ('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('skirt_front_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 270), ('skirt_front', 90)] | Fitness: 0.7395
+Layout 17: [('right_btorso', 90), ('left_ftorso', 90), ('skirt_back', 270), ('skirt_front_copy1', 270), ('skirt_front', 270), ('right_ftorso', 180), ('right_btorso_copy1', 90), ('right_ftorso_copy1', 180), ('left_btorso', 180), ('left_btorso_copy1', 180), ('skirt_back_copy1', 270), ('left_ftorso_copy1', 180)] | Fitness: 0.6740
+Layout 18: [('right_btorso', 180), ('skirt_front_copy1', 0), ('left_btorso', 180), ('skirt_back', 90), ('right_btorso_copy1', 270), ('skirt_back_copy1', 180), ('right_ftorso_copy1', 0), ('right_ftorso', 90), ('left_btorso_copy1', 90), ('left_ftorso_copy1', 90), ('left_ftorso', 180), ('skirt_front', 90)] | Fitness: 0.7380
+Layout 19: [('left_ftorso_copy1', 90), ('right_btorso', 270), ('left_ftorso', 270), ('left_btorso', 180), ('right_btorso_copy1', 180), ('skirt_back_copy1', 270), ('skirt_back', 180), ('right_ftorso', 180), ('skirt_front', 180), ('right_ftorso_copy1', 0), ('left_btorso_copy1', 0), ('skirt_front_copy1', 0)] | Fitness: 0.6837
+Layout 20: [('right_btorso', 90), ('left_btorso_copy1', 180), ('skirt_front', 270), ('left_ftorso', 0), ('skirt_front_copy1', 0), ('left_ftorso_copy1', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 90), ('skirt_back_copy1', 90), ('right_btorso_copy1', 180), ('skirt_back', 90), ('left_btorso', 90)] | Fitness: 0.7149
+Layout 21: [('skirt_front_copy1', 0), ('left_btorso_copy1', 0), ('skirt_back_copy1', 0), ('left_ftorso_copy1', 0), ('left_btorso', 90), ('right_ftorso', 270), ('right_btorso_copy1', 90), ('right_ftorso_copy1', 270), ('skirt_front', 180), ('left_ftorso', 0), ('skirt_back', 270), ('right_btorso', 90)] | Fitness: 0.6757
+Layout 22: [('right_ftorso', 90), ('left_btorso_copy1', 90), ('skirt_back_copy1', 270), ('skirt_front_copy1', 270), ('left_btorso', 90), ('right_btorso_copy1', 0), ('left_ftorso_copy1', 270), ('skirt_back', 270), ('right_btorso', 180), ('skirt_front', 270), ('right_ftorso_copy1', 270), ('left_ftorso', 0)] | Fitness: 0.7630
+Layout 23: [('skirt_front_copy1', 0), ('skirt_front', 90), ('right_btorso', 0), ('left_ftorso_copy1', 180), ('skirt_back', 0), ('skirt_back_copy1', 0), ('left_btorso_copy1', 180), ('right_ftorso', 0), ('left_ftorso', 90), ('right_btorso_copy1', 90), ('right_ftorso_copy1', 90), ('left_btorso', 180)] | Fitness: 0.7647
+Layout 24: [('right_btorso', 0), ('right_btorso_copy1', 90), ('skirt_front_copy1', 90), ('skirt_back', 0), ('left_ftorso', 0), ('skirt_front', 0), ('right_ftorso_copy1', 180), ('left_btorso_copy1', 270), ('left_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('right_ftorso', 270), ('left_btorso', 90)] | Fitness: 0.7089
+Layout 25: [('skirt_back', 180), ('right_btorso', 0), ('skirt_back_copy1', 270), ('left_btorso', 270), ('skirt_front_copy1', 270), ('left_btorso_copy1', 180), ('right_btorso_copy1', 270), ('left_ftorso', 180), ('right_ftorso', 90), ('left_ftorso_copy1', 180), ('right_ftorso_copy1', 90), ('skirt_front', 270)] | Fitness: 0.7302
+Layout 26: [('left_ftorso', 270), ('skirt_front_copy1', 90), ('right_btorso_copy1', 180), ('right_btorso', 180), ('right_ftorso', 270), ('left_ftorso_copy1', 180), ('skirt_front', 90), ('left_btorso_copy1', 180), ('skirt_back_copy1', 180), ('right_ftorso_copy1', 0), ('left_btorso', 180), ('skirt_back', 90)] | Fitness: 0.7662
+Layout 27: [('skirt_back', 270), ('left_ftorso', 90), ('left_ftorso_copy1', 0), ('skirt_front_copy1', 90), ('right_ftorso_copy1', 270), ('right_btorso', 270), ('right_btorso_copy1', 270), ('skirt_front', 180), ('left_btorso', 90), ('right_ftorso', 180), ('left_btorso_copy1', 0), ('skirt_back_copy1', 180)] | Fitness: 0.7537
+Layout 28: [('left_ftorso_copy1', 0), ('left_btorso_copy1', 90), ('skirt_back_copy1', 270), ('left_btorso', 0), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('skirt_front', 180), ('right_ftorso_copy1', 270), ('left_ftorso', 90), ('skirt_back', 90), ('skirt_front_copy1', 90), ('right_btorso', 270)] | Fitness: 0.6908
+Layout 29: [('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('right_btorso_copy1', 90), ('right_btorso', 90), ('skirt_back', 0), ('skirt_back_copy1', 90), ('skirt_front_copy1', 90), ('left_btorso_copy1', 0), ('right_ftorso', 270), ('right_ftorso_copy1', 90), ('skirt_front', 270)] | Fitness: 0.7742
+Layout 30: [('left_ftorso', 270), ('right_ftorso', 0), ('left_ftorso_copy1', 0), ('skirt_back', 0), ('right_btorso', 180), ('skirt_back_copy1', 90), ('skirt_front', 270), ('right_ftorso_copy1', 270), ('skirt_front_copy1', 0), ('left_btorso_copy1', 180), ('left_btorso', 90), ('right_btorso_copy1', 270)] | Fitness: 0.7158
+Layout 31: [('skirt_back_copy1', 0), ('right_ftorso_copy1', 90), ('right_ftorso', 90), ('skirt_front', 180), ('right_btorso', 90), ('right_btorso_copy1', 90), ('skirt_front_copy1', 180), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso_copy1', 90), ('left_ftorso', 270), ('skirt_back', 180)] | Fitness: 0.7778
+Layout 32: [('left_ftorso_copy1', 90), ('right_ftorso', 90), ('skirt_front_copy1', 0), ('right_ftorso_copy1', 90), ('skirt_back_copy1', 270), ('left_btorso_copy1', 180), ('right_btorso', 0), ('skirt_back', 270), ('left_btorso', 270), ('skirt_front', 270), ('left_ftorso', 270), ('right_btorso_copy1', 90)] | Fitness: 0.7214
+Layout 33: [('right_btorso_copy1', 90), ('left_btorso_copy1', 90), ('right_ftorso_copy1', 90), ('skirt_back_copy1', 90), ('right_btorso', 90), ('left_ftorso', 270), ('left_btorso', 180), ('right_ftorso', 180), ('skirt_front_copy1', 90), ('left_ftorso_copy1', 0), ('skirt_back', 0), ('skirt_front', 0)] | Fitness: 0.6992
+Layout 34: [('left_btorso', 180), ('skirt_back_copy1', 270), ('skirt_front_copy1', 0), ('right_ftorso_copy1', 270), ('left_btorso_copy1', 180), ('right_btorso_copy1', 270), ('skirt_front', 0), ('left_ftorso_copy1', 270), ('right_btorso', 90), ('left_ftorso', 270), ('right_ftorso', 0), ('skirt_back', 0)] | Fitness: 0.7176
+Layout 35: [('skirt_front', 90), ('left_btorso_copy1', 0), ('right_btorso', 180), ('left_btorso', 0), ('skirt_back', 90), ('skirt_front_copy1', 270), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('left_ftorso', 90), ('skirt_back_copy1', 0), ('left_ftorso_copy1', 180), ('right_btorso_copy1', 270)] | Fitness: 0.7840
+Layout 36: [('left_ftorso_copy1', 0), ('skirt_front', 90), ('right_btorso', 0), ('skirt_front_copy1', 0), ('skirt_back', 90), ('right_ftorso_copy1', 180), ('skirt_back_copy1', 90), ('right_btorso_copy1', 180), ('left_btorso', 90), ('left_ftorso', 270), ('left_btorso_copy1', 0), ('right_ftorso', 0)] | Fitness: 0.7148
+Layout 37: [('left_btorso', 90), ('skirt_back_copy1', 180), ('left_ftorso_copy1', 270), ('right_btorso', 180), ('skirt_back', 270), ('right_btorso_copy1', 90), ('right_ftorso_copy1', 90), ('left_ftorso', 0), ('skirt_front_copy1', 270), ('right_ftorso', 270), ('skirt_front', 90), ('left_btorso_copy1', 270)] | Fitness: 0.7067
+Layout 38: [('left_ftorso', 0), ('left_ftorso_copy1', 90), ('skirt_front', 0), ('right_btorso', 90), ('right_btorso_copy1', 0), ('skirt_back', 180), ('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('right_ftorso', 0), ('skirt_front_copy1', 0), ('left_btorso_copy1', 270), ('left_btorso', 270)] | Fitness: 0.7118
+Layout 39: [('skirt_front', 0), ('left_btorso', 270), ('right_btorso', 0), ('right_btorso_copy1', 180), ('right_ftorso_copy1', 0), ('left_btorso_copy1', 180), ('skirt_back_copy1', 0), ('right_ftorso', 270), ('left_ftorso', 90), ('skirt_front_copy1', 180), ('left_ftorso_copy1', 180), ('skirt_back', 270)] | Fitness: 0.7531
+Layout 40: [('right_btorso', 180), ('left_ftorso', 0), ('skirt_front', 270), ('left_btorso', 90), ('left_btorso_copy1', 270), ('right_ftorso', 90), ('left_ftorso_copy1', 90), ('skirt_back_copy1', 180), ('right_ftorso_copy1', 180), ('skirt_back', 0), ('skirt_front_copy1', 180), ('right_btorso_copy1', 180)] | Fitness: 0.7021
+Layout 41: [('right_btorso', 270), ('right_ftorso_copy1', 180), ('skirt_back', 90), ('left_ftorso_copy1', 90), ('skirt_front_copy1', 90), ('left_ftorso', 0), ('right_btorso_copy1', 270), ('left_btorso', 270), ('left_btorso_copy1', 180), ('skirt_back_copy1', 90), ('right_ftorso', 180), ('skirt_front', 270)] | Fitness: 0.7713
+Layout 42: [('right_btorso_copy1', 270), ('skirt_front', 180), ('left_ftorso_copy1', 180), ('right_ftorso_copy1', 90), ('left_btorso_copy1', 180), ('right_btorso', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 180), ('left_btorso', 180), ('left_ftorso', 90), ('right_ftorso', 0), ('skirt_back', 270)] | Fitness: 0.7566
+Layout 43: [('right_ftorso', 180), ('right_ftorso_copy1', 180), ('left_ftorso_copy1', 180), ('left_btorso_copy1', 0), ('skirt_front', 270), ('left_ftorso', 180), ('right_btorso_copy1', 90), ('right_btorso', 0), ('skirt_back_copy1', 270), ('skirt_back', 180), ('left_btorso', 180), ('skirt_front_copy1', 270)] | Fitness: 0.7136
+Layout 44: [('left_ftorso_copy1', 180), ('left_btorso_copy1', 180), ('skirt_front_copy1', 0), ('right_ftorso_copy1', 90), ('skirt_back_copy1', 270), ('right_ftorso', 0), ('skirt_front', 270), ('right_btorso_copy1', 270), ('skirt_back', 0), ('right_btorso', 0), ('left_btorso', 90), ('left_ftorso', 270)] | Fitness: 0.7126
+Layout 45: [('skirt_front', 0), ('right_btorso', 270), ('right_btorso_copy1', 270), ('left_btorso', 180), ('skirt_back', 180), ('skirt_front_copy1', 90), ('left_ftorso', 180), ('left_btorso_copy1', 180), ('left_ftorso_copy1', 0), ('skirt_back_copy1', 270), ('right_ftorso', 0), ('right_ftorso_copy1', 0)] | Fitness: 0.7414
+Layout 46: [('right_btorso', 180), ('left_ftorso_copy1', 270), ('left_ftorso', 180), ('right_ftorso', 90), ('right_btorso_copy1', 270), ('left_btorso', 270), ('left_btorso_copy1', 0), ('skirt_back_copy1', 90), ('skirt_front_copy1', 90), ('right_ftorso_copy1', 270), ('skirt_front', 0), ('skirt_back', 90)] | Fitness: 0.7158
+Layout 47: [('skirt_back', 0), ('skirt_front_copy1', 180), ('skirt_front', 90), ('left_ftorso_copy1', 0), ('right_btorso', 270), ('right_ftorso', 90), ('left_btorso', 180), ('left_ftorso', 90), ('skirt_back_copy1', 270), ('right_ftorso_copy1', 0), ('left_btorso_copy1', 0), ('right_btorso_copy1', 270)] | Fitness: 0.7711
+Layout 48: [('left_btorso_copy1', 180), ('left_btorso', 180), ('skirt_back', 90), ('right_ftorso', 90), ('left_ftorso', 180), ('right_btorso_copy1', 270), ('skirt_front_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_back_copy1', 270), ('left_ftorso_copy1', 0), ('skirt_front', 90), ('right_btorso', 90)] | Fitness: 0.7316
+Layout 49: [('left_ftorso_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 270), ('skirt_back', 90), ('right_btorso', 270), ('left_ftorso', 0), ('right_btorso_copy1', 0), ('right_ftorso_copy1', 270), ('right_ftorso', 270), ('skirt_front_copy1', 180), ('left_btorso_copy1', 180), ('left_btorso', 180)] | Fitness: 0.7347
+Layout 50: [('left_ftorso_copy1', 0), ('right_ftorso', 90), ('skirt_back', 180), ('right_btorso', 270), ('skirt_back_copy1', 180), ('left_btorso_copy1', 0), ('left_ftorso', 180), ('left_btorso', 90), ('right_ftorso_copy1', 270), ('skirt_front', 90), ('skirt_front_copy1', 180), ('right_btorso_copy1', 270)] | Fitness: 0.6857
+Layout 51: [('right_btorso', 90), ('left_btorso_copy1', 270), ('skirt_front', 180), ('skirt_back_copy1', 0), ('left_ftorso_copy1', 180), ('skirt_front_copy1', 180), ('right_ftorso', 0), ('skirt_back', 270), ('left_ftorso', 180), ('right_btorso_copy1', 0), ('left_btorso', 180), ('right_ftorso_copy1', 270)] | Fitness: 0.7239
+Layout 52: [('left_ftorso_copy1', 90), ('right_btorso_copy1', 0), ('skirt_back_copy1', 270), ('left_ftorso', 270), ('skirt_back', 90), ('right_btorso', 0), ('right_ftorso_copy1', 270), ('skirt_front_copy1', 0), ('skirt_front', 180), ('right_ftorso', 180), ('left_btorso', 270), ('left_btorso_copy1', 270)] | Fitness: 0.7302
+Layout 53: [('right_ftorso_copy1', 0), ('left_ftorso_copy1', 0), ('left_ftorso', 270), ('right_btorso_copy1', 270), ('right_btorso', 0), ('skirt_front', 0), ('left_btorso', 180), ('skirt_front_copy1', 0), ('left_btorso_copy1', 270), ('skirt_back', 90), ('skirt_back_copy1', 180), ('right_ftorso', 270)] | Fitness: 0.6763
+Layout 54: [('skirt_front', 0), ('left_ftorso_copy1', 0), ('skirt_front_copy1', 270), ('skirt_back', 0), ('right_ftorso', 90), ('skirt_back_copy1', 0), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 180), ('left_btorso', 270), ('right_btorso', 0), ('left_ftorso', 0), ('left_btorso_copy1', 270)] | Fitness: 0.7584
+Layout 55: [('skirt_back_copy1', 180), ('left_btorso', 180), ('left_ftorso_copy1', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 0), ('left_ftorso', 270), ('right_ftorso', 0), ('skirt_back', 180), ('skirt_front_copy1', 0), ('skirt_front', 0), ('right_ftorso_copy1', 90)] | Fitness: 0.7187
+Layout 56: [('skirt_back', 180), ('left_ftorso_copy1', 0), ('right_btorso', 0), ('left_ftorso', 0), ('skirt_front', 270), ('left_btorso', 90), ('right_btorso_copy1', 180), ('right_ftorso', 90), ('skirt_back_copy1', 180), ('left_btorso_copy1', 180), ('right_ftorso_copy1', 270), ('skirt_front_copy1', 180)] | Fitness: 0.7197
+Layout 57: [('skirt_back', 90), ('right_ftorso_copy1', 90), ('left_ftorso_copy1', 180), ('right_ftorso', 270), ('left_btorso_copy1', 0), ('left_ftorso', 180), ('skirt_front', 90), ('left_btorso', 0), ('right_btorso', 180), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso_copy1', 90)] | Fitness: 0.7339
+Layout 58: [('left_ftorso', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('left_btorso', 270), ('left_ftorso_copy1', 270), ('right_btorso', 90), ('skirt_front_copy1', 180), ('right_btorso_copy1', 90), ('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_back', 270), ('skirt_front', 180)] | Fitness: 0.7003
+Layout 59: [('left_ftorso', 0), ('skirt_back_copy1', 90), ('left_btorso', 0), ('right_ftorso_copy1', 90), ('skirt_front_copy1', 0), ('left_btorso_copy1', 0), ('left_ftorso_copy1', 180), ('right_btorso_copy1', 180), ('skirt_front', 180), ('right_ftorso', 180), ('right_btorso', 180), ('skirt_back', 270)] | Fitness: 0.7324
+Layout 60: [('left_btorso_copy1', 270), ('skirt_back', 180), ('left_ftorso', 180), ('left_ftorso_copy1', 270), ('right_ftorso', 180), ('skirt_front_copy1', 180), ('skirt_front', 270), ('skirt_back_copy1', 180), ('right_btorso', 0), ('right_btorso_copy1', 180), ('right_ftorso_copy1', 0), ('left_btorso', 90)] | Fitness: 0.7320
+Layout 61: [('skirt_front', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 270), ('skirt_front_copy1', 90), ('left_btorso_copy1', 180), ('right_ftorso', 0), ('skirt_back_copy1', 0), ('right_ftorso_copy1', 90), ('right_btorso_copy1', 0), ('left_ftorso_copy1', 180), ('skirt_back', 180)] | Fitness: 0.7180
+Layout 62: [('skirt_back_copy1', 270), ('skirt_front_copy1', 0), ('skirt_back', 180), ('left_btorso', 180), ('right_btorso', 90), ('right_ftorso', 270), ('skirt_front', 0), ('left_ftorso_copy1', 90), ('right_ftorso_copy1', 180), ('right_btorso_copy1', 180), ('left_btorso_copy1', 90), ('left_ftorso', 180)] | Fitness: 0.7599
+Layout 63: [('right_ftorso_copy1', 90), ('right_ftorso', 90), ('skirt_back_copy1', 180), ('left_ftorso', 90), ('left_ftorso_copy1', 180), ('right_btorso', 180), ('skirt_back', 0), ('left_btorso', 0), ('skirt_front', 0), ('left_btorso_copy1', 180), ('skirt_front_copy1', 90), ('right_btorso_copy1', 90)] | Fitness: 0.7558
+Layout 64: [('skirt_front', 180), ('right_ftorso', 180), ('skirt_front_copy1', 0), ('left_btorso_copy1', 270), ('right_btorso_copy1', 0), ('right_ftorso_copy1', 270), ('left_ftorso', 0), ('skirt_back', 270), ('left_btorso', 0), ('right_btorso', 0), ('skirt_back_copy1', 90), ('left_ftorso_copy1', 0)] | Fitness: 0.7481
+Layout 65: [('right_btorso_copy1', 90), ('skirt_back_copy1', 90), ('left_btorso_copy1', 180), ('left_ftorso', 0), ('skirt_front_copy1', 90), ('left_ftorso_copy1', 270), ('skirt_back', 0), ('left_btorso', 0), ('right_ftorso_copy1', 0), ('right_ftorso', 0), ('skirt_front', 180), ('right_btorso', 0)] | Fitness: 0.7304
+Layout 66: [('right_ftorso', 180), ('skirt_back', 180), ('skirt_front_copy1', 180), ('right_btorso', 0), ('right_btorso_copy1', 180), ('right_ftorso_copy1', 90), ('left_ftorso_copy1', 270), ('left_ftorso', 0), ('left_btorso', 90), ('skirt_front', 0), ('skirt_back_copy1', 90), ('left_btorso_copy1', 180)] | Fitness: 0.7377
+Layout 67: [('skirt_front_copy1', 270), ('right_btorso', 270), ('left_ftorso', 90), ('right_btorso_copy1', 270), ('skirt_back', 180), ('skirt_back_copy1', 180), ('skirt_front', 0), ('left_btorso', 0), ('left_ftorso_copy1', 90), ('right_ftorso', 90), ('left_btorso_copy1', 270), ('right_ftorso_copy1', 90)] | Fitness: 0.7587
+Layout 68: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Layout 69: [('right_ftorso_copy1', 180), ('right_ftorso', 180), ('skirt_front_copy1', 0), ('left_btorso', 90), ('left_ftorso', 180), ('skirt_front', 0), ('right_btorso', 0), ('skirt_back', 90), ('right_btorso_copy1', 270), ('left_ftorso_copy1', 90), ('skirt_back_copy1', 270), ('left_btorso_copy1', 180)] | Fitness: 0.7409
+Layout 70: [('right_btorso', 180), ('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('left_ftorso', 180), ('left_ftorso_copy1', 270), ('skirt_front', 90), ('left_btorso', 0), ('right_ftorso_copy1', 0), ('skirt_back', 0), ('left_btorso_copy1', 180)] | Fitness: 0.7751
+Layout 71: [('skirt_front', 90), ('left_btorso', 270), ('right_btorso_copy1', 0), ('left_ftorso', 180), ('skirt_back', 0), ('right_btorso', 0), ('left_ftorso_copy1', 90), ('right_ftorso_copy1', 270), ('left_btorso_copy1', 180), ('right_ftorso', 0), ('skirt_front_copy1', 180), ('skirt_back_copy1', 270)] | Fitness: 0.7449
+Layout 72: [('left_ftorso', 180), ('right_btorso', 90), ('skirt_back_copy1', 90), ('left_ftorso_copy1', 270), ('left_btorso', 90), ('left_btorso_copy1', 270), ('skirt_back', 90), ('right_btorso_copy1', 270), ('skirt_front', 270), ('skirt_front_copy1', 90), ('right_ftorso_copy1', 180), ('right_ftorso', 90)] | Fitness: 0.7184
+Layout 73: [('left_btorso_copy1', 0), ('skirt_back_copy1', 270), ('skirt_front', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 270), ('right_btorso_copy1', 90), ('left_btorso', 180), ('skirt_front_copy1', 270), ('right_ftorso', 180), ('skirt_back', 90), ('right_ftorso_copy1', 90), ('right_btorso', 90)] | Fitness: 0.6950
+Layout 74: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('skirt_front', 270)] | Fitness: 0.7911
+Layout 75: [('skirt_back_copy1', 0), ('left_btorso_copy1', 180), ('right_btorso_copy1', 0), ('left_btorso', 180), ('skirt_front_copy1', 0), ('right_ftorso', 180), ('left_ftorso', 270), ('right_ftorso_copy1', 90), ('left_ftorso_copy1', 90), ('skirt_front', 90), ('right_btorso', 0), ('skirt_back', 90)] | Fitness: 0.7476
+Layout 76: [('left_btorso', 90), ('left_btorso_copy1', 0), ('skirt_back_copy1', 270), ('left_ftorso_copy1', 90), ('skirt_front_copy1', 0), ('right_ftorso_copy1', 0), ('left_ftorso', 0), ('right_ftorso', 270), ('right_btorso', 270), ('skirt_back', 90), ('right_btorso_copy1', 0), ('skirt_front', 0)] | Fitness: 0.7174
+Layout 77: [('left_ftorso_copy1', 180), ('left_btorso', 90), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('right_btorso', 0), ('skirt_back_copy1', 90), ('skirt_back', 0), ('left_btorso_copy1', 0), ('right_ftorso', 0), ('right_btorso_copy1', 90), ('skirt_front', 0), ('skirt_front_copy1', 0)] | Fitness: 0.7598
+Layout 78: [('left_ftorso', 0), ('skirt_back', 180), ('right_btorso', 270), ('right_ftorso', 180), ('right_btorso_copy1', 0), ('skirt_back_copy1', 180), ('skirt_front', 0), ('left_btorso', 270), ('right_ftorso_copy1', 180), ('left_btorso_copy1', 180), ('skirt_front_copy1', 180), ('left_ftorso_copy1', 180)] | Fitness: 0.7083
+Layout 79: [('left_ftorso', 90), ('left_btorso', 180), ('skirt_back', 0), ('right_btorso', 270), ('skirt_front_copy1', 90), ('left_btorso_copy1', 90), ('right_ftorso_copy1', 270), ('skirt_front', 270), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('skirt_back_copy1', 90), ('right_btorso_copy1', 270)] | Fitness: 0.7280
+Layout 80: [('skirt_back', 270), ('right_btorso', 270), ('left_ftorso', 180), ('skirt_front_copy1', 0), ('right_ftorso_copy1', 0), ('left_btorso_copy1', 90), ('right_ftorso', 270), ('left_btorso', 90), ('skirt_back_copy1', 180), ('skirt_front', 270), ('left_ftorso_copy1', 270), ('right_btorso_copy1', 270)] | Fitness: 0.7394
+Layout 81: [('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 270), ('skirt_front', 0), ('left_ftorso_copy1', 90), ('left_btorso_copy1', 0), ('right_btorso', 270), ('right_ftorso_copy1', 270), ('skirt_back_copy1', 90), ('right_ftorso', 270), ('skirt_back', 180), ('right_btorso_copy1', 270)] | Fitness: 0.7143
+Layout 82: [('skirt_front_copy1', 270), ('right_ftorso_copy1', 90), ('skirt_front', 0), ('right_btorso_copy1', 0), ('right_ftorso', 0), ('skirt_back_copy1', 90), ('left_btorso_copy1', 0), ('skirt_back', 0), ('right_btorso', 180), ('left_ftorso_copy1', 270), ('left_btorso', 180), ('left_ftorso', 270)] | Fitness: 0.7484
+Layout 83: [('skirt_front', 0), ('skirt_back', 270), ('left_btorso_copy1', 270), ('right_ftorso_copy1', 90), ('right_ftorso', 0), ('left_ftorso_copy1', 270), ('skirt_front_copy1', 90), ('right_btorso', 180), ('skirt_back_copy1', 180), ('left_btorso', 270), ('right_btorso_copy1', 0), ('left_ftorso', 180)] | Fitness: 0.7076
+Layout 84: [('left_btorso_copy1', 180), ('skirt_front_copy1', 270), ('left_ftorso', 90), ('left_btorso', 180), ('skirt_back', 90), ('right_ftorso', 270), ('left_ftorso_copy1', 90), ('skirt_front', 180), ('right_btorso', 90), ('skirt_back_copy1', 270), ('right_ftorso_copy1', 180), ('right_btorso_copy1', 90)] | Fitness: 0.6836
+Layout 85: [('right_btorso', 0), ('skirt_front', 90), ('left_ftorso_copy1', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 180), ('right_ftorso_copy1', 180), ('left_btorso_copy1', 90), ('right_btorso_copy1', 180), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('skirt_back', 180)] | Fitness: 0.7835
+Layout 86: [('right_ftorso', 0), ('left_btorso', 0), ('skirt_front_copy1', 90), ('right_ftorso_copy1', 180), ('skirt_back', 90), ('skirt_back_copy1', 0), ('left_ftorso', 180), ('skirt_front', 0), ('right_btorso', 270), ('left_ftorso_copy1', 180), ('left_btorso_copy1', 90), ('right_btorso_copy1', 270)] | Fitness: 0.7246
+Layout 87: [('skirt_front', 180), ('skirt_front_copy1', 90), ('right_btorso', 90), ('left_ftorso', 0), ('left_btorso_copy1', 270), ('skirt_back', 270), ('right_ftorso', 270), ('skirt_back_copy1', 0), ('right_btorso_copy1', 90), ('left_btorso', 270), ('right_ftorso_copy1', 180), ('left_ftorso_copy1', 270)] | Fitness: 0.7512
+Layout 88: [('right_ftorso_copy1', 180), ('skirt_front', 180), ('left_btorso', 0), ('skirt_back', 270), ('skirt_back_copy1', 0), ('right_btorso_copy1', 270), ('right_ftorso', 270), ('left_btorso_copy1', 0), ('skirt_front_copy1', 270), ('left_ftorso_copy1', 90), ('left_ftorso', 270), ('right_btorso', 90)] | Fitness: 0.7204
+Layout 89: [('right_ftorso_copy1', 270), ('right_ftorso', 90), ('left_ftorso_copy1', 90), ('left_btorso', 180), ('skirt_back_copy1', 180), ('right_btorso_copy1', 90), ('skirt_front', 270), ('skirt_back', 90), ('left_btorso_copy1', 180), ('skirt_front_copy1', 270), ('left_ftorso', 270), ('right_btorso', 90)] | Fitness: 0.7321
+Layout 90: [('skirt_front_copy1', 0), ('right_ftorso', 90), ('right_btorso', 0), ('right_ftorso_copy1', 0), ('skirt_front', 0), ('left_ftorso', 270), ('left_btorso', 0), ('skirt_back', 270), ('skirt_back_copy1', 0), ('left_btorso_copy1', 270), ('right_btorso_copy1', 180), ('left_ftorso_copy1', 270)] | Fitness: 0.7171
+Layout 91: [('left_ftorso', 0), ('skirt_front_copy1', 270), ('skirt_back', 90), ('skirt_back_copy1', 0), ('right_ftorso', 0), ('left_btorso_copy1', 0), ('skirt_front', 0), ('left_btorso', 180), ('right_btorso', 180), ('left_ftorso_copy1', 0), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270)] | Fitness: 0.7428
+Layout 92: [('left_btorso', 90), ('skirt_back_copy1', 90), ('right_ftorso_copy1', 180), ('right_ftorso', 180), ('skirt_back', 0), ('left_ftorso_copy1', 180), ('skirt_front', 90), ('right_btorso_copy1', 0), ('left_ftorso', 90), ('left_btorso_copy1', 0), ('skirt_front_copy1', 90), ('right_btorso', 0)] | Fitness: 0.7415
+Layout 93: [('skirt_back_copy1', 0), ('left_ftorso', 270), ('right_ftorso_copy1', 90), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('skirt_back', 270), ('right_ftorso', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 180), ('right_btorso', 270), ('skirt_front_copy1', 180), ('skirt_front', 90)] | Fitness: 0.7063
+Layout 94: [('left_ftorso_copy1', 90), ('skirt_back', 180), ('right_btorso', 180), ('left_btorso', 90), ('skirt_front', 90), ('right_btorso_copy1', 270), ('skirt_back_copy1', 270), ('left_ftorso', 90), ('skirt_front_copy1', 90), ('left_btorso_copy1', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 270)] | Fitness: 0.7247
+Layout 95: [('skirt_front', 90), ('right_btorso', 270), ('right_btorso_copy1', 270), ('skirt_back_copy1', 270), ('right_ftorso_copy1', 180), ('right_ftorso', 0), ('left_btorso', 90), ('left_ftorso', 270), ('left_ftorso_copy1', 90), ('skirt_front_copy1', 270), ('left_btorso_copy1', 0), ('skirt_back', 270)] | Fitness: 0.7853
+Layout 96: [('right_ftorso', 90), ('left_btorso', 90), ('skirt_front', 270), ('right_ftorso_copy1', 270), ('left_ftorso', 0), ('skirt_back', 90), ('skirt_front_copy1', 270), ('left_btorso_copy1', 90), ('right_btorso_copy1', 90), ('left_ftorso_copy1', 0), ('right_btorso', 0), ('skirt_back_copy1', 90)] | Fitness: 0.6839
+Layout 97: [('right_ftorso', 180), ('right_ftorso_copy1', 270), ('skirt_back_copy1', 0), ('left_ftorso', 270), ('left_btorso_copy1', 0), ('left_btorso', 90), ('skirt_front', 270), ('right_btorso', 90), ('left_ftorso_copy1', 270), ('skirt_back', 0), ('right_btorso_copy1', 270), ('skirt_front_copy1', 90)] | Fitness: 0.7480
+Layout 98: [('right_btorso', 180), ('skirt_back_copy1', 270), ('right_ftorso', 90), ('skirt_front_copy1', 180), ('left_ftorso_copy1', 180), ('left_btorso', 180), ('skirt_front', 0), ('skirt_back', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 270), ('left_ftorso', 180), ('right_ftorso_copy1', 180)] | Fitness: 0.7078
+Layout 99: [('right_ftorso_copy1', 270), ('left_ftorso_copy1', 90), ('left_btorso', 90), ('right_btorso_copy1', 0), ('skirt_front_copy1', 90), ('skirt_front', 270), ('left_btorso_copy1', 180), ('skirt_back', 0), ('right_btorso', 270), ('left_ftorso', 180), ('skirt_back_copy1', 0), ('right_ftorso', 270)] | Fitness: 0.7899
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8240
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('skirt_front', 270)] | Fitness: 0.7911
+Elite: [('right_ftorso_copy1', 270), ('left_ftorso_copy1', 90), ('left_btorso', 90), ('right_btorso_copy1', 0), ('skirt_front_copy1', 90), ('skirt_front', 270), ('left_btorso_copy1', 180), ('skirt_back', 0), ('right_btorso', 270), ('left_ftorso', 180), ('skirt_back_copy1', 0), ('right_ftorso', 270)] | Fitness: 0.7899
+Elite: [('skirt_front', 90), ('right_btorso', 270), ('right_btorso_copy1', 270), ('skirt_back_copy1', 270), ('right_ftorso_copy1', 180), ('right_ftorso', 0), ('left_btorso', 90), ('left_ftorso', 270), ('left_ftorso_copy1', 90), ('skirt_front_copy1', 270), ('left_btorso_copy1', 0), ('skirt_back', 270)] | Fitness: 0.7853
+Elite: [('skirt_front', 90), ('left_btorso_copy1', 0), ('right_btorso', 180), ('left_btorso', 0), ('skirt_back', 90), ('skirt_front_copy1', 270), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('left_ftorso', 90), ('skirt_back_copy1', 0), ('left_ftorso_copy1', 180), ('right_btorso_copy1', 270)] | Fitness: 0.7840
+Elite: [('right_btorso', 0), ('skirt_front', 90), ('left_ftorso_copy1', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 180), ('right_ftorso_copy1', 180), ('left_btorso_copy1', 90), ('right_btorso_copy1', 180), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('skirt_back', 180)] | Fitness: 0.7835
+Elite: [('skirt_back_copy1', 0), ('right_ftorso_copy1', 90), ('right_ftorso', 90), ('skirt_front', 180), ('right_btorso', 90), ('right_btorso_copy1', 90), ('skirt_front_copy1', 180), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso_copy1', 90), ('left_ftorso', 270), ('skirt_back', 180)] | Fitness: 0.7778
+Elite: [('right_btorso', 180), ('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('left_ftorso', 180), ('left_ftorso_copy1', 270), ('skirt_front', 90), ('left_btorso', 0), ('right_ftorso_copy1', 0), ('skirt_back', 0), ('left_btorso_copy1', 180)] | Fitness: 0.7751
+Elite: [('left_ftorso_copy1', 0), ('skirt_front_copy1', 180), ('left_btorso_copy1', 0), ('skirt_back', 0), ('right_ftorso', 270), ('skirt_front', 270), ('right_btorso', 0), ('skirt_back_copy1', 270), ('right_btorso_copy1', 270), ('left_btorso', 180), ('right_ftorso_copy1', 270), ('left_ftorso', 0)] | Fitness: 0.7748
+Elite: [('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('right_btorso_copy1', 90), ('right_btorso', 90), ('skirt_back', 0), ('skirt_back_copy1', 90), ('skirt_front_copy1', 90), ('left_btorso_copy1', 0), ('right_ftorso', 270), ('right_ftorso_copy1', 90), ('skirt_front', 270)] | Fitness: 0.7742
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7644
+Offspring created with fitness: 0.7652
+Offspring created with fitness: 0.7445
+Offspring created with fitness: 0.7528
+Offspring created with fitness: 0.7528
+Offspring created with fitness: 0.7009
+Offspring created with fitness: 0.7898
+Offspring created with fitness: 0.7528
+Offspring created with fitness: 0.6893
+Offspring created with fitness: 0.8222
+Offspring created with fitness: 0.7133
+Offspring created with fitness: 0.7403
+Offspring created with fitness: 0.7700
+Offspring created with fitness: 0.7540
+Offspring created with fitness: 0.6864
+Offspring created with fitness: 0.6989
+Offspring created with fitness: 0.7009
+Offspring created with fitness: 0.7573
+Offspring created with fitness: 0.7854
+Offspring created with fitness: 0.7326
+Offspring created with fitness: 0.7258
+Offspring created with fitness: 0.7757
+Offspring created with fitness: 0.7254
+Offspring created with fitness: 0.7654
+Offspring created with fitness: 0.7324
+Offspring created with fitness: 0.7426
+Offspring created with fitness: 0.7475
+Offspring created with fitness: 0.7326
+Offspring created with fitness: 0.7023
+Offspring created with fitness: 0.7830
+Offspring created with fitness: 0.7414
+Offspring created with fitness: 0.7462
+Offspring created with fitness: 0.8180
+Offspring created with fitness: 0.7253
+Offspring created with fitness: 0.7394
+Offspring created with fitness: 0.7528
+Offspring created with fitness: 0.7324
+Offspring created with fitness: 0.7652
+Offspring created with fitness: 0.7757
+Offspring created with fitness: 0.7009
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7207
+Mutant created with fitness: 0.7967
+Mutant created with fitness: 0.7956
+Mutant created with fitness: 0.7638
+Mutant created with fitness: 0.7232
+Mutant created with fitness: 0.7508
+Mutant created with fitness: 0.7399
+Mutant created with fitness: 0.7002
+Mutant created with fitness: 0.7705
+Mutant created with fitness: 0.7372
+Mutant created with fitness: 0.7282
+Mutant created with fitness: 0.7731
+Mutant created with fitness: 0.7911
+Mutant created with fitness: 0.7029
+Mutant created with fitness: 0.7523
+Mutant created with fitness: 0.7195
+Mutant created with fitness: 0.7488
+Mutant created with fitness: 0.7563
+Mutant created with fitness: 0.7270
+Mutant created with fitness: 0.7213
+Mutant created with fitness: 0.7197
+Mutant created with fitness: 0.6959
+Mutant created with fitness: 0.7036
+Mutant created with fitness: 0.7297
+Mutant created with fitness: 0.7836
+Mutant created with fitness: 0.7681
+Mutant created with fitness: 0.7112
+Mutant created with fitness: 0.7432
+Mutant created with fitness: 0.7891
+Mutant created with fitness: 0.8169
+Mutant created with fitness: 0.7152
+Mutant created with fitness: 0.7800
+Mutant created with fitness: 0.6827
+Mutant created with fitness: 0.7358
+Mutant created with fitness: 0.7750
+Mutant created with fitness: 0.6832
+Mutant created with fitness: 0.7404
+Mutant created with fitness: 0.7541
+Mutant created with fitness: 0.7728
+Mutant created with fitness: 0.7227
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6938
+Random chromosome created with fitness: 0.6938
+Random chromosome generated with fitness: 0.7619
+Random chromosome created with fitness: 0.7619
+Random chromosome generated with fitness: 0.7589
+Random chromosome created with fitness: 0.7589
+Random chromosome generated with fitness: 0.7231
+Random chromosome created with fitness: 0.7231
+Random chromosome generated with fitness: 0.7017
+Random chromosome created with fitness: 0.7017
+Random chromosome generated with fitness: 0.7175
+Random chromosome created with fitness: 0.7175
+Random chromosome generated with fitness: 0.7055
+Random chromosome created with fitness: 0.7055
+Random chromosome generated with fitness: 0.7103
+Random chromosome created with fitness: 0.7103
+Random chromosome generated with fitness: 0.7131
+Random chromosome created with fitness: 0.7131
+Random chromosome generated with fitness: 0.7249
+Random chromosome created with fitness: 0.7249
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0512; mutants: -0.0412
+------------------------------------------------------------
+Generation 1: best 0.8240 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 1 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 1 completed in 36.52s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8240
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8180
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('skirt_front', 270), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('left_ftorso_copy1', 180)] | Fitness: 0.8169
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy11', 90), ('left_btorso_copy12', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.7967
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('right_btorso', 180), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('skirt_front_copy1', 90), ('skirt_front', 270)] | Fitness: 0.7956
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('skirt_front', 270)] | Fitness: 0.7911
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('right_ftorso', 90), ('left_ftorso_copy1', 180), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('skirt_front', 270)] | Fitness: 0.7911
+Elite: [('right_ftorso_copy1', 270), ('left_ftorso_copy1', 90), ('left_btorso', 90), ('right_btorso_copy1', 0), ('skirt_front_copy1', 90), ('skirt_front', 270), ('left_btorso_copy1', 180), ('skirt_back', 0), ('right_btorso', 270), ('left_ftorso', 180), ('skirt_back_copy1', 0), ('right_ftorso', 270)] | Fitness: 0.7899
+Elite: [('skirt_front', 90), ('skirt_back_copy1', 270), ('skirt_front_copy1', 270), ('skirt_back', 270), ('left_btorso', 90), ('left_ftorso', 270), ('left_ftorso_copy11', 90), ('left_ftorso_copy12', 90), ('left_btorso_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270)] | Fitness: 0.7898
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8240
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8180
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('skirt_front', 270), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('left_ftorso_copy1', 180)] | Fitness: 0.8169
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy11', 90), ('left_btorso_copy12', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.7967
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('right_btorso', 180), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('skirt_front_copy1', 90), ('skirt_front', 270)] | Fitness: 0.7956
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('skirt_front', 270)] | Fitness: 0.7911
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('right_ftorso', 90), ('left_ftorso_copy1', 180), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('skirt_front', 270)] | Fitness: 0.7911
+Elite: [('right_ftorso_copy1', 270), ('left_ftorso_copy1', 90), ('left_btorso', 90), ('right_btorso_copy1', 0), ('skirt_front_copy1', 90), ('skirt_front', 270), ('left_btorso_copy1', 180), ('skirt_back', 0), ('right_btorso', 270), ('left_ftorso', 180), ('skirt_back_copy1', 0), ('right_ftorso', 270)] | Fitness: 0.7899
+Elite: [('skirt_front', 90), ('skirt_back_copy1', 270), ('skirt_front_copy1', 270), ('skirt_back', 270), ('left_btorso', 90), ('left_ftorso', 270), ('left_ftorso_copy11', 90), ('left_ftorso_copy12', 90), ('left_btorso_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270)] | Fitness: 0.7898
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7824
+Offspring created with fitness: 0.7334
+Offspring created with fitness: 0.7700
+Offspring created with fitness: 0.7700
+Offspring created with fitness: 0.7438
+Offspring created with fitness: 0.7422
+Offspring created with fitness: 0.7003
+Offspring created with fitness: 0.7699
+Offspring created with fitness: 0.7446
+Offspring created with fitness: 0.7548
+Offspring created with fitness: 0.7253
+Offspring created with fitness: 0.7253
+Offspring created with fitness: 0.7643
+Offspring created with fitness: 0.7872
+Offspring created with fitness: 0.7326
+Offspring created with fitness: 0.7627
+Offspring created with fitness: 0.6879
+Offspring created with fitness: 0.7024
+Offspring created with fitness: 0.7865
+Offspring created with fitness: 0.7840
+Offspring created with fitness: 0.7253
+Offspring created with fitness: 0.7326
+Offspring created with fitness: 0.7045
+Offspring created with fitness: 0.7326
+Offspring created with fitness: 0.7700
+Offspring created with fitness: 0.7748
+Offspring created with fitness: 0.7827
+Offspring created with fitness: 0.7933
+Offspring created with fitness: 0.7097
+Offspring created with fitness: 0.7700
+Offspring created with fitness: 0.7257
+Offspring created with fitness: 0.8163
+Offspring created with fitness: 0.7045
+Offspring created with fitness: 0.7996
+Offspring created with fitness: 0.6918
+Offspring created with fitness: 0.7330
+Offspring created with fitness: 0.7361
+Offspring created with fitness: 0.7741
+Offspring created with fitness: 0.7865
+Offspring created with fitness: 0.7253
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7912
+Mutant created with fitness: 0.8118
+Mutant created with fitness: 0.7211
+Mutant created with fitness: 0.7321
+Mutant created with fitness: 0.7646
+Mutant created with fitness: 0.7810
+Mutant created with fitness: 0.7357
+Mutant created with fitness: 0.7230
+Mutant created with fitness: 0.7561
+Mutant created with fitness: 0.7487
+Mutant created with fitness: 0.7518
+Mutant created with fitness: 0.7781
+Mutant created with fitness: 0.7911
+Mutant created with fitness: 0.8275
+Mutant created with fitness: 0.8075
+Mutant created with fitness: 0.7643
+Mutant created with fitness: 0.7668
+Mutant created with fitness: 0.7299
+Mutant created with fitness: 0.7492
+Mutant created with fitness: 0.7455
+Mutant created with fitness: 0.7229
+Mutant created with fitness: 0.7778
+Mutant created with fitness: 0.7788
+Mutant created with fitness: 0.8117
+Mutant created with fitness: 0.8040
+Mutant created with fitness: 0.7878
+Mutant created with fitness: 0.7823
+Mutant created with fitness: 0.7744
+Mutant created with fitness: 0.7945
+Mutant created with fitness: 0.7937
+Mutant created with fitness: 0.7388
+Mutant created with fitness: 0.7376
+Mutant created with fitness: 0.7643
+Mutant created with fitness: 0.7750
+Mutant created with fitness: 0.7736
+Mutant created with fitness: 0.7534
+Mutant created with fitness: 0.8040
+Mutant created with fitness: 0.7582
+Mutant created with fitness: 0.7664
+Mutant created with fitness: 0.7819
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7090
+Random chromosome created with fitness: 0.7090
+Random chromosome generated with fitness: 0.7929
+Random chromosome created with fitness: 0.7929
+Random chromosome generated with fitness: 0.7732
+Random chromosome created with fitness: 0.7732
+Random chromosome generated with fitness: 0.7388
+Random chromosome created with fitness: 0.7388
+Random chromosome generated with fitness: 0.7577
+Random chromosome created with fitness: 0.7577
+Random chromosome generated with fitness: 0.7783
+Random chromosome created with fitness: 0.7783
+Random chromosome generated with fitness: 0.7756
+Random chromosome created with fitness: 0.7756
+Random chromosome generated with fitness: 0.7615
+Random chromosome created with fitness: 0.7615
+Random chromosome generated with fitness: 0.7557
+Random chromosome created with fitness: 0.7557
+Random chromosome generated with fitness: 0.7212
+Random chromosome created with fitness: 0.7212
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0608; mutants: -0.0329
+------------------------------------------------------------
+Generation 2: best 0.8275 (Δ +0.0035)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 2 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 2 completed in 37.20s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8180
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('skirt_front', 270), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('left_ftorso_copy1', 180)] | Fitness: 0.8169
+Elite: [('skirt_back_copy1', 90), ('skirt_front', 90), ('skirt_back', 270), ('skirt_front_copy1', 0), ('right_ftorso_copy1', 0), ('right_ftorso', 180), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_btorso_copy1', 90), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('left_ftorso', 90)] | Fitness: 0.8163
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy11', 0), ('left_btorso_copy12', 0)] | Fitness: 0.8118
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso1', 270), ('right_ftorso2', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8117
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('skirt_back', 180), ('right_btorso_copy1', 180), ('right_btorso', 180), ('skirt_front', 270)] | Fitness: 0.8075
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('right_btorso', 180), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('skirt_front_copy1', 90), ('skirt_front1', 270), ('skirt_front2', 270)] | Fitness: 0.8040
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8180
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('skirt_front', 270), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('right_btorso', 180), ('left_ftorso_copy1', 180)] | Fitness: 0.8169
+Elite: [('skirt_back_copy1', 90), ('skirt_front', 90), ('skirt_back', 270), ('skirt_front_copy1', 0), ('right_ftorso_copy1', 0), ('right_ftorso', 180), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_btorso_copy1', 90), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('left_ftorso', 90)] | Fitness: 0.8163
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy11', 0), ('left_btorso_copy12', 0)] | Fitness: 0.8118
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso1', 270), ('right_ftorso2', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8117
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('skirt_front_copy1', 90), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('skirt_back', 180), ('right_btorso_copy1', 180), ('right_btorso', 180), ('skirt_front', 270)] | Fitness: 0.8075
+Elite: [('right_ftorso_copy1', 180), ('skirt_back_copy1', 270), ('left_btorso', 90), ('left_ftorso', 270), ('right_btorso', 180), ('left_ftorso_copy1', 180), ('right_ftorso', 90), ('left_btorso_copy1', 0), ('right_btorso_copy1', 180), ('skirt_back', 180), ('skirt_front_copy1', 90), ('skirt_front1', 270), ('skirt_front2', 270)] | Fitness: 0.8040
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7940
+Offspring created with fitness: 0.7750
+Offspring created with fitness: 0.7954
+Offspring created with fitness: 0.8118
+Offspring created with fitness: 0.7827
+Offspring created with fitness: 0.7460
+Offspring created with fitness: 0.7707
+Offspring created with fitness: 0.8222
+Offspring created with fitness: 0.6963
+Offspring created with fitness: 0.7017
+Offspring created with fitness: 0.7621
+Offspring created with fitness: 0.7635
+Offspring created with fitness: 0.7681
+Offspring created with fitness: 0.7487
+Offspring created with fitness: 0.7903
+Offspring created with fitness: 0.7233
+Offspring created with fitness: 0.7637
+Offspring created with fitness: 0.8180
+Offspring created with fitness: 0.8064
+Offspring created with fitness: 0.7852
+Offspring created with fitness: 0.7467
+Offspring created with fitness: 0.7009
+Offspring created with fitness: 0.7799
+Offspring created with fitness: 0.7267
+Offspring created with fitness: 0.7249
+Offspring created with fitness: 0.7707
+Offspring created with fitness: 0.7700
+Offspring created with fitness: 0.7707
+Offspring created with fitness: 0.8118
+Offspring created with fitness: 0.7549
+Offspring created with fitness: 0.7179
+Offspring created with fitness: 0.6498
+Offspring created with fitness: 0.7122
+Offspring created with fitness: 0.8148
+Offspring created with fitness: 0.7699
+Offspring created with fitness: 0.7177
+Offspring created with fitness: 0.7193
+Offspring created with fitness: 0.8222
+Offspring created with fitness: 0.8163
+Offspring created with fitness: 0.7533
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7945
+Mutant created with fitness: 0.7562
+Mutant created with fitness: 0.7571
+Mutant created with fitness: 0.7189
+Mutant created with fitness: 0.8137
+Mutant created with fitness: 0.7821
+Mutant created with fitness: 0.7505
+Mutant created with fitness: 0.8117
+Mutant created with fitness: 0.7863
+Mutant created with fitness: 0.7670
+Mutant created with fitness: 0.7200
+Mutant created with fitness: 0.7465
+Mutant created with fitness: 0.7706
+Mutant created with fitness: 0.7562
+Mutant created with fitness: 0.7937
+Mutant created with fitness: 0.7505
+Mutant created with fitness: 0.7402
+Mutant created with fitness: 0.7107
+Mutant created with fitness: 0.8186
+Mutant created with fitness: 0.7492
+Mutant created with fitness: 0.7465
+Mutant created with fitness: 0.6926
+Mutant created with fitness: 0.7043
+Mutant created with fitness: 0.8083
+Mutant created with fitness: 0.8154
+Mutant created with fitness: 0.8257
+Mutant created with fitness: 0.8150
+Mutant created with fitness: 0.7821
+Mutant created with fitness: 0.7986
+Mutant created with fitness: 0.7842
+Mutant created with fitness: 0.7317
+Mutant created with fitness: 0.7725
+Mutant created with fitness: 0.7562
+Mutant created with fitness: 0.7314
+Mutant created with fitness: 0.7242
+Mutant created with fitness: 0.7271
+Mutant created with fitness: 0.7674
+Mutant created with fitness: 0.8350
+Mutant created with fitness: 0.7515
+Mutant created with fitness: 0.7505
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7140
+Random chromosome created with fitness: 0.7140
+Random chromosome generated with fitness: 0.7179
+Random chromosome created with fitness: 0.7179
+Random chromosome generated with fitness: 0.7281
+Random chromosome created with fitness: 0.7281
+Random chromosome generated with fitness: 0.7384
+Random chromosome created with fitness: 0.7384
+Random chromosome generated with fitness: 0.6756
+Random chromosome created with fitness: 0.6756
+Random chromosome generated with fitness: 0.7191
+Random chromosome created with fitness: 0.7191
+Random chromosome generated with fitness: 0.7385
+Random chromosome created with fitness: 0.7385
+Random chromosome generated with fitness: 0.6729
+Random chromosome created with fitness: 0.6729
+Random chromosome generated with fitness: 0.7873
+Random chromosome created with fitness: 0.7873
+Random chromosome generated with fitness: 0.6996
+Random chromosome created with fitness: 0.6996
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0587; mutants: -0.0473
+------------------------------------------------------------
+Generation 3: best 0.8350 (Δ +0.0075)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 3 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 300 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 3 completed in 41.11s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8257
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy11', 0), ('left_btorso_copy12', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8186
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8180
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8180
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8257
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy11', 0), ('left_btorso_copy12', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8186
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8180
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso', 180), ('left_btorso_copy1', 0)] | Fitness: 0.8180
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7940
+Offspring created with fitness: 0.7940
+Offspring created with fitness: 0.7698
+Offspring created with fitness: 0.7214
+Offspring created with fitness: 0.7106
+Offspring created with fitness: 0.7827
+Offspring created with fitness: 0.7572
+Offspring created with fitness: 0.7445
+Offspring created with fitness: 0.7009
+Offspring created with fitness: 0.8222
+Offspring created with fitness: 0.8222
+Offspring created with fitness: 0.7335
+Offspring created with fitness: 0.7403
+Offspring created with fitness: 0.8186
+Offspring created with fitness: 0.8186
+Offspring created with fitness: 0.7961
+Offspring created with fitness: 0.8222
+Offspring created with fitness: 0.7009
+Offspring created with fitness: 0.7908
+Offspring created with fitness: 0.7587
+Offspring created with fitness: 0.7535
+Offspring created with fitness: 0.6926
+Offspring created with fitness: 0.7987
+Offspring created with fitness: 0.7956
+Offspring created with fitness: 0.7709
+Offspring created with fitness: 0.7262
+Offspring created with fitness: 0.7236
+Offspring created with fitness: 0.7887
+Offspring created with fitness: 0.6940
+Offspring created with fitness: 0.7361
+Offspring created with fitness: 0.7324
+Offspring created with fitness: 0.6893
+Offspring created with fitness: 0.7912
+Offspring created with fitness: 0.7451
+Offspring created with fitness: 0.7681
+Offspring created with fitness: 0.6926
+Offspring created with fitness: 0.7405
+Offspring created with fitness: 0.6893
+Offspring created with fitness: 0.7264
+Offspring created with fitness: 0.7910
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7608
+Mutant created with fitness: 0.7673
+Mutant created with fitness: 0.7655
+Mutant created with fitness: 0.7800
+Mutant created with fitness: 0.7684
+Mutant created with fitness: 0.7854
+Mutant created with fitness: 0.8302
+Mutant created with fitness: 0.7673
+Mutant created with fitness: 0.7051
+Mutant created with fitness: 0.7797
+Mutant created with fitness: 0.7211
+Mutant created with fitness: 0.7545
+Mutant created with fitness: 0.7760
+Mutant created with fitness: 0.7898
+Mutant created with fitness: 0.7797
+Mutant created with fitness: 0.8275
+Mutant created with fitness: 0.7901
+Mutant created with fitness: 0.7750
+Mutant created with fitness: 0.7837
+Mutant created with fitness: 0.7791
+Mutant created with fitness: 0.8147
+Mutant created with fitness: 0.7087
+Mutant created with fitness: 0.7227
+Mutant created with fitness: 0.8019
+Mutant created with fitness: 0.8045
+Mutant created with fitness: 0.7553
+Mutant created with fitness: 0.8193
+Mutant created with fitness: 0.7375
+Mutant created with fitness: 0.8052
+Mutant created with fitness: 0.7835
+Mutant created with fitness: 0.7995
+Mutant created with fitness: 0.8205
+Mutant created with fitness: 0.7462
+Mutant created with fitness: 0.7640
+Mutant created with fitness: 0.7338
+Mutant created with fitness: 0.6951
+Mutant created with fitness: 0.7800
+Mutant created with fitness: 0.7596
+Mutant created with fitness: 0.7226
+Mutant created with fitness: 0.7692
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7757
+Random chromosome created with fitness: 0.7757
+Random chromosome generated with fitness: 0.7506
+Random chromosome created with fitness: 0.7506
+Random chromosome generated with fitness: 0.7754
+Random chromosome created with fitness: 0.7754
+Random chromosome generated with fitness: 0.7318
+Random chromosome generated with fitness: 0.7509
+Random chromosome created with fitness: 0.7509
+Random chromosome created with fitness: 0.7318
+Random chromosome generated with fitness: 0.7692
+Random chromosome created with fitness: 0.7692
+Random chromosome generated with fitness: 0.7859
+Random chromosome created with fitness: 0.7859
+Random chromosome generated with fitness: 0.7549
+Random chromosome created with fitness: 0.7549
+Random chromosome generated with fitness: 0.6860
+Random chromosome created with fitness: 0.6860
+Random chromosome generated with fitness: 0.7080
+Random chromosome created with fitness: 0.7080
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0692; mutants: -0.0521
+------------------------------------------------------------
+Generation 4: best 0.8350 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 400 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 4 completed in 42.03s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('skirt_back', 270), ('right_ftorso', 180), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8257
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('skirt_back', 270), ('right_ftorso', 180), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8257
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7324
+Offspring created with fitness: 0.7698
+Offspring created with fitness: 0.8064
+Offspring created with fitness: 0.6898
+Offspring created with fitness: 0.7203
+Offspring created with fitness: 0.8257
+Offspring created with fitness: 0.7827
+Offspring created with fitness: 0.8222
+Offspring created with fitness: 0.7932
+Offspring created with fitness: 0.7228
+Offspring created with fitness: 0.7344
+Offspring created with fitness: 0.6892
+Offspring created with fitness: 0.7324
+Offspring created with fitness: 0.7434
+Offspring created with fitness: 0.7615
+Offspring created with fitness: 0.7324
+Offspring created with fitness: 0.7451
+Offspring created with fitness: 0.7845
+Offspring created with fitness: 0.7299
+Offspring created with fitness: 0.6940
+Offspring created with fitness: 0.7681
+Offspring created with fitness: 0.8155
+Offspring created with fitness: 0.7903
+Offspring created with fitness: 0.6926
+Offspring created with fitness: 0.7827
+Offspring created with fitness: 0.7469
+Offspring created with fitness: 0.7203
+Offspring created with fitness: 0.8222
+Offspring created with fitness: 0.7451
+Offspring created with fitness: 0.7845
+Offspring created with fitness: 0.7405
+Offspring created with fitness: 0.7573
+Offspring created with fitness: 0.7623
+Offspring created with fitness: 0.7546
+Offspring created with fitness: 0.7354
+Offspring created with fitness: 0.7986
+Offspring created with fitness: 0.7681
+Offspring created with fitness: 0.6958
+Offspring created with fitness: 0.7405
+Offspring created with fitness: 0.7845
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7658
+Mutant created with fitness: 0.7655
+Mutant created with fitness: 0.7621
+Mutant created with fitness: 0.7990
+Mutant created with fitness: 0.8050
+Mutant created with fitness: 0.7967
+Mutant created with fitness: 0.8073
+Mutant created with fitness: 0.8052
+Mutant created with fitness: 0.8181
+Mutant created with fitness: 0.7049
+Mutant created with fitness: 0.7553
+Mutant created with fitness: 0.6938
+Mutant created with fitness: 0.7662
+Mutant created with fitness: 0.7569
+Mutant created with fitness: 0.8376
+Mutant created with fitness: 0.8106
+Mutant created with fitness: 0.7774
+Mutant created with fitness: 0.7937
+Mutant created with fitness: 0.8227
+Mutant created with fitness: 0.7051
+Mutant created with fitness: 0.7051
+Mutant created with fitness: 0.7759
+Mutant created with fitness: 0.7051
+Mutant created with fitness: 0.7051
+Mutant created with fitness: 0.7724
+Mutant created with fitness: 0.7956
+Mutant created with fitness: 0.7768
+Mutant created with fitness: 0.8049
+Mutant created with fitness: 0.7641
+Mutant created with fitness: 0.8071
+Mutant created with fitness: 0.8045
+Mutant created with fitness: 0.7587
+Mutant created with fitness: 0.7797
+Mutant created with fitness: 0.8052
+Mutant created with fitness: 0.7330
+Mutant created with fitness: 0.7587
+Mutant created with fitness: 0.7329
+Mutant created with fitness: 0.7170
+Mutant created with fitness: 0.7937
+Mutant created with fitness: 0.7229
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7805
+Random chromosome created with fitness: 0.7805
+Random chromosome generated with fitness: 0.7552
+Random chromosome created with fitness: 0.7552
+Random chromosome generated with fitness: 0.7579
+Random chromosome created with fitness: 0.7579
+Random chromosome generated with fitness: 0.6786
+Random chromosome created with fitness: 0.6786
+Random chromosome generated with fitness: 0.7224
+Random chromosome created with fitness: 0.7224
+Random chromosome generated with fitness: 0.7497
+Random chromosome created with fitness: 0.7497
+Random chromosome generated with fitness: 0.7062
+Random chromosome created with fitness: 0.7062
+Random chromosome generated with fitness: 0.7614
+Random chromosome created with fitness: 0.7614
+Random chromosome generated with fitness: 0.7160
+Random chromosome created with fitness: 0.7160
+Random chromosome generated with fitness: 0.7198
+Random chromosome created with fitness: 0.7198
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0735; mutants: -0.0559
+------------------------------------------------------------
+Generation 5: best 0.8376 (Δ +0.0027)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 5 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 500 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 5 completed in 41.17s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('skirt_back', 270), ('right_ftorso', 180), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8257
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8257
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8227
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('skirt_back', 270), ('right_ftorso', 180), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8257
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8257
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8240
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8227
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8222
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7996
+Offspring created with fitness: 0.7077
+Offspring created with fitness: 0.7077
+Offspring created with fitness: 0.8257
+Offspring created with fitness: 0.6940
+Offspring created with fitness: 0.6845
+Offspring created with fitness: 0.8169
+Offspring created with fitness: 0.7664
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.8293
+Offspring created with fitness: 0.7795
+Offspring created with fitness: 0.7655
+Offspring created with fitness: 0.8155
+Offspring created with fitness: 0.6987
+Offspring created with fitness: 0.7709
+Offspring created with fitness: 0.8064
+Offspring created with fitness: 0.7855
+Offspring created with fitness: 0.7203
+Offspring created with fitness: 0.7573
+Offspring created with fitness: 0.8257
+Offspring created with fitness: 0.7681
+Offspring created with fitness: 0.7442
+Offspring created with fitness: 0.7928
+Offspring created with fitness: 0.7693
+Offspring created with fitness: 0.8257
+Offspring created with fitness: 0.8257
+Offspring created with fitness: 0.7289
+Offspring created with fitness: 0.7009
+Offspring created with fitness: 0.8227
+Offspring created with fitness: 0.8222
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7009
+Offspring created with fitness: 0.8227
+Offspring created with fitness: 0.6972
+Offspring created with fitness: 0.7681
+Offspring created with fitness: 0.7442
+Offspring created with fitness: 0.7520
+Offspring created with fitness: 0.7573
+Offspring created with fitness: 0.7788
+Offspring created with fitness: 0.7575
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7412
+Mutant created with fitness: 0.7865
+Mutant created with fitness: 0.7795
+Mutant created with fitness: 0.8045
+Mutant created with fitness: 0.7741
+Mutant created with fitness: 0.7736
+Mutant created with fitness: 0.7384
+Mutant created with fitness: 0.7544
+Mutant created with fitness: 0.8302
+Mutant created with fitness: 0.7630
+Mutant created with fitness: 0.7474
+Mutant created with fitness: 0.7722
+Mutant created with fitness: 0.8147
+Mutant created with fitness: 0.7657
+Mutant created with fitness: 0.7721
+Mutant created with fitness: 0.7545
+Mutant created with fitness: 0.7553
+Mutant created with fitness: 0.8371
+Mutant created with fitness: 0.7319
+Mutant created with fitness: 0.7590
+Mutant created with fitness: 0.7520
+Mutant created with fitness: 0.7545
+Mutant created with fitness: 0.7630
+Mutant created with fitness: 0.7936
+Mutant created with fitness: 0.7572
+Mutant created with fitness: 0.7671
+Mutant created with fitness: 0.8073
+Mutant created with fitness: 0.7905
+Mutant created with fitness: 0.7556
+Mutant created with fitness: 0.8091
+Mutant created with fitness: 0.7229
+Mutant created with fitness: 0.8147
+Mutant created with fitness: 0.8391
+Mutant created with fitness: 0.7785
+Mutant created with fitness: 0.8052
+Mutant created with fitness: 0.7219
+Mutant created with fitness: 0.8354
+Mutant created with fitness: 0.7185
+Mutant created with fitness: 0.6940
+Mutant created with fitness: 0.7185
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7490
+Random chromosome created with fitness: 0.7490
+Random chromosome generated with fitness: 0.7965
+Random chromosome created with fitness: 0.7965
+Random chromosome generated with fitness: 0.7139
+Random chromosome created with fitness: 0.7139
+Random chromosome generated with fitness: 0.7002
+Random chromosome created with fitness: 0.7002
+Random chromosome generated with fitness: 0.7454
+Random chromosome generated with fitness: 0.7839
+Random chromosome created with fitness: 0.7839
+Random chromosome created with fitness: 0.7454
+Random chromosome generated with fitness: 0.7348
+Random chromosome created with fitness: 0.7348
+Random chromosome generated with fitness: 0.7099
+Random chromosome created with fitness: 0.7099
+Random chromosome generated with fitness: 0.7167
+Random chromosome created with fitness: 0.7167
+Random chromosome generated with fitness: 0.7315
+Random chromosome created with fitness: 0.7315
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0629; mutants: -0.0570
+------------------------------------------------------------
+Generation 6: best 0.8391 (Δ +0.0014)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 6 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 600 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 6 completed in 45.24s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8371
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso21', 0), ('left_btorso22', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8354
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('right_ftorso', 180), ('left_btorso_copy1', 90), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8293
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('skirt_back', 270), ('right_ftorso', 180), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8371
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso21', 0), ('left_btorso22', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8354
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('right_ftorso', 180), ('left_btorso_copy1', 90), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8293
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('skirt_back', 270), ('right_ftorso', 180), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso1', 90), ('right_btorso2', 90), ('left_ftorso', 90), ('skirt_front_copy1', 0)] | Fitness: 0.8275
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7002
+Offspring created with fitness: 0.7571
+Offspring created with fitness: 0.7698
+Offspring created with fitness: 0.7622
+Offspring created with fitness: 0.7599
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.6858
+Offspring created with fitness: 0.8135
+Offspring created with fitness: 0.7077
+Offspring created with fitness: 0.7531
+Offspring created with fitness: 0.6978
+Offspring created with fitness: 0.7531
+Offspring created with fitness: 0.7644
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7632
+Offspring created with fitness: 0.7996
+Offspring created with fitness: 0.8376
+Offspring created with fitness: 0.6858
+Offspring created with fitness: 0.7932
+Offspring created with fitness: 0.7203
+Offspring created with fitness: 0.7880
+Offspring created with fitness: 0.7880
+Offspring created with fitness: 0.7343
+Offspring created with fitness: 0.7599
+Offspring created with fitness: 0.7077
+Offspring created with fitness: 0.7986
+Offspring created with fitness: 0.7546
+Offspring created with fitness: 0.7611
+Offspring created with fitness: 0.8293
+Offspring created with fitness: 0.7447
+Offspring created with fitness: 0.7681
+Offspring created with fitness: 0.7378
+Offspring created with fitness: 0.8371
+Offspring created with fitness: 0.6858
+Offspring created with fitness: 0.8293
+Offspring created with fitness: 0.7529
+Offspring created with fitness: 0.7968
+Offspring created with fitness: 0.7518
+Offspring created with fitness: 0.7892
+Offspring created with fitness: 0.7556
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7673
+Mutant created with fitness: 0.7400
+Mutant created with fitness: 0.7547
+Mutant created with fitness: 0.7722
+Mutant created with fitness: 0.7443
+Mutant created with fitness: 0.8162
+Mutant created with fitness: 0.7851
+Mutant created with fitness: 0.8089
+Mutant created with fitness: 0.8123
+Mutant created with fitness: 0.7413
+Mutant created with fitness: 0.7786
+Mutant created with fitness: 0.7730
+Mutant created with fitness: 0.8302
+Mutant created with fitness: 0.7569
+Mutant created with fitness: 0.7400
+Mutant created with fitness: 0.8302
+Mutant created with fitness: 0.8375
+Mutant created with fitness: 0.7872
+Mutant created with fitness: 0.7675
+Mutant created with fitness: 0.7676
+Mutant created with fitness: 0.7526
+Mutant created with fitness: 0.7374
+Mutant created with fitness: 0.7980
+Mutant created with fitness: 0.8150
+Mutant created with fitness: 0.7668
+Mutant created with fitness: 0.8064
+Mutant created with fitness: 0.7970
+Mutant created with fitness: 0.7937
+Mutant created with fitness: 0.8150
+Mutant created with fitness: 0.7970
+Mutant created with fitness: 0.7408
+Mutant created with fitness: 0.8168
+Mutant created with fitness: 0.7525
+Mutant created with fitness: 0.7474
+Mutant created with fitness: 0.8137
+Mutant created with fitness: 0.7672
+Mutant created with fitness: 0.7882
+Mutant created with fitness: 0.7936
+Mutant created with fitness: 0.7486
+Mutant created with fitness: 0.7805
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7009
+Random chromosome created with fitness: 0.7009
+Random chromosome generated with fitness: 0.7364
+Random chromosome created with fitness: 0.7364
+Random chromosome generated with fitness: 0.7457
+Random chromosome created with fitness: 0.7457
+Random chromosome generated with fitness: 0.7421
+Random chromosome created with fitness: 0.7421
+Random chromosome generated with fitness: 0.7757
+Random chromosome created with fitness: 0.7757
+Random chromosome generated with fitness: 0.7479
+Random chromosome created with fitness: 0.7479
+Random chromosome generated with fitness: 0.7209
+Random chromosome created with fitness: 0.7209
+Random chromosome generated with fitness: 0.7130
+Random chromosome created with fitness: 0.7130
+Random chromosome generated with fitness: 0.6999
+Random chromosome created with fitness: 0.6999
+Random chromosome generated with fitness: 0.6776
+Random chromosome created with fitness: 0.6776
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0742; mutants: -0.0519
+------------------------------------------------------------
+Generation 7: best 0.8391 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 7 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 700 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 7 completed in 42.80s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy111', 0), ('left_btorso_copy112', 0), ('left_btorso', 180)] | Fitness: 0.8375
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8371
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8371
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso21', 0), ('left_btorso22', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8354
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('right_ftorso', 180), ('left_btorso_copy1', 90), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy111', 0), ('left_btorso_copy112', 0), ('left_btorso', 180)] | Fitness: 0.8375
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8371
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy12', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8371
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso21', 0), ('left_btorso22', 0), ('left_ftorso', 90), ('left_ftorso_copy1', 180)] | Fitness: 0.8354
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8350
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('right_ftorso', 180), ('left_btorso_copy1', 90), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy11', 0), ('skirt_front_copy121', 0), ('skirt_front_copy122', 0)] | Fitness: 0.8302
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7986
+Offspring created with fitness: 0.7986
+Offspring created with fitness: 0.6903
+Offspring created with fitness: 0.7981
+Offspring created with fitness: 0.8375
+Offspring created with fitness: 0.8371
+Offspring created with fitness: 0.8057
+Offspring created with fitness: 0.7827
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.7120
+Offspring created with fitness: 0.7068
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.6994
+Offspring created with fitness: 0.7086
+Offspring created with fitness: 0.7996
+Offspring created with fitness: 0.8064
+Offspring created with fitness: 0.7342
+Offspring created with fitness: 0.8371
+Offspring created with fitness: 0.7270
+Offspring created with fitness: 0.8371
+Offspring created with fitness: 0.7202
+Offspring created with fitness: 0.7546
+Offspring created with fitness: 0.8376
+Offspring created with fitness: 0.7040
+Offspring created with fitness: 0.7203
+Offspring created with fitness: 0.7342
+Offspring created with fitness: 0.7415
+Offspring created with fitness: 0.7986
+Offspring created with fitness: 0.7902
+Offspring created with fitness: 0.7515
+Offspring created with fitness: 0.7793
+Offspring created with fitness: 0.8376
+Offspring created with fitness: 0.7490
+Offspring created with fitness: 0.8354
+Offspring created with fitness: 0.7517
+Offspring created with fitness: 0.8371
+Offspring created with fitness: 0.7726
+Offspring created with fitness: 0.7443
+Offspring created with fitness: 0.7546
+Offspring created with fitness: 0.8375
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7644
+Mutant created with fitness: 0.8384
+Mutant created with fitness: 0.8040
+Mutant created with fitness: 0.7375
+Mutant created with fitness: 0.8155
+Mutant created with fitness: 0.8052
+Mutant created with fitness: 0.7424
+Mutant created with fitness: 0.7186
+Mutant created with fitness: 0.7998
+Mutant created with fitness: 0.7543
+Mutant created with fitness: 0.7972
+Mutant created with fitness: 0.8373
+Mutant created with fitness: 0.7615
+Mutant created with fitness: 0.8227
+Mutant created with fitness: 0.7557
+Mutant created with fitness: 0.8375
+Mutant created with fitness: 0.7634
+Mutant created with fitness: 0.7824
+Mutant created with fitness: 0.7383
+Mutant created with fitness: 0.7733
+Mutant created with fitness: 0.7916
+Mutant created with fitness: 0.6838
+Mutant created with fitness: 0.7775
+Mutant created with fitness: 0.7487
+Mutant created with fitness: 0.8135
+Mutant created with fitness: 0.8025
+Mutant created with fitness: 0.8173
+Mutant created with fitness: 0.7282
+Mutant created with fitness: 0.7408
+Mutant created with fitness: 0.8425
+Mutant created with fitness: 0.7060
+Mutant created with fitness: 0.7460
+Mutant created with fitness: 0.7551
+Mutant created with fitness: 0.8391
+Mutant created with fitness: 0.7613
+Mutant created with fitness: 0.7951
+Mutant created with fitness: 0.8364
+Mutant created with fitness: 0.8302
+Mutant created with fitness: 0.8216
+Mutant created with fitness: 0.7598
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7161
+Random chromosome created with fitness: 0.7161
+Random chromosome generated with fitness: 0.7592
+Random chromosome created with fitness: 0.7592
+Random chromosome generated with fitness: 0.7160
+Random chromosome created with fitness: 0.7160
+Random chromosome generated with fitness: 0.7531
+Random chromosome created with fitness: 0.7531
+Random chromosome generated with fitness: 0.7587
+Random chromosome created with fitness: 0.7587
+Random chromosome generated with fitness: 0.7626
+Random chromosome created with fitness: 0.7626
+Random chromosome generated with fitness: 0.7210
+Random chromosome created with fitness: 0.7210
+Random chromosome generated with fitness: 0.7746
+Random chromosome created with fitness: 0.7746
+Random chromosome generated with fitness: 0.7445
+Random chromosome created with fitness: 0.7445
+Random chromosome generated with fitness: 0.7076
+Random chromosome created with fitness: 0.7076
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0653; mutants: -0.0547
+------------------------------------------------------------
+Generation 8: best 0.8425 (Δ +0.0035)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 800 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 8 completed in 44.43s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8425
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy111', 180), ('left_ftorso_copy112', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy111', 0), ('skirt_front_copy112', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8384
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy111', 0), ('left_btorso_copy112', 0), ('left_btorso', 180)] | Fitness: 0.8375
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy111', 0), ('left_btorso_copy112', 0), ('left_btorso', 180)] | Fitness: 0.8375
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8425
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy111', 180), ('left_ftorso_copy112', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy111', 0), ('skirt_front_copy112', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8384
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy111', 0), ('left_btorso_copy112', 0), ('left_btorso', 180)] | Fitness: 0.8375
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy111', 0), ('left_btorso_copy112', 0), ('left_btorso', 180)] | Fitness: 0.8375
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.8376
+Offspring created with fitness: 0.7006
+Offspring created with fitness: 0.8328
+Offspring created with fitness: 0.7352
+Offspring created with fitness: 0.8375
+Offspring created with fitness: 0.7163
+Offspring created with fitness: 0.8006
+Offspring created with fitness: 0.7531
+Offspring created with fitness: 0.7615
+Offspring created with fitness: 0.7352
+Offspring created with fitness: 0.7066
+Offspring created with fitness: 0.7185
+Offspring created with fitness: 0.7941
+Offspring created with fitness: 0.8376
+Offspring created with fitness: 0.8293
+Offspring created with fitness: 0.8155
+Offspring created with fitness: 0.8155
+Offspring created with fitness: 0.7793
+Offspring created with fitness: 0.7208
+Offspring created with fitness: 0.7960
+Offspring created with fitness: 0.7664
+Offspring created with fitness: 0.7217
+Offspring created with fitness: 0.7673
+Offspring created with fitness: 0.7004
+Offspring created with fitness: 0.8376
+Offspring created with fitness: 0.8376
+Offspring created with fitness: 0.8052
+Offspring created with fitness: 0.8425
+Offspring created with fitness: 0.7581
+Offspring created with fitness: 0.8375
+Offspring created with fitness: 0.7551
+Offspring created with fitness: 0.7581
+Offspring created with fitness: 0.8375
+Offspring created with fitness: 0.7498
+Offspring created with fitness: 0.7673
+Offspring created with fitness: 0.7384
+Offspring created with fitness: 0.8376
+Offspring created with fitness: 0.7086
+Offspring created with fitness: 0.8391
+Offspring created with fitness: 0.7739
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.8196
+Mutant created with fitness: 0.8271
+Mutant created with fitness: 0.7084
+Mutant created with fitness: 0.7696
+Mutant created with fitness: 0.7547
+Mutant created with fitness: 0.7769
+Mutant created with fitness: 0.8316
+Mutant created with fitness: 0.7861
+Mutant created with fitness: 0.7061
+Mutant created with fitness: 0.6645
+Mutant created with fitness: 0.6938
+Mutant created with fitness: 0.7207
+Mutant created with fitness: 0.7630
+Mutant created with fitness: 0.7717
+Mutant created with fitness: 0.7632
+Mutant created with fitness: 0.8052
+Mutant created with fitness: 0.8183
+Mutant created with fitness: 0.7637
+Mutant created with fitness: 0.8375
+Mutant created with fitness: 0.8391
+Mutant created with fitness: 0.8175
+Mutant created with fitness: 0.7657
+Mutant created with fitness: 0.7049
+Mutant created with fitness: 0.7219
+Mutant created with fitness: 0.7630
+Mutant created with fitness: 0.8068
+Mutant created with fitness: 0.7661
+Mutant created with fitness: 0.8036
+Mutant created with fitness: 0.7955
+Mutant created with fitness: 0.8424
+Mutant created with fitness: 0.8425
+Mutant created with fitness: 0.7639
+Mutant created with fitness: 0.7978
+Mutant created with fitness: 0.7681
+Mutant created with fitness: 0.8006
+Mutant created with fitness: 0.7206
+Mutant created with fitness: 0.8323
+Mutant created with fitness: 0.8170
+Mutant created with fitness: 0.7484
+Mutant created with fitness: 0.7484
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.8097
+Random chromosome created with fitness: 0.8097
+Random chromosome generated with fitness: 0.7124
+Random chromosome created with fitness: 0.7124
+Random chromosome generated with fitness: 0.7396
+Random chromosome created with fitness: 0.7396
+Random chromosome generated with fitness: 0.7517
+Random chromosome created with fitness: 0.7517
+Random chromosome generated with fitness: 0.7515
+Random chromosome created with fitness: 0.7515
+Random chromosome generated with fitness: 0.7220
+Random chromosome created with fitness: 0.7220
+Random chromosome generated with fitness: 0.7247
+Random chromosome created with fitness: 0.7247
+Random chromosome generated with fitness: 0.7505
+Random chromosome created with fitness: 0.7505
+Random chromosome generated with fitness: 0.7385
+Random chromosome created with fitness: 0.7385
+Random chromosome generated with fitness: 0.7295
+Random chromosome created with fitness: 0.7295
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0604; mutants: -0.0623
+------------------------------------------------------------
+Generation 9: best 0.8425 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 9 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 900 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 9 completed in 48.55s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy111', 0), ('left_btorso_copy112', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8424
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy111', 180), ('left_ftorso_copy112', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy12', 180), ('left_ftorso_copy11', 180)] | Fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy111', 0), ('skirt_front_copy112', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8384
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8425
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy111', 0), ('left_btorso_copy112', 0), ('left_btorso1', 180), ('left_btorso2', 180)] | Fitness: 0.8424
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy111', 180), ('left_ftorso_copy112', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy12', 180), ('left_ftorso_copy11', 180)] | Fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_front', 90), ('skirt_back', 90), ('skirt_front_copy1', 270), ('skirt_back_copy1', 0), ('right_btorso', 180), ('right_ftorso', 180), ('right_ftorso_copy1', 0), ('right_btorso_copy1', 270), ('left_btorso_copy1', 0), ('left_btorso1', 0), ('left_btorso2', 0), ('left_ftorso', 90), ('left_ftorso_copy11', 180), ('left_ftorso_copy12', 180)] | Fitness: 0.8391
+Elite: [('skirt_back_copy1', 90), ('right_ftorso_copy1', 0), ('skirt_front', 90), ('left_btorso_copy1', 90), ('right_ftorso', 180), ('skirt_back', 270), ('left_btorso', 180), ('left_ftorso_copy1', 0), ('right_btorso_copy1', 90), ('right_btorso', 90), ('left_ftorso', 90), ('skirt_front_copy111', 0), ('skirt_front_copy112', 0), ('skirt_front_copy12', 0)] | Fitness: 0.8384
+Elite: [('skirt_front_copy1', 180), ('skirt_back_copy1', 180), ('skirt_front', 90), ('skirt_back', 0), ('right_btorso', 180), ('right_ftorso', 270), ('right_btorso_copy1', 270), ('right_ftorso_copy1', 0), ('left_ftorso', 270), ('left_ftorso_copy1', 0), ('left_btorso_copy121', 0), ('left_btorso_copy122', 0), ('left_btorso_copy11', 0), ('left_btorso', 180)] | Fitness: 0.8376
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7542
+Offspring created with fitness: 0.7298
+Offspring created with fitness: 0.8425
+Offspring created with fitness: 0.7581
+Offspring created with fitness: 0.7664
+Offspring created with fitness: 0.8261
+Offspring created with fitness: 0.8391
+Offspring created with fitness: 0.7338
+Offspring created with fitness: 0.7155
+Offspring created with fitness: 0.7004
+Offspring created with fitness: 0.7434
+Offspring created with fitness: 0.8035
+Offspring created with fitness: 0.7650
+Offspring created with fitness: 0.7251
+Offspring created with fitness: 0.8425
+Offspring created with fitness: 0.8425
+Offspring created with fitness: 0.8062
+Offspring created with fitness: 0.7006
+Offspring created with fitness: 0.7344
+Offspring created with fitness: 0.7700
+Offspring created with fitness: 0.7296
+Offspring created with fitness: 0.8391
+Offspring created with fitness: 0.7588
+Offspring created with fitness: 0.6766
+Offspring created with fitness: 0.8425
+Offspring created with fitness: 0.7006
+Offspring created with fitness: 0.8391
+Offspring created with fitness: 0.7966
+Offspring created with fitness: 0.7251
+Offspring created with fitness: 0.8424
+Offspring created with fitness: 0.7484
+Offspring created with fitness: 0.7635
+Offspring created with fitness: 0.6904
+Offspring created with fitness: 0.6956
+Offspring created with fitness: 0.7208
+Offspring created with fitness: 0.7752
+Offspring created with fitness: 0.7208
+Offspring created with fitness: 0.8391
+Offspring created with fitness: 0.7289
+Offspring created with fitness: 0.7296
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7989
+Mutant created with fitness: 0.7632
+Mutant created with fitness: 0.7867
+Mutant created with fitness: 0.7851
+Mutant created with fitness: 0.7690
+Mutant created with fitness: 0.7409
+Mutant created with fitness: 0.7664
+Mutant created with fitness: 0.8037
+Mutant created with fitness: 0.7596
+Mutant created with fitness: 0.7356
+Mutant created with fitness: 0.7447
+Mutant created with fitness: 0.7527
+Mutant created with fitness: 0.7325
+Mutant created with fitness: 0.8109
+Mutant created with fitness: 0.7918
+Mutant created with fitness: 0.7801
+Mutant created with fitness: 0.7311
+Mutant created with fitness: 0.7216
+Mutant created with fitness: 0.8384
+Mutant created with fitness: 0.7207
+Mutant created with fitness: 0.8164
+Mutant created with fitness: 0.8093
+Mutant created with fitness: 0.7302
+Mutant created with fitness: 0.7542
+Mutant created with fitness: 0.7923
+Mutant created with fitness: 0.7582
+Mutant created with fitness: 0.8056
+Mutant created with fitness: 0.8374
+Mutant created with fitness: 0.7912
+Mutant created with fitness: 0.7450
+Mutant created with fitness: 0.7690
+Mutant created with fitness: 0.7331
+Mutant created with fitness: 0.7596
+Mutant created with fitness: 0.7890
+Mutant created with fitness: 0.8215
+Mutant created with fitness: 0.7186
+Mutant created with fitness: 0.8364
+Mutant created with fitness: 0.7971
+Mutant created with fitness: 0.7613
+Mutant created with fitness: 0.7465
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7365
+Random chromosome created with fitness: 0.7365
+Random chromosome generated with fitness: 0.7939
+Random chromosome created with fitness: 0.7939
+Random chromosome generated with fitness: 0.7637
+Random chromosome created with fitness: 0.7637
+Random chromosome generated with fitness: 0.7616
+Random chromosome created with fitness: 0.7616
+Random chromosome generated with fitness: 0.7471
+Random chromosome created with fitness: 0.7471
+Random chromosome generated with fitness: 0.7404
+Random chromosome created with fitness: 0.7404
+Random chromosome generated with fitness: 0.6973
+Random chromosome created with fitness: 0.6973
+Random chromosome generated with fitness: 0.7142
+Random chromosome created with fitness: 0.7142
+Random chromosome generated with fitness: 0.7721
+Random chromosome created with fitness: 0.7721
+Random chromosome generated with fitness: 0.7721
+Random chromosome created with fitness: 0.7721
+Collected 40 offspring, 40 mutants, 10 randoms.
+Avg offspring gain vs parent: -0.0774; mutants: -0.0676
+------------------------------------------------------------
+Generation 10: best 0.8425 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 10 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_182151/plots/fitness_curves_20250603_182151.png
+Mean gains plot saved to nesting/run_logs/_20250603_182151/plots/mean_gains_20250603_182151.png
+Mutation gains plot saved to nesting/run_logs/_20250603_182151/plots/mutation_gains.png
+Swarm plot data: 1000 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_182151/plots/fitness_swarm_20250603_182151.png
+Plots updated successfully.
+Generation 10 completed in 51.16s.
+------------------------------------------------------------
+Early‑stopping: fitness plateau for 10 generations.
+------------------------------------------------------------
+Evolution completed.
+Total time: 470.41 seconds

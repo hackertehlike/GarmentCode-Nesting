@@ -1,0 +1,465 @@
+------------------------------------------------------------
+Evolution initialized with 50 chromosomes, 5 elites, 20 offspring, 20 mutants, 5 randoms.
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x13a4fd820>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x13a4fd820>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x103aa68d0>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'DEFAULT_PATTERN_PATH': <class 'str'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'PRESERVE_HOLES': <class 'bool'>, 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1'], 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DEFAULT_PATTERN_PATH': 'nesting-assets/Configured_design_specification.json', 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1'], 'SELECTED_DECODER': 'NFP', 'PRESERVE_HOLES': True, 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1', 'OX_K': 1, 'GRAVITATE_STEP': 2, 'POPULATION_SIZE': 50, 'NUM_GENERATIONS': 5, 'MUTATION_RATE': 0.2, 'POPULATION_WEIGHTS': {'elites': 0.1, 'offspring': 0.4, 'mutants': 0.4, 'randoms': 0.1}, 'MUTATION_WEIGHTS': {'rotate': 0, 'swap': 0, 'inversion': 1, 'insertion': 0, 'scramble': 0, 'split': 0}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 2, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs/', 'LOG_TIME': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': True, 'SNAP_TOLERANCE': 0.2, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 180], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 250, 'CONTAINER_HEIGHT_CM': 100.0, 'SEAM_ALLOWANCE_CM': 1, '__dict__': <function __dict__ at 0x13cd581f0>}
+Generating initial population...
+Random chromosome generated with fitness: 0.6146
+Random chromosome generated with fitness: 0.6023
+Random chromosome generated with fitness: 0.5932
+Random chromosome generated with fitness: 0.6145
+Random chromosome generated with fitness: 0.5794
+Random chromosome generated with fitness: 0.5736
+Random chromosome generated with fitness: 0.7105
+Random chromosome generated with fitness: 0.5969
+Random chromosome generated with fitness: 0.6031
+Random chromosome generated with fitness: 0.6894
+Random chromosome generated with fitness: 0.6727
+Random chromosome generated with fitness: 0.6226
+Random chromosome generated with fitness: 0.6037
+Random chromosome generated with fitness: 0.6299
+Random chromosome generated with fitness: 0.6532
+Random chromosome generated with fitness: 0.6297
+Random chromosome generated with fitness: 0.5511
+Random chromosome generated with fitness: 0.5897
+Random chromosome generated with fitness: 0.5524
+Random chromosome generated with fitness: 0.7119
+Random chromosome generated with fitness: 0.6113
+Random chromosome generated with fitness: 0.6325
+Random chromosome generated with fitness: 0.6290
+Random chromosome generated with fitness: 0.7361
+Random chromosome generated with fitness: 0.7102
+Random chromosome generated with fitness: 0.6146
+Random chromosome generated with fitness: 0.6997
+Random chromosome generated with fitness: 0.6508
+Random chromosome generated with fitness: 0.6784
+Random chromosome generated with fitness: 0.6341
+Random chromosome generated with fitness: 0.5956
+Random chromosome generated with fitness: 0.7309
+Random chromosome generated with fitness: 0.5193
+Random chromosome generated with fitness: 0.5866
+Random chromosome generated with fitness: 0.7122
+Random chromosome generated with fitness: 0.5086
+Random chromosome generated with fitness: 0.6544
+Random chromosome generated with fitness: 0.6293
+Random chromosome generated with fitness: 0.6188
+Random chromosome generated with fitness: 0.6158
+Random chromosome generated with fitness: 0.5664
+Random chromosome generated with fitness: 0.6183
+Random chromosome generated with fitness: 0.5409
+Random chromosome generated with fitness: 0.5478
+Random chromosome generated with fitness: 0.5230
+Random chromosome generated with fitness: 0.7138
+Random chromosome generated with fitness: 0.7224
+Random chromosome generated with fitness: 0.6141
+Random chromosome generated with fitness: 0.5586
+Random chromosome generated with fitness: 0.6934
+------------------------------------------------------------
+Initial population of 50 layouts generated.
+Layout 0: [('skirt_back', 90), ('left_ftorso', 270), ('skirt_front2', 270), ('skirt_front1', 180), ('right_btorso', 0), ('left_btorso', 0), ('right_ftorso', 180)] | Fitness: 0.6894
+Layout 1: [('left_ftorso', 0), ('skirt_front2', 0), ('right_ftorso', 270), ('skirt_back', 90), ('left_btorso', 180), ('right_btorso', 270), ('skirt_front1', 0)] | Fitness: 0.6145
+Layout 2: [('right_ftorso', 180), ('skirt_front1', 0), ('skirt_front2', 0), ('left_ftorso', 180), ('right_btorso', 270), ('left_btorso', 270), ('skirt_back', 270)] | Fitness: 0.5969
+Layout 3: [('skirt_front2', 180), ('right_ftorso', 180), ('left_ftorso', 180), ('skirt_front1', 270), ('left_btorso', 90), ('right_btorso', 0), ('skirt_back', 270)] | Fitness: 0.6031
+Layout 4: [('left_ftorso', 0), ('skirt_front2', 180), ('left_btorso', 90), ('right_btorso', 90), ('skirt_front1', 90), ('right_ftorso', 180), ('skirt_back', 0)] | Fitness: 0.5932
+Layout 5: [('skirt_front2', 90), ('left_btorso', 270), ('skirt_front1', 90), ('right_ftorso', 270), ('skirt_back', 270), ('right_btorso', 270), ('left_ftorso', 180)] | Fitness: 0.5794
+Layout 6: [('right_btorso', 270), ('skirt_front1', 270), ('left_btorso', 0), ('skirt_front2', 90), ('skirt_back', 90), ('left_ftorso', 270), ('right_ftorso', 270)] | Fitness: 0.6226
+Layout 7: [('skirt_front1', 180), ('skirt_front2', 270), ('left_ftorso', 270), ('right_btorso', 0), ('left_btorso', 180), ('skirt_back', 180), ('right_ftorso', 270)] | Fitness: 0.6727
+Layout 8: [('left_btorso', 0), ('right_ftorso', 270), ('skirt_back', 0), ('right_btorso', 90), ('left_ftorso', 270), ('skirt_front1', 180), ('skirt_front2', 270)] | Fitness: 0.6023
+Layout 9: [('right_btorso', 180), ('left_btorso', 90), ('left_ftorso', 270), ('right_ftorso', 180), ('skirt_back', 180), ('skirt_front2', 90), ('skirt_front1', 180)] | Fitness: 0.7105
+Layout 10: [('right_ftorso', 0), ('skirt_front2', 90), ('left_btorso', 180), ('right_btorso', 180), ('skirt_back', 0), ('left_ftorso', 90), ('skirt_front1', 180)] | Fitness: 0.6146
+Layout 11: [('left_btorso', 0), ('skirt_front1', 180), ('skirt_front2', 270), ('left_ftorso', 270), ('skirt_back', 90), ('right_ftorso', 180), ('right_btorso', 180)] | Fitness: 0.5736
+Layout 12: [('right_ftorso', 0), ('right_btorso', 180), ('skirt_front1', 180), ('left_ftorso', 270), ('skirt_back', 270), ('skirt_front2', 270), ('left_btorso', 270)] | Fitness: 0.6037
+Layout 13: [('left_ftorso', 0), ('right_ftorso', 180), ('left_btorso', 0), ('skirt_front1', 270), ('right_btorso', 0), ('skirt_back', 0), ('skirt_front2', 180)] | Fitness: 0.6299
+Layout 14: [('right_ftorso', 90), ('left_btorso', 180), ('right_btorso', 270), ('skirt_front1', 0), ('skirt_back', 90), ('skirt_front2', 180), ('left_ftorso', 270)] | Fitness: 0.5524
+Layout 15: [('skirt_front1', 0), ('left_btorso', 270), ('right_btorso', 270), ('left_ftorso', 180), ('right_ftorso', 0), ('skirt_back', 90), ('skirt_front2', 180)] | Fitness: 0.5511
+Layout 16: [('skirt_front2', 270), ('left_ftorso', 270), ('left_btorso', 180), ('skirt_front1', 0), ('right_btorso', 90), ('right_ftorso', 0), ('skirt_back', 180)] | Fitness: 0.7119
+Layout 17: [('right_ftorso', 270), ('skirt_back', 180), ('left_btorso', 0), ('left_ftorso', 0), ('skirt_front1', 270), ('right_btorso', 0), ('skirt_front2', 90)] | Fitness: 0.6297
+Layout 18: [('left_ftorso', 90), ('skirt_back', 90), ('skirt_front2', 270), ('right_btorso', 270), ('skirt_front1', 270), ('right_ftorso', 180), ('left_btorso', 0)] | Fitness: 0.5897
+Layout 19: [('skirt_back', 270), ('right_ftorso', 90), ('skirt_front1', 0), ('left_ftorso', 90), ('skirt_front2', 90), ('right_btorso', 270), ('left_btorso', 90)] | Fitness: 0.6113
+Layout 20: [('skirt_front1', 180), ('skirt_back', 0), ('left_btorso', 270), ('right_ftorso', 180), ('skirt_front2', 270), ('right_btorso', 0), ('left_ftorso', 270)] | Fitness: 0.6532
+Layout 21: [('left_btorso', 90), ('skirt_front1', 90), ('right_btorso', 270), ('skirt_back', 90), ('left_ftorso', 90), ('right_ftorso', 90), ('skirt_front2', 0)] | Fitness: 0.6325
+Layout 22: [('right_ftorso', 0), ('left_btorso', 270), ('right_btorso', 0), ('skirt_back', 270), ('skirt_front2', 180), ('left_ftorso', 270), ('skirt_front1', 0)] | Fitness: 0.6290
+Layout 23: [('skirt_front2', 0), ('skirt_back', 180), ('left_btorso', 90), ('right_ftorso', 0), ('left_ftorso', 180), ('right_btorso', 270), ('skirt_front1', 90)] | Fitness: 0.7361
+Layout 24: [('left_ftorso', 270), ('skirt_back', 90), ('right_ftorso', 90), ('skirt_front1', 90), ('right_btorso', 0), ('left_btorso', 0), ('skirt_front2', 90)] | Fitness: 0.6146
+Layout 25: [('right_ftorso', 90), ('skirt_back', 180), ('left_ftorso', 270), ('right_btorso', 180), ('left_btorso', 90), ('skirt_front1', 90), ('skirt_front2', 90)] | Fitness: 0.6997
+Layout 26: [('skirt_front1', 180), ('left_ftorso', 90), ('skirt_front2', 0), ('right_ftorso', 90), ('skirt_back', 0), ('left_btorso', 180), ('right_btorso', 180)] | Fitness: 0.6508
+Layout 27: [('left_btorso', 90), ('right_ftorso', 180), ('skirt_front1', 270), ('skirt_front2', 90), ('skirt_back', 270), ('left_ftorso', 0), ('right_btorso', 0)] | Fitness: 0.7102
+Layout 28: [('skirt_front2', 270), ('left_ftorso', 90), ('right_ftorso', 270), ('skirt_back', 0), ('right_btorso', 0), ('left_btorso', 180), ('skirt_front1', 90)] | Fitness: 0.6341
+Layout 29: [('skirt_back', 270), ('left_btorso', 0), ('left_ftorso', 270), ('right_btorso', 0), ('skirt_front1', 270), ('right_ftorso', 90), ('skirt_front2', 180)] | Fitness: 0.7309
+Layout 30: [('skirt_back', 180), ('left_btorso', 180), ('right_btorso', 180), ('skirt_front2', 270), ('left_ftorso', 90), ('right_ftorso', 270), ('skirt_front1', 270)] | Fitness: 0.6784
+Layout 31: [('right_ftorso', 90), ('left_ftorso', 90), ('skirt_front1', 90), ('skirt_front2', 0), ('skirt_back', 180), ('left_btorso', 90), ('right_btorso', 90)] | Fitness: 0.5193
+Layout 32: [('skirt_back', 270), ('skirt_front1', 180), ('left_ftorso', 180), ('right_btorso', 270), ('left_btorso', 180), ('right_ftorso', 180), ('skirt_front2', 0)] | Fitness: 0.5956
+Layout 33: [('right_ftorso', 90), ('left_btorso', 0), ('left_ftorso', 90), ('right_btorso', 180), ('skirt_front1', 270), ('skirt_back', 270), ('skirt_front2', 0)] | Fitness: 0.5866
+Layout 34: [('left_ftorso', 180), ('right_btorso', 90), ('skirt_front2', 270), ('left_btorso', 90), ('skirt_back', 270), ('right_ftorso', 270), ('skirt_front1', 90)] | Fitness: 0.5086
+Layout 35: [('skirt_front1', 90), ('skirt_back', 270), ('left_btorso', 90), ('right_btorso', 270), ('right_ftorso', 180), ('left_ftorso', 0), ('skirt_front2', 270)] | Fitness: 0.7122
+Layout 36: [('right_ftorso', 270), ('right_btorso', 0), ('left_btorso', 270), ('skirt_back', 0), ('left_ftorso', 90), ('skirt_front2', 270), ('skirt_front1', 90)] | Fitness: 0.6188
+Layout 37: [('left_btorso', 270), ('skirt_front2', 0), ('left_ftorso', 180), ('skirt_front1', 180), ('right_ftorso', 90), ('right_btorso', 90), ('skirt_back', 180)] | Fitness: 0.6544
+Layout 38: [('left_btorso', 270), ('skirt_back', 270), ('right_ftorso', 270), ('skirt_front2', 90), ('left_ftorso', 180), ('right_btorso', 270), ('skirt_front1', 90)] | Fitness: 0.6293
+Layout 39: [('skirt_front2', 0), ('skirt_front1', 180), ('left_btorso', 90), ('right_btorso', 90), ('skirt_back', 180), ('right_ftorso', 0), ('left_ftorso', 90)] | Fitness: 0.5664
+Layout 40: [('right_btorso', 0), ('left_ftorso', 180), ('right_ftorso', 90), ('skirt_front1', 180), ('left_btorso', 180), ('skirt_back', 270), ('skirt_front2', 270)] | Fitness: 0.6158
+Layout 41: [('left_ftorso', 0), ('right_ftorso', 90), ('skirt_front1', 180), ('skirt_front2', 0), ('skirt_back', 180), ('left_btorso', 90), ('right_btorso', 0)] | Fitness: 0.6183
+Layout 42: [('skirt_front2', 0), ('skirt_front1', 0), ('left_ftorso', 90), ('right_ftorso', 0), ('right_btorso', 270), ('skirt_back', 270), ('left_btorso', 270)] | Fitness: 0.5409
+Layout 43: [('skirt_back', 90), ('skirt_front1', 270), ('right_ftorso', 180), ('left_ftorso', 180), ('right_btorso', 90), ('skirt_front2', 180), ('left_btorso', 270)] | Fitness: 0.7138
+Layout 44: [('right_btorso', 90), ('skirt_front1', 0), ('skirt_front2', 270), ('right_ftorso', 0), ('left_ftorso', 0), ('skirt_back', 0), ('left_btorso', 270)] | Fitness: 0.5230
+Layout 45: [('skirt_front2', 270), ('right_ftorso', 90), ('left_ftorso', 0), ('skirt_front1', 90), ('right_btorso', 180), ('skirt_back', 0), ('left_btorso', 270)] | Fitness: 0.7224
+Layout 46: [('skirt_back', 90), ('skirt_front1', 0), ('right_ftorso', 90), ('skirt_front2', 270), ('right_btorso', 90), ('left_ftorso', 90), ('left_btorso', 180)] | Fitness: 0.6141
+Layout 47: [('right_btorso', 270), ('skirt_front1', 180), ('skirt_back', 90), ('left_btorso', 0), ('right_ftorso', 180), ('skirt_front2', 0), ('left_ftorso', 90)] | Fitness: 0.5478
+Layout 48: [('right_ftorso', 90), ('left_ftorso', 180), ('right_btorso', 270), ('skirt_front1', 90), ('skirt_back', 0), ('left_btorso', 270), ('skirt_front2', 270)] | Fitness: 0.6934
+Layout 49: [('skirt_back', 180), ('left_ftorso', 0), ('right_btorso', 0), ('skirt_front2', 90), ('right_ftorso', 90), ('skirt_front1', 90), ('left_btorso', 180)] | Fitness: 0.5586
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7361
+Collecting results from tasks…
+Offspring created with fitness: 0.6094
+Offspring created with fitness: 0.6192
+Offspring created with fitness: 0.6466
+Offspring created with fitness: 0.6868
+Offspring created with fitness: 0.6061
+Offspring created with fitness: 0.6694
+Offspring created with fitness: 0.6240
+Offspring created with fitness: 0.6157
+Offspring created with fitness: 0.7544
+Offspring created with fitness: 0.6471
+Offspring created with fitness: 0.7138
+Offspring created with fitness: 0.6226
+Offspring created with fitness: 0.6854
+Offspring created with fitness: 0.5826
+Offspring created with fitness: 0.5584
+Offspring created with fitness: 0.5667
+Offspring created with fitness: 0.6544
+Offspring created with fitness: 0.6034
+Offspring created with fitness: 0.6192
+Mutant created with fitness: 0.7238
+Mutant created with fitness: 0.5554
+Offspring created with fitness: 0.5011
+Mutant created with fitness: 0.7455
+Mutant created with fitness: 0.5961
+Mutant created with fitness: 0.6857
+Mutant created with fitness: 0.6333
+Mutant created with fitness: 0.5742
+Mutant created with fitness: 0.6333
+Mutant created with fitness: 0.6045
+Mutant created with fitness: 0.7067
+Mutant created with fitness: 0.6301
+Mutant created with fitness: 0.6200
+Mutant created with fitness: 0.7086
+Mutant created with fitness: 0.5195
+Mutant created with fitness: 0.6127
+Mutant created with fitness: 0.7437
+Mutant created with fitness: 0.6451
+Mutant created with fitness: 0.6753
+Mutant created with fitness: 0.6225
+Mutant created with fitness: 0.7081
+Random chromosome generated with fitness: 0.5697
+Random chromosome created with fitness: 0.5697
+Random chromosome generated with fitness: 0.6090
+Random chromosome created with fitness: 0.6090
+Random chromosome generated with fitness: 0.5496
+Random chromosome created with fitness: 0.5496
+Random chromosome generated with fitness: 0.6112
+Random chromosome created with fitness: 0.6112
+Random chromosome generated with fitness: 0.5585
+Random chromosome created with fitness: 0.5585
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0996; mutants: -0.0772
+------------------------------------------------------------
+Generation 1: best 0.7544 (Δ +0.0000)
+Generation 1 completed in 6.13s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7544
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7544
+Collecting results from tasks…
+Offspring created with fitness: 0.5790
+Offspring created with fitness: 0.6573
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.7250
+Offspring created with fitness: 0.6406
+Offspring created with fitness: 0.6343
+Offspring created with fitness: 0.7437
+Offspring created with fitness: 0.5606
+Offspring created with fitness: 0.6557
+Offspring created with fitness: 0.6880
+Offspring created with fitness: 0.5250
+Offspring created with fitness: 0.5250
+Offspring created with fitness: 0.5343
+Offspring created with fitness: 0.5820
+Offspring created with fitness: 0.6408
+Offspring created with fitness: 0.6343
+Offspring created with fitness: 0.6581
+Offspring created with fitness: 0.7361
+Mutant created with fitness: 0.7361
+Offspring created with fitness: 0.6792
+Offspring created with fitness: 0.4305
+Mutant created with fitness: 0.7095
+Mutant created with fitness: 0.6500
+Mutant created with fitness: 0.6095
+Mutant created with fitness: 0.7128
+Mutant created with fitness: 0.6802
+Mutant created with fitness: 0.6453
+Mutant created with fitness: 0.6922
+Mutant created with fitness: 0.7051
+Mutant created with fitness: 0.5779
+Mutant created with fitness: 0.6224
+Mutant created with fitness: 0.7370
+Mutant created with fitness: 0.6188
+Mutant created with fitness: 0.7128
+Mutant created with fitness: 0.6807
+Mutant created with fitness: 0.6683
+Mutant created with fitness: 0.7455
+Mutant created with fitness: 0.6556
+Mutant created with fitness: 0.5695
+Random chromosome generated with fitness: 0.5500
+Random chromosome created with fitness: 0.5500
+Random chromosome generated with fitness: 0.5561
+Random chromosome generated with fitness: 0.6848
+Random chromosome created with fitness: 0.6848
+Random chromosome created with fitness: 0.5561
+Mutant created with fitness: 0.5941
+Random chromosome generated with fitness: 0.6849
+Random chromosome created with fitness: 0.6849
+Random chromosome generated with fitness: 0.7036
+Random chromosome created with fitness: 0.7036
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.1191; mutants: -0.0748
+------------------------------------------------------------
+Generation 2: best 0.7544 (Δ +0.0000)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 2 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_151725/plots/fitness_curves_20250603_151725.png
+Mean gains plot saved to nesting/run_logs/_20250603_151725/plots/mean_gains_20250603_151725.png
+Mutation gains plot saved to nesting/run_logs/_20250603_151725/plots/mutation_gains.png
+Swarm plot data: 100 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_151725/plots/fitness_swarm_20250603_151725.png
+Plots updated successfully.
+Generation 2 completed in 6.57s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7544
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7544
+Collecting results from tasks…
+Offspring created with fitness: 0.6343
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.6986
+Offspring created with fitness: 0.6317
+Offspring created with fitness: 0.5199
+Offspring created with fitness: 0.7260
+Offspring created with fitness: 0.7455
+Offspring created with fitness: 0.7455
+Offspring created with fitness: 0.6581
+Offspring created with fitness: 0.6880
+Offspring created with fitness: 0.6694
+Offspring created with fitness: 0.5790
+Offspring created with fitness: 0.6229
+Offspring created with fitness: 0.7437
+Offspring created with fitness: 0.7544
+Offspring created with fitness: 0.6840
+Offspring created with fitness: 0.6000
+Offspring created with fitness: 0.7514
+Mutant created with fitness: 0.6556
+Offspring created with fitness: 0.7514
+Mutant created with fitness: 0.6343
+Offspring created with fitness: 0.6492
+Mutant created with fitness: 0.6343
+Mutant created with fitness: 0.6033
+Mutant created with fitness: 0.6343
+Mutant created with fitness: 0.6556
+Mutant created with fitness: 0.6683
+Mutant created with fitness: 0.7309
+Mutant created with fitness: 0.6299
+Mutant created with fitness: 0.6033
+Mutant created with fitness: 0.6220
+Mutant created with fitness: 0.6095
+Mutant created with fitness: 0.7370
+Mutant created with fitness: 0.5983
+Mutant created with fitness: 0.5926
+Mutant created with fitness: 0.6247
+Mutant created with fitness: 0.6205
+Mutant created with fitness: 0.6353
+Mutant created with fitness: 0.6526
+Random chromosome generated with fitness: 0.6425
+Random chromosome created with fitness: 0.6425
+Random chromosome generated with fitness: 0.6180
+Random chromosome created with fitness: 0.6180
+Mutant created with fitness: 0.6361
+Random chromosome generated with fitness: 0.5851
+Random chromosome created with fitness: 0.5851
+Random chromosome generated with fitness: 0.6337
+Random chromosome created with fitness: 0.6337
+Random chromosome generated with fitness: 0.5678
+Random chromosome created with fitness: 0.5678
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0711; mutants: -0.1076
+------------------------------------------------------------
+Generation 3: best 0.7544 (Δ +0.0000)
+Generation 3 completed in 5.84s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7544
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7544
+Collecting results from tasks…
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.6952
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.7617
+Offspring created with fitness: 0.7617
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.6652
+Offspring created with fitness: 0.6343
+Offspring created with fitness: 0.7544
+Offspring created with fitness: 0.6791
+Offspring created with fitness: 0.7345
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.7475
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.7544
+Mutant created with fitness: 0.6884
+Mutant created with fitness: 0.6123
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.7514
+Mutant created with fitness: 0.6350
+Mutant created with fitness: 0.7544
+Mutant created with fitness: 0.6824
+Mutant created with fitness: 0.6188
+Mutant created with fitness: 0.6017
+Mutant created with fitness: 0.6519
+Mutant created with fitness: 0.6224
+Mutant created with fitness: 0.7590
+Mutant created with fitness: 0.7070
+Mutant created with fitness: 0.6317
+Mutant created with fitness: 0.7678
+Mutant created with fitness: 0.6601
+Mutant created with fitness: 0.7590
+Mutant created with fitness: 0.6247
+Mutant created with fitness: 0.7006
+Mutant created with fitness: 0.7590
+Random chromosome generated with fitness: 0.5532
+Random chromosome created with fitness: 0.5532
+Mutant created with fitness: 0.5748
+Random chromosome generated with fitness: 0.5933
+Random chromosome created with fitness: 0.5933
+Random chromosome generated with fitness: 0.6479
+Random chromosome created with fitness: 0.6479
+Mutant created with fitness: 0.5800
+Random chromosome generated with fitness: 0.5898
+Random chromosome created with fitness: 0.5898
+Random chromosome generated with fitness: 0.5777
+Random chromosome created with fitness: 0.5777
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0184; mutants: -0.0834
+------------------------------------------------------------
+Generation 4: best 0.7678 (Δ +0.0133)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_151725/plots/fitness_curves_20250603_151725.png
+Mean gains plot saved to nesting/run_logs/_20250603_151725/plots/mean_gains_20250603_151725.png
+Mutation gains plot saved to nesting/run_logs/_20250603_151725/plots/mutation_gains.png
+Swarm plot data: 200 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_151725/plots/fitness_swarm_20250603_151725.png
+Plots updated successfully.
+Generation 4 completed in 6.16s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7678
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7678
+Collecting results from tasks…
+Offspring created with fitness: 0.7717
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.7485
+Offspring created with fitness: 0.7617
+Offspring created with fitness: 0.7617
+Offspring created with fitness: 0.7617
+Offspring created with fitness: 0.7590
+Offspring created with fitness: 0.8178
+Offspring created with fitness: 0.7617
+Offspring created with fitness: 0.7590
+Offspring created with fitness: 0.7485
+Offspring created with fitness: 0.6781
+Offspring created with fitness: 0.7590
+Offspring created with fitness: 0.6634
+Offspring created with fitness: 0.7617
+Offspring created with fitness: 0.7590
+Offspring created with fitness: 0.6302
+Offspring created with fitness: 0.7485
+Offspring created with fitness: 0.7678
+Offspring created with fitness: 0.7485
+Mutant created with fitness: 0.5954
+Mutant created with fitness: 0.6758
+Mutant created with fitness: 0.5996
+Mutant created with fitness: 0.6334
+Mutant created with fitness: 0.7617
+Mutant created with fitness: 0.6174
+Mutant created with fitness: 0.6325
+Mutant created with fitness: 0.6953
+Mutant created with fitness: 0.6712
+Mutant created with fitness: 0.6096
+Mutant created with fitness: 0.5819
+Mutant created with fitness: 0.6781
+Mutant created with fitness: 0.5996
+Mutant created with fitness: 0.6560
+Mutant created with fitness: 0.5803
+Mutant created with fitness: 0.8310
+Mutant created with fitness: 0.7267
+Mutant created with fitness: 0.6652
+Random chromosome generated with fitness: 0.6248
+Random chromosome created with fitness: 0.6248
+Mutant created with fitness: 0.5822
+Mutant created with fitness: 0.5819
+Random chromosome generated with fitness: 0.6262
+Random chromosome created with fitness: 0.6262
+Random chromosome generated with fitness: 0.5740
+Random chromosome created with fitness: 0.5740
+Random chromosome generated with fitness: 0.6581
+Random chromosome created with fitness: 0.6581
+Random chromosome generated with fitness: 0.6872
+Random chromosome created with fitness: 0.6872
+Collected 20 offspring, 20 mutants, 5 randoms.
+Avg offspring gain vs parent: -0.0167; mutants: -0.1136
+------------------------------------------------------------
+Generation 5: best 0.8310 (Δ +0.0632)
+Flushing metrics to CSV…
+Updating plots…
+Plotting 5 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250603_151725/plots/fitness_curves_20250603_151725.png
+Mean gains plot saved to nesting/run_logs/_20250603_151725/plots/mean_gains_20250603_151725.png
+Mutation gains plot saved to nesting/run_logs/_20250603_151725/plots/mutation_gains.png
+Swarm plot data: 250 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250603_151725/plots/fitness_swarm_20250603_151725.png
+Plots updated successfully.
+Generation 5 completed in 6.30s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8310
+------------------------------------------------------------
+Evolution completed.
+Total time: 37.80 seconds
