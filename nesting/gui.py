@@ -173,7 +173,7 @@ class NestingGUI:
             ui.button("Auto place (NFP)", on_click=lambda _: self._auto_place("NFP"))
             ui.button("Random Order (BL)", on_click=lambda _: self._auto_place("Random Order BL"))
             ui.button("Genetic Algorithm", on_click=lambda _: self._auto_place("Genetic Algorithm"))
-
+           # ui.button("Jostle", on_click=lambda _: self._auto_place("Jostle"))
             # Button to enable selection mode.
             ui.button("Select Panel (S)", on_click=self._enable_selection_mode)
             ui.button("Reset Selection", on_click=lambda _: self._select_panel(""))
@@ -387,6 +387,13 @@ class NestingGUI:
         # if self.pieces:
         #     first_id = next(iter(self.pieces))
         #     original_piece = self.pieces.pop(first_id)
+        #     left_piece, right_piece = original_piece.split()
+        #     self.pieces[left_piece.id] = left_piece
+        #     self.pieces[right_piece.id] = right_piece
+
+        # split every piece into two halves
+        # for piece_id, piece in panel_pieces.items():
+        #     original_piece = self.pieces.pop(piece_id)
         #     left_piece, right_piece = original_piece.split()
         #     self.pieces[left_piece.id] = left_piece
         #     self.pieces[right_piece.id] = right_piece
@@ -805,14 +812,14 @@ class NestingGUI:
 
             if method == "BL":
                 # Bottom-Left placement
-                decoder = BottomLeftDecoder(layout, container, step=config.GRAVITATE_STEP)
+                decoder = BottomLeftDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
             elif method == "Greedy":
                 # Greedy placement
-                decoder = GreedyBLDecoder(layout, container)   
+                decoder = GreedyBLDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, sort_key = config.SORT_BY, step=config.GRAVITATE_STEP)
             elif method == "NFP":
-                decoder = NFPDecoder(layout, container)
+                decoder = NFPDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
             elif method == "Random Order BL":
-                decoder = RandomDecoder(layout, container)
+                decoder = RandomDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
             elif method == "Genetic Algorithm":
                 evo = Evolution(
                     self.pieces,
@@ -842,6 +849,9 @@ class NestingGUI:
                 view    = LayoutView(best_chromosome.genes)
                 decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
   
+            elif method == "Jostle":
+                decoder = JostleDecoder(layout, container, step=config.GRAVITATE_STEP)
+
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             

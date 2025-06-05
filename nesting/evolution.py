@@ -176,7 +176,33 @@ class Evolution:
             self.population = [self._generate_random_chromosome() for _ in range(self.population_size)]
 
         self.pop_fitness_history.append([chrom.fitness for chrom in self.population])
-            
+        # Record initial generation (gen 0) metrics for plots and CSV
+        best0 = max(c.fitness for c in self.population)
+        avg_pop = sum(c.fitness for c in self.population) / len(self.population)
+        row0 = {
+            'generation': 0,
+            'avg_child_fitness': avg_pop,
+            'avg_elite': avg_pop,
+            'avg_off': 0.0,
+            'avg_mut': 0.0,
+            'avg_rand': avg_pop,
+            'best_fit': best0,
+            'delta_best': 0.0,
+            'mean_offspring_gain': 0.0,
+            'mean_mutant_gain': 0.0,
+        }
+        self._all_metrics.append(row0)
+        self._metrics_buffer.append(row0)
+        # Seed best and delta history
+        self.best_fitness_history.append(best0)
+        self.delta_best.append(0.0)
+        # Seed swarm plot data for gen 0
+        frame0 = pd.DataFrame([
+            {'generation': 0, 'fitness': c.fitness, 'origin': c.origin or 'initial'}
+            for c in self.population
+        ])
+        self._swarm_df = pd.concat([self._swarm_df, frame0], ignore_index=True)
+        
         self._log(f"Initial population of {self.population_size} layouts generated.", divider=True)
         for i, chrom in enumerate(self.population):
             self._log(f"Layout {i}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")

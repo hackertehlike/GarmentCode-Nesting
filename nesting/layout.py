@@ -182,6 +182,7 @@ class Piece:
             parts_inner: list[Polygon] = [g for g in result_inner.geoms if isinstance(g, Polygon)]
 
             # 5) Handle cases where outer split yields more fragments than expected
+            # this is some chatgpt magic
             if len(parts_outer) != 2:
                 print(f"[split] Warning: expected 2 outer parts, got {len(parts_outer)}; grouping by centroid and unioning")
                 # group outer fragments by centroid relative to midx
@@ -207,7 +208,7 @@ class Piece:
                 parts_outer_sorted = sorted(parts_outer, key=lambda g: g.centroid.x)
                 left_outer, right_outer = parts_outer_sorted
 
-            print(f"[split] Outer halves centroids: left={left_outer.centroid.x}, right={right_outer.centroid.x}")
+            #print(f"[split] Outer halves centroids: left={left_outer.centroid.x}, right={right_outer.centroid.x}")
 
             # 7) Group all inner fragments into “left” or “right” by centroid.x < or > midx
             inner_left_list: list[Polygon] = []
@@ -262,7 +263,7 @@ class Piece:
 
                 # 10c) Create a new Piece with “inner” path as its base polygon
                 #      We append a numeric suffix so its ID is unique (e.g. "origID1" and "origID2").
-                new_id = f"{self.id}{idx}"
+                new_id = f"{self.id}_s{idx}"
                 new_piece = Piece(i_coords_local, id=new_id)
 
                 # 10d) Copy over outer_path, parent_id, translation, rotation, and update bbox

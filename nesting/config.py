@@ -8,23 +8,34 @@ MULTITHREADING: bool = True
 VERBOSE: bool = True
 DEFAULT_PATTERN_PATH: str = "nesting-assets/shirts.json"
 
-DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
+DecoderName = Literal["BL", "Greedy", "NFP", "Random", "Jostle"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
 CrossoverName = Literal["pmx", "ox1"]
+SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
+
 # ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"
 OX_K = 1
+NUM_SPLITS = 30  # number of splits for the split mutation operator
+
 
 # ——— placement settings —————————————————————————————————————
+# BL
+GRAVITATE_ONCE: bool = True  # whether to gravitate the pattern once before starting the GA
 GRAVITATE_STEP = 2
+# Greedy
+SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
+
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 50
+POPULATION_SIZE       = 30
 NUM_GENERATIONS       = 10
-MUTATION_RATE         = 0.5
+MUTATION_RATE         = 0.3
+
+
 
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
@@ -41,8 +52,8 @@ MUTATION_WEIGHTS = {
     "swap":      0.1,
     "inversion": 0.1,
     "insertion": 0.1,
-    "scramble":  0.1,
-    "split":     0.5,   # keep zero until you implement it
+    "scramble":  0.2,
+    "split":     0.4,   # keep zero until you implement it
 }
 
 
@@ -112,6 +123,15 @@ def __dict__() -> dict:
         "MUTATION_WEIGHTS": MUTATION_WEIGHTS,
         "SAVE_LOGS": SAVE_LOGS,
         "SAVE_LOGS_PATH": SAVE_LOGS_PATH,
-        "LOG_TIME": LOG_TIME
+        "LOG_TIME": LOG_TIME,
+        "HULL_TRIM_RATIO": HULL_TRIM_RATIO,
+        "INTERIOR_SAMPLE_SPACING": INTERIOR_SAMPLE_SPACING,
+        "BOUNDARY_SAMPLE_SPACING": BOUNDARY_SAMPLE_SPACING,
+        "SNAP": SNAP,
+        "SNAP_TOLERANCE": SNAP_TOLERANCE,
+        "NUM_COPIES": NUM_COPIES,
+        "NUM_SPLITS": NUM_SPLITS,
+        "OX_K": OX_K,
+        "POPULATION_WEIGHTS": POPULATION_WEIGHTS,
+        "PRESERVE_HOLES": PRESERVE_HOLES
     }
-    

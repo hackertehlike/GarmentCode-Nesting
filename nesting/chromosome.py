@@ -88,15 +88,42 @@ class Chromosome(Layout):
         n = len(self.genes)
 
         if mutation == "split":
-            # Split a random gene into two new genes
-            idx = random.randrange(n)
-            piece = self.genes[idx]
-            new_genes = piece.split()
-            self.genes.pop(idx)
-            self.genes[idx:idx] = new_genes
-            print(f"[Chromosome.mutate] split {piece.id} into {new_genes[0].id} and {new_genes[1].id}")
-            # final chromosome print
-            print(f"[Chromosome.mutate] new genes: {[p.id for p in self.genes]}")
+            # Split up to config.NUM_SPLITS random unsplit genes
+            max_splits = min(config.NUM_SPLITS, len(self.genes))
+            num_splits = random.randint(5, max_splits)
+            for _ in range(num_splits):
+                # pick an unsplit gene (parent_id is None)
+                unsplit_idxs = [i for i, g in enumerate(self.genes) if g.parent_id is None]
+                if not unsplit_idxs:
+                    break
+                # Favor larger pieces: weight by bounding-box area
+                areas = []
+                for i in unsplit_idxs:
+                    # ensure bounding box is up to date
+                    self.genes[i].update_bbox()
+                    areas.append(self.genes[i].bbox_area)
+                idx = random.choices(unsplit_idxs, weights=areas, k=1)[0]
+                piece = self.genes[idx]
+                left, right = piece.split()
+                # replace original with left and right
+                self.genes.pop(idx)
+                self.genes.insert(idx, left)
+                self.genes.insert(idx + 1, right)
+                # relocate one of the split halves to a random position
+                child_to_move = random.choice([left, right])
+                # remove the chosen child from its current position
+                cur_pos = self.genes.index(child_to_move)
+                self.genes.pop(cur_pos)
+                # choose a new insert index across the genes list
+                new_pos = random.randrange(len(self.genes) + 1)
+                self.genes.insert(new_pos, child_to_move)
+                if config.VERBOSE:
+                    print(f"[Chromosome.mutate] relocated {child_to_move.id} to position {new_pos}")
+                if config.VERBOSE:
+                    print(f"[Chromosome.mutate] split {piece.id} into {left.id} and {right.id}")
+            # print resulting gene sequence
+            if config.VERBOSE:
+                print(f"[Chromosome.mutate] new genes: {[p.id for p in self.genes]}")
 
         elif mutation == "rotate":
             # Pick how many genes to rotate (1..n), then apply in batch
@@ -250,70 +277,6 @@ class Chromosome(Layout):
             dt = time.time() - t0
             print(f"[Chromosome.crossover_ox1] k={k} produced "
                 f"{len(child_genes)} genes in {dt:.4f} s, segments={segments}")
-
-        return Chromosome(child_genes, self.container)
-        t0 = time.time()
-
-        # ---------- helper -------------------------------------------------
-        def get_root(p: Piece) -> str:
-            return getattr(p, "root_id", None) or p.id.split("_")[0]
-
-        # Build ORDER-PRESERVING index  root_id → [Piece, Piece, …]  for both parents
-        def build_index(genes):
-            idx: "OrderedDict[str, list[Piece]]" = OrderedDict()
-            for g in genes:
-                idx.setdefault(get_root(g), []).append(g)
-            return idx
-
-        idx_self  = build_index(self.genes)
-        idx_other = build_index(other.genes)
-
-        # ---------- step 1: choose segments on self ------------------------
-        size_self = len(self.genes)
-        if size_self == 0:
-            raise ValueError("Parent 1 has no genes")
-        if 2 * k > size_self:
-            raise ValueError("2·k cut points exceed chromosome length")
-
-        cuts = sorted(random.sample(range(size_self), 2 * k))
-        segs = [(a, b) if a <= b else (b, a) for a, b in zip(cuts[::2], cuts[1::2])]
-
-        # Which indices fall into any chosen segment?
-        within = [False] * size_self
-        for a, b in segs:
-            within[a : b + 1] = [True] * (b - a + 1)
-
-        chosen_source: dict[str, str] = {}     # root_id → "self" | "other"
-        child_genes: list[Piece] = []
-
-        # Copy components if *any* of their leaves lie inside a selected position
-        seen_roots: set[str] = set()
-        for pos, g in enumerate(self.genes):
-            if within[pos]:
-                rid = get_root(g)
-                if rid not in seen_roots:
-                    seen_roots.add(rid)
-                    chosen_source[rid] = "self"
-                    # extend with deep-copies (no duplicates, preserved order)
-                    child_genes.extend(copy.deepcopy(p) for p in idx_self[rid])
-
-        # ---------- step 2: fill gaps with components from parent 2 --------
-        for rid, plist in idx_other.items():
-            if rid in chosen_source:
-                continue
-            chosen_source[rid] = "other"
-            child_genes.extend(copy.deepcopy(p) for p in plist)
-
-        # ---------- step 3: finally add any leftover self components -------
-        for rid, plist in idx_self.items():
-            if rid in chosen_source:
-                continue
-            chosen_source[rid] = "self"
-            child_genes.extend(copy.deepcopy(p) for p in plist)
-
-        if config.LOG_TIME:
-            print(f"[Chromosome.crossover_ox1] k={k} → {len(child_genes)} genes "
-                f"in {time.time()-t0:.4f}s, segments={segs}")
 
         return Chromosome(child_genes, self.container)
 
