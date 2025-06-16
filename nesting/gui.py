@@ -5,15 +5,20 @@ import copy
 # import yaml
 from typing import Dict, List, Tuple
 from pathlib import Path
+from datetime import datetime
 
 from nicegui import ui, events
 from nicegui.events import KeyEventArguments
 from nesting import utils
 from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap, etc.
+import matplotlib.pyplot as plt
+import io
+import base64
 from .path_extractor import *
 from .layout import *
 from .placement_engine import *
 import nesting.config as config
+from shapely.errors import GEOSException as TopologyException
 
 # viewer size in CSS‑pixels
 MAX_CANVAS_PX_WIDTH  = 800   
@@ -168,10 +173,11 @@ class NestingGUI:
             #         multiple=False)
 
             
-            ui.button("Auto place (Bottom‑Left)", on_click=self._auto_place)
+            ui.button("Auto place (Bottom-Left)", on_click=self._auto_place)
             ui.button("Auto place (Greedy)", on_click=lambda _: self._auto_place("Greedy"))
             ui.button("Auto place (NFP)", on_click=lambda _: self._auto_place("NFP"))
-            ui.button("Random Order (BL)", on_click=lambda _: self._auto_place("Random Order BL"))
+            ui.button("Auto place (Random BL)", on_click=lambda _: self._auto_place("RandomBL"))
+            ui.button("Auto place (Random NFP)", on_click=lambda _: self._auto_place("RandomNFP"))
             ui.button("Genetic Algorithm", on_click=lambda _: self._auto_place("Genetic Algorithm"))
            # ui.button("Jostle", on_click=lambda _: self._auto_place("Jostle"))
             # Button to enable selection mode.
@@ -179,8 +185,10 @@ class NestingGUI:
             ui.button("Reset Selection", on_click=lambda _: self._select_panel(""))
             ui.button("Rotate Panel (R)", on_click=lambda _: self._rotate_panel())
             ui.button("Reset rotations", on_click=lambda _: self._reset_rotations())
-
+            ui.button("Split Panel", on_click=lambda _: self._split_panel())
+            
             ui.button("Calculate Usage for Current Layout", on_click=self._calculate_usage)
+            ui.button("Run heuristics", on_click=self._run_heuristics)
 
         self._kb = ui.keyboard(on_key=self._handle_key, active=True)
 
@@ -812,14 +820,16 @@ class NestingGUI:
 
             if method == "BL":
                 # Bottom-Left placement
-                decoder = BottomLeftDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
+                decoder = BottomLeftDecoder(layout, container, gravitate_once=config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
             elif method == "Greedy":
                 # Greedy placement
                 decoder = GreedyBLDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, sort_key = config.SORT_BY, step=config.GRAVITATE_STEP)
             elif method == "NFP":
                 decoder = NFPDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
-            elif method == "Random Order BL":
-                decoder = RandomDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
+            elif method == "RandomBL":
+                decoder = RandomDecoder(layout, container, decoder="BL")
+            elif method == "RandomNFP":
+                decoder = RandomDecoder(layout, container, decoder="NFP")
             elif method == "Genetic Algorithm":
                 evo = Evolution(
                     self.pieces,
@@ -888,12 +898,87 @@ class NestingGUI:
             ui.notify('Auto placement completed ', type='positive')
 
             # if the BL runs out of space and there are intersections, still draw it but notify the user
-            if self._check_intersections():
-                ui.notify("Auto placement has intersections", type="negative")
-                print("Auto placement has intersections")
+            # if self._check_intersections():
+            #     ui.notify("Auto placement has intersections", type="negative")
+            #     print("Auto placement has intersections")
 
         except Exception as exc:
             ui.notify(f'Auto placement failed: {exc}', type='negative')
+
+    def _run_heuristics(self):
+        """Run Random+BL heuristic 100x before and after manual split, then save plot to log path."""
+        ui.notify('Running heuristics...', type='info')
+        print('Run heuristics: starting')
+
+        from pathlib import Path
+        import copy
+        import io
+        import matplotlib.pyplot as plt
+
+        # Load original pieces
+        extractor = PatternPathExtractor(Path(config.DEFAULT_PATTERN_PATH))
+        panel_pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE)
+
+        # Metrics before split
+        print('Run heuristics: before-split runs start')
+        before_bb = []
+        before_hull = []
+        for _ in range(100):
+            # Prepare a fresh copy of all pieces for each run
+            pieces_copy = {pid: copy.deepcopy(piece) for pid, piece in panel_pieces.items()}
+            layout = Layout(pieces_copy)
+            dec = RandomDecoder(layout, self.container)
+            dec.decode()
+            before_bb.append(dec.usage_BB())
+            before_hull.append(dec.concave_hull_utilization())
+        print('Run heuristics: before-split runs complete')
+
+        # Manual split of every piece
+        print('Run heuristics: splitting pieces')
+        split_pieces = {}
+        for pid, piece in panel_pieces.items():
+            left, right = copy.deepcopy(piece).split()
+            split_pieces[left.id] = left
+            split_pieces[right.id] = right
+
+        # Metrics after split
+        print('Run heuristics: after-split runs start')
+        after_bb = []
+        after_hull = []
+        for _ in range(200):
+            # Again, fresh copy of all split pieces for each run
+            pieces_copy = {pid: copy.deepcopy(piece) for pid, piece in split_pieces.items()}
+            layout = Layout(pieces_copy)
+            dec = RandomDecoder(layout, self.container)
+            dec.decode()
+            after_bb.append(dec.usage_BB())
+            after_hull.append(dec.concave_hull_utilization())
+        print('Run heuristics: after-split runs complete')
+
+        # Plot and save
+        print('Run heuristics: plotting results')
+        plt.figure(figsize=(6, 6))
+        plt.scatter(before_bb, before_hull, c='blue', alpha=0.5, label='before split')
+        plt.scatter(after_bb, after_hull, c='red', alpha=0.5, label='after split')
+        plt.xlabel('Bounding-box utilization')
+        plt.ylabel('Concave-hull utilization')
+        plt.legend()
+        plt.title('Heuristic: split vs original')
+        plt.tight_layout()
+
+        # Ensure the log directory exists, then save the PNG there with timestamp
+        log_dir = Path(config.SAVE_LOGS_PATH)
+        log_dir.mkdir(parents=True, exist_ok=True)
+
+        ts = datetime.now().strftime('%Y%m%d-%H%M%S')
+        filename = f'heuristic_split_vs_original_{ts}.png'
+        output_path = log_dir / filename
+        plt.savefig(output_path, format='png')
+        plt.close()
+
+        print(f'Run heuristics: plot saved to {output_path} (timestamp: {ts})')
+        ui.notify(f'Heuristics run complete. Plot saved to: {output_path} (timestamp: {ts})', type='positive')
+
 
     def _enable_selection_mode(self):
         self.selection_mode = True
@@ -941,6 +1026,29 @@ class NestingGUI:
             piece.reset_rotation()
         self._draw_outlines()
         ui.notify("All panel rotations reset", type="positive")
+
+    def _split_panel(self):
+        """Split the currently selected panel into two and redraw."""
+        if not self.selected_panel:
+            ui.notify("No panel selected to split", type="warning")
+            return
+        pid = self.selected_panel
+        # remove original
+        piece = self.pieces.pop(pid, None)
+        if piece is None:
+            ui.notify(f"Panel '{pid}' not found", type="negative")
+            return
+        # split into two pieces
+        left, right = piece.split()
+        # add new pieces
+        self.pieces[left.id] = left
+        self.pieces[right.id] = right
+        # rebuild layout, outlines, and clear selection
+        self.layout = Layout(self.pieces)
+        self._rebuild_panel_outlines()
+        self._draw_outlines()
+        ui.notify(f"Panel split into '{left.id}' and '{right.id}'", type="positive")
+        self.selected_panel = ""
 
 if __name__ in {"__main__", "__mp_main__"}:
     # run_gui.py

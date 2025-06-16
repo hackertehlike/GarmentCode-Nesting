@@ -225,16 +225,35 @@ class Evolution:
         # Sort viable chromosomes by fitness (descending)
         viable.sort(key=lambda c: c.fitness, reverse=True)
 
+        # Check if we have enough elite chromosomes
+        elite_count = min(self.n_elites, len(viable))
+        elite_list = viable[:elite_count]
+        
+        # If we don't have enough elites, pad with random chromosomes
+        if elite_count < self.n_elites:
+            missing_count = self.n_elites - elite_count
+            self._log(f"Only {elite_count} viable chromosomes found, padding with {missing_count} random chromosomes", divider=True)
+            
+            # Generate random chromosomes to fill the gap
+            random_chromosomes = []
+            for _ in range(missing_count):
+                random_chrom = self._generate_random_chromosome()
+                random_chrom.origin = "random_elite_padding"
+                random_chromosomes.append(random_chrom)
+            
+            elite_list.extend(random_chromosomes)
+        
         self._log(
-            f"Returning elite layouts. Best fitness: {viable[0].fitness:.4f}",
+            f"Returning elite layouts. Best fitness: {elite_list[0].fitness:.4f}",
             divider=True
         )
 
-        # print the top 5 elite chromosomes
-        for chrom in viable[:self.n_elites]:
-            self._log(f"Elite: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
+        # print the elite chromosomes
+        for i, chrom in enumerate(elite_list):
+            source = " (random padding)" if i >= elite_count else ""
+            self._log(f"Elite {i+1}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}{source}")
 
-        return viable[: self.n_elites]  # return top n_elites chromosomes
+        return elite_list
 
 
     

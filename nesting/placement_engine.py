@@ -125,8 +125,8 @@ class PlacementEngine:
 
     def _gravitate_once(self, piece: Piece, x: float, y: float, step: float = config.GRAVITATE_STEP) -> Tuple[float, float]:
         """
-        “Traditional” fully‐left then fully‐down:
-        1. From (x,y), move left in discrete steps until you can’t go further.
+        “Traditional” fully-left then fully-down:
+        1. From (x,y), move left in discrete steps until you can't go further.
         2. From that leftmost location, move down in discrete steps until you can’t go further.
         No iteration back to left after moving down.
         """
@@ -481,22 +481,31 @@ class RandomDecoder(PlacementEngine):
                  layout: Layout,
                  container: Container,
                  *,
+                 decoder: str = "BL",  # choose 'BL' or 'NFP'
                  rotations_on: bool = config.ENABLE_ROTATIONS,
                  **kwargs):
+        # Shuffle piece order
         ids = list(layout.order)
         random.shuffle(ids)
         shuffled = OrderedDict((i, layout.order[i]) for i in ids)
         super().__init__(Layout(shuffled), container, **kwargs)
+        self.decoder = decoder
         self.rotations_on = rotations_on
 
     def decode(self):
+        # Apply random rotations if enabled
         if self.rotations_on:
             for p in self.layout.order.values():
                 p.rotate(random.choice(config.ALLOWED_ROTATIONS))
-
-        bl = BottomLeftDecoder(self.layout, self.container, step=config.GRAVITATE_STEP)
-        placements = bl.decode()
-        self.placed = bl.placed
+        # Delegate to chosen decode strategy
+        if self.decoder == "BL":
+            dec = BottomLeftDecoder(self.layout, self.container, step=config.GRAVITATE_STEP)
+        elif self.decoder == "NFP":
+            dec = NFPDecoder(self.layout, self.container)
+        else:
+            raise ValueError(f"RandomDecoder: unsupported decoder '{self.decoder}'")
+        placements = dec.decode()
+        self.placed = dec.placed
         return placements
 
 
@@ -624,269 +633,3 @@ class NFPDecoder(PlacementEngine):
                 moving.get_outer_path()
             )
         return self._nfp_cache[key]
-
-
-
-@register_decoder("Jostle")
-class JostleDecoder(NFPDecoder):
-    """Jostle search with basic orientation and policy options."""
-
-    def __init__(
-        self,
-        layout: Layout,
-        container: Container,
-        *,
-        max_cycles: int = 500,
-        cmax: int = 4,
-        policy: str = "MU",
-        rotation_mode: str = "free",
-        **kwargs,
-    ) -> None:
-        super().__init__(layout, container, **kwargs)
-        self.max_cycles = int(max_cycles)
-        self.cmax = int(cmax)
-        self.policy = policy.upper()
-        self.rotation_mode = rotation_mode
-
-    # ------------------------------------------------------------------
-    #  Internal helpers
-    # ------------------------------------------------------------------
-
-    def _policy_score(
-        self, x: float, y: float, piece: Piece, *, current_max_x: float
-    ) -> float:
-        """Return the score for ``piece`` at ``(x, y)`` according to the
-        selected policy."""
-
-        if self.policy == "BL":
-            # Smaller x wins; tie break by y
-            return -x - 1e-3 * y
-
-        if self.policy == "ML":
-            used = max(current_max_x, x + piece.width)
-            return -used
-
-        # MU – incremental convex hull utilisation
-        union_poly: Optional[Polygon] = self._exterior_contour
-        if union_poly is None:
-            utilised = utils.polygon_area(piece.get_outer_path())
-            hull_area = Polygon(
-                [(x + dx, y + dy) for dx, dy in piece.get_outer_path()]
-            ).convex_hull.area
-        else:
-            piece_poly = Polygon(
-                [(x + dx, y + dy) for dx, dy in piece.get_outer_path()]
-            )
-            merged = union_poly.union(piece_poly)
-            utilised = union_poly.area + utils.polygon_area(piece.get_outer_path())
-            hull_area = merged.convex_hull.area
-        return utilised / hull_area if hull_area > 0 else 0.0
-
-    def _mirror_geom(self, geom: Polygon) -> Polygon:
-        width = float(self.container.width)
-        return affinity.scale(geom, xfact=-1.0, yfact=1.0, origin=(width / 2.0, 0))
-
-    def _find_best_position_bidir(
-        self, piece: Piece, *, reverse: bool
-    ) -> Tuple[Optional[float], Optional[float]]:
-        """Variant of :meth:`~nesting.placement_engine.NFPDecoder._find_best_position`
-        that allows packing from the right margin when ``reverse`` is True."""
-
-        if not reverse:
-            return super()._find_best_position(piece)
-
-        # Right-to-left packing – operate in mirrored space and mirror the
-        # resulting coordinates back.
-        if not self.placed:
-            x = self.container.width - piece.width
-            y = self.container.height - piece.height
-            return x, y
-
-        contour = self._exterior_contour
-        if contour is None or contour.is_empty:
-            x = self.container.width - piece.width
-            y = self.container.height - piece.height
-            return x, y
-
-        contour = self._mirror_geom(contour)
-
-        rings: List[List[Tuple[float, float]]] = []
-        if isinstance(contour, Polygon):
-            rings.append(list(contour.exterior.coords))
-        else:
-            for geom in getattr(contour, "geoms", []):
-                if isinstance(geom, Polygon):
-                    rings.append(list(geom.exterior.coords))
-
-        moving_path = piece.get_outer_path()
-        all_nfp_pts: List[Tuple[float, float]] = []
-        for ring_coords in rings:
-            pts = utils.no_fit_polygon(ring_coords, moving_path)
-            all_nfp_pts.extend(pts)
-
-        flattened = [
-            (x + p.translation[0], y + p.translation[1])
-            for p in self.placed
-            for x, y in p.get_outer_path()
-        ]
-        xs_placed = [v[0] for v in flattened]
-        ys_placed = [v[1] for v in flattened]
-        min_px, max_px = min(xs_placed), max(xs_placed)
-        min_py, max_py = min(ys_placed), max(ys_placed)
-
-        best_score = -1.0
-        best_x = best_y = None
-
-        for dx_rel, dy_rel in all_nfp_pts:
-            x_mir = dx_rel
-            y_mir = dy_rel
-            x_cand = self.container.width - piece.width - x_mir
-            y_cand = y_mir
-
-            candidate_vertices = [
-                (x + x_cand, y + y_cand) for x, y in moving_path
-            ]
-            xs_cand = [v[0] for v in candidate_vertices]
-            ys_cand = [v[1] for v in candidate_vertices]
-
-            if (
-                min(xs_cand) < 0
-                or max(xs_cand) > self.container.width
-                or min(ys_cand) < 0
-                or max(ys_cand) > self.container.height
-            ):
-                continue
-
-            if not self._fits(piece, x_cand, y_cand):
-                continue
-
-            cand_min_x = min(xs_cand)
-            cand_max_x = max(xs_cand)
-            cand_min_y = min(ys_cand)
-            cand_max_y = max(ys_cand)
-
-            overlap_w = min(max_px, cand_max_x) - max(min_px, cand_min_x)
-            overlap_h = min(max_py, cand_max_y) - max(min_py, cand_min_y)
-            score = 0.0 if overlap_w <= 0 or overlap_h <= 0 else overlap_w * overlap_h
-            if score > best_score:
-                best_score = score
-                best_x = x_cand
-                best_y = y_cand
-
-        if best_x is None or best_y is None:
-            best_x = self.container.width - piece.width
-            best_y = self.container.height - piece.height
-
-        return best_x, best_y
-
-    def _orientation_candidates(self, base: Iterable[float]) -> List[float]:
-        """Return orientation candidates given the base angles."""
-        cands = list(base)
-        if self.rotation_mode == "free":
-            tweaks = [-5.0, -3.0, -1.0, 1.0, 3.0, 5.0]
-            for a in base:
-                for t in tweaks:
-                    cands.append(a + t)
-        uniq = sorted({ang % 360 for ang in cands})
-        return uniq
-
-    # ------------------------------------------------------------------
-    #  Packing of an ordered sequence
-    # ------------------------------------------------------------------
-
-    def _pack_order(self, order_ids: List[str], *, reverse: bool) -> None:
-        self.placed = []
-        self._exterior_contour = None
-
-        base_angles = [0.0, 90.0, 180.0, 270.0]
-
-        for pid in order_ids:
-            piece = self.layout.order[pid]
-
-            best_pos = (None, None)
-            best_angle = piece.rotation
-            best_score = -math.inf
-            best_width = piece.width
-
-            current_max_x = (
-                max(p.translation[0] + p.width for p in self.placed)
-                if self.placed
-                else 0.0
-            )
-
-            for ang in self._orientation_candidates(base_angles):
-                delta = ang - piece.rotation
-                piece.rotate(delta)
-                x, y = self._find_best_position_bidir(piece, reverse=reverse)
-                score = self._policy_score(x, y, piece, current_max_x=current_max_x)
-
-                if score > best_score or (
-                    score == best_score and self.policy == "BL" and piece.width < best_width
-                ):
-                    best_score = score
-                    best_pos = (x, y)
-                    best_angle = piece.rotation
-                    best_width = piece.width
-
-                # revert for next candidate
-                piece.rotate(-delta)
-
-            # apply best placement
-            piece.rotate(best_angle - piece.rotation)
-            piece.translation = best_pos
-            self.placed.append(piece)
-            self._update_exterior_contour(piece)
-
-    # ------------------------------------------------------------------
-    #  Public API
-    # ------------------------------------------------------------------
-
-    def decode(self) -> List[Tuple[str, float, float, float]]:
-        order_ids = list(self.layout.order.keys())
-        best_state: List[Tuple[str, Tuple[float, float], float]] | None = None
-        best_score = -math.inf
-        idle = 0
-        direction = False  # False ⇒ left→right, True ⇒ right→left
-
-        for _ in range(self.max_cycles):
-            self._pack_order(order_ids, reverse=direction)
-            score = self.concave_hull_utilization()
-            if score > best_score:
-                best_score = score
-                best_state = [
-                    (p.id, p.translation, p.rotation) for p in self.placed
-                ]
-                idle = 0
-            else:
-                idle += 1
-
-            if direction:
-                order_ids = [p.id for p in sorted(self.placed, key=lambda p: p.translation[0])]
-                direction = False
-            else:
-                order_ids = [p.id for p in sorted(self.placed, key=lambda p: p.translation[0], reverse=True)]
-                direction = True
-
-            if idle >= self.cmax:
-                if len(order_ids) >= 2:
-                    i, j = random.sample(range(len(order_ids)), 2)
-                    pid = order_ids.pop(j)
-                    order_ids.insert(i, pid)
-                idle = 0
-
-        if best_state is None:
-            return []
-
-        # reapply best layout
-        self.placed = []
-        self._exterior_contour = None
-        for pid, (tx, ty), rot in best_state:
-            piece = self.layout.order[pid]
-            piece.rotate(rot - piece.rotation)
-            piece.translation = (tx, ty)
-            self.placed.append(piece)
-            self._update_exterior_contour(piece)
-
-        return [
-            (p.id, p.translation[0], p.translation[1], p.rotation) for p in self.placed
-        ]

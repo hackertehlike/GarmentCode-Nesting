@@ -6,7 +6,7 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = True
 VERBOSE: bool = True
-DEFAULT_PATTERN_PATH: str = "nesting-assets/shirts.json"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/garmentcodedata_batch0/rand_1W5S805WDS_specification.json"
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random", "Jostle"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
@@ -32,7 +32,7 @@ SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
 
 # ——— genetic algorithm —————————————————————————————————————
 POPULATION_SIZE       = 30
-NUM_GENERATIONS       = 10
+NUM_GENERATIONS       = 40
 MUTATION_RATE         = 0.3
 
 
@@ -49,11 +49,11 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
 # mutation weights
 MUTATION_WEIGHTS = {
     "rotate":    0.1,
-    "swap":      0.1,
-    "inversion": 0.1,
+    "swap":      0.2,
+    "inversion": 0.2,
     "insertion": 0.1,
     "scramble":  0.2,
-    "split":     0.4,   # keep zero until you implement it
+    "split":     0.2,
 }
 
 
@@ -83,14 +83,14 @@ SNAP_TOLERANCE = 0.1 # how close points must be to snap to the hull, in percenta
 # ——— sampling (path extractor) —————————————————————————————————————
 SAMPLES_PER_EDGE  = 4
 ENABLE_ROTATIONS  = True
-ALLOWED_ROTATIONS = [180]
+ALLOWED_ROTATIONS = [0, 90, 180, 270]  # allowed rotations in degrees, if ENABLE_ROTATIONS is True
 
 
 # GUI STUFF
 NUM_COPIES = 0
 
-CONTAINER_WIDTH_CM  = 700
-CONTAINER_HEIGHT_CM = 200.0
+CONTAINER_WIDTH_CM  = 140
+CONTAINER_HEIGHT_CM = 400
 
 SEAM_ALLOWANCE_CM = 0
 

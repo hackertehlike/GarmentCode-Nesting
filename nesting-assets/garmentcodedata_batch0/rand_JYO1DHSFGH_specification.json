@@ -1,0 +1,326 @@
+{
+  "pattern": {
+    "panels": {
+      "skirt_panel_1": {
+        "translation": [
+          -1.588369272043376,
+          78.77250000000001,
+          15.415442545147709
+        ],
+        "rotation": [
+          0.0,
+          37.42168983357748,
+          0.0
+        ],
+        "vertices": [
+          [
+            0,
+            0
+          ],
+          [
+            26.818942527802875,
+            0
+          ],
+          [
+            24.274779782544694,
+            30.597549351442453
+          ],
+          [
+            2.5441627452581805,
+            30.597549351442453
+          ]
+        ],
+        "edges": [
+          {
+            "endpoints": [
+              0,
+              1
+            ],
+            "curvature": {
+              "type": "circle",
+              "params": [
+                24.360539462754264,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "endpoints": [
+              1,
+              2
+            ]
+          },
+          {
+            "endpoints": [
+              2,
+              3
+            ],
+            "label": "lower_interface"
+          },
+          {
+            "endpoints": [
+              3,
+              0
+            ]
+          }
+        ],
+        "label": "leg"
+      },
+      "skirt_panel_0": {
+        "translation": [
+          -15.415442545147709,
+          78.77250000000001,
+          -1.5883692720433726
+        ],
+        "rotation": [
+          0.0,
+          -52.57831016642257,
+          0.0
+        ],
+        "vertices": [
+          [
+            0,
+            0
+          ],
+          [
+            26.818942527802875,
+            0
+          ],
+          [
+            24.274779782544694,
+            30.597549351442453
+          ],
+          [
+            2.5441627452581805,
+            30.597549351442453
+          ]
+        ],
+        "edges": [
+          {
+            "endpoints": [
+              0,
+              1
+            ],
+            "curvature": {
+              "type": "circle",
+              "params": [
+                24.360539462754264,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "endpoints": [
+              1,
+              2
+            ]
+          },
+          {
+            "endpoints": [
+              2,
+              3
+            ],
+            "label": "lower_interface"
+          },
+          {
+            "endpoints": [
+              3,
+              0
+            ]
+          }
+        ],
+        "label": "leg"
+      },
+      "skirt_panel_2": {
+        "translation": [
+          15.415442545147707,
+          78.77250000000001,
+          1.5883692720433795
+        ],
+        "rotation": [
+          180.0,
+          52.57831016642257,
+          -180.0
+        ],
+        "vertices": [
+          [
+            0,
+            0
+          ],
+          [
+            26.818942527802875,
+            0
+          ],
+          [
+            24.274779782544694,
+            30.597549351442453
+          ],
+          [
+            2.5441627452581805,
+            30.597549351442453
+          ]
+        ],
+        "edges": [
+          {
+            "endpoints": [
+              0,
+              1
+            ],
+            "curvature": {
+              "type": "circle",
+              "params": [
+                24.360539462754264,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "endpoints": [
+              1,
+              2
+            ]
+          },
+          {
+            "endpoints": [
+              2,
+              3
+            ],
+            "label": "lower_interface"
+          },
+          {
+            "endpoints": [
+              3,
+              0
+            ]
+          }
+        ],
+        "label": "leg"
+      },
+      "skirt_panel_3": {
+        "translation": [
+          1.5883692720433822,
+          78.77250000000001,
+          -15.415442545147707
+        ],
+        "rotation": [
+          180.0,
+          -37.42168983357745,
+          -180.0
+        ],
+        "vertices": [
+          [
+            0,
+            0
+          ],
+          [
+            26.818942527802875,
+            0
+          ],
+          [
+            24.274779782544694,
+            30.597549351442453
+          ],
+          [
+            2.5441627452581805,
+            30.597549351442453
+          ]
+        ],
+        "edges": [
+          {
+            "endpoints": [
+              0,
+              1
+            ],
+            "curvature": {
+              "type": "circle",
+              "params": [
+                24.360539462754264,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "endpoints": [
+              1,
+              2
+            ]
+          },
+          {
+            "endpoints": [
+              2,
+              3
+            ],
+            "label": "lower_interface"
+          },
+          {
+            "endpoints": [
+              3,
+              0
+            ]
+          }
+        ],
+        "label": "leg"
+      }
+    },
+    "stitches": [
+      [
+        {
+          "panel": "skirt_panel_0",
+          "edge": 1
+        },
+        {
+          "panel": "skirt_panel_1",
+          "edge": 3
+        }
+      ],
+      [
+        {
+          "panel": "skirt_panel_1",
+          "edge": 1
+        },
+        {
+          "panel": "skirt_panel_2",
+          "edge": 3
+        }
+      ],
+      [
+        {
+          "panel": "skirt_panel_2",
+          "edge": 1
+        },
+        {
+          "panel": "skirt_panel_3",
+          "edge": 3
+        }
+      ],
+      [
+        {
+          "panel": "skirt_panel_3",
+          "edge": 1
+        },
+        {
+          "panel": "skirt_panel_0",
+          "edge": 3
+        }
+      ]
+    ],
+    "panel_order": [
+      "skirt_panel_3",
+      "skirt_panel_0",
+      "skirt_panel_2",
+      "skirt_panel_1"
+    ]
+  },
+  "parameters": {},
+  "parameter_order": [],
+  "properties": {
+    "curvature_coords": "relative",
+    "normalize_panel_translation": false,
+    "normalized_edge_loops": true,
+    "units_in_meter": 100
+  }
+}
