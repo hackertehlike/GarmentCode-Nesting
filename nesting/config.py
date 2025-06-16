@@ -6,7 +6,7 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = True
 VERBOSE: bool = True
-DEFAULT_PATTERN_PATH: str = "nesting-assets/garmentcodedata_batch0/rand_1W5S805WDS_specification.json"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/Configured_design_specification_asym_dress.json"
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random", "Jostle"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
@@ -31,17 +31,17 @@ SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
 
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 30
-NUM_GENERATIONS       = 40
+POPULATION_SIZE       = 10
+NUM_GENERATIONS       = 2
 MUTATION_RATE         = 0.3
 
 
 
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
-    "elites": 0.1,  # weight for elite population
+    "elites": 0.2,  # weight for elite population
     "offspring": 0.4,  # weight for offspring population
-    "mutants": 0.4,  # weight for mutants population
+    "mutants": 0.3,  # weight for mutants population
     "randoms": 0.1,  # weight for random population
 }
 

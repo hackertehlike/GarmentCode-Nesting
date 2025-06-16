@@ -1,9 +1,10 @@
 from __future__ import annotations
 import itertools
 import tempfile
+import json
 import copy
 # import yaml
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Set, Optional
 from pathlib import Path
 from datetime import datetime
 
@@ -18,6 +19,7 @@ from .path_extractor import *
 from .layout import *
 from .placement_engine import *
 import nesting.config as config
+from nesting.panel_mapping import affected_panels, select_genes
 from shapely.errors import GEOSException as TopologyException
 
 # viewer size in CSS‑pixels
@@ -64,6 +66,10 @@ class NestingGUI:
         self.selected_panel: str = ""
         self.selection_mode: bool = False
 
+        # Pattern regeneration path
+        self.pattern_path: Optional[Path] = None
+        if pattern_path:
+            self.pattern_path = Path(pattern_path)
 
         self.hull_path: ui.element | None = None
 
@@ -121,6 +127,13 @@ class NestingGUI:
 
                 if t in ('float', 'int'):
                     ui.number(value=val, label=name,
+                            on_change=lambda e, n=name: self._on_param_change(n, e))
+                elif t == 'bool':
+                    ui.checkbox(value=val, text=name,
+                            on_change=lambda e, n=name: self._on_param_change(n, e))
+                elif t == 'enum':
+                    options = spec.get('options', [])
+                    ui.select(options, value=val, label=name,
                             on_change=lambda e, n=name: self._on_param_change(n, e))
 
 
@@ -236,56 +249,55 @@ class NestingGUI:
     # ---------------------------------------------------------------------------- #
     def _filtered_design_tree(self) -> dict:
         dp_all = copy.deepcopy(self.design_params)          # never mutate source
-        meta    = dp_all.get('meta', {})
-
-        # 1 ───────────────────────── top-level meta filtering ──────────────────── #
-        upper  = meta.get('upper',  {}).get('v')
-        wb     = meta.get('wb',     {}).get('v')
-        bottom = meta.get('bottom', {}).get('v')
-
-        keep_top = {'meta'}                                 # always keep meta
-
-        if wb   is not None: keep_top.add('waistband')
-        if upper is not None: keep_top.update({'shirt', 'collar', 'sleeve', 'left'})
-
-        bottom_map = {
-            'SkirtCircle':      {'skirt'},
-            'AsymmSkirtCircle': {'flare-skirt'},
-            'GodetSkirt':       {'godet-skirt'},
-            'PencilSkirt':      {'pencil-skirt'},
-            'Skirt2':           {'skirt'},
-            'SkirtManyPanels':  {'skirt-many-panels'},
-            'SkirtLevels':      {'levels-skirt'},
-            'Pants':            {'pants'},
-        }
-        keep_top.update(bottom_map.get(bottom, set()))
-
-        dp = {k: v for k, v in dp_all.items() if k in keep_top}
-
-        # 2 ────────────────────── sub-block “gate” filtering ───────────────────── #
-        # Collar › component ------------------------------------------------------ #
-        comp = dp.get('collar', {}).get('component')
-        if comp and comp.get('style', {}).get('v') is None:
-            for k in list(comp.keys()):
-                print(f"Removing {k} from collar.component")
-                comp.pop(k)
-
-        # Sleeve block ----------------------------------------------------------- #
-        sleeve = dp.get('sleeve')
-        if sleeve:
-            if sleeve.get('sleeveless', {}).get('v'):       # True  → hide sleeve details
-                print("Hiding sleeve details")
-                for k in list(sleeve.keys()):
-                    print(f"Removing {k} from sleeve")
-                    sleeve.pop(k)
-            else:
-                cuff = sleeve.get('cuff')
-                if cuff and cuff.get('type', {}).get('v') is None:
-                    for k in list(cuff.keys()):
-                        cuff.pop(k)
-
-        #print("dp:", dp)
-        return dp
+        
+        # If we don't have any pieces loaded yet, do basic filtering
+        if not self.pieces:
+            # Always include meta
+            filtered_dp = {'meta': dp_all.get('meta', {})}
+            # Use the meta parameters to determine what to include
+            meta = dp_all.get('meta', {})
+            upper = meta.get('upper', {}).get('v')
+            wb = meta.get('wb', {}).get('v')
+            bottom = meta.get('bottom', {}).get('v')
+            
+            if wb is not None: 
+                filtered_dp['waistband'] = dp_all.get('waistband', {})
+            if upper is not None:
+                filtered_dp['shirt'] = dp_all.get('shirt', {})
+                filtered_dp['collar'] = dp_all.get('collar', {})
+                filtered_dp['sleeve'] = dp_all.get('sleeve', {})
+                filtered_dp['left'] = dp_all.get('left', {})
+                
+            # Handle bottom garments
+            bottom_map = {
+                'SkirtCircle':      {'skirt'},
+                'AsymmSkirtCircle': {'flare-skirt'},
+                'GodetSkirt':       {'godet-skirt'},
+                'PencilSkirt':      {'pencil-skirt'},
+                'Skirt2':           {'skirt'},
+                'SkirtManyPanels':  {'skirt-many-panels'},
+                'SkirtLevels':      {'levels-skirt'},
+                'Pants':            {'pants'},
+            }
+            if bottom in bottom_map:
+                for key in bottom_map[bottom]:
+                    if key in dp_all:
+                        filtered_dp[key] = dp_all[key]
+        else:
+            # Extract panel IDs from loaded pieces
+            panel_ids = set()
+            for piece_id in self.pieces.keys():
+                # Remove any "_copy#" suffix to get the original panel ID
+                base_id = piece_id.split("_copy")[0]
+                panel_ids.add(base_id)
+            
+            print(f"Loaded panel IDs: {panel_ids}")
+            
+            # Use the new panel_mapping filter_parameters function
+            from nesting.panel_mapping import filter_parameters
+            filtered_dp = filter_parameters(dp_all, panel_ids)
+            
+        return filtered_dp
 
 
     # def _load_yaml(self, e: events.UploadEventArguments):
@@ -319,19 +331,11 @@ class NestingGUI:
     #         ui.notify(f"Could not load YAML: {exc}", type="negative")
 
 
-    # def _on_param_change(self, param: str, e) -> None:
-    #     try:
-    #         new_val = float(e.value)
-    #     except ValueError:
-    #         new_val = e.value      # for string or bool parameters
-    #     self.style_params[param] = new_val
-    #     # ui.notify(f"{param} → {new_val}")
-
-
-    # # TODO: recalculate panels
-    # def _update_pattern_by_style(self):
-    #     pass
-
+    def _on_param_change(self, param: str, e) -> None:
+        """Handle parameter changes by updating the design and regenerating the pattern."""
+        #TODO
+        pass
+    
     # ---------------------------------------------------------------------------- #
     #                                  TOOLBAR                                     #
     # ---------------------------------------------------------------------------- #
@@ -373,6 +377,9 @@ class NestingGUI:
         Clear old state, load geometry + design parameters from *path*,
         and rebuild the sidebar.
         """
+        # Store the pattern path for regeneration
+        self.pattern_path = path
+        
         # --- clear old GUI/scene state ---------------------------------
         self.panel_path_refs.clear()
         self.selected_panel = ""
@@ -423,6 +430,9 @@ class NestingGUI:
         #     print(f"Loaded piece: {piece_id} with translation {piece.translation} and rotation {piece.rotation}")
         self._rebuild_panel_outlines()
         self.pattern_loaded = True
+        
+        # Rebuild the sidebar to update the parameters based on the loaded panels
+        self._build_sidebar()
         self._draw_outlines()
 
         # --- design parameters ----------------------------------------
@@ -685,7 +695,7 @@ class NestingGUI:
         self.drag_data = {}
         # print offsets
         # for name, (dx, dy) in self.panel_transforms.items():
-        #     print(f"Panel {name} offset: ({dx}, {dy})")
+        #     print(f"Panel {name} offset: ({dx, dy})")
 
     def _global_drag_move(self, e) -> None:
         if self.drag_data:
@@ -860,7 +870,9 @@ class NestingGUI:
                 decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
   
             elif method == "Jostle":
-                decoder = JostleDecoder(layout, container, step=config.GRAVITATE_STEP)
+                # Use the default decoder instead of JostleDecoder
+                view    = LayoutView(layout)
+                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
 
             else:
                 raise ValueError(f"Unknown placement method: {method}")
