@@ -7,9 +7,12 @@ import time
 import random
 import copy
 from typing import Callable
+from pathlib import Path
 
 from .layout import Piece, Container, Layout, LayoutView
 from .placement_engine import DECODER_REGISTRY
+from pygarment.garmentcode.params import DesignSampler
+from pygarment.garmentcode.utils import nested_get, nested_set
 import nesting.config as config
 
 # ── Metric Registration ─────────────────────────────────────────────────────────
@@ -53,12 +56,20 @@ class Chromosome(Layout):
         self,
         pieces: list[Piece],
         container: Container,
-        origin: str = "random"
+        origin: str = "random",
+        *,
+        design_params: dict | None = None,
+        body_params: object | None = None,
+        design_sampler: "DesignSampler" | None = None,
     ):
         # Store a deep copy of each piece
         self._genes = [copy.deepcopy(p) for p in pieces]
         self.container = container
         self.fitness: float | None = None
+
+        self.design_params = copy.deepcopy(design_params) if design_params else None
+        self.body_params = body_params
+        self.design_sampler = design_sampler
 
         # Track origin and last mutation type
         self.origin: str | None = origin
@@ -82,8 +93,26 @@ class Chromosome(Layout):
 
         # Choose mutation type according to weights
         mutation_types, weights = zip(*config.MUTATION_WEIGHTS.items())
+        
+        # Always print which mutation types are available with their weights
+        if config.VERBOSE:
+            print(f"[Chromosome.mutate] Available mutations: {list(zip(mutation_types, weights))}")
+            
         mutation = random.choices(mutation_types, weights=weights, k=1)[0]
         self.last_mutation = mutation
+        
+        # Always print which mutation was selected
+        if config.VERBOSE:
+            print(f"[Chromosome.mutate] Selected mutation: {mutation}")
+            
+        # For design_param, check if data is available early and print more info
+        if mutation == "design_param":
+            if self.design_params is None:
+                print("[Chromosome.mutate] Missing design_params")
+            if self.design_sampler is None:
+                print("[Chromosome.mutate] Missing design_sampler")
+            if self.body_params is None:
+                print("[Chromosome.mutate] Missing body_params")
 
         n = len(self.genes)
 
@@ -157,6 +186,93 @@ class Chromosome(Layout):
             random.shuffle(sub)
             self.genes[i : j + 1] = sub
 
+        elif mutation == "design_param":
+            if self.design_params is None or self.design_sampler is None or self.body_params is None:
+                if config.VERBOSE:
+                    print("[Chromosome.mutate] design_param skipped: missing data")
+            else:
+                if config.VERBOSE:
+                    print("[Chromosome.mutate] Starting design_param mutation")
+                
+                # flatten parameter paths
+                param_paths: list[str] = []
+
+                def _collect(node, prefix=[]):
+                    for k, v in node.items():
+                        if isinstance(v, dict) and "v" in v:
+                            param_paths.append(".".join(prefix + [k]))
+                        elif isinstance(v, dict):
+                            _collect(v, prefix + [k])
+
+                _collect(self.design_params)
+
+                if config.VERBOSE:
+                    print(f"[Chromosome.mutate] Found {len(param_paths)} possible parameters to mutate")
+                
+                # Always log whether we can find parameters to mutate
+                if not param_paths:
+                    print("[Chromosome.mutate] ERROR: No mutable parameters found in design_params")
+                    print("[Chromosome.mutate] design_params structure:")
+                    import json
+                    print(json.dumps(self.design_params, indent=2)[:500] + "..." if len(json.dumps(self.design_params)) > 500 else json.dumps(self.design_params, indent=2))
+                
+                if param_paths:
+                    chosen = random.choice(param_paths)
+                    if config.VERBOSE:
+                        old_value = nested_get(self.design_params, chosen.split("."))
+                        print(f"[Chromosome.mutate] Selected parameter: '{chosen}' with current value: {old_value}")
+                    
+                    new_params = copy.deepcopy(self.design_params)
+                    self.design_sampler._randomize_value(new_params, chosen.split("."))
+                    
+                    if config.VERBOSE:
+                        new_value = nested_get(new_params, chosen.split("."))
+                        print(f"[Chromosome.mutate] Changed '{chosen}' from {old_value} to {new_value}")
+                    
+                    self.design_params = new_params
+
+                    from assets.garment_programs.meta_garment import MetaGarment
+                    from nesting.path_extractor import PatternPathExtractor
+                    from nesting.panel_mapping import affected_panels, select_genes
+                    import tempfile
+
+                    if config.VERBOSE:
+                        print(f"[Chromosome.mutate] Regenerating garment with MetaGarment")
+                    
+                    mg = MetaGarment("design_mut", self.body_params, self.design_params)
+                    pattern = mg.assembly()
+                    with tempfile.TemporaryDirectory() as td:
+                        out_dir = Path(td)
+                        pattern.serialize(out_dir, to_subfolder=False, with_3d=False, with_text=False, view_ids=False)
+                        spec_path = out_dir / f"{pattern.name}_specification.json"
+                        extractor = PatternPathExtractor(spec_path)
+                        new_pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE)
+                        for p in new_pieces.values():
+                            p.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+                    
+                    if config.VERBOSE:
+                        print(f"[Chromosome.mutate] Generated {len(new_pieces)} new panel pieces")
+
+                    pats = affected_panels([chosen])
+                    if config.VERBOSE:
+                        print(f"[Chromosome.mutate] Parameter '{chosen}' affects panel patterns: {pats}")
+                    
+                    affected_ids = select_genes(new_pieces.keys(), pats)
+                    if config.VERBOSE:
+                        print(f"[Chromosome.mutate] Will update {len(affected_ids)} panel pieces: {affected_ids}")
+                    
+                    update_count = 0
+                    for i, g in enumerate(self.genes):
+                        if g.id in affected_ids:
+                            new_piece = copy.deepcopy(new_pieces[g.id])
+                            new_piece.rotation = g.rotation
+                            new_piece.translation = g.translation
+                            self.genes[i] = new_piece
+                            update_count += 1
+                    
+                    if config.VERBOSE:
+                        print(f"[Chromosome.mutate] Successfully updated {update_count} panel pieces")
+
         else:
             raise ValueError(f"Unknown mutation type: {mutation}")
 
@@ -177,9 +293,11 @@ class Chromosome(Layout):
         • Parents may contain different numbers of leaves (genes).
         • The child inherits complete split-trees: every original component
         (root_id) is taken entirely from *one* parent, never mixed.
-        • Step 1 is still “OX1 style”: pick 2·k cut points on *self* and copy
+        • Step 1 is still "OX1 style": pick 2·k cut points on *self* and copy
         those segments (plus any additional leaves that belong to the same
         components) into the child, preserving order.
+        • Design parameters and corresponding panel geometry are inherited together
+        from the same parent to maintain consistency.
 
         Parameters
         ----------
@@ -203,23 +321,87 @@ class Chromosome(Layout):
         # ------------------------------------------------------------------
         # helpers -----------------------------------------------------------
         # ------------------------------------------------------------------
-        def get_root_id(piece):
-            """Return the identifier of the original (pre-split) component."""
-            return getattr(piece, "root_id", None) or piece.id.split("_")[0]
+        from nesting.panel_mapping import PARAM_TO_PATTERNS, select_genes
 
-        def copy_all_leaves(src_genes, root_id, placed):
-            """
-            Copy *all* leaves of `root_id` from `src_genes` into child_genes,
-            preserving their order in `src_genes`.  Uses deep-copies and
-            updates `placed`.
-            """
-            copied = []
-            for g in src_genes:
-                if get_root_id(g) == root_id and g.id not in placed:
-                    child_genes.append(copy.deepcopy(g))
-                    placed.add(g.id)
-                    copied.append(g.id)
-            return copied
+        gene_ids = [g.id for g in self.genes]
+
+        def _build_groups(ids):
+            from fnmatch import fnmatch
+
+            adj = {i: set() for i in ids}
+
+            # group by root_id
+            roots = {}
+            for i in ids:
+                rid = i.split("_")[0]
+                roots.setdefault(rid, []).append(i)
+            for lst in roots.values():
+                for a in lst:
+                    for b in lst:
+                        if a != b:
+                            adj[a].add(b); adj[b].add(a)
+
+            # parameter groups - only if design parameters are available
+            param_group = {}
+            if self.design_params is not None or other.design_params is not None:
+                for param, patterns in PARAM_TO_PATTERNS.items():
+                    matched = [i for i in ids if any(fnmatch(i, p) for p in patterns)]
+                    for a in matched:
+                        for b in matched:
+                            if a != b:
+                                adj[a].add(b); adj[b].add(a)
+                    if matched:
+                        param_group[param] = 0  # Will be updated properly later
+
+            visited = set(); groups = []
+            for i in ids:
+                if i in visited:
+                    continue
+                comp=set([i]); stack=[i]; visited.add(i)
+                while stack:
+                    cur=stack.pop()
+                    for nb in adj[cur]:
+                        if nb not in visited:
+                            visited.add(nb); comp.add(nb); stack.append(nb)
+                groups.append(comp)
+
+            gmap={}
+            for idx, comp in enumerate(groups):
+                for i in comp:
+                    gmap[i]=idx
+                    
+            # Update param_group with correct group indices
+            if self.design_params is not None or other.design_params is not None:
+                for param, patterns in PARAM_TO_PATTERNS.items():
+                    matched=[i for i in ids if any(fnmatch(i,p) for p in patterns)]
+                    if matched:
+                        param_group[param]=gmap[matched[0]]
+                        
+            return gmap, param_group
+
+        group_map, param_group = _build_groups(gene_ids)
+
+        def get_group_id(piece):
+            return group_map.get(piece.id, -1)
+
+        # Map of group IDs to genes from both parents
+        parent_genes = {
+            "self": {},
+            "other": {}
+        }
+        
+        # Group genes by their group ID for both parents
+        for g in self.genes:
+            gid = get_group_id(g)
+            if gid not in parent_genes["self"]:
+                parent_genes["self"][gid] = []
+            parent_genes["self"][gid].append(g)
+        
+        for g in other.genes:
+            gid = get_group_id(g)
+            if gid not in parent_genes["other"]:
+                parent_genes["other"][gid] = []
+            parent_genes["other"][gid].append(g)
 
         # ------------------------------------------------------------------
         # 1) choose 2·k cut points on *self* and create first draft segment --
@@ -237,38 +419,51 @@ class Chromosome(Layout):
 
         child_genes: list["Piece"] = []
         placed_ids: set[str] = set()
-        chosen_source: dict[str, str] = {}     # root_id → "self" | "other"
+        chosen_source: dict[int, str] = {}     # group_id → "self" | "other"
 
         # Copy the chosen segments from self (plus all leaves of their components)
         for seg_start, seg_end in segments:
             for idx in range(seg_start, seg_end + 1):
                 g = self.genes[idx]
-                rid = get_root_id(g)
-                if rid in chosen_source:
-                    # This component was already taken earlier in this loop
+                gid = get_group_id(g)
+                if gid in chosen_source:
                     continue
-                chosen_source[rid] = "self"
-                copy_all_leaves(self.genes, rid, placed_ids)
+                chosen_source[gid] = "self"
+                
+                # Add all genes from this group
+                if gid in parent_genes["self"]:
+                    for gene in parent_genes["self"][gid]:
+                        if gene.id not in placed_ids:
+                            child_genes.append(copy.deepcopy(gene))
+                            placed_ids.add(gene.id)
 
         # ------------------------------------------------------------------
         # 2) walk through parent 2 and take components not chosen yet --------
         # ------------------------------------------------------------------
-        for g in other.genes:
-            rid = get_root_id(g)
-            if rid in chosen_source:                # competing tree → skip
+        for gid in parent_genes["other"]:
+            if gid in chosen_source:
                 continue
-            chosen_source[rid] = "other"
-            copy_all_leaves(other.genes, rid, placed_ids)
+            chosen_source[gid] = "other"
+            
+            # Add all genes from this group
+            for gene in parent_genes["other"][gid]:
+                if gene.id not in placed_ids:
+                    child_genes.append(copy.deepcopy(gene))
+                    placed_ids.add(gene.id)
 
         # ------------------------------------------------------------------
         # 3) finally, copy any still-missing components from parent 1 --------
         # ------------------------------------------------------------------
-        for g in self.genes:
-            rid = get_root_id(g)
-            if rid in chosen_source:                # already taken
+        for gid in parent_genes["self"]:
+            if gid in chosen_source:
                 continue
-            chosen_source[rid] = "self"
-            copy_all_leaves(self.genes, rid, placed_ids)
+            chosen_source[gid] = "self"
+            
+            # Add all genes from this group
+            for gene in parent_genes["self"][gid]:
+                if gene.id not in placed_ids:
+                    child_genes.append(copy.deepcopy(gene))
+                    placed_ids.add(gene.id)
 
         # ------------------------------------------------------------------
         # 4) finished -------------------------------------------------------
@@ -278,7 +473,18 @@ class Chromosome(Layout):
             print(f"[Chromosome.crossover_ox1] k={k} produced "
                 f"{len(child_genes)} genes in {dt:.4f} s, segments={segments}")
 
-        return Chromosome(child_genes, self.container)
+        child_dp = None
+        if self.design_params is not None and other.design_params is not None:
+            child_dp = copy.deepcopy(self.design_params)
+            for param, gid in param_group.items():
+                source = chosen_source.get(gid, "self")
+                parent_dp = self.design_params if source == "self" else other.design_params
+                val = nested_get(parent_dp, param.split("."))
+                nested_set(child_dp, param.split("."), copy.deepcopy(val))
+
+        return Chromosome(child_genes, self.container, origin="crossover",
+                           design_params=child_dp, body_params=self.body_params,
+                           design_sampler=self.design_sampler)
 
 
     # def sync_order(self) -> None:

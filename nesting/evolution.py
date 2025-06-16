@@ -47,11 +47,41 @@ class Evolution:
         extend_window: int = 10,
         extend_threshold: float = 0.1,
         max_generations: int = 200,
+        design_params: dict = None,
+        body_params: object = None,
+        design_sampler: object = None,
     ) -> None:
         self.generation = 0
         self.container = container
         self.pieces = pieces
         self.population: list[Chromosome] = []
+        
+        # Initialize logging first to avoid attribute errors
+        self.log_lines = []
+        
+        # Setup log files and directories
+        ts = time.strftime("%Y%m%d_%H%M%S")
+        log_dir = config.SAVE_LOGS_PATH
+        
+        # append timestamp to log path
+        log_dir = f"{log_dir}_{ts}"
+        Path(log_dir).mkdir(parents=True, exist_ok=True)        # ensure folder exists
+        
+        self.log_path = Path(log_dir) / f"evolution_log_{ts}.txt"
+        self.csv_path = Path(log_dir) / f"evolution_metrics_{ts}.csv"
+        
+        plots_dir = Path(log_dir) / "plots"
+        plots_dir.mkdir(exist_ok=True)
+
+        self.plot_path = plots_dir / f"fitness_curves_{ts}.png"
+        self.gain_plot_path = plots_dir / f"mean_gains_{ts}.png"
+        self.swarm_plot_path = plots_dir / f"fitness_swarm_{ts}.png"
+        self.mut_plot_path = plots_dir / "mutation_gains.png" 
+
+        self._metrics_buffer = []
+        self._all_metrics = []
+        self._csv_header_done = False
+        self._swarm_df = pd.DataFrame(columns=["generation", "fitness", "origin"])
 
         # GA parameters
         self.num_generations = num_generations
@@ -62,6 +92,11 @@ class Evolution:
         #self.pmx = pmx
         # self.allow_duplicate_genes = allow_duplicate_genes
         # self.max_duplicate_retries = max_duplicate_retries
+        
+        # Design parameters
+        self.design_params = design_params
+        self.body_params = body_params
+        self.design_sampler = design_sampler
 
         # ── early stopping ───────────────────────────────────────────────
         self.enable_dynamic_stopping = enable_dynamic_stopping
@@ -94,31 +129,6 @@ class Evolution:
         self.mean_offspring_gain: list[float] = []
         self.mean_mutant_gain: list[float] = []
         self.mutation_perf: dict[str, list[float]] = {}      # per-generation mean gain
-
-        ts            = time.strftime("%Y%m%d_%H%M%S")
-        log_dir = config.SAVE_LOGS_PATH
-        
-        # append timestamp to log path
-        log_dir = f"{log_dir}_{ts}"
-        Path(log_dir).mkdir(parents=True, exist_ok=True)        # ensure folder exists
-        
-        self.log_path = Path(log_dir) / f"evolution_log_{ts}.txt"
-        self.csv_path   = Path(log_dir) / f"evolution_metrics_{ts}.csv"
-        
-        plots_dir = Path(log_dir) / "plots"
-        plots_dir.mkdir(exist_ok=True)
-
-        self.plot_path      = plots_dir / f"fitness_curves_{ts}.png"
-        self.gain_plot_path = plots_dir / f"mean_gains_{ts}.png"
-        self.swarm_plot_path = plots_dir / f"fitness_swarm_{ts}.png"
-        self.mut_plot_path  = plots_dir / "mutation_gains.png" 
-
-        self.log_lines       : list[str]          = []
-        self._metrics_buffer : list[dict[str, float]] = []
-        self._all_metrics: list[dict[str, float]] = []
-        self._csv_header_done: bool               = False
-
-        self._swarm_df = pd.DataFrame(columns=["generation", "fitness", "origin"])
         
         self._log(
             f"Evolution initialized with {self.population_size} chromosomes, "
@@ -126,6 +136,18 @@ class Evolution:
             f"{self.n_mutants} mutants, {self.n_randoms} randoms.",
             divider=True
         )
+        
+        # Log design parameter status
+        if self.design_params:
+            self._log(f"Design parameters loaded: {len(self._flatten_params(self.design_params))} parameters found")
+        else:
+            self._log("WARNING: No design parameters provided to Evolution constructor")
+            
+        if self.body_params is None:
+            self._log("WARNING: No body parameters provided to Evolution constructor")
+            
+        if self.design_sampler is None:
+            self._log("WARNING: No design sampler provided to Evolution constructor")
     # ------------------------------------------------------------------
     # Logging helper
     # ------------------------------------------------------------------
@@ -148,7 +170,14 @@ class Evolution:
         #self._log("Generating random chromosome...")
         ids_ = list(self.pieces.keys())
         random.shuffle(ids_)
-        chrom = Chromosome([self.pieces[i] for i in ids_], self.container)
+        chrom = Chromosome(
+            [self.pieces[i] for i in ids_], 
+            self.container,
+            origin="random",
+            design_params=self.design_params, 
+            body_params=self.body_params,
+            design_sampler=self.design_sampler
+        )
 
         # ramdomize rotations
         for piece in chrom.genes:
@@ -165,6 +194,9 @@ class Evolution:
         return chrom
 
     def generate_population(self) -> None:
+        # Initialize design parameter tracking
+        self.design_param_changes = []
+        
         # generate initial population in parallel
         self._log("Generating initial population...")
 
@@ -475,6 +507,9 @@ class Evolution:
         row.update(row_mut)
         self.mutation_perf.clear()  # reset for next generation
 
+        # Track design parameter changes
+        self._track_design_param_changes(self.generation, new_population)
+
         self._metrics_buffer.append(row)
         self._all_metrics.append(row)
 
@@ -561,7 +596,9 @@ class Evolution:
         self._log(f"Total time: {end - start:.2f} seconds")
 
         if config.SAVE_LOGS:
-            self._flush_log()  
+            self._flush_log()
+            # Save design parameter changes
+            self.save_design_param_changes()
 
         return self._get_elite()[0]
 
@@ -704,4 +741,177 @@ class Evolution:
 
         self._log(f"Swarm plot saved to {self.swarm_plot_path}")
         self._log("Plots updated successfully.")
+
+    def _track_design_param_changes(self, generation: int, population: list[Chromosome]) -> None:
+        """
+        Track and log design parameter changes in the population.
+        Compares design params of all chromosomes to detect parameter mutations.
+        Enhanced to check ALL chromosomes, not just those marked with design_param mutation.
+        """
+        if not hasattr(self, 'design_param_changes'):
+            self.design_param_changes = []
+        
+        # Skip if design params aren't being used
+        if self.design_params is None:
+            self._log(f"[Generation {generation}] No original design parameters available for comparison")
+            return
+            
+        # First, check specifically for chromosomes with design_param as their last mutation
+        mutated_chroms = [c for c in population if c.last_mutation == "design_param"]
+        self._log(f"[Generation {generation}] Found {len(mutated_chroms)} chromosomes with design_param as last mutation")
+        
+        # Now check ALL chromosomes for any design parameter differences
+        mutated_count = 0
+        
+        for idx, chrom in enumerate(population):
+            if chrom.design_params is None:
+                if config.VERBOSE:
+                    self._log(f"  Chromosome {idx}: No design parameters available")
+                continue
+                
+            # Use our comparison function
+            diffs = self._compare_design_params(self.design_params, chrom.design_params)
+            
+            if diffs:
+                mutated_count += 1
+                mutation_type = "design_param" if chrom.last_mutation == "design_param" else chrom.last_mutation or "unknown"
+                self._log(f"  Chromosome {idx} (origin: {chrom.origin}, last mutation: {mutation_type}): {len(diffs)} parameter differences")
+                
+                for path, old_val, new_val in diffs:
+                    self._log(f"    Parameter '{path}' changed: {old_val} -> {new_val}")
+                    self.design_param_changes.append({
+                        'generation': generation,
+                        'chromosome': idx,
+                        'chromosome_origin': chrom.origin,
+                        'last_mutation': chrom.last_mutation,
+                        'parameter': path,
+                        'old_value': old_val,
+                        'new_value': new_val,
+                        'fitness': chrom.fitness
+                    })
+        
+        if mutated_count > 0:
+            self._log(f"[Generation {generation}] Total of {mutated_count} chromosomes with design parameter differences")
+    
+    def save_design_param_changes(self):
+        """Save design parameter changes to a CSV file with enhanced details."""
+        if not hasattr(self, 'design_param_changes') or not self.design_param_changes:
+            self._log("No design parameter changes to save.")
+            return
+            
+        import pandas as pd
+        from datetime import datetime
+        
+        # Create a DataFrame from the changes
+        df = pd.DataFrame(self.design_param_changes)
+        
+        # Save to CSV with timestamp in the directory for this run
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_dir = Path(self.log_path).parent
+        csv_path = log_dir / f"design_param_changes.csv"
+        df.to_csv(csv_path, index=False)
+        
+        self._log(f"Saved {len(self.design_param_changes)} design parameter changes to {csv_path}")
+        
+        # Print comprehensive summary
+        param_counts = df['parameter'].value_counts()
+        self._log("Parameter change frequency:")
+        for param, count in param_counts.items():
+            self._log(f"  {param}: {count} times")
+        
+        gen_counts = df['generation'].value_counts().sort_index()
+        self._log("Changes per generation:")
+        for gen, count in gen_counts.items():
+            self._log(f"  Generation {gen}: {count} changes")
+            
+        if 'chromosome_origin' in df.columns:
+            origin_counts = df['chromosome_origin'].value_counts()
+            self._log("Changes by chromosome origin:")
+            for origin, count in origin_counts.items():
+                self._log(f"  {origin}: {count} changes")
+                
+        if 'last_mutation' in df.columns:
+            mutation_counts = df['last_mutation'].value_counts()
+            self._log("Changes by last mutation type:")
+            for mutation, count in mutation_counts.items():
+                self._log(f"  {mutation}: {count} changes")
+                
+        # Create parameter change summary plot
+        try:
+            import matplotlib.pyplot as plt
+            import seaborn as sns
+            
+            plots_dir = log_dir / "plots"
+            plots_dir.mkdir(exist_ok=True)
+            
+            # Plot changes per generation
+            plt.figure(figsize=(10, 6))
+            ax = sns.countplot(x='generation', data=df)
+            plt.title('Design Parameter Changes per Generation')
+            plt.xlabel('Generation')
+            plt.ylabel('Number of Changes')
+            plt.tight_layout()
+            plt.savefig(plots_dir / "design_param_changes_by_gen.png")
+            plt.close()
+            
+            # Plot changes by parameter
+            if len(param_counts) > 0:
+                plt.figure(figsize=(12, 8))
+                param_df = pd.DataFrame({'parameter': param_counts.index, 'count': param_counts.values})
+                param_df = param_df.sort_values('count', ascending=False)
+                ax = sns.barplot(x='count', y='parameter', data=param_df)
+                plt.title('Design Parameter Change Frequency')
+                plt.xlabel('Number of Changes')
+                plt.ylabel('Parameter')
+                plt.tight_layout()
+                plt.savefig(plots_dir / "design_param_changes_by_param.png")
+                plt.close()
+                
+            self._log(f"Design parameter change plots saved to {plots_dir}")
+        except Exception as e:
+            self._log(f"Error creating parameter change plots: {e}")
+
+    def _compare_design_params(self, params1, params2):
+        """
+        Compare two design parameter dictionaries and return a list of differences.
+        Returns a list of tuples (param_path, value1, value2) for parameters that differ.
+        """
+        if params1 is None or params2 is None:
+            return []
+            
+        differences = []
+        
+        # Get all param paths from both dictionaries
+        paths1 = set(self._flatten_params(params1))
+        paths2 = set(self._flatten_params(params2))
+        
+        # Check all paths
+        all_paths = paths1.union(paths2)
+        
+        for path in all_paths:
+            val1 = self._get_param_value(params1, path)
+            val2 = self._get_param_value(params2, path)
+            
+            # Compare values (handling None values)
+            if val1 != val2:
+                differences.append((path, val1, val2))
+                
+        return differences
+        
+    def _print_param_comparison(self, gen_num, pop_idx, chrom, orig_params):
+        """Print a comparison of chromosome design params vs original params"""
+        if chrom.design_params is None:
+            self._log(f"[Generation {gen_num}] Chromosome {pop_idx}: No design parameters")
+            return
+            
+        diffs = self._compare_design_params(orig_params, chrom.design_params)
+        
+        if not diffs:
+            if config.VERBOSE:
+                self._log(f"[Generation {gen_num}] Chromosome {pop_idx}: Design parameters identical to original")
+            return
+            
+        self._log(f"[Generation {gen_num}] Chromosome {pop_idx}: Found {len(diffs)} parameter differences")
+        for path, orig_val, new_val in diffs:
+            self._log(f"  Parameter '{path}': {orig_val} -> {new_val}")
 

@@ -31,9 +31,9 @@ SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
 
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 10
-NUM_GENERATIONS       = 2
-MUTATION_RATE         = 0.3
+POPULATION_SIZE       = 30
+NUM_GENERATIONS       = 10
+MUTATION_RATE         = 0.9
 
 
 
@@ -48,12 +48,13 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
 
 # mutation weights
 MUTATION_WEIGHTS = {
-    "rotate":    0.1,
-    "swap":      0.2,
-    "inversion": 0.2,
-    "insertion": 0.1,
-    "scramble":  0.2,
-    "split":     0.2,
+    "rotate":    0,
+    "swap":      0,
+    "inversion": 0,
+    "insertion": 0,
+    "scramble":  0,
+    "split":     0,
+    "design_param": 1
 }
 
 

@@ -9,6 +9,7 @@ if project_root not in sys.path:
 
 import random
 import time
+import yaml
 from datetime import datetime
 from pathlib import Path
 import copy
@@ -23,6 +24,8 @@ from nesting.layout import Layout, Container, Piece, LayoutView
 from nesting.placement_engine import DECODER_REGISTRY
 from nesting.evolution import Evolution
 import nesting.config as config
+from pygarment.garmentcode.params import DesignSampler
+from assets.bodies.body_params import BodyParameters
 
 
 def flush_results(rows: list[dict], timestamp: str = None) -> None:
@@ -155,7 +158,7 @@ def split_pieces(pieces: dict[str, Piece]) -> dict[str, Piece]:
     return new_pieces
 
 
-def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern_name: str, split: bool = False) -> list[dict]:
+def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern_name: str, json_path: Path, split: bool = False) -> list[dict]:
     """
     Run Genetic Algorithm on the given pieces and container, tracking metrics for each generation.
     Returns a list of dictionaries with metrics for each generation.
@@ -164,6 +167,9 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
     results = []
     
     try:
+        # Load design parameters
+        design_params, body_params, design_sampler = load_design_params(json_path)
+        
         # Create an Evolution instance with default config settings
         evo = Evolution(
             pieces,
@@ -179,6 +185,9 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
             extend_threshold=config.EXTEND_THRESHOLD,
             max_generations=config.MAX_GENERATIONS,
             crossover_method=config.SELECTED_CROSSOVER,
+            design_params=design_params,
+            body_params=body_params,
+            design_sampler=design_sampler,
         )
         
         # Initialize population
@@ -269,6 +278,38 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
     return results
 
 
+def load_design_params(json_path: Path) -> tuple:
+    """
+    Load design parameters, body parameters, and create a design sampler.
+    Returns a tuple of (design_params, body_params, design_sampler)
+    """
+    try:
+        # Load design parameters from adjacent YAML file
+        yaml_path = json_path.parent / f"{json_path.stem.split('_specification')[0]}_design_params.yaml"
+        if not yaml_path.exists():
+            yaml_path = json_path.parent / "design_params.yaml"
+        
+        if yaml_path.exists():
+            with open(yaml_path, "r", encoding="utf-8") as f:
+                yaml_data = yaml.safe_load(f)
+                design_params = yaml_data.get("design", {})
+        else:
+            print(f"No design parameters found for {json_path.name}, creating empty dict")
+            design_params = {}
+        
+        # Create body parameters
+        body_params = BodyParameters()
+        
+        # Create design sampler
+        design_sampler = DesignSampler(design_params)
+        
+        return design_params, body_params, design_sampler
+    
+    except Exception as e:
+        print(f"Error loading design parameters from {json_path}: {e}")
+        return {}, None, None
+
+
 def main():
     data_dir = Path("./nesting-assets/garmentcodedata_batch0")
     json_files = sorted(data_dir.glob("*.json"))
@@ -314,7 +355,8 @@ def main():
         results = run_ga_with_tracking(
             copy.deepcopy(pieces), 
             container, 
-            pattern_name, 
+            pattern_name,
+            json_path,
             split=False
         )
         all_results.extend(results)
@@ -330,7 +372,8 @@ def main():
         results = run_ga_with_tracking(
             copy.deepcopy(split_dict), 
             container, 
-            pattern_name, 
+            pattern_name,
+            json_path,
             split=True
         )
         all_results.extend(results)
