@@ -333,8 +333,39 @@ class NestingGUI:
 
     def _on_param_change(self, param: str, e) -> None:
         """Handle parameter changes by updating the design and regenerating the pattern."""
-        #TODO
-        pass
+        # Update the nested design parameter dictionary
+        value = getattr(e, "value", None)
+        node = self.design_params
+        parts = param.split(".")
+        for p in parts[:-1]:
+            node = node.setdefault(p, {})
+        leaf = node.setdefault(parts[-1], {})
+        if isinstance(leaf, dict) and "v" in leaf:
+            leaf["v"] = value
+        else:
+            node[parts[-1]] = {"v": value}
+
+        if self.pattern_path is None or self.body_params is None:
+            return
+
+        # Save updated design parameters
+        import yaml
+        yaml_path = self.pattern_path.parent / "design_params.yaml"
+        with open(yaml_path, "w", encoding="utf-8") as f:
+            yaml.dump({"design": self.design_params}, f, default_flow_style=False, sort_keys=False)
+
+        # Regenerate the sewing pattern using MetaGarment
+        from assets.garment_programs.meta_garment import MetaGarment
+        mg = MetaGarment("Configured_design", self.body_params, self.design_params)
+        pattern = mg.assembly()
+
+        out_dir = self.pattern_path.parent
+        pattern.serialize(out_dir, to_subfolder=False, with_3d=False, with_text=False,
+                          view_ids=False, empty_ok=True)
+        self.pattern_path = out_dir / f"{pattern.name}_specification.json"
+
+        # Reload pieces from the regenerated pattern
+        self._load_pattern_core(self.pattern_path)
     
     # ---------------------------------------------------------------------------- #
     #                                  TOOLBAR                                     #
@@ -436,10 +467,32 @@ class NestingGUI:
         self._draw_outlines()
 
         # --- design parameters ----------------------------------------
-        with path.open("r", encoding="utf-8") as f:
-            spec = json.load(f)
-            self.design_params = spec.get("design", {})
+        yaml_path = path.parent / "design_params.yaml"
+        try:
+            import yaml
+            if yaml_path.exists():
+                with open(yaml_path, "r", encoding="utf-8") as f:
+                    self.design_params = yaml.safe_load(f).get("design", {})
+            else:
+                with path.open("r", encoding="utf-8") as f:
+                    spec = json.load(f)
+                    self.design_params = spec.get("design", {})
             print("Design parameters loaded:", self.design_params)
+        except Exception as exc:
+            print(f"Failed to load design parameters: {exc}")
+            self.design_params = {}
+
+        # --- body parameters -----------------------------------------
+        body_path = path.parent / "body_measurements.yaml"
+        try:
+            from assets.bodies.body_params import BodyParameters
+            if body_path.exists():
+                self.body_params = BodyParameters(body_path)
+            else:
+                self.body_params = None
+        except Exception as exc:
+            print(f"Failed to load body parameters: {exc}")
+            self.body_params = None
 
         # --- sidebar ---------------------------------------------------
         self._build_sidebar()          # see next section
