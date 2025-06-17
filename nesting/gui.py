@@ -15,6 +15,8 @@ from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap,
 import matplotlib.pyplot as plt
 import io
 import base64
+
+from pygarment.garmentcode.params import DesignSampler
 from .path_extractor import *
 from .layout import *
 from .placement_engine import *
@@ -494,6 +496,42 @@ class NestingGUI:
             print(f"Failed to load body parameters: {exc}")
             self.body_params = None
 
+        # --- design sampler -----------------------------------------
+        try:
+            from pygarment.garmentcode.params import DesignSampler
+            import tempfile
+            
+            if self.design_params:
+                print("Creating design sampler from design parameters...")
+                # DesignSampler expects a file path, not a dictionary
+                # Create a temporary YAML file with the design parameters
+                with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.yaml') as tmp:
+                    import yaml
+                    # Format the content as required by DesignSampler.load
+                    yaml_content = {'design': self.design_params}
+                    yaml.dump(yaml_content, tmp, default_flow_style=False)
+                    tmp_path = tmp.name
+                    print(f"Created temporary YAML file: {tmp_path}")
+                
+                try:
+                    # Create a DesignSampler with the temporary file
+                    print(f"Creating DesignSampler with file: {tmp_path}")
+                    self.design_sampler = DesignSampler(tmp_path)
+                    print("DesignSampler created successfully!")
+                except Exception as e:
+                    print(f"Error creating DesignSampler: {e}")
+                    self.design_sampler = None
+                
+                # We'll keep the temporary file - don't delete it
+                # This ensures the DesignSampler can access it throughout its lifetime
+                print(f"Design sampler state: {self.design_sampler is not None}")
+            else:
+                self.design_sampler = None
+                print("No design parameters available for sampler")
+        except Exception as exc:
+            print(f"Failed to create design sampler: {exc}")
+            self.design_sampler = None
+
         # --- sidebar ---------------------------------------------------
         self._build_sidebar()          # see next section
 
@@ -894,6 +932,14 @@ class NestingGUI:
             elif method == "RandomNFP":
                 decoder = RandomDecoder(layout, container, decoder="NFP")
             elif method == "Genetic Algorithm":
+                # Use the parameters that were loaded during pattern loading
+                print("Using design parameters from pattern loading")
+                
+                # Debug: Print what we're passing to Evolution
+                print(f"Design params: {self.design_params is not None}")
+                print(f"Body params: {self.body_params is not None}")
+                print(f"Design sampler: {self.design_sampler is not None}")
+                
                 evo = Evolution(
                     self.pieces,
                     container,
@@ -907,7 +953,10 @@ class NestingGUI:
                     extend_window=config.EXTEND_WINDOW,
                     extend_threshold=config.EXTEND_THRESHOLD,
                     max_generations=config.MAX_GENERATIONS,
-                    crossover_method= config.SELECTED_CROSSOVER,
+                    crossover_method=config.SELECTED_CROSSOVER,
+                    design_params=self.design_params if hasattr(self, 'design_params') else None,
+                    body_params=self.body_params if hasattr(self, 'body_params') else None,
+                    design_sampler=self.design_sampler if hasattr(self, 'design_sampler') else None,
                 )
                 best_chromosome = evo.run()
                 if best_chromosome is None:
@@ -1114,6 +1163,42 @@ class NestingGUI:
         self._draw_outlines()
         ui.notify(f"Panel split into '{left.id}' and '{right.id}'", type="positive")
         self.selected_panel = ""
+
+    def _create_design_sampler(self, design_params):
+        """
+        Create a DesignSampler instance from a dictionary of design parameters.
+        
+        Args:
+            design_params: Dictionary of design parameters
+            
+        Returns:
+            A DesignSampler instance, or None if creation fails
+        """
+        try:
+            from pygarment.garmentcode.params import DesignSampler
+            import yaml
+            import tempfile
+            from pathlib import Path
+            
+            # Create a temporary YAML file with the design parameters
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.yaml') as tmp:
+                # Format the content as required by DesignSampler.load
+                yaml_content = {'design': design_params}
+                yaml.dump(yaml_content, tmp, default_flow_style=False)
+                tmp_path = tmp.name
+            
+            # Create a DesignSampler with the temporary file
+            sampler = DesignSampler(tmp_path)
+            
+            # Clean up the temporary file
+            Path(tmp_path).unlink()
+            
+            print(f"Design sampler created with {len(design_params)} parameters")
+            return sampler
+        
+        except Exception as exc:
+            print(f"Failed to create design sampler: {exc}")
+            return None
 
 if __name__ in {"__main__", "__mp_main__"}:
     # run_gui.py

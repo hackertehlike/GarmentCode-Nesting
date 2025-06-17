@@ -283,7 +283,8 @@ class Evolution:
         # print the elite chromosomes
         for i, chrom in enumerate(elite_list):
             source = " (random padding)" if i >= elite_count else ""
-            self._log(f"Elite {i+1}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}{source}")
+            #printout the signature of the chromosome
+            self._log(f"Elite {i+1}: {chrom._signature()} | Fitness: {chrom.fitness:.4f}{source}")
 
         return elite_list
 
@@ -871,6 +872,53 @@ class Evolution:
         except Exception as e:
             self._log(f"Error creating parameter change plots: {e}")
 
+    def _flatten_params(self, params, prefix=None):
+        """Recursively yield parameter paths as tuples of keys."""
+        if prefix is None:
+            prefix = []
+
+        paths = []
+
+        if isinstance(params, dict):
+            for key, value in params.items():
+                new_prefix = prefix + [str(key)]
+                if isinstance(value, (dict, list)):
+                    paths.extend(self._flatten_params(value, new_prefix))
+                else:
+                    paths.append(tuple(new_prefix))
+
+        elif isinstance(params, list):
+            for idx, value in enumerate(params):
+                new_prefix = prefix + [str(idx)]
+                if isinstance(value, (dict, list)):
+                    paths.extend(self._flatten_params(value, new_prefix))
+                else:
+                    paths.append(tuple(new_prefix))
+
+        else:
+            if prefix:
+                paths.append(tuple(prefix))
+
+        return paths
+
+    def _get_param_value(self, params, path):
+        """Return value from nested dict/list using a tuple or dotted path."""
+        if isinstance(path, str):
+            path = path.split(".")
+
+        cur = params
+        for key in path:
+            if isinstance(cur, dict):
+                cur = cur.get(key)
+            elif isinstance(cur, list):
+                try:
+                    cur = cur[int(key)]
+                except (ValueError, IndexError):
+                    return None
+            else:
+                return None
+        return cur
+
     def _compare_design_params(self, params1, params2):
         """
         Compare two design parameter dictionaries and return a list of differences.
@@ -881,18 +929,18 @@ class Evolution:
             
         differences = []
         
-        # Get all param paths from both dictionaries
-        paths1 = set(self._flatten_params(params1))
-        paths2 = set(self._flatten_params(params2))
+        # Get all param paths and values from both dictionaries
+        flattened1 = dict(self._flatten_params(params1))
+        flattened2 = dict(self._flatten_params(params2))
         
-        # Check all paths
-        all_paths = paths1.union(paths2)
+        # Get all unique paths
+        all_paths = set(flattened1.keys()).union(set(flattened2.keys()))
         
         for path in all_paths:
-            val1 = self._get_param_value(params1, path)
-            val2 = self._get_param_value(params2, path)
+            val1 = flattened1.get(path)
+            val2 = flattened2.get(path)
             
-            # Compare values (handling None values)
+            # Compare values (handling missing keys)
             if val1 != val2:
                 differences.append((path, val1, val2))
                 
@@ -914,4 +962,33 @@ class Evolution:
         self._log(f"[Generation {gen_num}] Chromosome {pop_idx}: Found {len(diffs)} parameter differences")
         for path, orig_val, new_val in diffs:
             self._log(f"  Parameter '{path}': {orig_val} -> {new_val}")
+    
+    def _flatten_params(self, params_dict, prefix=''):
+        """
+        Flatten a nested dictionary of parameters into a list of (key, value) tuples.
+        This is used for counting and tracking design parameters.
+        
+        Args:
+            params_dict: Dictionary of parameters, potentially nested
+            prefix: Prefix to add to keys from upper levels of nesting
+            
+        Returns:
+            List of (key, value) tuples
+        """
+        result = []
+        if isinstance(params_dict, dict):
+            for key, value in params_dict.items():
+                full_key = f"{prefix}.{key}" if prefix else key
+                if isinstance(value, (dict, list)):
+                    result.extend(self._flatten_params(value, full_key))
+                else:
+                    result.append((full_key, value))
+        elif isinstance(params_dict, list):
+            for i, item in enumerate(params_dict):
+                full_key = f"{prefix}.{i}"
+                if isinstance(item, (dict, list)):
+                    result.extend(self._flatten_params(item, full_key))
+                else:
+                    result.append((full_key, item))
+        return result
 

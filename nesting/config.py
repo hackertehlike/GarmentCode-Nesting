@@ -72,6 +72,7 @@ GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 SAVE_LOGS = True
 SAVE_LOGS_PATH = "nesting/run_logs/"
 LOG_TIME = True
+LOG_DESIGN_PARAM_PATHS = True
 
 # ——— concave hull —————————————————————————————————————
 HULL_TRIM_RATIO = 10 # higher number -> more convex
@@ -125,6 +126,7 @@ def __dict__() -> dict:
         "SAVE_LOGS": SAVE_LOGS,
         "SAVE_LOGS_PATH": SAVE_LOGS_PATH,
         "LOG_TIME": LOG_TIME,
+        "LOG_DESIGN_PARAM_PATHS": LOG_DESIGN_PARAM_PATHS,
         "HULL_TRIM_RATIO": HULL_TRIM_RATIO,
         "INTERIOR_SAMPLE_SPACING": INTERIOR_SAMPLE_SPACING,
         "BOUNDARY_SAMPLE_SPACING": BOUNDARY_SAMPLE_SPACING,

@@ -8,6 +8,8 @@ import random
 import copy
 from typing import Callable
 from pathlib import Path
+import csv
+import json
 
 from .layout import Piece, Container, Layout, LayoutView
 from .placement_engine import DECODER_REGISTRY
@@ -253,25 +255,43 @@ class Chromosome(Layout):
                     if config.VERBOSE:
                         print(f"[Chromosome.mutate] Generated {len(new_pieces)} new panel pieces")
 
-                    pats = affected_panels([chosen])
+                    changed = affected_panels([chosen])
                     if config.VERBOSE:
-                        print(f"[Chromosome.mutate] Parameter '{chosen}' affects panel patterns: {pats}")
+                        print(f"[Chromosome.mutate] Parameter '{chosen}' affects panel patterns: {changed}")
                     
-                    affected_ids = select_genes(new_pieces.keys(), pats)
+                    affected_ids = select_genes(new_pieces.keys(), changed)
                     if config.VERBOSE:
                         print(f"[Chromosome.mutate] Will update {len(affected_ids)} panel pieces: {affected_ids}")
-                    
+
                     update_count = 0
+                    update_records = []
                     for i, g in enumerate(self.genes):
                         if g.id in affected_ids:
+                            old_path = copy.deepcopy(g.outer_path)
                             new_piece = copy.deepcopy(new_pieces[g.id])
                             new_piece.rotation = g.rotation
                             new_piece.translation = g.translation
                             self.genes[i] = new_piece
                             update_count += 1
-                    
+                            update_records.append((g.id, old_path, new_piece.outer_path))
+
                     if config.VERBOSE:
                         print(f"[Chromosome.mutate] Successfully updated {update_count} panel pieces")
+
+                    if update_records and (config.VERBOSE or config.LOG_DESIGN_PARAM_PATHS):
+                        log_file = Path(config.SAVE_LOGS_PATH) / "design_param_paths.csv"
+                        header_needed = not log_file.exists()
+                        with log_file.open("a", newline="") as fh:
+                            writer = csv.writer(fh)
+                            if header_needed:
+                                writer.writerow(["piece_id", "old_outer_path", "new_outer_path"])
+                            for rec in update_records:
+                                piece_id, old_p, new_p = rec
+                                writer.writerow([
+                                    piece_id,
+                                    json.dumps(old_p),
+                                    json.dumps(new_p),
+                                ])
 
         else:
             raise ValueError(f"Unknown mutation type: {mutation}")
@@ -491,17 +511,52 @@ class Chromosome(Layout):
     #     """Sync the order dict to reflect the current gene sequence."""
     #     self.order = OrderedDict((p.id, p) for p in self.genes)
 
-    def _signature(self) -> tuple[tuple[str, int], ...]:
-        """An immutable fingerprint: ((id, rotation), …) in gene order."""
-        return tuple((p.id, p.rotation) for p in self.genes)
+    def _signature(self) -> tuple:
+        """
+        An immutable fingerprint including:
+        - Gene signature: ((id, rotation), …) in gene order
+        - Design parameters hash (if available)
+        """
+        # Get signature based on genes
+        gene_signature = tuple((p.id, p.rotation) for p in self.genes)
+        
+        # Include design params hash if available
+        if self.design_params is not None:
+            try:
+                # Convert design params to a stable string representation and hash it
+                design_params_str = json.dumps(self.design_params, sort_keys=True)
+                design_params_hash = hash(design_params_str)
+                # Return a tuple containing both the gene signature and design params hash
+                return (gene_signature, design_params_hash)
+            except (TypeError, ValueError) as e:
+                # If design params can't be serialized to JSON, fallback to a simple id
+                if config.VERBOSE:
+                    print(f"[Chromosome._signature] Warning: Could not hash design params: {e}")
+                # Return just the gene signature with a dummy hash
+                return (gene_signature, hash(id(self.design_params)))
+        
+        # If no design params, just return the gene signature
+        return (gene_signature, None)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Chromosome):
             return NotImplemented
-        return self._signature() == other._signature()
+        self_sig = self._signature()
+        other_sig = other._signature()
+        return self_sig[0] == other_sig[0] and self_sig[1] == other_sig[1]
 
     def __hash__(self) -> int:
         return hash(self._signature())
 
     def __repr__(self) -> str:
-        return f"Chromosome({self._signature()})"
+        signature = self._signature()
+        gene_signature = signature[0]
+        design_params_hash = signature[1]
+        
+        # Original gene signature representation
+        genes_str = str(gene_signature)
+        
+        if design_params_hash is not None:
+            return f"Chromosome(genes={genes_str}, design_params_hash={design_params_hash})"
+        else:
+            return f"Chromosome(genes={genes_str})"

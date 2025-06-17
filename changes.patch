@@ -1,0 +1,212 @@
+diff --git a/nesting/gui.py b/nesting/gui.py
+index ce68e1d99907d2571d7a06d8e6cd95f6b90df97c..bdde3d80aae990be36bd6c5227659e2999d4c8f0 100644
+--- a/nesting/gui.py
++++ b/nesting/gui.py
+@@ -1,88 +1,90 @@
+ from __future__ import annotations
+ import itertools
+ import tempfile
+ import json
+ import copy
+ # import yaml
+ from typing import Dict, List, Tuple, Set, Optional
+ from pathlib import Path
+ from datetime import datetime
+ 
+ from nicegui import ui, events
+ from nicegui.events import KeyEventArguments
+ from nesting import utils
+ from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap, etc.
++from pygarment.garmentcode.params import DesignSampler
+ import matplotlib.pyplot as plt
+ import io
+ import base64
+ from .path_extractor import *
+ from .layout import *
+ from .placement_engine import *
+ import nesting.config as config
+ from nesting.panel_mapping import affected_panels, select_genes
+ from shapely.errors import GEOSException as TopologyException
+ 
+ # viewer size in CSS‑pixels
+ MAX_CANVAS_PX_WIDTH  = 800   
+ MAX_CANVAS_PX_HEIGHT = 600
+ 
+ 
+ class NestingGUI:
+     """
+     Display garment‑pattern JSON files as SVG outlines with seam allowance.
+     • All JSON coordinates and container inputs are in centimetres.
+     • A uniform seam allowance (cm) can be typed in the toolbar.
+     • Both the original outline (dashed grey) and the enlarged outline
+       (filled colour, draggable) are rendered for each panel.
+     • A button tests all enlarged outlines for pairwise intersections.
+     """
+ 
+     def __init__(self, pattern_path: str | Path | None = None) -> None:
+         # container dimensions in cm
+         self.container_width_cm  = config.CONTAINER_WIDTH_CM
+         self.container_height_cm = config.CONTAINER_HEIGHT_CM
+         
+         self.container = Container(self.container_width_cm, self.container_height_cm)
+         self.layout = None  # will be a Layout instance once pattern is loaded
+ 
+         self._update_scale_factors()
+ 
+         # seam allowance in cm
+         self.seam_allowance_cm: float = config.SEAM_ALLOWANCE_CM
+ 
+         self.pieces : Dict[str, Piece] = {}  # for storing pieces
+ 
+         # UI drag bookkeeping
+         self.panel_path_refs: Dict[str, Tuple[any, any]] = {}
+         # self.panel_transforms: Dict[str, Tuple[float, float]] = {}
+         self.drag_data: Dict = {}
+ 
+         self.pattern_loaded = False
+         #self.yaml_loaded     = False
+ 
+         self.design_params: Dict[str, any] = {}  # design specification from JSON
++        self.design_sampler: DesignSampler | None = None
+ 
+         # Currently selected panel for style editing.
+         self.selected_panel: str = ""
+         self.selection_mode: bool = False
+ 
+         # Pattern regeneration path
+         self.pattern_path: Optional[Path] = None
+         if pattern_path:
+             self.pattern_path = Path(pattern_path)
+ 
+         self.hull_path: ui.element | None = None
+ 
+         self._build_layout()
+ 
+         if pattern_path is not None:
+             # user supplied a pattern → load it once
+             self._load_pattern_core(Path(pattern_path))
+         else:
+             # fall back to the previous hard-coded default
+             self._load_default_pattern()
+ 
+ 
+     # ---------------------------------------------------------------------------- #
+     #                                  UI Builders                                 #
+     # ---------------------------------------------------------------------------- #
+diff --git a/nesting/gui.py b/nesting/gui.py
+index ce68e1d99907d2571d7a06d8e6cd95f6b90df97c..bdde3d80aae990be36bd6c5227659e2999d4c8f0 100644
+--- a/nesting/gui.py
++++ b/nesting/gui.py
+@@ -456,50 +458,54 @@ class NestingGUI:
+ 
+         print(f"Loaded {num_copies+1} copies, {len(self.pieces)} pieces in total.")
+ 
+         # print all the pieces
+         # for piece_id, piece in self.pieces.items():
+         #     print(f"Loaded piece: {piece_id} with translation {piece.translation} and rotation {piece.rotation}")
+         self._rebuild_panel_outlines()
+         self.pattern_loaded = True
+         
+         # Rebuild the sidebar to update the parameters based on the loaded panels
+         self._build_sidebar()
+         self._draw_outlines()
+ 
+         # --- design parameters ----------------------------------------
+         yaml_path = path.parent / "design_params.yaml"
+         try:
+             import yaml
+             if yaml_path.exists():
+                 with open(yaml_path, "r", encoding="utf-8") as f:
+                     self.design_params = yaml.safe_load(f).get("design", {})
+             else:
+                 with path.open("r", encoding="utf-8") as f:
+                     spec = json.load(f)
+                     self.design_params = spec.get("design", {})
+             print("Design parameters loaded:", self.design_params)
++            if yaml_path.exists():
++                self.design_sampler = DesignSampler(str(yaml_path))
++            else:
++                self.design_sampler = None
+         except Exception as exc:
+             print(f"Failed to load design parameters: {exc}")
+             self.design_params = {}
+ 
+         # --- body parameters -----------------------------------------
+         body_path = path.parent / "body_measurements.yaml"
+         try:
+             from assets.bodies.body_params import BodyParameters
+             if body_path.exists():
+                 self.body_params = BodyParameters(body_path)
+             else:
+                 self.body_params = None
+         except Exception as exc:
+             print(f"Failed to load body parameters: {exc}")
+             self.body_params = None
+ 
+         # --- sidebar ---------------------------------------------------
+         self._build_sidebar()          # see next section
+ 
+ 
+     def _load_pattern(self, e: events.UploadEventArguments):
+         """Handle file-upload event and delegate to the core loader."""
+         with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmp:
+             tmp.write(e.content.read())
+             tmp_path = Path(tmp.name)
+diff --git a/nesting/gui.py b/nesting/gui.py
+index ce68e1d99907d2571d7a06d8e6cd95f6b90df97c..bdde3d80aae990be36bd6c5227659e2999d4c8f0 100644
+--- a/nesting/gui.py
++++ b/nesting/gui.py
+@@ -886,50 +892,53 @@ class NestingGUI:
+                 decoder = BottomLeftDecoder(layout, container, gravitate_once=config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
+             elif method == "Greedy":
+                 # Greedy placement
+                 decoder = GreedyBLDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, sort_key = config.SORT_BY, step=config.GRAVITATE_STEP)
+             elif method == "NFP":
+                 decoder = NFPDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
+             elif method == "RandomBL":
+                 decoder = RandomDecoder(layout, container, decoder="BL")
+             elif method == "RandomNFP":
+                 decoder = RandomDecoder(layout, container, decoder="NFP")
+             elif method == "Genetic Algorithm":
+                 evo = Evolution(
+                     self.pieces,
+                     container,
+                     num_generations=config.NUM_GENERATIONS,
+                     population_size=config.POPULATION_SIZE,
+                     mutation_rate=config.MUTATION_RATE,
+                     enable_dynamic_stopping=config.ENABLE_DYNAMIC_STOPPING,
+                     early_stop_window=config.EARLY_STOP_WINDOW,
+                     early_stop_tolerance=config.EARLY_STOP_TOLERANCE,
+                     enable_extension=config.ENABLE_EXTENSION,
+                     extend_window=config.EXTEND_WINDOW,
+                     extend_threshold=config.EXTEND_THRESHOLD,
+                     max_generations=config.MAX_GENERATIONS,
+                     crossover_method= config.SELECTED_CROSSOVER,
++                    design_params=self.design_params,
++                    body_params=self.body_params,
++                    design_sampler=self.design_sampler,
+                 )
+                 best_chromosome = evo.run()
+                 if best_chromosome is None:
+                     ui.notify("No valid solution found by the Genetic Algorithm", type="negative")
+                     return
+                 
+                 self.pieces = {p.id: copy.deepcopy(p) for p in best_chromosome.genes}
+                 self.layout = Layout(self.pieces)          # keep layout in sync
+                 self._rebuild_panel_outlines()             # add seam allowance etc.
+                 self._draw_outlines()                      # paint them on the canvas
+             
+                 view    = LayoutView(best_chromosome.genes)
+                 decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
+   
+             elif method == "Jostle":
+                 # Use the default decoder instead of JostleDecoder
+                 view    = LayoutView(layout)
+                 decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
+ 
+             else:
+                 raise ValueError(f"Unknown placement method: {method}")
+             
+             print("Now decoding...")
+             placements = decoder.decode()  # [(name, dx, dy)]
+             print("Decoding done")
