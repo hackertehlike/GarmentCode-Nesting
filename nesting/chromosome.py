@@ -106,15 +106,6 @@ class Chromosome(Layout):
         # Always print which mutation was selected
         if config.VERBOSE:
             print(f"[Chromosome.mutate] Selected mutation: {mutation}")
-            
-        # For design_param, check if data is available early and print more info
-        if mutation == "design_param":
-            if self.design_params is None:
-                print("[Chromosome.mutate] Missing design_params")
-            if self.design_sampler is None:
-                print("[Chromosome.mutate] Missing design_sampler")
-            if self.body_params is None:
-                print("[Chromosome.mutate] Missing body_params")
 
         n = len(self.genes)
 
@@ -190,8 +181,14 @@ class Chromosome(Layout):
 
         elif mutation == "design_param":
             if self.design_params is None or self.design_sampler is None or self.body_params is None:
-                if config.VERBOSE:
-                    print("[Chromosome.mutate] design_param skipped: missing data")
+                
+                if self.design_params is None:
+                    print("[Chromosome.mutate] Missing design_params")
+                if self.design_sampler is None:
+                    print("[Chromosome.mutate] Missing design_sampler")
+                if self.body_params is None:
+                    print("[Chromosome.mutate] Missing body_params")
+            
             else:
                 if config.VERBOSE:
                     print("[Chromosome.mutate] Starting design_param mutation")
