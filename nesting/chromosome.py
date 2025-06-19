@@ -212,7 +212,7 @@ class Chromosome(Layout):
                 if not param_paths:
                     print("[Chromosome.mutate] ERROR: No mutable parameters found in design_params")
                     print("[Chromosome.mutate] design_params structure:")
-                    import json
+                    # Using the globally imported json module
                     print(json.dumps(self.design_params, indent=2)[:500] + "..." if len(json.dumps(self.design_params)) > 500 else json.dumps(self.design_params, indent=2))
                 
                 if param_paths:

@@ -1,0 +1,1114 @@
+------------------------------------------------------------
+Evolution initialized with 30 chromosomes, 6 elites, 12 offspring, 9 mutants, 3 randoms.
+Design parameters loaded: 619 parameters found
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x12fc16130>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x12fc16130>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x1073d1c00>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'DEFAULT_PATTERN_PATH': <class 'str'>, 'DEFAULT_DESIGN_PARAM_PATH': <class 'str'>, 'DEFAULT_BODY_PARAM_PATH': <class 'str'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'PRESERVE_HOLES': <class 'bool'>, 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1'], 'GRAVITATE_ONCE': <class 'bool'>, 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DEFAULT_PATTERN_PATH': 'nesting-assets/default_pattern.json', 'DEFAULT_DESIGN_PARAM_PATH': 'nesting-assets/default_design_params.yaml', 'DEFAULT_BODY_PARAM_PATH': 'nesting-assets/default_body_measurements.yaml', 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1'], 'SortKey': typing.Literal['bbox_area', 'hull_area', 'aspect_ratio'], 'SELECTED_DECODER': 'NFP', 'PRESERVE_HOLES': True, 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1', 'OX_K': 1, 'NUM_SPLITS': 30, 'GRAVITATE_ONCE': True, 'GRAVITATE_STEP': 2, 'SORT_BY': 'hull_area', 'POPULATION_SIZE': 30, 'NUM_GENERATIONS': 10, 'MUTATION_RATE': 0.9, 'POPULATION_WEIGHTS': {'elites': 0.2, 'offspring': 0.4, 'mutants': 0.3, 'randoms': 0.1}, 'MUTATION_WEIGHTS': {'rotate': 0, 'swap': 0, 'inversion': 0, 'insertion': 0, 'scramble': 0, 'split': 0, 'design_param': 1}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 4, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs/', 'LOG_TIME': True, 'LOG_DESIGN_PARAM_PATHS': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 0.1, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 140, 'CONTAINER_HEIGHT_CM': 400, 'SEAM_ALLOWANCE_CM': 0, '__dict__': <function __dict__ at 0x12fc00c10>}
+Generating initial population...
+Random chromosome generated with fitness: 0.7056
+Random chromosome generated with fitness: 0.7923
+Random chromosome generated with fitness: 0.5841
+Random chromosome generated with fitness: 0.6472
+Random chromosome generated with fitness: 0.7689
+Random chromosome generated with fitness: 0.5655
+Random chromosome generated with fitness: 0.7381
+Random chromosome generated with fitness: 0.6168
+Random chromosome generated with fitness: 0.6065
+Random chromosome generated with fitness: 0.6730
+Random chromosome generated with fitness: 0.7090
+Random chromosome generated with fitness: 0.7101
+Random chromosome generated with fitness: 0.6737
+Random chromosome generated with fitness: 0.6971
+Random chromosome generated with fitness: 0.7700
+Random chromosome generated with fitness: 0.7287
+Random chromosome generated with fitness: 0.6847
+Random chromosome generated with fitness: 0.7538
+Random chromosome generated with fitness: 0.6418
+Random chromosome generated with fitness: 0.6145
+Random chromosome generated with fitness: 0.6799
+Random chromosome generated with fitness: 0.5870
+Random chromosome generated with fitness: 0.7913
+Random chromosome generated with fitness: 0.7076
+Random chromosome generated with fitness: 0.6459
+Random chromosome generated with fitness: 0.7190
+Random chromosome generated with fitness: 0.6343
+Random chromosome generated with fitness: 0.7973
+Random chromosome generated with fitness: 0.6789
+Random chromosome generated with fitness: 0.6521
+------------------------------------------------------------
+Initial population of 30 layouts generated.
+Layout 0: [('left_btorso', 0), ('left_ftorso', 270), ('right_btorso', 270), ('right_ftorso', 0)] | Fitness: 0.5841
+Layout 1: [('left_btorso', 270), ('right_ftorso', 270), ('left_ftorso', 0), ('right_btorso', 90)] | Fitness: 0.7923
+Layout 2: [('right_ftorso', 270), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 180)] | Fitness: 0.6168
+Layout 3: [('right_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180), ('left_btorso', 180)] | Fitness: 0.7101
+Layout 4: [('right_btorso', 180), ('left_btorso', 0), ('left_ftorso', 90), ('right_ftorso', 180)] | Fitness: 0.6065
+Layout 5: [('left_ftorso', 180), ('right_ftorso', 90), ('left_btorso', 270), ('right_btorso', 270)] | Fitness: 0.6472
+Layout 6: [('left_btorso', 90), ('left_ftorso', 270), ('right_btorso', 270), ('right_ftorso', 270)] | Fitness: 0.7090
+Layout 7: [('left_btorso', 90), ('left_ftorso', 270), ('right_btorso', 180), ('right_ftorso', 270)] | Fitness: 0.6730
+Layout 8: [('right_btorso', 270), ('right_ftorso', 180), ('left_btorso', 180), ('left_ftorso', 90)] | Fitness: 0.7689
+Layout 9: [('right_btorso', 0), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 90)] | Fitness: 0.7381
+Layout 10: [('left_ftorso', 270), ('right_btorso', 0), ('right_ftorso', 270), ('left_btorso', 90)] | Fitness: 0.5655
+Layout 11: [('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)] | Fitness: 0.7056
+Layout 12: [('right_btorso', 90), ('left_ftorso', 180), ('left_btorso', 90), ('right_ftorso', 90)] | Fitness: 0.6737
+Layout 13: [('left_ftorso', 90), ('left_btorso', 90), ('right_btorso', 270), ('right_ftorso', 90)] | Fitness: 0.7538
+Layout 14: [('right_btorso', 180), ('left_ftorso', 90), ('right_ftorso', 90), ('left_btorso', 0)] | Fitness: 0.6971
+Layout 15: [('left_ftorso', 0), ('right_ftorso', 90), ('left_btorso', 270), ('right_btorso', 180)] | Fitness: 0.6847
+Layout 16: [('left_btorso', 0), ('left_ftorso', 0), ('right_btorso', 180), ('right_ftorso', 270)] | Fitness: 0.7287
+Layout 17: [('left_btorso', 90), ('right_ftorso', 180), ('left_ftorso', 180), ('right_btorso', 0)] | Fitness: 0.7700
+Layout 18: [('left_ftorso', 0), ('left_btorso', 90), ('right_btorso', 0), ('right_ftorso', 0)] | Fitness: 0.6418
+Layout 19: [('right_btorso', 270), ('left_btorso', 90), ('left_ftorso', 270), ('right_ftorso', 270)] | Fitness: 0.6799
+Layout 20: [('left_btorso', 270), ('right_btorso', 90), ('left_ftorso', 90), ('right_ftorso', 90)] | Fitness: 0.6145
+Layout 21: [('right_btorso', 90), ('left_ftorso', 270), ('right_ftorso', 180), ('left_btorso', 0)] | Fitness: 0.5870
+Layout 22: [('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 90), ('left_btorso', 180)] | Fitness: 0.7913
+Layout 23: [('left_ftorso', 90), ('right_btorso', 180), ('left_btorso', 270), ('right_ftorso', 180)] | Fitness: 0.7076
+Layout 24: [('left_btorso', 180), ('right_btorso', 0), ('left_ftorso', 0), ('right_ftorso', 0)] | Fitness: 0.6789
+Layout 25: [('right_btorso', 270), ('left_ftorso', 90), ('right_ftorso', 0), ('left_btorso', 90)] | Fitness: 0.6343
+Layout 26: [('left_ftorso', 270), ('right_ftorso', 0), ('left_btorso', 0), ('right_btorso', 0)] | Fitness: 0.6459
+Layout 27: [('right_btorso', 180), ('left_ftorso', 270), ('left_btorso', 180), ('right_ftorso', 90)] | Fitness: 0.7190
+Layout 28: [('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)] | Fitness: 0.7973
+Layout 29: [('right_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 270), ('left_btorso', 0)] | Fitness: 0.6521
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7973
+Elite 1: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 2: ((('left_btorso', 270), ('right_ftorso', 270), ('left_ftorso', 0), ('right_btorso', 90)), 8248583132063952142) | Fitness: 0.7923
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 90), ('left_btorso', 180)), 8248583132063952142) | Fitness: 0.7913
+Elite 4: ((('left_btorso', 90), ('right_ftorso', 180), ('left_ftorso', 180), ('right_btorso', 0)), 8248583132063952142) | Fitness: 0.7700
+Elite 5: ((('right_btorso', 270), ('right_ftorso', 180), ('left_btorso', 180), ('left_ftorso', 90)), 8248583132063952142) | Fitness: 0.7689
+Elite 6: ((('left_ftorso', 90), ('left_btorso', 90), ('right_btorso', 270), ('right_ftorso', 90)), 8248583132063952142) | Fitness: 0.7538
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7689
+Offspring created with fitness: 0.7689
+Offspring created with fitness: 0.7689
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.7689
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7689
+Offspring created with fitness: 0.7923
+Offspring created with fitness: 0.7689
+Offspring created with fitness: 0.7538
+Offspring created with fitness: 0.7538
+Offspring created with fitness: 0.7973
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+Mutant created with fitness: 0.7689
+Mutant created with fitness: 0.7689
+Mutant created with fitness: 0.7913
+Mutant created with fitness: 0.7913
+Mutant created with fitness: 0.7689
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7538
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7211
+Random chromosome created with fitness: 0.7211
+Random chromosome generated with fitness: 0.7600
+Random chromosome created with fitness: 0.7600
+Random chromosome generated with fitness: 0.6545
+Random chromosome created with fitness: 0.6545
+Collected 11 offspring, 7 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0102; mutants: +0.0000
+------------------------------------------------------------
+Generation 1: best 0.7973 (Δ +0.0000)
+[Generation 1] Found 15 chromosomes with design_param as last mutation
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.top_ruffle.v' changed: 1 -> 2.3110000108126316
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'flare-skirt.skirt-many-panels.n_panels.v' changed: 4 -> 10
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 88
+  Chromosome 15 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.cuff.skirt_flare.v' changed: 1.2 -> 1.8144081291561363
+  Chromosome 17 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.length.v' changed: 0.3 -> 0.7880788502577518
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.6771397973966146
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'godet-skirt.num_inserts.v' changed: 4 -> 10
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.low_angle.v' changed: 0 -> -12
+[Generation 1] Total of 9 chromosomes with design parameter differences
+Generation 1 completed in 1.99s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7973
+Elite 1: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 2: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7517546345622431228) | Fitness: 0.7973
+Elite 3: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 4: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7993881625885389271) | Fitness: 0.7973
+Elite 5: ((('left_btorso', 270), ('right_ftorso', 270), ('left_ftorso', 0), ('right_btorso', 90)), 8248583132063952142) | Fitness: 0.7923
+Elite 6: ((('left_btorso', 270), ('right_ftorso', 270), ('left_ftorso', 0), ('right_btorso', 90)), -727928496246679502) | Fitness: 0.7923
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7973
+Elite 1: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 2: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7517546345622431228) | Fitness: 0.7973
+Elite 3: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 4: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7993881625885389271) | Fitness: 0.7973
+Elite 5: ((('left_btorso', 270), ('right_ftorso', 270), ('left_ftorso', 0), ('right_btorso', 90)), 8248583132063952142) | Fitness: 0.7923
+Elite 6: ((('left_btorso', 270), ('right_ftorso', 270), ('left_ftorso', 0), ('right_btorso', 90)), -727928496246679502) | Fitness: 0.7923
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.7973
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7923
+Offspring created with fitness: 0.7923
+Offspring created with fitness: 0.7923
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: local variable 'json' referenced before assignment
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7923
+Mutant created with fitness: 0.7923
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7923
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6289
+Random chromosome created with fitness: 0.6289
+Random chromosome generated with fitness: 0.7352
+Random chromosome created with fitness: 0.7352
+Random chromosome generated with fitness: 0.6585
+Random chromosome created with fitness: 0.6585
+Collected 8 offspring, 8 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0019; mutants: +0.0000
+------------------------------------------------------------
+Generation 2: best 0.7973 (Δ +0.0000)
+[Generation 2] Found 18 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.low_angle.v' changed: 0 -> -12
+  Chromosome 5 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.top_ruffle.v' changed: 1 -> 2.3110000108126316
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.top_ruffle.v' changed: 1 -> 2.3110000108126316
+  Chromosome 9 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.cuff.top_ruffle.v' changed: 1 -> 2.3110000108126316
+    Parameter 'left.sleeve.end_width.v' changed: 1.0 -> 1.8205866270089444
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.top_ruffle.v' changed: 1 -> 2.3110000108126316
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffSkirt
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 1 -> 1.6812136802161608
+  Chromosome 16 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.top_ruffle.v' changed: 1 -> 2.3110000108126316
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'flare-skirt.suns.v' changed: 0.75 -> 1.5587003885616457
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.length.v' changed: 0.4 -> 0.7629737475240592
+    Parameter 'pencil-skirt.low_angle.v' changed: 0 -> -12
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.2876888855954775
+[Generation 2] Total of 12 chromosomes with design parameter differences
+Generation 2 completed in 1.78s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7973
+Elite 1: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 2: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7517546345622431228) | Fitness: 0.7973
+Elite 3: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 4: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7993881625885389271) | Fitness: 0.7973
+Elite 5: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 6: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7973
+Elite 1: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 2: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7517546345622431228) | Fitness: 0.7973
+Elite 3: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 4: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7993881625885389271) | Fitness: 0.7973
+Elite 5: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 6: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7522
+Random chromosome created with fitness: 0.7522
+Random chromosome generated with fitness: 0.8603
+Random chromosome created with fitness: 0.8603
+Random chromosome generated with fitness: 0.7365
+Random chromosome created with fitness: 0.7365
+Collected 9 offspring, 6 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 3: best 0.8603 (Δ +0.0630)
+[Generation 3] Found 18 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.low_angle.v' changed: 0 -> -12
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.connect_ruffle.v' changed: 1 -> 1.5476799770781395
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'flare-skirt.cut.place.v' changed: -0.5 -> 0.4337552824415354
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.width.v' changed: 1.0 -> 1.2251762129188029
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'skirt.length.v' changed: 0.2 -> 0.8277257891286305
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.low_angle.v' changed: 0 -> -12
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.depth.v' changed: 7 -> 5
+  Chromosome 15 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.low_angle.v' changed: 0 -> -12
+    Parameter 'collar.component.lapel_standing.v' changed: False -> True
+  Chromosome 16 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.7159533657172841
+  Chromosome 17 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.1884886233576626
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'flare-skirt.skirt-many-panels.panel_curve.v' changed: 0 -> 0.25
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+[Generation 3] Total of 13 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250619_120815/plots/fitness_curves_20250619_120815.png
+Mean gains plot saved to nesting/run_logs/_20250619_120815/plots/mean_gains_20250619_120815.png
+Mutation gains plot saved to nesting/run_logs/_20250619_120815/plots/mutation_gains.png
+Swarm plot data: 106 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250619_120815/plots/fitness_swarm_20250619_120815.png
+Plots updated successfully.
+Generation 3 completed in 2.32s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 3: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7517546345622431228) | Fitness: 0.7973
+Elite 4: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 5: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7993881625885389271) | Fitness: 0.7973
+Elite 6: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 3: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7517546345622431228) | Fitness: 0.7973
+Elite 4: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 5: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7993881625885389271) | Fitness: 0.7973
+Elite 6: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.7973
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7130
+Random chromosome created with fitness: 0.7130
+Random chromosome generated with fitness: 0.7177
+Random chromosome created with fitness: 0.7177
+Random chromosome generated with fitness: 0.8277
+Random chromosome created with fitness: 0.8277
+Collected 10 offspring, 6 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0126; mutants: +0.0000
+------------------------------------------------------------
+Generation 4: best 0.8603 (Δ +0.0000)
+[Generation 4] Found 18 chromosomes with design_param as last mutation
+  Chromosome 2 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+  Chromosome 4 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.low_angle.v' changed: 0 -> -12
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.low_angle.v' changed: 0 -> -12
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.length.v' changed: 0.3 -> 0.6690937363532035
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.rise.v' changed: 1.0 -> 0.7419865610090384
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.low_angle.v' changed: 0 -> -12
+  Chromosome 16 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 17 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.5145115640351088
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.v' changed: Shirt -> FittedShirt
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.skirt_ruffle.v' changed: 1.0 -> 1.1177385782338143
+[Generation 4] Total of 13 chromosomes with design parameter differences
+Generation 4 completed in 1.82s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('left_ftorso', 0), ('right_btorso', 270), ('left_btorso', 270), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.8277
+Elite 5: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 6: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7517546345622431228) | Fitness: 0.7973
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('left_ftorso', 0), ('right_btorso', 270), ('left_btorso', 270), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.8277
+Elite 5: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), 8248583132063952142) | Fitness: 0.7973
+Elite 6: ((('right_btorso', 180), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 180)), -7517546345622431228) | Fitness: 0.7973
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.8603
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.7973
+Offspring created with fitness: 0.8277
+Offspring created with fitness: 0.7973
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: local variable 'json' referenced before assignment
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.7973
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8277
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7106
+Random chromosome created with fitness: 0.7106
+Random chromosome generated with fitness: 0.7256
+Random chromosome created with fitness: 0.7256
+Random chromosome generated with fitness: 0.6149
+Random chromosome created with fitness: 0.6149
+Collected 10 offspring, 8 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0189; mutants: +0.0000
+------------------------------------------------------------
+Generation 5: best 0.8603 (Δ +0.0000)
+[Generation 5] Found 20 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 5 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 7 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 8 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.rise.v' changed: 1.0 -> 0.5333842862875366
+  Chromosome 10 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.rise.v' changed: 1 -> 0.7091151767286619
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 1 -> 1.9811617848219185
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.7868766565233585
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.armhole_shape.range.2' changed: ArmholeCurve -> None
+    Parameter 'left.sleeve.armhole_shape.v' changed: ArmholeCurve -> ArmholeSquare
+  Chromosome 16 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'godet-skirt.cuts_distance.v' changed: 5 -> 8
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.6751777555689111
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'skirt.length.v' changed: 0.2 -> -0.1141780605592092
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.0889507696614813
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'godet-skirt.insert_w.v' changed: 15 -> 18
+[Generation 5] Total of 17 chromosomes with design parameter differences
+Generation 5 completed in 1.83s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6335
+Random chromosome created with fitness: 0.6335
+Random chromosome generated with fitness: 0.5770
+Random chromosome created with fitness: 0.5770
+Random chromosome generated with fitness: 0.6776
+Random chromosome created with fitness: 0.6776
+Collected 9 offspring, 7 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 6: best 0.8603 (Δ +0.0000)
+[Generation 6] Found 19 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 3 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 5 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 7 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 8 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'levels-skirt.base_length_frac.v' changed: 0.5 -> 0.6153158412043855
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 10 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'pants.width.v' changed: 1.0 -> 1.3938571338181798
+  Chromosome 11 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'levels-skirt.level_ruffle.v' changed: 1.0 -> 1.234973065290074
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'flare-skirt.cut.place.v' changed: -0.5 -> 0.31973003850814674
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.3338888797832327
+  Chromosome 15 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'flare-skirt.length.v' changed: 0.2 -> 0.5473391504614296
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 16 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'godet-skirt.num_inserts.v' changed: 4 -> 6
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 17 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.sleeve.sleeve_angle.v' changed: 10 -> 25
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'pants.cuff.cuff_len.v' changed: 0.1 -> 0.28471721273622286
+  Chromosome 19 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.sleeve.end_width.v' changed: 1.0 -> 0.8534897123791643
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'flare-skirt.cut.width.v' changed: 0.1 -> 0.20164595008043662
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'godet-skirt.cuts_distance.v' changed: 5 -> 4
+[Generation 6] Total of 20 chromosomes with design parameter differences
+Generation 6 completed in 1.77s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.8603
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6395
+Random chromosome created with fitness: 0.6395
+Random chromosome generated with fitness: 0.6314
+Random chromosome created with fitness: 0.6314
+Random chromosome generated with fitness: 0.7197
+Random chromosome created with fitness: 0.7197
+Collected 10 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 7: best 0.8603 (Δ +0.0000)
+[Generation 7] Found 19 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 3 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 5 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 7 (origin: offspring, last mutation: unknown): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 8 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 9 (origin: offspring, last mutation: unknown): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 1 -> 1.8093891557665884
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.sleeve.connect_ruffle.v' changed: 1 -> 1.9747541854011175
+  Chromosome 14 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'waistband.waist.v' changed: 1.0 -> 1.2792851522656683
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 90
+  Chromosome 16 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.sleeve.standing_shoulder_len.v' changed: 5.0 -> 5.906646552138334
+  Chromosome 17 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.8686407141752686
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.sleeve.sleeve_angle.v' changed: 10 -> 16
+  Chromosome 19 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'sleeve.end_width.v' changed: 1.0 -> 1.6488553457609012
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 91
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'sleeve.cuff.type.v' changed: None -> CuffSkirt
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 24 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'skirt.rise.v' changed: 1 -> 0.9909340819584691
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+[Generation 7] Total of 23 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250619_120815/plots/fitness_curves_20250619_120815.png
+Mean gains plot saved to nesting/run_logs/_20250619_120815/plots/mean_gains_20250619_120815.png
+Mutation gains plot saved to nesting/run_logs/_20250619_120815/plots/mutation_gains.png
+Swarm plot data: 211 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250619_120815/plots/fitness_swarm_20250619_120815.png
+Plots updated successfully.
+Generation 7 completed in 2.11s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6661
+Random chromosome created with fitness: 0.6661
+Random chromosome generated with fitness: 0.7355
+Random chromosome created with fitness: 0.7355
+Random chromosome generated with fitness: 0.7213
+Random chromosome created with fitness: 0.7213
+Collected 8 offspring, 7 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 8: best 0.8603 (Δ +0.0000)
+[Generation 8] Found 18 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 3 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 5 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 7 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.length.v' changed: 0.3 -> 0.3955610322416291
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 8 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'flare-skirt.length.v' changed: 0.2 -> 0.6126357866610224
+  Chromosome 9 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 82
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'pencil-skirt.flare.v' changed: 1.0 -> 1.1962607239278427
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'skirt.rise.v' changed: 1 -> 0.6720719554549874
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.sleeve.cuff.skirt_flare.v' changed: 1.2 -> 1.1328131071754615
+  Chromosome 14 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'flare-skirt.skirt-many-panels.panel_curve.v' changed: 0 -> 0.45
+  Chromosome 15 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'pencil-skirt.rise.v' changed: 1 -> 0.6160862817832894
+  Chromosome 16 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffSkirt
+  Chromosome 17 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.7573072377422395
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'levels-skirt.base_length_frac.v' changed: 0.5 -> 0.37935502623555084
+  Chromosome 19 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.length.v' changed: 0.3 -> 0.1334799732414632
+[Generation 8] Total of 20 chromosomes with design parameter differences
+Generation 8 completed in 1.76s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6617
+Random chromosome created with fitness: 0.6617
+Random chromosome generated with fitness: 0.7913
+Random chromosome created with fitness: 0.7913
+Random chromosome generated with fitness: 0.6230
+Random chromosome created with fitness: 0.6230
+Collected 12 offspring, 7 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 9: best 0.8603 (Δ +0.0000)
+[Generation 9] Found 21 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 3 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 5 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 6 (origin: offspring, last mutation: unknown): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 7 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 8 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'godet-skirt.insert_w.v' changed: 15 -> 31
+  Chromosome 9 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+    Parameter 'sleeve.sleeve_angle.v' changed: 10 -> 28
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.skirt_fraction.v' changed: 0.5 -> 0.17328515092467933
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.sleeve_angle.v' changed: 10 -> 32
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'sleeve.smoothing_coeff.v' changed: 0.25 -> 0.2363910455807536
+  Chromosome 16 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'sleeve.standing_shoulder_len.v' changed: 5.0 -> 9.665940544457722
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.length.v' changed: 0.4 -> 0.8225517106432132
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'levels-skirt.length.v' changed: 0.5 -> 0.44588645087186085
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 19 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'pencil-skirt.right_slit.v' changed: 0 -> 0.7206457473397356
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.depth.v' changed: 7 -> 2
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.7660086695826506
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'sleeve.cuff.type.v' changed: None -> CuffSkirt
+  Chromosome 24 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: None -> CuffBand
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+[Generation 9] Total of 24 chromosomes with design parameter differences
+Generation 9 completed in 1.95s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: local variable 'json' referenced before assignment
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.8603
+‼ offspring task failed: local variable 'json' referenced before assignment
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Offspring created with fitness: 0.8603
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+‼ mutant task failed: local variable 'json' referenced before assignment
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Mutant created with fitness: 0.8603
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7283
+Random chromosome created with fitness: 0.7283
+Random chromosome generated with fitness: 0.6355
+Random chromosome created with fitness: 0.6355
+Random chromosome generated with fitness: 0.6881
+Random chromosome created with fitness: 0.6881
+Collected 9 offspring, 6 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 10: best 0.8603 (Δ +0.0000)
+[Generation 10] Found 17 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 3 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 5 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 7 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 8 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 75
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 10 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'pants.cuff.skirt_flare.v' changed: 1.2 -> 1.61491531833211
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'sleeve.cuff.skirt_flare.v' changed: 1.2 -> 1.5616396040319023
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+    Parameter 'sleeve.end_width.v' changed: 1.0 -> 0.48044856711263223
+  Chromosome 15 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 16 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+    Parameter 'pencil-skirt.front_slit.v' changed: 0 -> 0.05241415591203204
+  Chromosome 17 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'flare-skirt.skirt-many-panels.n_panels.v' changed: 4 -> 10
+    Parameter 'pencil-skirt.back_slit.v' changed: 0 -> 0.8744481240919059
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+  Chromosome 20 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'pencil-skirt.left_slit.v' changed: 0 -> 0.3831366249343657
+    Parameter 'pants.cuff.type.v' changed: None -> CuffBand
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5567263310153093
+[Generation 10] Total of 18 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 11 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250619_120815/plots/fitness_curves_20250619_120815.png
+Mean gains plot saved to nesting/run_logs/_20250619_120815/plots/mean_gains_20250619_120815.png
+Mutation gains plot saved to nesting/run_logs/_20250619_120815/plots/mutation_gains.png
+Swarm plot data: 287 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250619_120815/plots/fitness_swarm_20250619_120815.png
+Plots updated successfully.
+Generation 10 completed in 2.17s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.8603
+Elite 1: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8248583132063952142) | Fitness: 0.8603
+Elite 2: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 8631739541938462377) | Fitness: 0.8603
+Elite 3: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 4: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 5: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), -5291982123621443042) | Fitness: 0.8603
+Elite 6: ((('right_ftorso', 0), ('right_btorso', 270), ('left_ftorso', 90), ('left_btorso', 0)), 4416444695085028123) | Fitness: 0.8603
+------------------------------------------------------------
+Evolution completed.
+Total time: 20.66 seconds

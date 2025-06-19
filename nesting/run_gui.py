@@ -1,17 +1,26 @@
 import sys
 from nicegui import ui
 from pathlib import Path
+import os
 from .gui import NestingGUI
+import nesting.config as config
 
 def main() -> None:
+    # Check if pattern path is provided
+    use_default = False
     if len(sys.argv) < 2:
-        print("Usage: python -m nesting.run_gui <pattern.json> [port]")
-        sys.exit(1)
-
-    pattern_path = Path(sys.argv[1])
+        print("No pattern specified. Using default pattern.")
+        pattern_path = Path(config.DEFAULT_PATTERN_PATH)
+        use_default = True
+    else:
+        pattern_path = Path(sys.argv[1])
+    
+    # Set port
     port = int(sys.argv[2]) if len(sys.argv) > 2 else 8082
-
-    NestingGUI(pattern_path)
+    
+    # Initialize with pattern path and use_default flag
+    # This tells NestingGUI whether to load default style/body params
+    NestingGUI(pattern_path, use_default_params=use_default)
     ui.run(port=port)
 
 if __name__ in {"__main__", "__mp_main__"}:

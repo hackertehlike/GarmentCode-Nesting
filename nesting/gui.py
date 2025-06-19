@@ -39,7 +39,7 @@ class NestingGUI:
     • A button tests all enlarged outlines for pairwise intersections.
     """
 
-    def __init__(self, pattern_path: str | Path | None = None) -> None:
+    def __init__(self, pattern_path: str | Path | None = None, use_default_params: bool = False) -> None:
         # container dimensions in cm
         self.container_width_cm  = config.CONTAINER_WIDTH_CM
         self.container_height_cm = config.CONTAINER_HEIGHT_CM
@@ -72,6 +72,9 @@ class NestingGUI:
         self.pattern_path: Optional[Path] = None
         if pattern_path:
             self.pattern_path = Path(pattern_path)
+            
+        # Flag to determine if we should use default parameters
+        self.use_default_params = use_default_params
 
         self.hull_path: ui.element | None = None
 
@@ -347,27 +350,75 @@ class NestingGUI:
         else:
             node[parts[-1]] = {"v": value}
 
-        if self.pattern_path is None or self.body_params is None:
-            return
+        # Handle case when using default params
+        if self.use_default_params:
+            # If using default params, we need to ensure we have a body_params object
+            if self.body_params is None:
+                try:
+                    from assets.bodies.body_params import BodyParameters
+                    default_body_path = Path(config.DEFAULT_BODY_PARAM_PATH)
+                    if default_body_path.exists():
+                        self.body_params = BodyParameters(default_body_path)
+                        print("Loaded default body parameters for dynamic design update")
+                    else:
+                        print(f"Cannot find default body parameters at {default_body_path}")
+                        return
+                except Exception as exc:
+                    print(f"Failed to load default body parameters: {exc}")
+                    return
 
-        # Save updated design parameters
-        import yaml
-        yaml_path = self.pattern_path.parent / "design_params.yaml"
-        with open(yaml_path, "w", encoding="utf-8") as f:
-            yaml.dump({"design": self.design_params}, f, default_flow_style=False, sort_keys=False)
+            # Ensure we have a valid pattern_path
+            if self.pattern_path is None:
+                self.pattern_path = Path(config.DEFAULT_PATTERN_PATH)
+            
+            # Create a temporary directory for regenerated pattern
+            import tempfile
+            out_dir = Path(tempfile.mkdtemp())
+            
+            # Save updated design parameters to the temporary directory
+            import yaml
+            yaml_path = out_dir / "design_params.yaml"
+            with open(yaml_path, "w", encoding="utf-8") as f:
+                yaml.dump({"design": self.design_params}, f, default_flow_style=False, sort_keys=False)
+        else:
+            # Original behavior for non-default parameters
+            if self.pattern_path is None or self.body_params is None:
+                return
+                
+            # Use the original pattern directory
+            out_dir = self.pattern_path.parent
+            
+            # Save updated design parameters
+            import yaml
+            yaml_path = out_dir / "design_params.yaml"
+            with open(yaml_path, "w", encoding="utf-8") as f:
+                yaml.dump({"design": self.design_params}, f, default_flow_style=False, sort_keys=False)
 
         # Regenerate the sewing pattern using MetaGarment
-        from assets.garment_programs.meta_garment import MetaGarment
-        mg = MetaGarment("Configured_design", self.body_params, self.design_params)
-        pattern = mg.assembly()
+        try:
+            from assets.garment_programs.meta_garment import MetaGarment
+            mg = MetaGarment("Configured_design", self.body_params, self.design_params)
+            pattern = mg.assembly()
 
-        out_dir = self.pattern_path.parent
-        pattern.serialize(out_dir, to_subfolder=False, with_3d=False, with_text=False,
-                          view_ids=False, empty_ok=True)
-        self.pattern_path = out_dir / f"{pattern.name}_specification.json"
-
-        # Reload pieces from the regenerated pattern
-        self._load_pattern_core(self.pattern_path)
+            pattern.serialize(out_dir, to_subfolder=False, with_3d=False, with_text=False,
+                            view_ids=False, empty_ok=True)
+            new_pattern_path = out_dir / f"{pattern.name}_specification.json"
+            
+            # Store the new pattern path
+            self.pattern_path = new_pattern_path
+            
+            # Keep track that we're not using default params anymore since we're
+            # now working with a dynamically generated pattern
+            self.use_default_params = False
+            
+            # Reload pieces from the regenerated pattern
+            self._load_pattern_core(self.pattern_path)
+            
+            # Notify success
+            ui.notify("Pattern updated successfully", type="positive")
+        except Exception as exc:
+            print(f"Error regenerating pattern: {exc}")
+            ui.notify(f"Failed to update pattern: {exc}", type="negative")
     
     # ---------------------------------------------------------------------------- #
     #                                  TOOLBAR                                     #
@@ -412,6 +463,9 @@ class NestingGUI:
         """
         # Store the pattern path for regeneration
         self.pattern_path = path
+        
+        # Store current use_default_params state
+        current_use_default_params = self.use_default_params
         
         # --- clear old GUI/scene state ---------------------------------
         self.panel_path_refs.clear()
@@ -472,25 +526,46 @@ class NestingGUI:
         yaml_path = path.parent / "design_params.yaml"
         try:
             import yaml
-            if yaml_path.exists():
+            if yaml_path.exists() and not self.use_default_params:
+                # Use the design params from the provided pattern folder
                 with open(yaml_path, "r", encoding="utf-8") as f:
                     self.design_params = yaml.safe_load(f).get("design", {})
-            else:
+                print("Design parameters loaded from pattern folder:", self.design_params)
+            elif not self.use_default_params:
+                # Try to get design params from the pattern JSON
                 with path.open("r", encoding="utf-8") as f:
                     spec = json.load(f)
                     self.design_params = spec.get("design", {})
-            print("Design parameters loaded:", self.design_params)
+                print("Design parameters loaded from pattern JSON:", self.design_params)
+            else:
+                # Use default design params
+                default_design_path = Path(config.DEFAULT_DESIGN_PARAM_PATH)
+                if default_design_path.exists():
+                    with open(default_design_path, "r", encoding="utf-8") as f:
+                        self.design_params = yaml.safe_load(f).get("design", {})
+                    print("Default design parameters loaded:", self.design_params)
+                else:
+                    print(f"Default design params file not found: {default_design_path}")
+                    self.design_params = {}
         except Exception as exc:
             print(f"Failed to load design parameters: {exc}")
             self.design_params = {}
 
         # --- body parameters -----------------------------------------
         body_path = path.parent / "body_measurements.yaml"
+        default_body_path = Path(config.DEFAULT_BODY_PARAM_PATH)
         try:
             from assets.bodies.body_params import BodyParameters
-            if body_path.exists():
+            if body_path.exists() and not self.use_default_params:
+                # Use the body params from the provided pattern folder
                 self.body_params = BodyParameters(body_path)
+                print("Body parameters loaded from pattern folder")
+            elif default_body_path.exists() and self.use_default_params:
+                # Use default body params
+                self.body_params = BodyParameters(default_body_path)
+                print("Default body parameters loaded")
             else:
+                print(f"No body parameters found")
                 self.body_params = None
         except Exception as exc:
             print(f"Failed to load body parameters: {exc}")
@@ -534,6 +609,10 @@ class NestingGUI:
 
         # --- sidebar ---------------------------------------------------
         self._build_sidebar()          # see next section
+        
+        # Restore use_default_params state unless explicitly set in the method call
+        if hasattr(self, 'current_use_default_params'):
+            self.use_default_params = current_use_default_params
 
 
     def _load_pattern(self, e: events.UploadEventArguments):
@@ -555,6 +634,8 @@ class NestingGUI:
         So I don't have to load something in every time I change code... 
         """
         default_path = config.DEFAULT_PATTERN_PATH
+        # Always use default params when loading the default pattern
+        self.use_default_params = True
         self._load_pattern_core(Path(default_path))
 
     def _update_scale_factors(self):

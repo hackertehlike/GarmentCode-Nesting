@@ -6,7 +6,9 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = True
 VERBOSE: bool = True
-DEFAULT_PATTERN_PATH: str = "nesting-assets/Configured_design_specification_asym_dress.json"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/default_pattern.json"
+DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/default_design_params.yaml"
+DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/default_body_measurements.yaml"
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random", "Jostle"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
