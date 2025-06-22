@@ -76,6 +76,7 @@ class Evolution:
         self.plot_path = plots_dir / f"fitness_curves_{ts}.png"
         self.gain_plot_path = plots_dir / f"mean_gains_{ts}.png"
         self.swarm_plot_path = plots_dir / f"fitness_swarm_{ts}.png"
+        self.delta_best_plot_path = plots_dir / f"delta_best_{ts}.png"
         self.mut_plot_path = plots_dir / "mutation_gains.png" 
 
         self._metrics_buffer = []
@@ -683,6 +684,20 @@ class Evolution:
 
         self._log(f"Mean gains plot saved to {self.gain_plot_path}")
 
+        # ——— Plot for delta best (improvement in best fitness) ———
+        plt.figure(figsize=(8, 5))
+        plt.plot(df['generation'], df['delta_best'], marker='o', color='green', linestyle='-', label='Delta Best')
+        plt.xlabel("Generation")
+        plt.ylabel("Improvement in Best Fitness")
+        plt.title("Best Fitness Improvement per Generation")
+        plt.axhline(0, color='gray', linestyle='--', alpha=0.5)
+        plt.legend(loc="best")
+        plt.tight_layout()
+        plt.savefig(self.delta_best_plot_path)
+        plt.close()
+
+        self._log(f"Delta best plot saved to {self.delta_best_plot_path}")
+
         # ——— Plot 3: mutation gains (only if there are any mutants) ———
         # Note: In your case, self.n_mutants == 0, so this block is effectively skipped.
         if self.n_mutants != 0:
@@ -871,6 +886,67 @@ class Evolution:
             self._log(f"Design parameter change plots saved to {plots_dir}")
         except Exception as e:
             self._log(f"Error creating parameter change plots: {e}")
+
+    def output_best_result(self):
+        """
+        Output the best result from the evolution process.
+        Compares the best chromosome's design parameters to the original parameters
+        and outputs a summary of all changed parameters.
+        """
+        self._log("Generating report of best result...", divider=True)
+        
+        # Find the best chromosome
+        best_chrom = max(self.population, key=lambda c: c.fitness)
+        self._log(f"Best fitness: {best_chrom.fitness:.6f}")
+        
+        # Only proceed if we have design parameters
+        if not self.design_params or not best_chrom.design_params:
+            self._log("No design parameters to compare")
+            return
+        
+        # Compare design parameters
+        changed_params = []
+        
+        def compare_params(orig_params, new_params, path=[]):
+            """Compare original and new parameters recursively"""
+            if isinstance(orig_params, dict) and isinstance(new_params, dict):
+                for key in set(orig_params.keys()) | set(new_params.keys()):
+                    if key in orig_params and key in new_params:
+                        # Both have the key, compare values
+                        if key == 'v':  # This is a value field
+                            orig_v = orig_params[key]
+                            new_v = new_params[key]
+                            if orig_v != new_v:
+                                full_path = '.'.join(path)
+                                changed_params.append({
+                                    'parameter': full_path,
+                                    'original_value': orig_v,
+                                    'best_value': new_v
+                                })
+                        elif key != 'range':  # Skip comparing range fields
+                            compare_params(orig_params[key], new_params[key], path + [key])
+        
+        # Start comparison at the root
+        compare_params(self.design_params, best_chrom.design_params)
+        
+        # Output changed parameters
+        if changed_params:
+            self._log(f"Found {len(changed_params)} changed parameters in the best result:")
+            
+            # Write to CSV
+            report_path = Path(self.log_path).parent / "best_result_changes.csv"
+            with report_path.open('w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=['parameter', 'original_value', 'best_value'])
+                writer.writeheader()
+                writer.writerows(changed_params)
+            
+            # Log the changes
+            for change in changed_params:
+                self._log(f"  {change['parameter']}: {change['original_value']} -> {change['best_value']}")
+            
+            self._log(f"Full report saved to {report_path}")
+        else:
+            self._log("No parameter changes in the best result")
 
     def _flatten_params(self, params, prefix=None):
         """Recursively yield parameter paths as tuples of keys."""
