@@ -10,6 +10,7 @@ from typing import Callable
 from pathlib import Path
 import csv
 import json
+from fnmatch import fnmatch
 
 from .layout import Piece, Container, Layout, LayoutView
 from .placement_engine import DECODER_REGISTRY
@@ -180,6 +181,12 @@ class Chromosome(Layout):
             self.genes[i : j + 1] = sub
 
         elif mutation == "design_param":
+            # Design parameter mutation
+            # This mutation randomly changes one design parameter
+            # Parameters can be filtered out using:
+            # 1. Panel ID filtering - only parameters that affect current panels
+            # 2. EXCLUDED_PARAM_PATHS - parameters explicitly excluded in config
+            
             if self.design_params is None or self.design_sampler is None or self.body_params is None:
                 
                 if self.design_params is None:
@@ -205,6 +212,14 @@ class Chromosome(Layout):
 
                 _collect(self.design_params)
 
+                # Filter out excluded parameter paths using fnmatch patterns
+                if config.EXCLUDED_PARAM_PATHS:
+                    param_paths = [
+                        p
+                        for p in param_paths
+                        if not any(fnmatch(p, pat) for pat in config.EXCLUDED_PARAM_PATHS)
+                    ]
+
                 if config.VERBOSE:
                     print(f"[Chromosome.mutate] Found {len(param_paths)} possible parameters to mutate")
                 
@@ -214,18 +229,87 @@ class Chromosome(Layout):
                     print("[Chromosome.mutate] design_params structure:")
                     # Using the globally imported json module
                     print(json.dumps(self.design_params, indent=2)[:500] + "..." if len(json.dumps(self.design_params)) > 500 else json.dumps(self.design_params, indent=2))
-                
-                if param_paths:
-                    chosen = random.choice(param_paths)
+
+                else:
+                    # Get the panel IDs from the current genes
+                    panel_ids = {g.id for g in self.genes}
+                    
+                    # Import filter_parameters from panel_mapping
+                    from nesting.panel_mapping import filter_parameters, PARAM_TO_PATTERNS
+                    
+                    # Get the filtered parameters that affect the current panels
+                    filtered_params = filter_parameters(self.design_params, panel_ids)
+                    
+                    # Extract filtered parameter paths
+                    filtered_param_paths = []
+                    
+                    def _collect_filtered(node, prefix=[]):
+                        for k, v in node.items():
+                            if isinstance(v, dict) and "v" in v:
+                                filtered_param_paths.append(".".join(prefix + [k]))
+                            elif isinstance(v, dict):
+                                _collect_filtered(v, prefix + [k])
+                    
+                    _collect_filtered(filtered_params)
+                    
+                    if config.VERBOSE:
+                        print(f"[Chromosome.mutate] Found {len(filtered_param_paths)} filtered parameters that affect current panels")
+                    
+                    # Filter out excluded parameter paths using wildcard support
+                    
+                    def is_excluded(param_path):
+                        return any(fnmatch(param_path, pattern) for pattern in config.EXCLUDED_PARAM_PATHS)
+                    
+                    valid_param_paths = [p for p in param_paths if not is_excluded(p)]
+                    valid_filtered_paths = [p for p in filtered_param_paths if not is_excluded(p)]
+                    
+                    if config.VERBOSE:
+                        excluded_count = len(param_paths) - len(valid_param_paths)
+                        if excluded_count > 0:
+                            print(f"[Chromosome.mutate] Excluded {excluded_count} parameters based on EXCLUDED_PARAM_PATHS")
+                            excluded_examples = [p for p in param_paths if is_excluded(p)][:5]  # Show up to 5 examples
+                            if excluded_examples:
+                                examples_str = ", ".join(excluded_examples)
+                                print(f"[Chromosome.mutate] Examples of excluded parameters: {examples_str}")
+                    
+                    # If all parameters are excluded, log warning and return without mutation
+                    if not valid_param_paths:
+                        print("[Chromosome.mutate] WARNING: All parameters are excluded by EXCLUDED_PARAM_PATHS, skipping mutation")
+                        return self
+                    
+                    # Rejection sampling: try to find a parameter that affects the current panels
+                    max_attempts = 10  # Prevent infinite loops
+                    attempts = 0
+                    chosen = None
+                    
+                    while attempts < max_attempts:
+                        candidate = random.choice(valid_param_paths)
+                        if candidate in valid_filtered_paths:
+                            chosen = candidate
+                            break
+                        attempts += 1
+                    
+                    # If we couldn't find a relevant parameter after max attempts, just use any parameter
+                    if chosen is None:
+                        chosen = random.choice(valid_param_paths)
+                        if config.VERBOSE:
+                            print(f"[Chromosome.mutate] Could not find relevant parameter after {max_attempts} attempts, using random parameter")
+                    
                     if config.VERBOSE:
                         old_value = nested_get(self.design_params, chosen.split("."))
                         print(f"[Chromosome.mutate] Selected parameter: '{chosen}' with current value: {old_value}")
                     
                     new_params = copy.deepcopy(self.design_params)
-                    self.design_sampler._randomize_value(new_params, chosen.split("."))
+                    
+                    # Use our safe randomization function to avoid modifying ranges
+                    old_value, new_value = safe_randomize_param(self.design_sampler, new_params, chosen.split("."))
                     
                     if config.VERBOSE:
-                        new_value = nested_get(new_params, chosen.split("."))
+                        print(f"[Chromosome.mutate] Changed '{chosen}' from {old_value} to {new_value}")
+                    
+                    self.design_params = new_params
+                    
+                    if config.VERBOSE:
                         print(f"[Chromosome.mutate] Changed '{chosen}' from {old_value} to {new_value}")
                     
                     self.design_params = new_params
@@ -343,8 +427,6 @@ class Chromosome(Layout):
         gene_ids = [g.id for g in self.genes]
 
         def _build_groups(ids):
-            from fnmatch import fnmatch
-
             adj = {i: set() for i in ids}
 
             # group by root_id
@@ -557,3 +639,98 @@ class Chromosome(Layout):
             return f"Chromosome(genes={genes_str}, design_params_hash={design_params_hash})"
         else:
             return f"Chromosome(genes={genes_str})"
+    
+# Helper function to safely randomize parameter values without modifying ranges
+def safe_randomize_param(design_sampler, params, path_parts):
+    """
+    Safely randomize a parameter value without modifying range values.
+    Instead of using the _randomize_value method which modifies ranges in-place,
+    this function manually creates a new random value based on the parameter type
+    and range, then sets only the 'v' field.
+    """
+    param_path = ".".join(path_parts)
+    
+    # Get the parameter node
+    param_node = nested_get(params, path_parts)
+    
+    # Check if it's a valid parameter with a 'v' field
+    if not isinstance(param_node, dict) or 'v' not in param_node:
+        raise ValueError(f"Invalid parameter path: {param_path}, node doesn't have a 'v' field")
+    
+    # Get current value, type and range
+    old_value = param_node['v']
+    p_type = param_node.get('type', 'float')  # Default to float if type is missing
+    
+    # Make a deep copy of the range to avoid modifying the original
+    range_values = copy.deepcopy(param_node.get('range', []))
+    
+    # Get default probability
+    def_prob = param_node.get('default_prob', None)
+    
+    # Use the default value with probability def_prob
+    if def_prob is not None and random.random() < def_prob:
+        # Keep the default (current) value
+        new_value = old_value
+    else:
+        # Generate a new random value based on type
+        if 'select' in p_type or p_type == 'bool' or 'file' in p_type:  # Discrete types
+            # Handle None in select_null type
+            if p_type == 'select_null' and None not in range_values:
+                range_values = range_values + [None]
+                
+            # Exclude default value if def_prob is set
+            if def_prob is not None and old_value in range_values:
+                range_values = [v for v in range_values if v != old_value]
+                
+            # If no values left after exclusion, use the original range
+            if not range_values:
+                range_values = copy.deepcopy(param_node.get('range', []))
+                
+            # Select random value
+            if range_values:
+                new_value = random.choice(range_values)
+            else:
+                # If no range values at all, keep the old value
+                new_value = old_value
+                
+        elif p_type == 'int':
+            if len(range_values) >= 2:
+                # Ensure we get a different value if possible
+                if def_prob is not None and range_values[1] - range_values[0] > 1:
+                    while True:
+                        new_value = random.randint(range_values[0], range_values[1])
+                        if new_value != old_value:
+                            break
+                else:
+                    new_value = random.randint(range_values[0], range_values[1])
+            else:
+                # No proper range, keep old value
+                new_value = old_value
+                
+        elif p_type == 'float':
+            if len(range_values) >= 2:
+                # Ensure we get a noticeably different value
+                if def_prob is not None:
+                    while True:
+                        new_value = random.uniform(range_values[0], range_values[1])
+                        # Check if different enough (at least 1% of range)
+                        range_span = range_values[1] - range_values[0]
+                        min_diff = max(0.01 * range_span, 1e-6)
+                        if abs(new_value - old_value) > min_diff:
+                            break
+                else:
+                    new_value = random.uniform(range_values[0], range_values[1])
+            else:
+                # No proper range, keep old value
+                new_value = old_value
+        else:
+            # Unknown type, keep old value
+            new_value = old_value
+    
+    # Set only the 'v' value without touching the range
+    param_node['v'] = new_value
+    
+    if config.VERBOSE:
+        print(f"[safe_randomize_param] Changed '{param_path}.v' from {old_value} to {new_value} (preserved ranges)")
+    
+    return old_value, new_value

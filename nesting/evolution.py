@@ -597,10 +597,14 @@ class Evolution:
         end = time.time()
         self._log(f"Total time: {end - start:.2f} seconds")
 
+        # Save plots and CSV one last time
+        self.update_plots()
         if config.SAVE_LOGS:
             self._flush_log()
             # Save design parameter changes
             self.save_design_param_changes()
+            # Output best result with all changed parameters
+            self.output_best_result()
 
         return self._get_elite()[0]
 
@@ -684,21 +688,24 @@ class Evolution:
 
         self._log(f"Mean gains plot saved to {self.gain_plot_path}")
 
-        # ——— Plot for delta best (improvement in best fitness) ———
+        # ——— Plot 3: delta best ———
         plt.figure(figsize=(8, 5))
-        plt.plot(df['generation'], df['delta_best'], marker='o', color='green', linestyle='-', label='Delta Best')
-        plt.xlabel("Generation")
-        plt.ylabel("Improvement in Best Fitness")
-        plt.title("Best Fitness Improvement per Generation")
-        plt.axhline(0, color='gray', linestyle='--', alpha=0.5)
-        plt.legend(loc="best")
-        plt.tight_layout()
-        plt.savefig(self.delta_best_plot_path)
-        plt.close()
+        if 'delta_best' in df.columns:
+            plt.plot(df['generation'], df['delta_best'], marker='o', color='green', linestyle='-', label='Delta Best')
+            plt.axhline(0, color='gray', linestyle='--', alpha=0.5)
+            plt.xlabel("Generation")
+            plt.ylabel("Improvement in Best Fitness")
+            plt.title("Best Fitness Improvement per Generation")
+            plt.legend(loc="best")
+            plt.tight_layout()
+            plt.savefig(self.delta_best_plot_path)
+            plt.close()
+            
+            self._log(f"Delta best plot saved to {self.delta_best_plot_path}")
+        else:
+            self._log("Delta best data not available, skipping delta best plot")
 
-        self._log(f"Delta best plot saved to {self.delta_best_plot_path}")
-
-        # ——— Plot 3: mutation gains (only if there are any mutants) ———
+        # ——— Plot 4: mutation gains (only if there are any mutants) ———
         # Note: In your case, self.n_mutants == 0, so this block is effectively skipped.
         if self.n_mutants != 0:
             mut_cols = [c for c in df.columns if c.startswith("mut_gain_")]
