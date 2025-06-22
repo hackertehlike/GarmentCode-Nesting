@@ -48,6 +48,13 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
 }
 
 
+# Parameters that should be excluded from design parameter mutations
+EXCLUDED_PARAM_PATHS = [
+    "*component*",  # Exclude all component style mutations
+    "*range*",
+]
+
+
 # mutation weights
 MUTATION_WEIGHTS = {
     "rotate":    0,
@@ -138,5 +145,6 @@ def __dict__() -> dict:
         "NUM_SPLITS": NUM_SPLITS,
         "OX_K": OX_K,
         "POPULATION_WEIGHTS": POPULATION_WEIGHTS,
-        "PRESERVE_HOLES": PRESERVE_HOLES
+        "PRESERVE_HOLES": PRESERVE_HOLES,
+        "EXCLUDED_PARAM_PATHS": EXCLUDED_PARAM_PATHS
     }
