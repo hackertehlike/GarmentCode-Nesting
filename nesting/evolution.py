@@ -600,11 +600,12 @@ class Evolution:
         # Save plots and CSV one last time
         self.update_plots()
         if config.SAVE_LOGS:
+            # Output best result with all changed parameters
+            self.output_best_result()
+            # Flush the log to include the best result output
             self._flush_log()
             # Save design parameter changes
             self.save_design_param_changes()
-            # Output best result with all changed parameters
-            self.output_best_result()
 
         return self._get_elite()[0]
 
@@ -904,7 +905,16 @@ class Evolution:
         
         # Find the best chromosome
         best_chrom = max(self.population, key=lambda c: c.fitness)
-        self._log(f"Best fitness: {best_chrom.fitness:.6f}")
+        
+        # Calculate fitness improvement
+        initial_fitness = self.best_fitness_history[0] if self.best_fitness_history else 0
+        final_fitness = best_chrom.fitness
+        improvement = final_fitness - initial_fitness
+        improvement_percent = (improvement / initial_fitness * 100) if initial_fitness > 0 else 0
+        
+        self._log(f"Initial fitness: {initial_fitness:.6f}")
+        self._log(f"Final fitness:   {final_fitness:.6f}")
+        self._log(f"Improvement:     {improvement:.6f} ({improvement_percent:.2f}%)")
         
         # Only proceed if we have design parameters
         if not self.design_params or not best_chrom.design_params:
@@ -940,18 +950,97 @@ class Evolution:
         if changed_params:
             self._log(f"Found {len(changed_params)} changed parameters in the best result:")
             
-            # Write to CSV
+            # Import functions to identify affected panels
+            from nesting.panel_mapping import affected_panels, select_genes
+            
+            # Get the original pieces for comparison
+            from assets.garment_programs.meta_garment import MetaGarment
+            from nesting.path_extractor import PatternPathExtractor
+            import tempfile
+            import json
+            from pathlib import Path
+            
+            # Generate the original pattern with the initial parameters
+            original_mg = MetaGarment("original", self.body_params, self.design_params)
+            original_pattern = original_mg.assembly()
+            original_pieces = {}
+            
+            with tempfile.TemporaryDirectory() as td:
+                out_dir = Path(td)
+                original_pattern.serialize(out_dir, to_subfolder=False, with_3d=False, with_text=False, view_ids=False)
+                spec_path = out_dir / f"{original_pattern.name}_specification.json"
+                extractor = PatternPathExtractor(spec_path)
+                original_pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE)
+            
+            # Generate the best pattern with the final parameters
+            best_mg = MetaGarment("best", self.body_params, best_chrom.design_params)
+            best_pattern = best_mg.assembly()
+            best_pieces = {}
+            
+            with tempfile.TemporaryDirectory() as td:
+                out_dir = Path(td)
+                best_pattern.serialize(out_dir, to_subfolder=False, with_3d=False, with_text=False, view_ids=False)
+                spec_path = out_dir / f"{best_pattern.name}_specification.json"
+                extractor = PatternPathExtractor(spec_path)
+                best_pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE)
+            
+            # Enhance the changed parameters with affected pieces and their paths
+            for change in changed_params:
+                param_name = change['parameter']
+                
+                # Get the panel patterns affected by this parameter
+                affected_patterns = affected_panels([param_name])
+                
+                # Get the affected piece IDs
+                affected_ids = select_genes(best_pieces.keys(), affected_patterns)
+                
+                # Store affected pieces and their paths
+                affected_pieces = []
+                for piece_id in affected_ids:
+                    if piece_id in original_pieces and piece_id in best_pieces:
+                        affected_pieces.append({
+                            'piece_id': piece_id,
+                            'old_path': original_pieces[piece_id].outer_path,
+                            'new_path': best_pieces[piece_id].outer_path
+                        })
+                
+                # Add to the change record
+                change['affected_pieces'] = affected_pieces
+                change['affected_count'] = len(affected_pieces)
+            
+            # Write enhanced report to CSV
             report_path = Path(self.log_path).parent / "best_result_changes.csv"
+            
+            # First write the main CSV with parameter changes
             with report_path.open('w', newline='') as f:
-                writer = csv.DictWriter(f, fieldnames=['parameter', 'original_value', 'best_value'])
+                writer = csv.DictWriter(f, fieldnames=['parameter', 'original_value', 'best_value', 'affected_count'])
                 writer.writeheader()
-                writer.writerows(changed_params)
+                for change in changed_params:
+                    # Create a copy without the affected_pieces list for the main CSV
+                    row = {k: v for k, v in change.items() if k != 'affected_pieces'}
+                    writer.writerow(row)
+            
+            # Then write a detailed CSV with all affected pieces
+            detailed_report_path = Path(self.log_path).parent / "best_result_paths.csv"
+            with detailed_report_path.open('w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(["parameter", "piece_id", "old_path", "new_path"])
+                for change in changed_params:
+                    param_name = change['parameter']
+                    for piece in change.get('affected_pieces', []):
+                        writer.writerow([
+                            param_name,
+                            piece['piece_id'],
+                            json.dumps(piece['old_path']),
+                            json.dumps(piece['new_path'])
+                        ])
             
             # Log the changes
             for change in changed_params:
-                self._log(f"  {change['parameter']}: {change['original_value']} -> {change['best_value']}")
+                self._log(f"  {change['parameter']}: {change['original_value']} -> {change['best_value']} (affects {change['affected_count']} pieces)")
             
-            self._log(f"Full report saved to {report_path}")
+            self._log(f"Parameter change report saved to {report_path}")
+            self._log(f"Detailed path changes saved to {detailed_report_path}")
         else:
             self._log("No parameter changes in the best result")
 

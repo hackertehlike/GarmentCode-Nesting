@@ -224,22 +224,21 @@ def filter_parameters(design_params: Dict, panel_ids: Optional[Set[str]] = None)
     import copy
     dp = copy.deepcopy(design_params)
     
-    # 1. If panel IDs are provided, filter by relevant parameters for those panels
-    if panel_ids:
-        # Collect all parameters that would affect any of our loaded panels
-        top_level_params = set()
-        for param_path, panel_patterns in PARAM_TO_PATTERNS.items():
-            # Check if any of our panels match the patterns for this parameter
-            matching_panels = select_genes(panel_ids, panel_patterns)
-            if matching_panels:
-                # This parameter affects at least one of our loaded panels
-                top_level_params.add(param_path.split('.')[0])  # Add the top-level component
-        
-        # Always include meta
-        top_level_params.add('meta')
-        
-        # Filter the design parameters to only include relevant sections
-        dp = {k: v for k, v in dp.items() if k in top_level_params}
+    # If panel IDs are provided, filter by relevant parameters for those panels
+    # Collect all parameters that would affect any of our loaded panels
+    top_level_params = set()
+    for param_path, panel_patterns in PARAM_TO_PATTERNS.items():
+        # Check if any of our panels match the patterns for this parameter
+        matching_panels = select_genes(panel_ids, panel_patterns)
+        if matching_panels:
+            # This parameter affects at least one of our loaded panels
+            top_level_params.add(param_path.split('.')[0])  # Add the top-level component
+    
+    # Always include meta
+    top_level_params.add('meta')
+    
+    # Filter the design parameters to only include relevant sections
+    dp = {k: v for k, v in dp.items() if k in top_level_params}
     
     # 2. Apply hierarchical parameter filtering
     _apply_parameter_hierarchy(dp)
@@ -261,7 +260,7 @@ def _apply_parameter_hierarchy(dp: Dict) -> None:
                 return None
             current = current[part]
         return current
-    
+    x
     # Helper function to set a nested parameter value
     def _set_nested(params: Dict, path: str, value: Optional[Dict]) -> None:
         parts = path.split('.')

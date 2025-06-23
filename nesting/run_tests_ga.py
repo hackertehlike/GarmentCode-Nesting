@@ -236,6 +236,13 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
             elites = evo._get_elite()
             if elites:
                 best_chrom = elites[0]
+                
+                # Calculate delta (improvement) in best fitness
+                prev_best = evo.best_fitness_history[-1] if len(evo.best_fitness_history) > 1 else best_chrom.fitness
+                delta_best = best_chrom.fitness - prev_best
+                
+                print(f"Generation {gen}: Best fitness {best_chrom.fitness:.6f} (Δ {delta_best:+.6f})")
+                
                 # Use decoder to calculate utilization metrics
                 view = LayoutView(best_chrom.genes)
                 decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
@@ -272,8 +279,17 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
         # Record final best solution
         print(f"GA completed for {pattern_name} (Split: {split}) in {time.time() - start_time:.2f} seconds")
         
+        # Make sure we generate the best result output
+        if config.SAVE_LOGS:
+            print("Generating detailed report of best result...")
+            evo.update_plots()
+            evo.output_best_result()
+            print("Best result report generated.")
+        
     except Exception as e:
         print(f"Error during GA run for {pattern_name}: {e}")
+        import traceback
+        traceback.print_exc()
     
     return results
 

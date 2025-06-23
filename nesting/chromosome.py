@@ -647,6 +647,9 @@ def safe_randomize_param(design_sampler, params, path_parts):
     Instead of using the _randomize_value method which modifies ranges in-place,
     this function manually creates a new random value based on the parameter type
     and range, then sets only the 'v' field.
+    
+    Only numeric types (int, float) and select types are randomized.
+    Boolean parameters are skipped.
     """
     param_path = ".".join(path_parts)
     
@@ -661,6 +664,12 @@ def safe_randomize_param(design_sampler, params, path_parts):
     old_value = param_node['v']
     p_type = param_node.get('type', 'float')  # Default to float if type is missing
     
+    # Skip boolean parameters
+    if p_type == 'bool' or isinstance(old_value, bool):
+        if config.VERBOSE:
+            print(f"[safe_randomize_param] Skipping boolean parameter '{param_path}'")
+        return old_value, old_value
+    
     # Make a deep copy of the range to avoid modifying the original
     range_values = copy.deepcopy(param_node.get('range', []))
     
@@ -673,7 +682,7 @@ def safe_randomize_param(design_sampler, params, path_parts):
         new_value = old_value
     else:
         # Generate a new random value based on type
-        if 'select' in p_type or p_type == 'bool' or 'file' in p_type:  # Discrete types
+        if 'select' in p_type or 'file' in p_type:  # Discrete types (excluding bool)
             # Handle None in select_null type
             if p_type == 'select_null' and None not in range_values:
                 range_values = range_values + [None]

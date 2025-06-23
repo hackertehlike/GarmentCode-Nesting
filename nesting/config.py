@@ -33,9 +33,9 @@ SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
 
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 30
-NUM_GENERATIONS       = 10
-MUTATION_RATE         = 0.9
+POPULATION_SIZE       = 40
+NUM_GENERATIONS       = 15
+MUTATION_RATE         = 0.5
 
 
 
@@ -51,19 +51,22 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
 # Parameters that should be excluded from design parameter mutations
 EXCLUDED_PARAM_PATHS = [
     "*component*",  # Exclude all component style mutations
-    "*range*",
+    "*range*",      # Exclude range modifications
+    "*.b_*",        # Exclude boolean parameters (typically prefixed with b_)
+    "*bool*",       # Exclude parameters with bool in the name
+    "*flip*"        # Exclude flip parameters (which are typically boolean)
 ]
 
 
 # mutation weights
 MUTATION_WEIGHTS = {
-    "rotate":    0,
-    "swap":      0,
-    "inversion": 0,
-    "insertion": 0,
-    "scramble":  0,
-    "split":     0,
-    "design_param": 1
+    "rotate":    0.2,
+    "swap":      0.1,
+    "inversion": 0.1,
+    "insertion": 0.1,
+    "scramble":  0.1,
+    "split":     0.2,
+    "design_param": 0.2
 }
 
 
