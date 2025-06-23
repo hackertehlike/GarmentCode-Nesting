@@ -1,0 +1,1265 @@
+------------------------------------------------------------
+Evolution initialized with 30 chromosomes, 6 elites, 12 offspring, 9 mutants, 3 randoms.
+Design parameters loaded: 619 parameters found
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x123197190>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x123197190>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x107595ba0>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'DEFAULT_PATTERN_PATH': <class 'str'>, 'DEFAULT_DESIGN_PARAM_PATH': <class 'str'>, 'DEFAULT_BODY_PARAM_PATH': <class 'str'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'PRESERVE_HOLES': <class 'bool'>, 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1'], 'GRAVITATE_ONCE': <class 'bool'>, 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DEFAULT_PATTERN_PATH': 'nesting-assets/default_pattern.json', 'DEFAULT_DESIGN_PARAM_PATH': 'nesting-assets/default_design_params.yaml', 'DEFAULT_BODY_PARAM_PATH': 'nesting-assets/default_body_measurements.yaml', 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1'], 'SortKey': typing.Literal['bbox_area', 'hull_area', 'aspect_ratio'], 'SELECTED_DECODER': 'NFP', 'PRESERVE_HOLES': True, 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1', 'OX_K': 1, 'NUM_SPLITS': 30, 'GRAVITATE_ONCE': True, 'GRAVITATE_STEP': 2, 'SORT_BY': 'hull_area', 'POPULATION_SIZE': 30, 'NUM_GENERATIONS': 10, 'MUTATION_RATE': 0.9, 'POPULATION_WEIGHTS': {'elites': 0.2, 'offspring': 0.4, 'mutants': 0.3, 'randoms': 0.1}, 'EXCLUDED_PARAM_PATHS': ['*component*', '*.v'], 'MUTATION_WEIGHTS': {'rotate': 0, 'swap': 0, 'inversion': 0, 'insertion': 0, 'scramble': 0, 'split': 0, 'design_param': 1}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 4, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs/', 'LOG_TIME': True, 'LOG_DESIGN_PARAM_PATHS': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 0.1, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 140, 'CONTAINER_HEIGHT_CM': 400, 'SEAM_ALLOWANCE_CM': 0, '__dict__': <function __dict__ at 0x123181c10>}
+Generating initial population...
+Random chromosome generated with fitness: 0.6133
+Random chromosome generated with fitness: 0.7055
+Random chromosome generated with fitness: 0.5337
+Random chromosome generated with fitness: 0.6346
+Random chromosome generated with fitness: 0.7018
+Random chromosome generated with fitness: 0.6922
+Random chromosome generated with fitness: 0.7194
+Random chromosome generated with fitness: 0.6201
+Random chromosome generated with fitness: 0.5705
+Random chromosome generated with fitness: 0.6110
+Random chromosome generated with fitness: 0.5826
+Random chromosome generated with fitness: 0.6579
+Random chromosome generated with fitness: 0.7065
+Random chromosome generated with fitness: 0.6810
+Random chromosome generated with fitness: 0.6826
+Random chromosome generated with fitness: 0.6630
+Random chromosome generated with fitness: 0.6373
+Random chromosome generated with fitness: 0.7228
+Random chromosome generated with fitness: 0.7133
+Random chromosome generated with fitness: 0.5318
+Random chromosome generated with fitness: 0.5609
+Random chromosome generated with fitness: 0.6424
+Random chromosome generated with fitness: 0.7033
+Random chromosome generated with fitness: 0.5875
+Random chromosome generated with fitness: 0.5578
+Random chromosome generated with fitness: 0.5618
+Random chromosome generated with fitness: 0.5709
+Random chromosome generated with fitness: 0.6778
+Random chromosome generated with fitness: 0.5964
+Random chromosome generated with fitness: 0.6644
+------------------------------------------------------------
+Initial population of 30 layouts generated.
+Layout 0: [('right_ftorso', 0), ('wb_back', 270), ('wb_front', 90), ('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180)] | Fitness: 0.7018
+Layout 1: [('right_btorso', 90), ('left_btorso', 270), ('right_ftorso', 270), ('wb_back', 180), ('wb_front', 270), ('left_ftorso', 270)] | Fitness: 0.6346
+Layout 2: [('wb_front', 0), ('left_ftorso', 0), ('right_btorso', 90), ('right_ftorso', 0), ('wb_back', 270), ('left_btorso', 0)] | Fitness: 0.6133
+Layout 3: [('wb_front', 270), ('right_ftorso', 0), ('left_ftorso', 180), ('left_btorso', 270), ('wb_back', 0), ('right_btorso', 0)] | Fitness: 0.6922
+Layout 4: [('right_btorso', 270), ('right_ftorso', 180), ('wb_front', 180), ('wb_back', 270), ('left_ftorso', 90), ('left_btorso', 90)] | Fitness: 0.6201
+Layout 5: [('right_btorso', 90), ('wb_back', 90), ('left_ftorso', 90), ('right_ftorso', 0), ('wb_front', 270), ('left_btorso', 90)] | Fitness: 0.5705
+Layout 6: [('right_ftorso', 270), ('right_btorso', 180), ('left_ftorso', 90), ('wb_front', 180), ('wb_back', 90), ('left_btorso', 180)] | Fitness: 0.5826
+Layout 7: [('left_btorso', 180), ('left_ftorso', 270), ('wb_back', 270), ('wb_front', 0), ('right_ftorso', 90), ('right_btorso', 90)] | Fitness: 0.6579
+Layout 8: [('left_ftorso', 90), ('wb_back', 0), ('right_ftorso', 270), ('left_btorso', 270), ('right_btorso', 0), ('wb_front', 0)] | Fitness: 0.7194
+Layout 9: [('right_ftorso', 180), ('left_btorso', 180), ('right_btorso', 270), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 90)] | Fitness: 0.7055
+Layout 10: [('wb_back', 90), ('left_ftorso', 180), ('left_btorso', 0), ('right_btorso', 90), ('right_ftorso', 270), ('wb_front', 0)] | Fitness: 0.5337
+Layout 11: [('wb_front', 0), ('left_btorso', 0), ('right_btorso', 0), ('wb_back', 270), ('right_ftorso', 270), ('left_ftorso', 180)] | Fitness: 0.6110
+Layout 12: [('right_ftorso', 180), ('right_btorso', 270), ('wb_front', 90), ('wb_back', 180), ('left_btorso', 0), ('left_ftorso', 270)] | Fitness: 0.6810
+Layout 13: [('wb_front', 180), ('left_ftorso', 270), ('right_btorso', 270), ('wb_back', 270), ('left_btorso', 90), ('right_ftorso', 180)] | Fitness: 0.7065
+Layout 14: [('right_ftorso', 0), ('wb_front', 180), ('left_ftorso', 180), ('wb_back', 180), ('right_btorso', 270), ('left_btorso', 0)] | Fitness: 0.7228
+Layout 15: [('left_ftorso', 0), ('left_btorso', 270), ('wb_front', 0), ('wb_back', 0), ('right_ftorso', 0), ('right_btorso', 180)] | Fitness: 0.6630
+Layout 16: [('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 90), ('right_btorso', 0), ('left_btorso', 0), ('wb_front', 270)] | Fitness: 0.6826
+Layout 17: [('right_btorso', 90), ('right_ftorso', 90), ('left_ftorso', 180), ('wb_back', 180), ('left_btorso', 90), ('wb_front', 0)] | Fitness: 0.6373
+Layout 18: [('right_ftorso', 90), ('wb_back', 0), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('left_btorso', 270)] | Fitness: 0.7133
+Layout 19: [('right_ftorso', 180), ('left_btorso', 90), ('wb_back', 180), ('wb_front', 270), ('right_btorso', 270), ('left_ftorso', 0)] | Fitness: 0.5609
+Layout 20: [('right_btorso', 0), ('left_btorso', 270), ('wb_front', 270), ('right_ftorso', 180), ('wb_back', 180), ('left_ftorso', 90)] | Fitness: 0.5318
+Layout 21: [('right_btorso', 90), ('wb_back', 0), ('left_ftorso', 0), ('wb_front', 270), ('left_btorso', 180), ('right_ftorso', 270)] | Fitness: 0.5875
+Layout 22: [('left_ftorso', 0), ('left_btorso', 0), ('right_btorso', 0), ('wb_back', 90), ('right_ftorso', 90), ('wb_front', 270)] | Fitness: 0.6424
+Layout 23: [('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)] | Fitness: 0.7033
+Layout 24: [('right_ftorso', 180), ('left_ftorso', 90), ('left_btorso', 0), ('right_btorso', 90), ('wb_back', 270), ('wb_front', 90)] | Fitness: 0.5618
+Layout 25: [('left_btorso', 90), ('wb_back', 180), ('right_btorso', 180), ('wb_front', 0), ('right_ftorso', 90), ('left_ftorso', 270)] | Fitness: 0.5709
+Layout 26: [('wb_front', 270), ('right_ftorso', 180), ('wb_back', 180), ('left_ftorso', 270), ('right_btorso', 270), ('left_btorso', 180)] | Fitness: 0.6644
+Layout 27: [('wb_back', 180), ('left_ftorso', 180), ('right_ftorso', 270), ('left_btorso', 0), ('right_btorso', 270), ('wb_front', 90)] | Fitness: 0.5964
+Layout 28: [('wb_front', 270), ('left_btorso', 0), ('wb_back', 0), ('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 0)] | Fitness: 0.5578
+Layout 29: [('left_btorso', 270), ('wb_back', 90), ('right_btorso', 270), ('wb_front', 0), ('right_ftorso', 270), ('left_ftorso', 90)] | Fitness: 0.6778
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7228
+Elite 1: ((('right_ftorso', 0), ('wb_front', 180), ('left_ftorso', 180), ('wb_back', 180), ('right_btorso', 270), ('left_btorso', 0)), 810292321428385638) | Fitness: 0.7228
+Elite 2: ((('left_ftorso', 90), ('wb_back', 0), ('right_ftorso', 270), ('left_btorso', 270), ('right_btorso', 0), ('wb_front', 0)), 810292321428385638) | Fitness: 0.7194
+Elite 3: ((('right_ftorso', 90), ('wb_back', 0), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('left_btorso', 270)), 810292321428385638) | Fitness: 0.7133
+Elite 4: ((('wb_front', 180), ('left_ftorso', 270), ('right_btorso', 270), ('wb_back', 270), ('left_btorso', 90), ('right_ftorso', 180)), 810292321428385638) | Fitness: 0.7065
+Elite 5: ((('right_ftorso', 180), ('left_btorso', 180), ('right_btorso', 270), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 90)), 810292321428385638) | Fitness: 0.7055
+Elite 6: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7033
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7284
+Offspring created with fitness: 0.6244
+Offspring created with fitness: 0.5559
+Offspring created with fitness: 0.6870
+Offspring created with fitness: 0.7284
+Offspring created with fitness: 0.5559
+Offspring created with fitness: 0.6379
+Offspring created with fitness: 0.6461
+Offspring created with fitness: 0.6090
+Offspring created with fitness: 0.5829
+Offspring created with fitness: 0.6267
+Offspring created with fitness: 0.6443
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7065
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.6011
+Mutant created with fitness: 0.6286
+Mutant created with fitness: 0.7194
+Mutant created with fitness: 0.7055
+Mutant created with fitness: 0.6386
+Mutant created with fitness: 0.5950
+Mutant created with fitness: 0.7228
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6907
+Random chromosome created with fitness: 0.6907
+Random chromosome generated with fitness: 0.6555
+Random chromosome created with fitness: 0.6555
+Random chromosome generated with fitness: 0.5822
+Random chromosome created with fitness: 0.5822
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0804; mutants: -0.0389
+------------------------------------------------------------
+Generation 1: best 0.7308 (Δ +0.0080)
+[Generation 1] Found 20 chromosomes with design_param as last mutation
+  Chromosome 7 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.7894674231372242
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.b_flip_curve.v' changed: False -> True
+    Parameter 'collar.b_flip_curve.range.1' changed: False -> None
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: 0.2 -> -0.07251213646284649
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'shirt.flare.v' changed: 1.0 -> 1.2331823067466736
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'shirt.width.v' changed: 1.05 -> 1.0332269480427874
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.width.v' changed: 1.05 -> 1.2962374977472537
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.8948288465734329
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.4 -> 0.4182412415529364
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.6991119462023391
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.42477944438993714
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'waistband.waist.v' changed: 1.0 -> 1.4766104447282882
+  Chromosome 26 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtLevels
+[Generation 1] Total of 12 chromosomes with design parameter differences
+Generation 1 completed in 3.89s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7308
+Elite 1: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7308
+Elite 2: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 180), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7284
+Elite 3: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 0), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7284
+Elite 4: ((('right_ftorso', 0), ('wb_front', 180), ('left_ftorso', 180), ('wb_back', 180), ('right_btorso', 270), ('left_btorso', 0)), 810292321428385638) | Fitness: 0.7228
+Elite 5: ((('right_ftorso', 0), ('wb_front', 180), ('left_ftorso', 180), ('wb_back', 180), ('right_btorso', 270), ('left_btorso', 0)), -7550914373370949062) | Fitness: 0.7228
+Elite 6: ((('left_ftorso', 90), ('wb_back', 0), ('right_ftorso', 270), ('left_btorso', 270), ('right_btorso', 0), ('wb_front', 0)), 810292321428385638) | Fitness: 0.7194
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7308
+Elite 1: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7308
+Elite 2: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 180), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7284
+Elite 3: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 0), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7284
+Elite 4: ((('right_ftorso', 0), ('wb_front', 180), ('left_ftorso', 180), ('wb_back', 180), ('right_btorso', 270), ('left_btorso', 0)), 810292321428385638) | Fitness: 0.7228
+Elite 5: ((('right_ftorso', 0), ('wb_front', 180), ('left_ftorso', 180), ('wb_back', 180), ('right_btorso', 270), ('left_btorso', 0)), -7550914373370949062) | Fitness: 0.7228
+Elite 6: ((('left_ftorso', 90), ('wb_back', 0), ('right_ftorso', 270), ('left_btorso', 270), ('right_btorso', 0), ('wb_front', 0)), 810292321428385638) | Fitness: 0.7194
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6654
+Offspring created with fitness: 0.7284
+Offspring created with fitness: 0.6514
+Offspring created with fitness: 0.6484
+Offspring created with fitness: 0.6619
+Offspring created with fitness: 0.7162
+Offspring created with fitness: 0.6613
+Offspring created with fitness: 0.6870
+Offspring created with fitness: 0.6215
+Offspring created with fitness: 0.6654
+Offspring created with fitness: 0.5885
+Offspring created with fitness: 0.6073
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.6827
+Mutant created with fitness: 0.7284
+Mutant created with fitness: 0.6654
+Mutant created with fitness: 0.6297
+Mutant created with fitness: 0.7194
+Mutant created with fitness: 0.6587
+Mutant created with fitness: 0.6146
+Mutant created with fitness: 0.6703
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6239
+Random chromosome created with fitness: 0.6239
+Random chromosome generated with fitness: 0.6258
+Random chromosome created with fitness: 0.6258
+Random chromosome generated with fitness: 0.7449
+Random chromosome created with fitness: 0.7449
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0701; mutants: -0.0470
+------------------------------------------------------------
+Generation 2: best 0.7449 (Δ +0.0142)
+[Generation 2] Found 24 chromosomes with design_param as last mutation
+  Chromosome 4 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtLevels
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.07268698401503279
+  Chromosome 9 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'meta.wb.v' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+  Chromosome 10 (origin: offspring, last mutation: design_param): 8 parameter differences
+    Parameter 'left.collar.f_collar.v' changed: CircleNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 11 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtLevels
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.7488649653190643
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.4 -> 1.2024778361573008
+  Chromosome 17 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtLevels
+    Parameter 'collar.f_flip_curve.range.1' changed: False -> None
+    Parameter 'collar.f_flip_curve.v' changed: False -> True
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 19 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'shirt.strapless.v' changed: False -> True
+    Parameter 'shirt.strapless.range.1' changed: False -> None
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 1 -> 1.6739696449274883
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'shirt.length.v' changed: 1.2 -> 1.0775915775187253
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: 0.2 -> 0.02405929279822916
+  Chromosome 25 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtLevels
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+  Chromosome 26 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtLevels
+[Generation 2] Total of 15 chromosomes with design parameter differences
+Generation 2 completed in 3.82s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7449
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 2: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7308
+Elite 3: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), -7016539075105255792) | Fitness: 0.7308
+Elite 4: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 180), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7284
+Elite 5: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 180), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7284
+Elite 6: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 180), ('wb_back', 180)), -1692625458524684884) | Fitness: 0.7284
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7449
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 2: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7308
+Elite 3: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), -7016539075105255792) | Fitness: 0.7308
+Elite 4: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 180), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7284
+Elite 5: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 180), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7284
+Elite 6: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('right_ftorso', 270), ('wb_front', 180), ('wb_back', 180)), -1692625458524684884) | Fitness: 0.7284
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6514
+Offspring created with fitness: 0.7284
+Offspring created with fitness: 0.7284
+Offspring created with fitness: 0.6484
+Offspring created with fitness: 0.6654
+Offspring created with fitness: 0.6514
+Offspring created with fitness: 0.7284
+Offspring created with fitness: 0.6484
+Offspring created with fitness: 0.7284
+Offspring created with fitness: 0.6654
+Offspring created with fitness: 0.6653
+Offspring created with fitness: 0.5839
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.6696
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.6514
+Mutant created with fitness: 0.6514
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.6619
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.6717
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6423
+Random chromosome created with fitness: 0.6423
+Random chromosome generated with fitness: 0.6899
+Random chromosome created with fitness: 0.6899
+Random chromosome generated with fitness: 0.5669
+Random chromosome created with fitness: 0.5669
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0571; mutants: -0.0379
+------------------------------------------------------------
+Generation 3: best 0.7449 (Δ +0.0000)
+[Generation 3] Found 26 chromosomes with design_param as last mutation
+  Chromosome 2 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 5 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 1 -> 1.6739696449274883
+  Chromosome 7 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5064041575572801
+  Chromosome 8 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.7753117347971282
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 1 -> 1.6739696449274883
+  Chromosome 9 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 92
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 11 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+    Parameter 'collar.bc_angle.v' changed: 95 -> 88
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.4093214822443038
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 15 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 1 -> 1.6739696449274883
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.7686663912830808
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'waistband.waist.v' changed: 1.0 -> 1.0168468000873268
+  Chromosome 19 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.6404299829433596
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 1 -> 1.6739696449274883
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.6421607191155568
+[Generation 3] Total of 16 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_175822/plots/fitness_curves_20250622_175822.png
+Mean gains plot saved to nesting/run_logs/_20250622_175822/plots/mean_gains_20250622_175822.png
+Delta best plot saved to nesting/run_logs/_20250622_175822/plots/delta_best_20250622_175822.png
+Mutation gains plot saved to nesting/run_logs/_20250622_175822/plots/mutation_gains.png
+Swarm plot data: 120 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_175822/plots/fitness_swarm_20250622_175822.png
+Plots updated successfully.
+Generation 3 completed in 4.41s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7449
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 3: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7308
+Elite 4: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), -7016539075105255792) | Fitness: 0.7308
+Elite 5: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), -8875176462154492018) | Fitness: 0.7308
+Elite 6: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 2778836459382355372) | Fitness: 0.7308
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7449
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 3: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7308
+Elite 4: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), -7016539075105255792) | Fitness: 0.7308
+Elite 5: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), -8875176462154492018) | Fitness: 0.7308
+Elite 6: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 2778836459382355372) | Fitness: 0.7308
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6484
+‼ offspring task failed: TopologyException: side location conflict at 17.04997784920047 368.89056412019153. This can occur if the input geometry is invalid.
+Offspring created with fitness: 0.6484
+Offspring created with fitness: 0.5807
+Offspring created with fitness: 0.6119
+Offspring created with fitness: 0.6653
+Offspring created with fitness: 0.6484
+Offspring created with fitness: 0.6514
+Offspring created with fitness: 0.6964
+Offspring created with fitness: 0.7319
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.7102
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: TopologyException: side location conflict at 34.59003967323499 338.68058769845499. This can occur if the input geometry is invalid.
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.6717
+Mutant created with fitness: 0.6523
+Mutant created with fitness: 0.6521
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.6711
+Mutant created with fitness: 0.6523
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.5490
+Random chromosome created with fitness: 0.5490
+Random chromosome generated with fitness: 0.7193
+Random chromosome created with fitness: 0.7193
+Random chromosome generated with fitness: 0.6862
+Random chromosome created with fitness: 0.6862
+Collected 11 offspring, 8 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0787; mutants: -0.0443
+------------------------------------------------------------
+Generation 4: best 0.7449 (Δ +0.0000)
+[Generation 4] Found 23 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 3 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 4 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.6404299829433596
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 5 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+  Chromosome 6 (origin: offspring, last mutation: unknown): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 7 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.6573259833016705
+  Chromosome 10 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.6404299829433596
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.8428500687490065
+  Chromosome 16 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.8346306973339342
+  Chromosome 17 (origin: mutant, last mutation: design_param): 6 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.6404299829433596
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 18 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.6404299829433596
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+    Parameter 'collar.bc_angle.v' changed: 95 -> 98
+  Chromosome 19 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.6404299829433596
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 20 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.6404299829433596
+    Parameter 'collar.fc_angle.v' changed: 95 -> 105
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.shirt.width.v' changed: 1.05 -> 1.1799136197981812
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+  Chromosome 24 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.6404299829433596
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+[Generation 4] Total of 21 chromosomes with design parameter differences
+Generation 4 completed in 3.66s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7449
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 3: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 4: ((('left_ftorso', 270), ('right_ftorso', 180), ('left_btorso', 270), ('right_btorso', 0), ('wb_back', 90), ('wb_front', 270)), -7199138521496423732) | Fitness: 0.7319
+Elite 5: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7308
+Elite 6: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), -7016539075105255792) | Fitness: 0.7308
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7449
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 3: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 4: ((('left_ftorso', 270), ('right_ftorso', 180), ('left_btorso', 270), ('right_btorso', 0), ('wb_back', 90), ('wb_front', 270)), -7199138521496423732) | Fitness: 0.7319
+Elite 5: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), 810292321428385638) | Fitness: 0.7308
+Elite 6: ((('left_btorso', 270), ('left_ftorso', 180), ('right_btorso', 0), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 180)), -7016539075105255792) | Fitness: 0.7308
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6356
+Offspring created with fitness: 0.6170
+Offspring created with fitness: 0.7319
+Offspring created with fitness: 0.5807
+Offspring created with fitness: 0.6220
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.6041
+Offspring created with fitness: 0.6988
+Offspring created with fitness: 0.6654
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.6468
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.7308
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.7319
+Mutant created with fitness: 0.7319
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.6521
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7418
+Random chromosome created with fitness: 0.7418
+Random chromosome generated with fitness: 0.7131
+Random chromosome created with fitness: 0.7131
+Random chromosome generated with fitness: 0.6568
+Random chromosome created with fitness: 0.6568
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0835; mutants: -0.0082
+------------------------------------------------------------
+Generation 5: best 0.7498 (Δ +0.0048)
+[Generation 5] Found 25 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 3 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 5 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 6 (origin: offspring, last mutation: unknown): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 7 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 85
+  Chromosome 10 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.4 -> 1.2003659945223635
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 14 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'shirt.flare.v' changed: 1.0 -> 1.0437869619311526
+  Chromosome 15 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+    Parameter 'shirt.length.v' changed: 1.2 -> 2.5481293947008927
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 17 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'collar.width.v' changed: 0.2 -> -0.1330497063972167
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.294164685111201
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 25 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> AsymmSkirtCircle
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 26 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+[Generation 5] Total of 22 chromosomes with design parameter differences
+Generation 5 completed in 4.30s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7498
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 3: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 4: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 5: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 6: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 6089074889513137603) | Fitness: 0.7449
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7498
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 3: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 4: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 5: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Elite 6: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 6089074889513137603) | Fitness: 0.7449
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.6722
+Offspring created with fitness: 0.5807
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.6988
+Offspring created with fitness: 0.6722
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.7313
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.6041
+Offspring created with fitness: 0.5807
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.6595
+Mutant created with fitness: 0.6499
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.7187
+Mutant created with fitness: 0.7187
+Mutant created with fitness: 0.6963
+Mutant created with fitness: 0.6595
+Mutant created with fitness: 0.7498
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6304
+Random chromosome created with fitness: 0.6304
+Random chromosome generated with fitness: 0.7151
+Random chromosome created with fitness: 0.7151
+Random chromosome generated with fitness: 0.5563
+Random chromosome created with fitness: 0.5563
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0796; mutants: -0.0392
+------------------------------------------------------------
+Generation 6: best 0.7498 (Δ +0.0000)
+[Generation 6] Found 25 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 4 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 5 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.294164685111201
+  Chromosome 6 (origin: offspring, last mutation: unknown): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.294164685111201
+  Chromosome 7 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.v' changed: FittedShirt -> None
+  Chromosome 9 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.b_flip_curve.range.1' changed: False -> None
+    Parameter 'left.collar.b_flip_curve.v' changed: False -> True
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.38133433394591326
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 14 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'left.collar.f_collar.v' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 108
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 17 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.38988557498667986
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 19 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 1.0760583377800828
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.7890521769442024
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 24 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'left.collar.f_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 26 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+[Generation 6] Total of 22 chromosomes with design parameter differences
+Generation 6 completed in 3.88s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7498
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7498
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 3: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 4: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 5: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 6: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7498
+Elite 1: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7498
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 3: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 4: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 5: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7449
+Elite 6: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7449
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.5807
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.6041
+Offspring created with fitness: 0.6988
+Offspring created with fitness: 0.6041
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.6041
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.6927
+Offspring created with fitness: 0.6041
+Offspring created with fitness: 0.6722
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: TopologyException: side location conflict at 34.828002664990599 365.58398508447743. This can occur if the input geometry is invalid.
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.6595
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.5931
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7627
+Random chromosome created with fitness: 0.7627
+Random chromosome generated with fitness: 0.5711
+Random chromosome created with fitness: 0.5711
+Random chromosome generated with fitness: 0.7352
+Random chromosome created with fitness: 0.7352
+Collected 12 offspring, 8 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0962; mutants: -0.0309
+------------------------------------------------------------
+Generation 7: best 0.7627 (Δ +0.0129)
+[Generation 7] Found 23 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 5 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 7 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 8 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.5112167940274195
+  Chromosome 9 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.37951923366394474
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.7991392264135718
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 92
+  Chromosome 14 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'collar.b_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.b_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.b_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.b_collar.v' changed: CircleNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.b_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.b_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.b_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 95 -> 106
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 23 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'meta.wb.v' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 25 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+[Generation 7] Total of 19 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_175822/plots/fitness_curves_20250622_175822.png
+Mean gains plot saved to nesting/run_logs/_20250622_175822/plots/mean_gains_20250622_175822.png
+Delta best plot saved to nesting/run_logs/_20250622_175822/plots/delta_best_20250622_175822.png
+Mutation gains plot saved to nesting/run_logs/_20250622_175822/plots/mutation_gains.png
+Swarm plot data: 237 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_175822/plots/fitness_swarm_20250622_175822.png
+Plots updated successfully.
+Generation 7 completed in 4.43s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7627
+Elite 1: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7498
+Elite 3: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 4: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 5: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 6: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7627
+Elite 1: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 2: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7498
+Elite 3: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 4: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 5: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 6: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.6405
+Offspring created with fitness: 0.6108
+Offspring created with fitness: 0.7147
+Offspring created with fitness: 0.6722
+Offspring created with fitness: 0.6601
+Offspring created with fitness: 0.6988
+Offspring created with fitness: 0.6988
+Offspring created with fitness: 0.6041
+Offspring created with fitness: 0.6988
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.6966
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7627
+Mutant created with fitness: 0.7627
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.6595
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.6595
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.6499
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6817
+Random chromosome created with fitness: 0.6817
+Random chromosome generated with fitness: 0.6237
+Random chromosome created with fitness: 0.6237
+Random chromosome generated with fitness: 0.6908
+Random chromosome created with fitness: 0.6908
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0790; mutants: -0.0312
+------------------------------------------------------------
+Generation 8: best 0.7627 (Δ +0.0000)
+[Generation 8] Found 25 chromosomes with design_param as last mutation
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 4 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 5 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 7 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.3988859143974897
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.17723311155267407
+  Chromosome 9 (origin: offspring, last mutation: design_param): 8 parameter differences
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 0.7622785772528364
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 14 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.7678111168868005
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'shirt.width.v' changed: 1.05 -> 1.1805992102556748
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.43112137418126134
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.7011873341664583
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'shirt.length.v' changed: 1.2 -> 2.932359369796339
+  Chromosome 24 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.b_bezier_x.v' changed: 0.15 -> 0.7827046327982767
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+[Generation 8] Total of 21 chromosomes with design parameter differences
+Generation 8 completed in 3.77s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7627
+Elite 1: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 2: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), -7016539075105255792) | Fitness: 0.7627
+Elite 3: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 4: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7498
+Elite 5: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 6: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7627
+Elite 1: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 2: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), -7016539075105255792) | Fitness: 0.7627
+Elite 3: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 4: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), 810292321428385638) | Fitness: 0.7498
+Elite 5: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Elite 6: ((('left_ftorso', 270), ('wb_back', 90), ('right_ftorso', 180), ('left_btorso', 270), ('wb_front', 270), ('right_btorso', 0)), -7199138521496423732) | Fitness: 0.7498
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.7311
+Offspring created with fitness: 0.6988
+Offspring created with fitness: 0.6572
+Offspring created with fitness: 0.6222
+Offspring created with fitness: 0.6894
+Offspring created with fitness: 0.7311
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.6966
+Offspring created with fitness: 0.6988
+Offspring created with fitness: 0.6956
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7627
+Mutant created with fitness: 0.7627
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.7627
+Mutant created with fitness: 0.6883
+Mutant created with fitness: 0.7498
+Mutant created with fitness: 0.6595
+Mutant created with fitness: 0.5958
+Mutant created with fitness: 0.7498
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6690
+Random chromosome created with fitness: 0.6690
+Random chromosome generated with fitness: 0.7081
+Random chromosome created with fitness: 0.7081
+Random chromosome generated with fitness: 0.5827
+Random chromosome created with fitness: 0.5827
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0691; mutants: -0.0368
+------------------------------------------------------------
+Generation 9: best 0.7627 (Δ +0.0000)
+[Generation 9] Found 25 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 4 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 5 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 8 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.563623251810616
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 9 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.2739211233936908
+  Chromosome 12 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 0.9459680733305619
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.7209528419705413
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 97
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 16 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'shirt.flare.v' changed: 1.0 -> 0.7448025489277611
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.21849578537167602
+  Chromosome 18 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.9723581532871591
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.8594762839281382
+  Chromosome 21 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.22096376787720962
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+  Chromosome 25 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 26 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.component.style.v' changed: None -> SimpleLapel
+[Generation 9] Total of 20 chromosomes with design parameter differences
+Generation 9 completed in 4.01s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7627
+Elite 1: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 2: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), -7016539075105255792) | Fitness: 0.7627
+Elite 3: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 4: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 7989858096711570011) | Fitness: 0.7627
+Elite 5: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), -3368851158036070946) | Fitness: 0.7627
+Elite 6: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 6366420419339407110) | Fitness: 0.7627
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7627
+Elite 1: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 2: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), -7016539075105255792) | Fitness: 0.7627
+Elite 3: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 4: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 7989858096711570011) | Fitness: 0.7627
+Elite 5: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), -3368851158036070946) | Fitness: 0.7627
+Elite 6: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 6366420419339407110) | Fitness: 0.7627
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6108
+Offspring created with fitness: 0.6569
+Offspring created with fitness: 0.6569
+Offspring created with fitness: 0.6108
+Offspring created with fitness: 0.6108
+Offspring created with fitness: 0.6569
+Offspring created with fitness: 0.6569
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6569
+Offspring created with fitness: 0.6389
+Offspring created with fitness: 0.6569
+Offspring created with fitness: 0.6108
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: TopologyException: side location conflict at 21.806773246597825 324.33986792780746. This can occur if the input geometry is invalid.
+Mutant created with fitness: 0.7627
+Mutant created with fitness: 0.5847
+Mutant created with fitness: 0.7627
+Mutant created with fitness: 0.6426
+Mutant created with fitness: 0.7627
+Mutant created with fitness: 0.6883
+Mutant created with fitness: 0.5935
+Mutant created with fitness: 0.5958
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6190
+Random chromosome created with fitness: 0.6190
+Random chromosome generated with fitness: 0.6036
+Random chromosome created with fitness: 0.6036
+Random chromosome generated with fitness: 0.7742
+Random chromosome created with fitness: 0.7742
+Collected 12 offspring, 8 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.1158; mutants: -0.0886
+------------------------------------------------------------
+Generation 10: best 0.7742 (Δ +0.0114)
+[Generation 10] Found 22 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 3 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+  Chromosome 4 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.9723581532871591
+  Chromosome 5 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.22096376787720962
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 6 (origin: offspring, last mutation: unknown): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.22096376787720962
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 7 (origin: offspring, last mutation: unknown): 3 parameter differences
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+  Chromosome 8 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.v' changed: FittedShirt -> None
+  Chromosome 9 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.9723581532871591
+  Chromosome 10 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.2627630333165199
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.9723581532871591
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.1651134228096609
+  Chromosome 12 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.6603162992831689
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 15 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'waistband.waist.v' changed: 1.0 -> 1.18892991585646
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 17 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.22096376787720962
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 18 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.22096376787720962
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+  Chromosome 19 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.2530647997024546
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+  Chromosome 20 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+  Chromosome 22 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 102
+  Chromosome 23 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+    Parameter 'collar.bc_angle.v' changed: 95 -> 91
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 1.0811828814811175
+  Chromosome 25 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.22096376787720962
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+[Generation 10] Total of 21 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 11 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_175822/plots/fitness_curves_20250622_175822.png
+Mean gains plot saved to nesting/run_logs/_20250622_175822/plots/mean_gains_20250622_175822.png
+Delta best plot saved to nesting/run_logs/_20250622_175822/plots/delta_best_20250622_175822.png
+Mutation gains plot saved to nesting/run_logs/_20250622_175822/plots/mutation_gains.png
+Swarm plot data: 326 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_175822/plots/fitness_swarm_20250622_175822.png
+Plots updated successfully.
+Generation 10 completed in 3.65s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7742
+Elite 1: ((('left_btorso', 270), ('wb_front', 0), ('right_ftorso', 90), ('wb_back', 0), ('left_ftorso', 270), ('right_btorso', 90)), 810292321428385638) | Fitness: 0.7742
+Elite 2: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 3: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), -7016539075105255792) | Fitness: 0.7627
+Elite 4: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 810292321428385638) | Fitness: 0.7627
+Elite 5: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), 7989858096711570011) | Fitness: 0.7627
+Elite 6: ((('wb_back', 270), ('left_ftorso', 270), ('left_btorso', 0), ('wb_front', 270), ('right_btorso', 90), ('right_ftorso', 90)), -3368851158036070946) | Fitness: 0.7627
+------------------------------------------------------------
+Evolution completed.
+Total time: 41.52 seconds

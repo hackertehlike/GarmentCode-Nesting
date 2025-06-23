@@ -1,212 +1,419 @@
-diff --git a/nesting/gui.py b/nesting/gui.py
-index ce68e1d99907d2571d7a06d8e6cd95f6b90df97c..bdde3d80aae990be36bd6c5227659e2999d4c8f0 100644
---- a/nesting/gui.py
-+++ b/nesting/gui.py
-@@ -1,88 +1,90 @@
- from __future__ import annotations
- import itertools
- import tempfile
- import json
- import copy
- # import yaml
- from typing import Dict, List, Tuple, Set, Optional
- from pathlib import Path
- from datetime import datetime
- 
- from nicegui import ui, events
- from nicegui.events import KeyEventArguments
- from nesting import utils
- from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap, etc.
-+from pygarment.garmentcode.params import DesignSampler
- import matplotlib.pyplot as plt
- import io
- import base64
- from .path_extractor import *
- from .layout import *
- from .placement_engine import *
- import nesting.config as config
- from nesting.panel_mapping import affected_panels, select_genes
- from shapely.errors import GEOSException as TopologyException
- 
- # viewer size in CSS‑pixels
- MAX_CANVAS_PX_WIDTH  = 800   
- MAX_CANVAS_PX_HEIGHT = 600
- 
- 
- class NestingGUI:
-     """
-     Display garment‑pattern JSON files as SVG outlines with seam allowance.
-     • All JSON coordinates and container inputs are in centimetres.
-     • A uniform seam allowance (cm) can be typed in the toolbar.
-     • Both the original outline (dashed grey) and the enlarged outline
-       (filled colour, draggable) are rendered for each panel.
-     • A button tests all enlarged outlines for pairwise intersections.
-     """
- 
-     def __init__(self, pattern_path: str | Path | None = None) -> None:
-         # container dimensions in cm
-         self.container_width_cm  = config.CONTAINER_WIDTH_CM
-         self.container_height_cm = config.CONTAINER_HEIGHT_CM
+diff --git a/nesting/run_tests_ga.py b/nesting/run_tests_ga.py
+index dd798642feb30c6aa00ecd3a46cc0c666a0387ab..d89fb0c63b0cea9ee4205ab08bf6f5c5193154ac 100755
+--- a/nesting/run_tests_ga.py
++++ b/nesting/run_tests_ga.py
+@@ -110,298 +110,272 @@ def flush_results(rows: list[dict], timestamp: str = None) -> None:
+         fig2.tight_layout()
+         avg_path = plots_dir / f"ga_utilization_by_pattern_{timestamp}.png"
+         fig2.savefig(avg_path, dpi=300)
+         plt.close(fig2)
+     
+     # 3. If we have generation data, plot fitness over generations
+     if 'generation' in df.columns and 'best_fitness' in df.columns:
+         fig3, ax3 = plt.subplots(figsize=(10, 6))
          
-         self.container = Container(self.container_width_cm, self.container_height_cm)
-         self.layout = None  # will be a Layout instance once pattern is loaded
+         for pattern in df['pattern'].unique():
+             pattern_data = df[df['pattern'] == pattern]
+             pattern_data = pattern_data.sort_values('generation')
+             ax3.plot(pattern_data['generation'], pattern_data['best_fitness'], 
+                     marker='o', label=pattern, alpha=0.7)
+         
+         ax3.set_xlabel('Generation')
+         ax3.set_ylabel('Best Fitness')
+         ax3.set_title('Fitness Evolution by Generation')
+         ax3.grid(True, linestyle='--', alpha=0.6)
+         ax3.legend()
+         
+         fitness_path = plots_dir / f"ga_fitness_evolution_{timestamp}.png"
+         fig3.tight_layout()
+         fig3.savefig(fitness_path, dpi=300)
+         plt.close(fig3)
++
++    # 4. Average fitness by chromosome origin
++    if {'generation', 'avg_off', 'avg_mut', 'avg_rand'}.issubset(df.columns):
++        fig4, ax4 = plt.subplots(figsize=(10, 6))
++        ax4.plot(df['generation'], df['avg_off'], label='offspring', marker='o')
++        ax4.plot(df['generation'], df['avg_mut'], label='mutants', marker='o')
++        ax4.plot(df['generation'], df['avg_rand'], label='random', marker='o')
++        ax4.set_xlabel('Generation')
++        ax4.set_ylabel('Average Fitness')
++        ax4.set_title('Average Fitness by Origin')
++        ax4.grid(True, linestyle='--', alpha=0.6)
++        ax4.legend()
++        path4 = plots_dir / f"ga_origin_fitness_{timestamp}.png"
++        fig4.tight_layout()
++        fig4.savefig(path4, dpi=300)
++        plt.close(fig4)
++
++    # 5. Mutation efficiency by type
++    mut_cols = [c for c in df.columns if c.startswith('mut_gain_')]
++    if mut_cols:
++        fig5, ax5 = plt.subplots(figsize=(10, 6))
++        for col in mut_cols:
++            ax5.plot(df['generation'], df[col], label=col.replace('mut_gain_', ''))
++        ax5.set_xlabel('Generation')
++        ax5.set_ylabel('Δ Fitness vs parent')
++        ax5.set_title('Mutation Efficiency by Type')
++        ax5.grid(True, linestyle='--', alpha=0.6)
++        ax5.legend()
++        path5 = plots_dir / f"ga_mutation_eff_{timestamp}.png"
++        fig5.tight_layout()
++        fig5.savefig(path5, dpi=300)
++        plt.close(fig5)
+         
+     print(f"Results saved to {csv_path} and plots saved to {plots_dir}")
  
-         self._update_scale_factors()
  
-         # seam allowance in cm
-         self.seam_allowance_cm: float = config.SEAM_ALLOWANCE_CM
+ def load_pieces(json_path: Path) -> dict[str, Piece]:
+     extractor = PatternPathExtractor(json_path)
+     pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE)
+     for p in pieces.values():
+         p.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+     return pieces
  
-         self.pieces : Dict[str, Piece] = {}  # for storing pieces
  
-         # UI drag bookkeeping
-         self.panel_path_refs: Dict[str, Tuple[any, any]] = {}
-         # self.panel_transforms: Dict[str, Tuple[float, float]] = {}
-         self.drag_data: Dict = {}
+ def split_pieces(pieces: dict[str, Piece]) -> dict[str, Piece]:
+     """Split pieces and handle topology exceptions."""
+     new_pieces: dict[str, Piece] = {}
+     for piece in pieces.values():
+         try:
+             left, right = piece.split()
+             new_pieces[left.id] = left
+             new_pieces[right.id] = right
+         except TopologyException as e:
+             print(f"Skipping split for piece {piece.id} due to topology error: {e}")
+             new_pieces[piece.id] = piece  # Keep the original piece
+     return new_pieces
  
-         self.pattern_loaded = False
-         #self.yaml_loaded     = False
  
-         self.design_params: Dict[str, any] = {}  # design specification from JSON
-+        self.design_sampler: DesignSampler | None = None
+-def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern_name: str, json_path: Path, split: bool = False) -> list[dict]:
+-    """
+-    Run Genetic Algorithm on the given pieces and container, tracking metrics for each generation.
+-    Returns a list of dictionaries with metrics for each generation.
+-    """
++def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern_name: str, json_path: Path) -> list[dict]:
++    """Run GA on a pattern and collect per generation metrics."""
+     start_time = time.time()
+-    results = []
+-    
++    results: list[dict] = []
++
+     try:
+-        # Load design parameters
+         design_params, body_params, design_sampler = load_design_params(json_path)
+-        
+-        # Create an Evolution instance with default config settings
++
+         evo = Evolution(
+             pieces,
+             container,
+             num_generations=config.NUM_GENERATIONS,
+             population_size=config.POPULATION_SIZE,
+             mutation_rate=config.MUTATION_RATE,
+             enable_dynamic_stopping=config.ENABLE_DYNAMIC_STOPPING,
+             early_stop_window=config.EARLY_STOP_WINDOW,
+             early_stop_tolerance=config.EARLY_STOP_TOLERANCE,
+             enable_extension=config.ENABLE_EXTENSION,
+             extend_window=config.EXTEND_WINDOW,
+             extend_threshold=config.EXTEND_THRESHOLD,
+             max_generations=config.MAX_GENERATIONS,
+             crossover_method=config.SELECTED_CROSSOVER,
+             design_params=design_params,
+             body_params=body_params,
+             design_sampler=design_sampler,
+         )
+-        
+-        # Initialize population
+-        print(f"Generating initial population for {pattern_name} (Split: {split})")
++
++        print(f"Generating initial population for {pattern_name}")
+         evo.generate_population()
+-        
+-        # Record initial generation (gen 0)
+-        elites = evo._get_elite()
+-        if elites:
+-            best_chrom = elites[0]
+-            # Use decoder to calculate utilization metrics
++
++        # metrics for generation 0
++        row = evo._all_metrics[-1]
++        best_chrom = max(evo.population, key=lambda c: c.fitness)
++        view = LayoutView(best_chrom.genes)
++        decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
++        decoder.decode()
++
++        entry = {
++            "pattern": pattern_name,
++            "generation": int(row.get("generation", 0)),
++            "best_fitness": row.get("best_fit", best_chrom.fitness),
++            "avg_fitness": row.get("avg_child_fitness", 0.0),
++            "usage_bb": decoder.usage_BB(),
++            "concave_hull": decoder.concave_hull_utilization(),
++            "rest_length": decoder.rest_length(),
++            "avg_off": row.get("avg_off", 0.0),
++            "avg_mut": row.get("avg_mut", 0.0),
++            "avg_rand": row.get("avg_rand", 0.0),
++            "mean_offspring_gain": row.get("mean_offspring_gain", 0.0),
++            "mean_mutant_gain": row.get("mean_mutant_gain", 0.0),
++        }
++        for k, v in row.items():
++            if k.startswith("mut_gain_"):
++                entry[k] = v
++        results.append(entry)
++
++        for gen in range(1, config.NUM_GENERATIONS + 1):
++            print(f"Running generation {gen}/{config.NUM_GENERATIONS} for {pattern_name}")
++            evo.next_generation()
++
++            row = evo._all_metrics[-1]
++            best_chrom = max(evo.population, key=lambda c: c.fitness)
+             view = LayoutView(best_chrom.genes)
+             decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
+             decoder.decode()
+-            
+-            results.append({
++
++            entry = {
+                 "pattern": pattern_name,
+-                "split": split,
+-                "generation": 0,
+-                "best_fitness": best_chrom.fitness,
+-                "avg_fitness": sum(c.fitness for c in evo.population) / len(evo.population) if evo.population else 0,
+-                "elites_found": len(elites),
++                "generation": int(row.get("generation", gen)),
++                "best_fitness": row.get("best_fit", best_chrom.fitness),
++                "avg_fitness": row.get("avg_child_fitness", 0.0),
+                 "usage_bb": decoder.usage_BB(),
+                 "concave_hull": decoder.concave_hull_utilization(),
+                 "rest_length": decoder.rest_length(),
+-                "execution_time": 0,
+-                "algorithm": f"GA-{config.SELECTED_DECODER}",
+-                "decoder": config.SELECTED_DECODER,
+-                "crossover": config.SELECTED_CROSSOVER,
+-                "population_size": config.POPULATION_SIZE,
+-                "elite_count": evo.n_elites,
+-                "mutation_rate": config.MUTATION_RATE,
+-            })
+-        
+-        # Run for specified number of generations
+-        max_gens = config.NUM_GENERATIONS
+-        for gen in range(1, max_gens + 1):
+-            gen_start = time.time()
+-            print(f"Running generation {gen}/{max_gens} for {pattern_name} (Split: {split})")
+-            
+-            # Evolve to next generation
+-            evo.next_generation()
+-            evo.generation += 1
+-            
+-            # Record metrics for this generation
+-            elites = evo._get_elite()
+-            if elites:
+-                best_chrom = elites[0]
+-                
+-                # Calculate delta (improvement) in best fitness
+-                prev_best = evo.best_fitness_history[-1] if len(evo.best_fitness_history) > 1 else best_chrom.fitness
+-                delta_best = best_chrom.fitness - prev_best
+-                
+-                print(f"Generation {gen}: Best fitness {best_chrom.fitness:.6f} (Δ {delta_best:+.6f})")
+-                
+-                # Use decoder to calculate utilization metrics
+-                view = LayoutView(best_chrom.genes)
+-                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
+-                decoder.decode()
+-                
+-                gen_time = time.time() - start_time
+-                gen_delta = time.time() - gen_start
+-                
+-                results.append({
+-                    "pattern": pattern_name,
+-                    "split": split,
+-                    "generation": gen,
+-                    "best_fitness": best_chrom.fitness,
+-                    "avg_fitness": sum(c.fitness for c in evo.population) / len(evo.population) if evo.population else 0,
+-                    "elites_found": len(elites),
+-                    "usage_bb": decoder.usage_BB(),
+-                    "concave_hull": decoder.concave_hull_utilization(),
+-                    "rest_length": decoder.rest_length(),
+-                    "execution_time": gen_time,
+-                    "generation_time": gen_delta,
+-                    "algorithm": f"GA-{config.SELECTED_DECODER}",
+-                    "decoder": config.SELECTED_DECODER,
+-                    "crossover": config.SELECTED_CROSSOVER, 
+-                    "population_size": config.POPULATION_SIZE,
+-                    "elite_count": evo.n_elites,
+-                    "mutation_rate": config.MUTATION_RATE,
+-                })
+-            
+-            # Check if early stopped
++                "avg_off": row.get("avg_off", 0.0),
++                "avg_mut": row.get("avg_mut", 0.0),
++                "avg_rand": row.get("avg_rand", 0.0),
++                "mean_offspring_gain": row.get("mean_offspring_gain", 0.0),
++                "mean_mutant_gain": row.get("mean_mutant_gain", 0.0),
++            }
++            for k, v in row.items():
++                if k.startswith("mut_gain_"):
++                    entry[k] = v
++            results.append(entry)
++
+             if evo.early_stopped:
+                 print(f"Early stopping triggered at generation {gen} for {pattern_name}")
+                 break
+-        
+-        # Record final best solution
+-        print(f"GA completed for {pattern_name} (Split: {split}) in {time.time() - start_time:.2f} seconds")
+-        
+-        # Make sure we generate the best result output
++
++        print(f"GA completed for {pattern_name} in {time.time() - start_time:.2f} seconds")
++
+         if config.SAVE_LOGS:
+-            print("Generating detailed report of best result...")
+             evo.update_plots()
+             evo.output_best_result()
+-            print("Best result report generated.")
+         
+     except Exception as e:
+         print(f"Error during GA run for {pattern_name}: {e}")
+         import traceback
+         traceback.print_exc()
+     
+     return results
  
-         # Currently selected panel for style editing.
-         self.selected_panel: str = ""
-         self.selection_mode: bool = False
  
-         # Pattern regeneration path
-         self.pattern_path: Optional[Path] = None
-         if pattern_path:
-             self.pattern_path = Path(pattern_path)
- 
-         self.hull_path: ui.element | None = None
- 
-         self._build_layout()
- 
-         if pattern_path is not None:
-             # user supplied a pattern → load it once
-             self._load_pattern_core(Path(pattern_path))
+ def load_design_params(json_path: Path) -> tuple:
+-    """
+-    Load design parameters, body parameters, and create a design sampler.
+-    Returns a tuple of (design_params, body_params, design_sampler)
+-    """
++    """Load design and body parameters for a pattern."""
+     try:
+-        # Load design parameters from adjacent YAML file
+-        yaml_path = json_path.parent / f"{json_path.stem.split('_specification')[0]}_design_params.yaml"
+-        if not yaml_path.exists():
+-            yaml_path = json_path.parent / "design_params.yaml"
+-        
+-        if yaml_path.exists():
+-            with open(yaml_path, "r", encoding="utf-8") as f:
++        base = json_path.stem.split("_specification")[0]
++        design_yaml = json_path.parent / f"{base}_design_params.yaml"
++        if not design_yaml.exists():
++            design_yaml = json_path.parent / "design_params.yaml"
++
++        if design_yaml.exists():
++            with open(design_yaml, "r", encoding="utf-8") as f:
+                 yaml_data = yaml.safe_load(f)
+                 design_params = yaml_data.get("design", {})
          else:
-             # fall back to the previous hard-coded default
-             self._load_default_pattern()
+-            print(f"No design parameters found for {json_path.name}, creating empty dict")
+             design_params = {}
+-        
+-        # Create body parameters
+-        body_params = BodyParameters()
+-        
+-        # Create design sampler
++
++        body_yaml = json_path.parent / f"{base}_body_measurements.yaml"
++        if not body_yaml.exists():
++            body_yaml = json_path.parent / "body_measurements.yaml"
++        if not body_yaml.exists():
++            body_yaml = Path(config.DEFAULT_BODY_PARAM_PATH)
++
++        body_params = BodyParameters(body_yaml)
+         design_sampler = DesignSampler(design_params)
+-        
+         return design_params, body_params, design_sampler
+-    
++
+     except Exception as e:
+         print(f"Error loading design parameters from {json_path}: {e}")
+         return {}, None, None
  
  
-     # ---------------------------------------------------------------------------- #
-     #                                  UI Builders                                 #
-     # ---------------------------------------------------------------------------- #
-diff --git a/nesting/gui.py b/nesting/gui.py
-index ce68e1d99907d2571d7a06d8e6cd95f6b90df97c..bdde3d80aae990be36bd6c5227659e2999d4c8f0 100644
---- a/nesting/gui.py
-+++ b/nesting/gui.py
-@@ -456,50 +458,54 @@ class NestingGUI:
+ def main():
+-    data_dir = Path("./nesting-assets/garmentcodedata_batch0")
+-    json_files = sorted(data_dir.glob("*.json"))
++    data_dir = Path("./nesting-assets/pattern_files")
++    json_files = sorted(data_dir.glob("*/*_specification.json"))
+     if not json_files:
+         print(f"No JSON files found in {data_dir}.")
+         return
  
-         print(f"Loaded {num_copies+1} copies, {len(self.pieces)} pieces in total.")
+     # Create timestamp for this benchmark run
+     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+     print(f"Starting GA benchmark run at {timestamp}")
+     
+     # Create container with dimensions from config
+     container = Container(config.CONTAINER_WIDTH_CM, config.CONTAINER_HEIGHT_CM)
+     all_results = []
  
-         # print all the pieces
-         # for piece_id, piece in self.pieces.items():
-         #     print(f"Loaded piece: {piece_id} with translation {piece.translation} and rotation {piece.rotation}")
-         self._rebuild_panel_outlines()
-         self.pattern_loaded = True
+-    # Limit the number of patterns to process for testing
+-    max_patterns = 3  # Adjust as needed
+-    test_files = json_files[:max_patterns]
++    test_files = json_files
+     
+     # Record GA configuration for reference
+     print(f"\nGA Configuration:")
+     print(f"  Population Size: {config.POPULATION_SIZE}")
+     print(f"  Number of Generations: {config.NUM_GENERATIONS}")
+     print(f"  Mutation Rate: {config.MUTATION_RATE}")
+     print(f"  Crossover Method: {config.SELECTED_CROSSOVER}")
+     print(f"  Decoder: {config.SELECTED_DECODER}")
+     print(f"  Dynamic Stopping: {config.ENABLE_DYNAMIC_STOPPING}")
+     print(f"  Elite %: {config.POPULATION_WEIGHTS['elites']}")
+     print()
+ 
+     for json_path in test_files:
+-        pattern_name = json_path.stem
++        pattern_name = json_path.stem.replace('_specification', '')
+         print(f"\n{'='*50}")
+         print(f"Processing pattern: {pattern_name}")
+         print(f"{'='*50}")
          
-         # Rebuild the sidebar to update the parameters based on the loaded panels
-         self._build_sidebar()
-         self._draw_outlines()
+         # Load pieces
+         pieces = load_pieces(json_path)
+         print(f"Loaded {len(pieces)} pieces from {pattern_name}")
+         
+-        # Run GA without splitting
+-        print(f"\nRunning GA for {pattern_name} without splitting")
+         results = run_ga_with_tracking(
+-            copy.deepcopy(pieces), 
+-            container, 
+-            pattern_name,
+-            json_path,
+-            split=False
+-        )
+-        all_results.extend(results)
+-        
+-        # Save intermediate results
+-        flush_results(all_results, timestamp)
+-        
+-        # Run GA with splitting
+-        print(f"\nRunning GA for {pattern_name} with splitting")
+-        split_dict = split_pieces(copy.deepcopy(pieces))
+-        print(f"After splitting: {len(split_dict)} pieces")
+-        
+-        results = run_ga_with_tracking(
+-            copy.deepcopy(split_dict), 
+-            container, 
++            copy.deepcopy(pieces),
++            container,
+             pattern_name,
+             json_path,
+-            split=True
+         )
+         all_results.extend(results)
+-        
+-        # Save results after each pattern
++
+         flush_results(all_results, timestamp)
  
-         # --- design parameters ----------------------------------------
-         yaml_path = path.parent / "design_params.yaml"
-         try:
-             import yaml
-             if yaml_path.exists():
-                 with open(yaml_path, "r", encoding="utf-8") as f:
-                     self.design_params = yaml.safe_load(f).get("design", {})
-             else:
-                 with path.open("r", encoding="utf-8") as f:
-                     spec = json.load(f)
-                     self.design_params = spec.get("design", {})
-             print("Design parameters loaded:", self.design_params)
-+            if yaml_path.exists():
-+                self.design_sampler = DesignSampler(str(yaml_path))
-+            else:
-+                self.design_sampler = None
-         except Exception as exc:
-             print(f"Failed to load design parameters: {exc}")
-             self.design_params = {}
- 
-         # --- body parameters -----------------------------------------
-         body_path = path.parent / "body_measurements.yaml"
-         try:
-             from assets.bodies.body_params import BodyParameters
-             if body_path.exists():
-                 self.body_params = BodyParameters(body_path)
-             else:
-                 self.body_params = None
-         except Exception as exc:
-             print(f"Failed to load body parameters: {exc}")
-             self.body_params = None
- 
-         # --- sidebar ---------------------------------------------------
-         self._build_sidebar()          # see next section
+     # Final save of all results
+     flush_results(all_results, timestamp)
+     print(f"\nGA benchmark completed at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+-    print(f"Total benchmarks: {len(test_files)} patterns, with and without splitting")
++    print(f"Total benchmarks: {len(test_files)} patterns processed")
  
  
-     def _load_pattern(self, e: events.UploadEventArguments):
-         """Handle file-upload event and delegate to the core loader."""
-         with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmp:
-             tmp.write(e.content.read())
-             tmp_path = Path(tmp.name)
-diff --git a/nesting/gui.py b/nesting/gui.py
-index ce68e1d99907d2571d7a06d8e6cd95f6b90df97c..bdde3d80aae990be36bd6c5227659e2999d4c8f0 100644
---- a/nesting/gui.py
-+++ b/nesting/gui.py
-@@ -886,50 +892,53 @@ class NestingGUI:
-                 decoder = BottomLeftDecoder(layout, container, gravitate_once=config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
-             elif method == "Greedy":
-                 # Greedy placement
-                 decoder = GreedyBLDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, sort_key = config.SORT_BY, step=config.GRAVITATE_STEP)
-             elif method == "NFP":
-                 decoder = NFPDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
-             elif method == "RandomBL":
-                 decoder = RandomDecoder(layout, container, decoder="BL")
-             elif method == "RandomNFP":
-                 decoder = RandomDecoder(layout, container, decoder="NFP")
-             elif method == "Genetic Algorithm":
-                 evo = Evolution(
-                     self.pieces,
-                     container,
-                     num_generations=config.NUM_GENERATIONS,
-                     population_size=config.POPULATION_SIZE,
-                     mutation_rate=config.MUTATION_RATE,
-                     enable_dynamic_stopping=config.ENABLE_DYNAMIC_STOPPING,
-                     early_stop_window=config.EARLY_STOP_WINDOW,
-                     early_stop_tolerance=config.EARLY_STOP_TOLERANCE,
-                     enable_extension=config.ENABLE_EXTENSION,
-                     extend_window=config.EXTEND_WINDOW,
-                     extend_threshold=config.EXTEND_THRESHOLD,
-                     max_generations=config.MAX_GENERATIONS,
-                     crossover_method= config.SELECTED_CROSSOVER,
-+                    design_params=self.design_params,
-+                    body_params=self.body_params,
-+                    design_sampler=self.design_sampler,
-                 )
-                 best_chromosome = evo.run()
-                 if best_chromosome is None:
-                     ui.notify("No valid solution found by the Genetic Algorithm", type="negative")
-                     return
-                 
-                 self.pieces = {p.id: copy.deepcopy(p) for p in best_chromosome.genes}
-                 self.layout = Layout(self.pieces)          # keep layout in sync
-                 self._rebuild_panel_outlines()             # add seam allowance etc.
-                 self._draw_outlines()                      # paint them on the canvas
-             
-                 view    = LayoutView(best_chromosome.genes)
-                 decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
-   
-             elif method == "Jostle":
-                 # Use the default decoder instead of JostleDecoder
-                 view    = LayoutView(layout)
-                 decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
- 
-             else:
-                 raise ValueError(f"Unknown placement method: {method}")
-             
-             print("Now decoding...")
-             placements = decoder.decode()  # [(name, dx, dy)]
-             print("Decoding done")
+ if __name__ == "__main__":
+     main()

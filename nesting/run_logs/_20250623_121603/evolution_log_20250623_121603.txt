@@ -1,0 +1,1404 @@
+------------------------------------------------------------
+Evolution initialized with 30 chromosomes, 6 elites, 12 offspring, 9 mutants, 3 randoms.
+Design parameters loaded: 619 parameters found
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x1641112e0>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x1641112e0>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x105f19b70>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'DEFAULT_PATTERN_PATH': <class 'str'>, 'DEFAULT_DESIGN_PARAM_PATH': <class 'str'>, 'DEFAULT_BODY_PARAM_PATH': <class 'str'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'PRESERVE_HOLES': <class 'bool'>, 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1'], 'GRAVITATE_ONCE': <class 'bool'>, 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DEFAULT_PATTERN_PATH': 'nesting-assets/default_pattern.json', 'DEFAULT_DESIGN_PARAM_PATH': 'nesting-assets/default_design_params.yaml', 'DEFAULT_BODY_PARAM_PATH': 'nesting-assets/default_body_measurements.yaml', 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1'], 'SortKey': typing.Literal['bbox_area', 'hull_area', 'aspect_ratio'], 'SELECTED_DECODER': 'NFP', 'PRESERVE_HOLES': True, 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1', 'OX_K': 1, 'NUM_SPLITS': 30, 'GRAVITATE_ONCE': True, 'GRAVITATE_STEP': 2, 'SORT_BY': 'hull_area', 'POPULATION_SIZE': 30, 'NUM_GENERATIONS': 10, 'MUTATION_RATE': 0.9, 'POPULATION_WEIGHTS': {'elites': 0.2, 'offspring': 0.4, 'mutants': 0.3, 'randoms': 0.1}, 'EXCLUDED_PARAM_PATHS': ['*component*', '*range*', '*.b_*', '*bool*', '*flip*'], 'MUTATION_WEIGHTS': {'rotate': 0, 'swap': 0, 'inversion': 0, 'insertion': 0, 'scramble': 0, 'split': 0, 'design_param': 1}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 4, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs/', 'LOG_TIME': True, 'LOG_DESIGN_PARAM_PATHS': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 0.1, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 140, 'CONTAINER_HEIGHT_CM': 400, 'SEAM_ALLOWANCE_CM': 0, '__dict__': <function __dict__ at 0x1640fbc10>}
+Generating initial population...
+Random chromosome generated with fitness: 0.6418
+Random chromosome generated with fitness: 0.7094
+Random chromosome generated with fitness: 0.7105
+Random chromosome generated with fitness: 0.6828
+Random chromosome generated with fitness: 0.7223
+Random chromosome generated with fitness: 0.6820
+Random chromosome generated with fitness: 0.6436
+Random chromosome generated with fitness: 0.6878
+Random chromosome generated with fitness: 0.6064
+Random chromosome generated with fitness: 0.6459
+Random chromosome generated with fitness: 0.6359
+Random chromosome generated with fitness: 0.6974
+Random chromosome generated with fitness: 0.6432
+Random chromosome generated with fitness: 0.6926
+Random chromosome generated with fitness: 0.6491
+Random chromosome generated with fitness: 0.6294
+Random chromosome generated with fitness: 0.6514
+Random chromosome generated with fitness: 0.6758
+Random chromosome generated with fitness: 0.6586
+Random chromosome generated with fitness: 0.6900
+Random chromosome generated with fitness: 0.6901
+Random chromosome generated with fitness: 0.7068
+Random chromosome generated with fitness: 0.7059
+Random chromosome generated with fitness: 0.6572
+Random chromosome generated with fitness: 0.6049
+Random chromosome generated with fitness: 0.6965
+Random chromosome generated with fitness: 0.6592
+Random chromosome generated with fitness: 0.6370
+Random chromosome generated with fitness: 0.6783
+Random chromosome generated with fitness: 0.6356
+------------------------------------------------------------
+Initial population of 30 layouts generated.
+Layout 0: [('sl_right_cuff_skirt_f', 0), ('sl_left_cuff_b', 180), ('left_btorso', 180), ('right_ftorso', 270), ('left_ftorso', 90), ('sl_right_cuff_skirt_b', 270), ('right_hood', 90), ('sl_right_cuff_b', 0), ('right_sleeve_b', 90), ('right_btorso', 180), ('sl_left_cuff_skirt_f', 180), ('left_sleeve_f', 180), ('left_sleeve_b', 270), ('wb_back', 0), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_f', 90), ('right_sleeve_f', 90), ('sl_right_cuff_f', 0), ('wb_front', 90), ('left_hood', 180)] | Fitness: 0.6359
+Layout 1: [('right_btorso', 270), ('left_btorso', 90), ('sl_left_cuff_skirt_b', 0), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_sleeve_b', 0), ('left_hood', 0), ('sl_right_cuff_skirt_b', 90), ('right_sleeve_f', 270), ('wb_front', 0), ('sl_right_cuff_f', 270), ('wb_back', 90), ('right_ftorso', 270), ('sl_right_cuff_b', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 0), ('sl_left_cuff_f', 180), ('sl_left_cuff_skirt_f', 90), ('sl_left_cuff_b', 90), ('left_sleeve_f', 90)] | Fitness: 0.7105
+Layout 2: [('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_b', 180), ('wb_back', 270), ('sl_right_cuff_b', 0), ('wb_front', 90), ('sl_left_cuff_skirt_b', 90), ('right_ftorso', 270), ('right_sleeve_b', 180), ('sl_right_cuff_f', 0), ('left_hood', 90), ('left_ftorso', 270), ('sl_right_cuff_skirt_f', 90), ('right_sleeve_f', 0), ('sl_left_cuff_f', 90), ('right_btorso', 180), ('left_sleeve_b', 270), ('left_btorso', 90), ('left_sleeve_f', 180), ('right_hood', 270)] | Fitness: 0.6064
+Layout 3: [('left_btorso', 270), ('left_hood', 90), ('right_sleeve_f', 270), ('right_hood', 180), ('wb_front', 0), ('sl_right_cuff_skirt_b', 270), ('sl_right_cuff_skirt_f', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_b', 270), ('sl_left_cuff_skirt_f', 270), ('sl_right_cuff_f', 180), ('left_ftorso', 90), ('right_btorso', 90), ('wb_back', 90), ('sl_left_cuff_skirt_b', 270), ('left_sleeve_f', 270), ('sl_left_cuff_f', 180), ('right_ftorso', 180), ('right_sleeve_b', 0), ('left_sleeve_b', 270)] | Fitness: 0.6974
+Layout 4: [('right_hood', 180), ('sl_left_cuff_f', 270), ('sl_left_cuff_b', 180), ('sl_right_cuff_skirt_f', 180), ('right_sleeve_b', 90), ('sl_right_cuff_b', 0), ('right_btorso', 270), ('right_ftorso', 90), ('left_sleeve_f', 180), ('left_hood', 270), ('left_btorso', 90), ('wb_front', 180), ('sl_left_cuff_skirt_b', 0), ('right_sleeve_f', 90), ('left_ftorso', 270), ('sl_left_cuff_skirt_f', 90), ('sl_right_cuff_f', 180), ('wb_back', 90), ('sl_right_cuff_skirt_b', 180), ('left_sleeve_b', 0)] | Fitness: 0.6828
+Layout 5: [('sl_right_cuff_skirt_b', 270), ('right_sleeve_f', 90), ('sl_left_cuff_b', 270), ('right_hood', 0), ('left_ftorso', 0), ('wb_front', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_skirt_f', 0), ('right_sleeve_b', 270), ('right_ftorso', 180), ('sl_right_cuff_skirt_f', 0), ('sl_left_cuff_f', 90), ('left_sleeve_f', 180), ('sl_right_cuff_b', 180), ('left_sleeve_b', 90), ('left_hood', 90), ('sl_right_cuff_f', 270), ('left_btorso', 270), ('right_btorso', 90), ('wb_back', 180)] | Fitness: 0.6459
+Layout 6: [('sl_right_cuff_f', 270), ('sl_left_cuff_f', 270), ('left_ftorso', 0), ('sl_right_cuff_skirt_f', 270), ('sl_left_cuff_skirt_b', 270), ('right_ftorso', 0), ('left_btorso', 270), ('left_sleeve_f', 270), ('sl_left_cuff_b', 270), ('sl_right_cuff_b', 180), ('left_sleeve_b', 270), ('right_sleeve_b', 180), ('right_hood', 0), ('wb_front', 0), ('sl_right_cuff_skirt_b', 180), ('sl_left_cuff_skirt_f', 270), ('wb_back', 180), ('right_sleeve_f', 270), ('left_hood', 0), ('right_btorso', 0)] | Fitness: 0.7094
+Layout 7: [('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)] | Fitness: 0.7223
+Layout 8: [('wb_front', 0), ('left_sleeve_f', 270), ('sl_right_cuff_skirt_f', 90), ('left_btorso', 90), ('right_sleeve_b', 270), ('sl_left_cuff_skirt_b', 180), ('wb_back', 0), ('sl_left_cuff_skirt_f', 0), ('sl_right_cuff_f', 180), ('left_ftorso', 90), ('right_btorso', 180), ('right_ftorso', 180), ('sl_right_cuff_b', 0), ('right_hood', 90), ('sl_right_cuff_skirt_b', 0), ('left_sleeve_b', 180), ('sl_left_cuff_f', 270), ('right_sleeve_f', 0), ('sl_left_cuff_b', 0), ('left_hood', 0)] | Fitness: 0.6820
+Layout 9: [('right_sleeve_f', 180), ('sl_right_cuff_skirt_f', 180), ('sl_right_cuff_skirt_b', 270), ('sl_left_cuff_skirt_f', 180), ('left_hood', 90), ('right_ftorso', 180), ('wb_front', 270), ('left_ftorso', 180), ('sl_left_cuff_b', 0), ('left_btorso', 0), ('right_btorso', 0), ('sl_right_cuff_b', 0), ('wb_back', 180), ('right_sleeve_b', 270), ('left_sleeve_f', 180), ('sl_left_cuff_skirt_b', 180), ('left_sleeve_b', 0), ('right_hood', 180), ('sl_right_cuff_f', 0), ('sl_left_cuff_f', 180)] | Fitness: 0.6418
+Layout 10: [('left_hood', 90), ('left_sleeve_f', 180), ('sl_right_cuff_f', 90), ('right_btorso', 90), ('sl_left_cuff_skirt_f', 90), ('right_ftorso', 180), ('left_btorso', 90), ('sl_left_cuff_b', 90), ('left_sleeve_b', 180), ('sl_right_cuff_b', 90), ('right_sleeve_b', 180), ('wb_front', 90), ('right_hood', 90), ('sl_right_cuff_skirt_f', 180), ('sl_left_cuff_skirt_b', 180), ('sl_right_cuff_skirt_b', 270), ('sl_left_cuff_f', 90), ('right_sleeve_f', 0), ('wb_back', 0), ('left_ftorso', 270)] | Fitness: 0.6878
+Layout 11: [('right_ftorso', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_b', 270), ('right_btorso', 90), ('left_btorso', 0), ('sl_left_cuff_skirt_b', 0), ('left_sleeve_b', 180), ('left_ftorso', 270), ('wb_front', 270), ('right_sleeve_b', 180), ('left_sleeve_f', 0), ('right_hood', 270), ('sl_right_cuff_skirt_f', 90), ('left_hood', 180), ('wb_back', 270), ('sl_left_cuff_skirt_f', 270), ('sl_right_cuff_skirt_b', 270), ('sl_right_cuff_f', 90), ('sl_left_cuff_f', 90), ('right_sleeve_f', 180)] | Fitness: 0.6436
+Layout 12: [('wb_front', 90), ('sl_right_cuff_skirt_b', 270), ('right_btorso', 180), ('left_ftorso', 0), ('right_sleeve_f', 90), ('wb_back', 180), ('sl_left_cuff_f', 0), ('sl_left_cuff_b', 270), ('sl_left_cuff_skirt_f', 0), ('sl_right_cuff_b', 270), ('right_sleeve_b', 180), ('left_hood', 0), ('sl_left_cuff_skirt_b', 180), ('sl_right_cuff_skirt_f', 180), ('sl_right_cuff_f', 90), ('right_hood', 0), ('left_sleeve_b', 180), ('left_sleeve_f', 270), ('left_btorso', 0), ('right_ftorso', 270)] | Fitness: 0.6926
+Layout 13: [('sl_left_cuff_f', 0), ('sl_left_cuff_skirt_b', 0), ('left_sleeve_f', 180), ('sl_right_cuff_f', 270), ('right_sleeve_f', 90), ('sl_right_cuff_skirt_b', 180), ('right_ftorso', 0), ('left_ftorso', 90), ('left_btorso', 0), ('sl_right_cuff_b', 180), ('sl_left_cuff_skirt_f', 90), ('sl_left_cuff_b', 90), ('wb_front', 180), ('right_hood', 180), ('sl_right_cuff_skirt_f', 0), ('right_btorso', 0), ('wb_back', 0), ('left_hood', 180), ('right_sleeve_b', 270), ('left_sleeve_b', 0)] | Fitness: 0.6294
+Layout 14: [('sl_left_cuff_skirt_f', 0), ('left_ftorso', 90), ('sl_right_cuff_b', 90), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_b', 270), ('sl_left_cuff_skirt_b', 0), ('sl_right_cuff_f', 90), ('sl_right_cuff_skirt_f', 180), ('left_btorso', 90), ('left_sleeve_b', 90), ('right_ftorso', 90), ('wb_front', 90), ('left_sleeve_f', 180), ('right_sleeve_b', 270), ('wb_back', 0), ('sl_left_cuff_b', 180), ('right_sleeve_f', 180), ('right_hood', 90), ('right_btorso', 90), ('left_hood', 90)] | Fitness: 0.6432
+Layout 15: [('sl_left_cuff_skirt_b', 90), ('right_sleeve_b', 180), ('sl_right_cuff_skirt_f', 90), ('sl_left_cuff_skirt_f', 0), ('left_hood', 180), ('sl_left_cuff_b', 180), ('sl_right_cuff_skirt_b', 90), ('right_hood', 270), ('right_btorso', 270), ('right_sleeve_f', 180), ('left_ftorso', 270), ('sl_right_cuff_b', 180), ('sl_left_cuff_f', 180), ('left_btorso', 180), ('wb_back', 180), ('sl_right_cuff_f', 270), ('wb_front', 90), ('right_ftorso', 270), ('left_sleeve_f', 270), ('left_sleeve_b', 0)] | Fitness: 0.6491
+Layout 16: [('sl_left_cuff_skirt_f', 90), ('sl_right_cuff_skirt_b', 180), ('left_ftorso', 90), ('right_sleeve_b', 270), ('right_ftorso', 180), ('right_sleeve_f', 180), ('right_hood', 0), ('left_sleeve_b', 0), ('sl_right_cuff_f', 270), ('right_btorso', 180), ('left_btorso', 270), ('sl_left_cuff_skirt_b', 180), ('sl_left_cuff_f', 0), ('left_hood', 90), ('wb_back', 0), ('sl_right_cuff_skirt_f', 0), ('sl_left_cuff_b', 0), ('left_sleeve_f', 270), ('sl_right_cuff_b', 180), ('wb_front', 180)] | Fitness: 0.6758
+Layout 17: [('left_sleeve_b', 270), ('wb_back', 180), ('sl_left_cuff_f', 270), ('sl_left_cuff_skirt_b', 90), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_skirt_b', 90), ('right_sleeve_f', 270), ('sl_left_cuff_b', 90), ('right_btorso', 0), ('right_sleeve_b', 180), ('sl_right_cuff_b', 270), ('left_hood', 270), ('left_btorso', 180), ('sl_right_cuff_f', 270), ('right_ftorso', 90), ('sl_left_cuff_skirt_f', 0), ('right_hood', 270), ('left_ftorso', 180), ('wb_front', 90), ('left_sleeve_f', 0)] | Fitness: 0.6514
+Layout 18: [('sl_left_cuff_skirt_b', 270), ('sl_right_cuff_f', 270), ('wb_back', 0), ('right_ftorso', 90), ('sl_left_cuff_f', 0), ('left_hood', 180), ('wb_front', 270), ('sl_left_cuff_skirt_f', 180), ('left_sleeve_f', 0), ('sl_left_cuff_b', 90), ('right_btorso', 180), ('right_hood', 270), ('sl_right_cuff_skirt_f', 180), ('left_sleeve_b', 180), ('sl_right_cuff_b', 90), ('left_btorso', 0), ('sl_right_cuff_skirt_b', 180), ('right_sleeve_f', 270), ('left_ftorso', 270), ('right_sleeve_b', 180)] | Fitness: 0.6586
+Layout 19: [('left_sleeve_b', 180), ('sl_left_cuff_b', 0), ('left_ftorso', 270), ('left_btorso', 0), ('sl_right_cuff_f', 0), ('wb_front', 180), ('left_sleeve_f', 180), ('sl_left_cuff_f', 0), ('wb_back', 90), ('sl_left_cuff_skirt_b', 180), ('right_sleeve_b', 90), ('right_ftorso', 90), ('right_hood', 90), ('right_sleeve_f', 90), ('right_btorso', 270), ('sl_right_cuff_skirt_b', 90), ('left_hood', 180), ('sl_right_cuff_b', 180), ('sl_left_cuff_skirt_f', 180), ('sl_right_cuff_skirt_f', 0)] | Fitness: 0.6900
+Layout 20: [('wb_front', 180), ('right_ftorso', 180), ('left_ftorso', 0), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_b', 180), ('sl_left_cuff_f', 0), ('sl_right_cuff_b', 180), ('sl_right_cuff_f', 90), ('right_hood', 90), ('left_btorso', 0), ('right_sleeve_f', 90), ('right_btorso', 0), ('sl_left_cuff_skirt_b', 270), ('left_hood', 0), ('sl_right_cuff_skirt_f', 180), ('left_sleeve_f', 180), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_b', 270), ('right_sleeve_b', 90)] | Fitness: 0.7059
+Layout 21: [('sl_left_cuff_skirt_b', 180), ('wb_back', 180), ('sl_right_cuff_b', 0), ('right_sleeve_b', 0), ('left_sleeve_f', 0), ('sl_left_cuff_b', 270), ('left_hood', 90), ('sl_right_cuff_skirt_f', 0), ('sl_right_cuff_skirt_b', 270), ('right_sleeve_f', 270), ('sl_left_cuff_skirt_f', 0), ('left_btorso', 270), ('sl_left_cuff_f', 180), ('left_sleeve_b', 180), ('right_ftorso', 180), ('sl_right_cuff_f', 180), ('left_ftorso', 90), ('right_hood', 90), ('wb_front', 90), ('right_btorso', 90)] | Fitness: 0.6901
+Layout 22: [('sl_left_cuff_skirt_b', 180), ('left_btorso', 180), ('right_btorso', 90), ('sl_left_cuff_skirt_f', 0), ('left_sleeve_f', 90), ('sl_right_cuff_skirt_b', 270), ('sl_left_cuff_f', 180), ('sl_right_cuff_skirt_f', 90), ('sl_left_cuff_b', 90), ('sl_right_cuff_f', 270), ('left_hood', 270), ('right_sleeve_f', 180), ('wb_front', 90), ('right_hood', 180), ('left_ftorso', 270), ('right_sleeve_b', 0), ('wb_back', 270), ('left_sleeve_b', 270), ('right_ftorso', 0), ('sl_right_cuff_b', 270)] | Fitness: 0.6572
+Layout 23: [('sl_right_cuff_f', 180), ('wb_front', 270), ('left_ftorso', 180), ('right_ftorso', 0), ('left_btorso', 0), ('sl_left_cuff_skirt_f', 270), ('sl_right_cuff_skirt_b', 180), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('right_sleeve_b', 270), ('sl_right_cuff_b', 90), ('left_hood', 180), ('sl_right_cuff_skirt_f', 180), ('right_btorso', 180), ('sl_left_cuff_skirt_b', 180), ('right_hood', 90), ('sl_left_cuff_b', 0), ('wb_back', 0), ('sl_left_cuff_f', 180)] | Fitness: 0.7068
+Layout 24: [('sl_right_cuff_skirt_b', 180), ('right_sleeve_f', 270), ('left_hood', 270), ('wb_back', 180), ('sl_right_cuff_skirt_f', 0), ('left_btorso', 90), ('sl_left_cuff_f', 270), ('sl_left_cuff_skirt_f', 270), ('sl_left_cuff_b', 180), ('left_sleeve_f', 180), ('sl_right_cuff_f', 90), ('sl_right_cuff_b', 0), ('left_sleeve_b', 0), ('right_ftorso', 180), ('left_ftorso', 0), ('right_sleeve_b', 90), ('sl_left_cuff_skirt_b', 0), ('wb_front', 180), ('right_btorso', 90), ('right_hood', 90)] | Fitness: 0.6049
+Layout 25: [('sl_right_cuff_f', 0), ('right_ftorso', 90), ('sl_right_cuff_skirt_f', 180), ('right_hood', 0), ('right_sleeve_f', 270), ('right_btorso', 270), ('wb_front', 90), ('sl_right_cuff_b', 180), ('left_ftorso', 0), ('left_sleeve_f', 270), ('left_btorso', 270), ('sl_left_cuff_skirt_f', 270), ('left_hood', 180), ('sl_right_cuff_skirt_b', 270), ('left_sleeve_b', 0), ('wb_back', 270), ('sl_left_cuff_f', 180), ('right_sleeve_b', 270), ('sl_left_cuff_skirt_b', 270), ('sl_left_cuff_b', 270)] | Fitness: 0.6965
+Layout 26: [('sl_left_cuff_skirt_f', 90), ('right_sleeve_b', 180), ('wb_front', 0), ('sl_left_cuff_f', 180), ('sl_left_cuff_b', 0), ('right_hood', 0), ('right_sleeve_f', 270), ('wb_back', 0), ('left_hood', 270), ('sl_right_cuff_skirt_b', 180), ('sl_left_cuff_skirt_b', 180), ('sl_right_cuff_b', 0), ('right_ftorso', 180), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_f', 270), ('right_btorso', 90), ('left_ftorso', 270), ('left_sleeve_f', 180), ('left_btorso', 180), ('left_sleeve_b', 90)] | Fitness: 0.6592
+Layout 27: [('right_btorso', 180), ('wb_front', 180), ('left_btorso', 180), ('left_hood', 90), ('left_ftorso', 180), ('sl_left_cuff_f', 270), ('wb_back', 90), ('sl_right_cuff_skirt_f', 0), ('sl_right_cuff_skirt_b', 270), ('sl_right_cuff_b', 0), ('right_sleeve_f', 90), ('left_sleeve_b', 180), ('sl_right_cuff_f', 270), ('sl_left_cuff_skirt_b', 0), ('sl_left_cuff_b', 180), ('right_ftorso', 180), ('right_sleeve_b', 0), ('sl_left_cuff_skirt_f', 90), ('right_hood', 0), ('left_sleeve_f', 270)] | Fitness: 0.6370
+Layout 28: [('right_hood', 180), ('left_hood', 180), ('sl_right_cuff_skirt_f', 180), ('wb_back', 0), ('sl_left_cuff_skirt_f', 90), ('right_ftorso', 0), ('sl_left_cuff_f', 180), ('wb_front', 180), ('sl_right_cuff_b', 180), ('sl_right_cuff_skirt_b', 90), ('left_btorso', 180), ('right_sleeve_b', 180), ('left_sleeve_f', 0), ('sl_left_cuff_b', 90), ('left_sleeve_b', 0), ('right_btorso', 0), ('right_sleeve_f', 180), ('sl_right_cuff_f', 180), ('left_ftorso', 270), ('sl_left_cuff_skirt_b', 0)] | Fitness: 0.6356
+Layout 29: [('sl_right_cuff_skirt_f', 0), ('left_sleeve_b', 90), ('left_ftorso', 90), ('sl_left_cuff_b', 270), ('right_ftorso', 0), ('wb_front', 270), ('sl_left_cuff_f', 90), ('right_btorso', 270), ('right_hood', 180), ('left_hood', 180), ('sl_right_cuff_f', 270), ('sl_left_cuff_skirt_f', 180), ('left_sleeve_f', 0), ('sl_left_cuff_skirt_b', 0), ('sl_right_cuff_skirt_b', 0), ('sl_right_cuff_b', 270), ('left_btorso', 90), ('right_sleeve_b', 270), ('right_sleeve_f', 0), ('wb_back', 270)] | Fitness: 0.6783
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7223
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)), 2350706881143690474) | Fitness: 0.7223
+Elite 2: ((('right_btorso', 270), ('left_btorso', 90), ('sl_left_cuff_skirt_b', 0), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_sleeve_b', 0), ('left_hood', 0), ('sl_right_cuff_skirt_b', 90), ('right_sleeve_f', 270), ('wb_front', 0), ('sl_right_cuff_f', 270), ('wb_back', 90), ('right_ftorso', 270), ('sl_right_cuff_b', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 0), ('sl_left_cuff_f', 180), ('sl_left_cuff_skirt_f', 90), ('sl_left_cuff_b', 90), ('left_sleeve_f', 90)), 2350706881143690474) | Fitness: 0.7105
+Elite 3: ((('sl_right_cuff_f', 270), ('sl_left_cuff_f', 270), ('left_ftorso', 0), ('sl_right_cuff_skirt_f', 270), ('sl_left_cuff_skirt_b', 270), ('right_ftorso', 0), ('left_btorso', 270), ('left_sleeve_f', 270), ('sl_left_cuff_b', 270), ('sl_right_cuff_b', 180), ('left_sleeve_b', 270), ('right_sleeve_b', 180), ('right_hood', 0), ('wb_front', 0), ('sl_right_cuff_skirt_b', 180), ('sl_left_cuff_skirt_f', 270), ('wb_back', 180), ('right_sleeve_f', 270), ('left_hood', 0), ('right_btorso', 0)), 2350706881143690474) | Fitness: 0.7094
+Elite 4: ((('sl_right_cuff_f', 180), ('wb_front', 270), ('left_ftorso', 180), ('right_ftorso', 0), ('left_btorso', 0), ('sl_left_cuff_skirt_f', 270), ('sl_right_cuff_skirt_b', 180), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('right_sleeve_b', 270), ('sl_right_cuff_b', 90), ('left_hood', 180), ('sl_right_cuff_skirt_f', 180), ('right_btorso', 180), ('sl_left_cuff_skirt_b', 180), ('right_hood', 90), ('sl_left_cuff_b', 0), ('wb_back', 0), ('sl_left_cuff_f', 180)), 2350706881143690474) | Fitness: 0.7068
+Elite 5: ((('wb_front', 180), ('right_ftorso', 180), ('left_ftorso', 0), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_b', 180), ('sl_left_cuff_f', 0), ('sl_right_cuff_b', 180), ('sl_right_cuff_f', 90), ('right_hood', 90), ('left_btorso', 0), ('right_sleeve_f', 90), ('right_btorso', 0), ('sl_left_cuff_skirt_b', 270), ('left_hood', 0), ('sl_right_cuff_skirt_f', 180), ('left_sleeve_f', 180), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_b', 270), ('right_sleeve_b', 90)), 2350706881143690474) | Fitness: 0.7059
+Elite 6: ((('left_btorso', 270), ('left_hood', 90), ('right_sleeve_f', 270), ('right_hood', 180), ('wb_front', 0), ('sl_right_cuff_skirt_b', 270), ('sl_right_cuff_skirt_f', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_b', 270), ('sl_left_cuff_skirt_f', 270), ('sl_right_cuff_f', 180), ('left_ftorso', 90), ('right_btorso', 90), ('wb_back', 90), ('sl_left_cuff_skirt_b', 270), ('left_sleeve_f', 270), ('sl_left_cuff_f', 180), ('right_ftorso', 180), ('right_sleeve_b', 0), ('left_sleeve_b', 270)), 2350706881143690474) | Fitness: 0.6974
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6397
+Offspring created with fitness: 0.6735
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7002
+Offspring created with fitness: 0.6305
+Offspring created with fitness: 0.6277
+Offspring created with fitness: 0.6262
+Offspring created with fitness: 0.6579
+Offspring created with fitness: 0.7003
+Offspring created with fitness: 0.5890
+Offspring created with fitness: 0.6930
+Offspring created with fitness: 0.6423
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.6494
+Mutant created with fitness: 0.7223
+Mutant created with fitness: 0.7125
+Mutant created with fitness: 0.7072
+Mutant created with fitness: 0.7133
+Mutant created with fitness: 0.7065
+Mutant created with fitness: 0.6567
+Mutant created with fitness: 0.6049
+Mutant created with fitness: 0.6974
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6554
+Random chromosome created with fitness: 0.6554
+Random chromosome generated with fitness: 0.6935
+Random chromosome created with fitness: 0.6935
+Random chromosome generated with fitness: 0.6288
+Random chromosome created with fitness: 0.6288
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0550; mutants: -0.0242
+------------------------------------------------------------
+Generation 1: best 0.7393 (Δ +0.0171)
+[Generation 1] Found 19 chromosomes with design_param as last mutation
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.2102872813227536
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.flare.v' changed: 1.03 -> 0.6639498523487739
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.armhole_shape.v' changed: ArmholeCurve -> ArmholeSquare
+  Chromosome 15 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.sleeve_angle.v' changed: 21 -> 30
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 79 -> 97
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.armhole_shape.v' changed: ArmholeCurve -> ArmholeAngle
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.end_width.v' changed: 1.0 -> 1.7389486393368556
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: 0.213 -> 0.45467155644662527
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> Bezier2NeckHalf
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 1.0297694796932688
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'sleeve.connect_ruffle.v' changed: 1.46 -> 1.995328356676205
+  Chromosome 26 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.flare.v' changed: 1.03 -> 0.9833433109670313
+[Generation 1] Total of 15 chromosomes with design parameter differences
+Generation 1 completed in 54.33s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)), 2350706881143690474) | Fitness: 0.7223
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)), -3353961977986854625) | Fitness: 0.7223
+Elite 4: ((('wb_front', 180), ('right_ftorso', 180), ('left_ftorso', 0), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_b', 180), ('sl_left_cuff_f', 0), ('sl_right_cuff_b', 180), ('sl_right_cuff_f', 90), ('right_hood', 90), ('left_btorso', 0), ('right_sleeve_f', 90), ('right_btorso', 0), ('sl_left_cuff_skirt_b', 270), ('left_hood', 0), ('sl_right_cuff_skirt_f', 180), ('left_sleeve_f', 180), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_b', 270), ('right_sleeve_b', 90)), 3782317879043580232) | Fitness: 0.7133
+Elite 5: ((('sl_right_cuff_f', 270), ('sl_left_cuff_f', 270), ('left_ftorso', 0), ('sl_right_cuff_skirt_f', 270), ('sl_left_cuff_skirt_b', 270), ('right_ftorso', 0), ('left_btorso', 270), ('left_sleeve_f', 270), ('sl_left_cuff_b', 270), ('sl_right_cuff_b', 180), ('left_sleeve_b', 270), ('right_sleeve_b', 180), ('right_hood', 0), ('wb_front', 0), ('sl_right_cuff_skirt_b', 180), ('sl_left_cuff_skirt_f', 270), ('wb_back', 180), ('right_sleeve_f', 270), ('left_hood', 0), ('right_btorso', 0)), -2180788638169333784) | Fitness: 0.7125
+Elite 6: ((('right_btorso', 270), ('left_btorso', 90), ('sl_left_cuff_skirt_b', 0), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_sleeve_b', 0), ('left_hood', 0), ('sl_right_cuff_skirt_b', 90), ('right_sleeve_f', 270), ('wb_front', 0), ('sl_right_cuff_f', 270), ('wb_back', 90), ('right_ftorso', 270), ('sl_right_cuff_b', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 0), ('sl_left_cuff_f', 180), ('sl_left_cuff_skirt_f', 90), ('sl_left_cuff_b', 90), ('left_sleeve_f', 90)), 2350706881143690474) | Fitness: 0.7105
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)), 2350706881143690474) | Fitness: 0.7223
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)), -3353961977986854625) | Fitness: 0.7223
+Elite 4: ((('wb_front', 180), ('right_ftorso', 180), ('left_ftorso', 0), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_b', 180), ('sl_left_cuff_f', 0), ('sl_right_cuff_b', 180), ('sl_right_cuff_f', 90), ('right_hood', 90), ('left_btorso', 0), ('right_sleeve_f', 90), ('right_btorso', 0), ('sl_left_cuff_skirt_b', 270), ('left_hood', 0), ('sl_right_cuff_skirt_f', 180), ('left_sleeve_f', 180), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_b', 270), ('right_sleeve_b', 90)), 3782317879043580232) | Fitness: 0.7133
+Elite 5: ((('sl_right_cuff_f', 270), ('sl_left_cuff_f', 270), ('left_ftorso', 0), ('sl_right_cuff_skirt_f', 270), ('sl_left_cuff_skirt_b', 270), ('right_ftorso', 0), ('left_btorso', 270), ('left_sleeve_f', 270), ('sl_left_cuff_b', 270), ('sl_right_cuff_b', 180), ('left_sleeve_b', 270), ('right_sleeve_b', 180), ('right_hood', 0), ('wb_front', 0), ('sl_right_cuff_skirt_b', 180), ('sl_left_cuff_skirt_f', 270), ('wb_back', 180), ('right_sleeve_f', 270), ('left_hood', 0), ('right_btorso', 0)), -2180788638169333784) | Fitness: 0.7125
+Elite 6: ((('right_btorso', 270), ('left_btorso', 90), ('sl_left_cuff_skirt_b', 0), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_sleeve_b', 0), ('left_hood', 0), ('sl_right_cuff_skirt_b', 90), ('right_sleeve_f', 270), ('wb_front', 0), ('sl_right_cuff_f', 270), ('wb_back', 90), ('right_ftorso', 270), ('sl_right_cuff_b', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 0), ('sl_left_cuff_f', 180), ('sl_left_cuff_skirt_f', 90), ('sl_left_cuff_b', 90), ('left_sleeve_f', 90)), 2350706881143690474) | Fitness: 0.7105
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6403
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6788
+Offspring created with fitness: 0.6781
+Offspring created with fitness: 0.6863
+Offspring created with fitness: 0.6735
+Offspring created with fitness: 0.6863
+Offspring created with fitness: 0.7101
+Offspring created with fitness: 0.6347
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6330
+Offspring created with fitness: 0.7101
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.6244
+Mutant created with fitness: 0.7223
+Mutant created with fitness: 0.7125
+Mutant created with fitness: 0.7223
+Mutant created with fitness: 0.6952
+Mutant created with fitness: 0.6128
+Mutant created with fitness: 0.6928
+Mutant created with fitness: 0.6868
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7045
+Random chromosome created with fitness: 0.7045
+Random chromosome generated with fitness: 0.6020
+Random chromosome created with fitness: 0.6020
+Random chromosome generated with fitness: 0.7143
+Random chromosome created with fitness: 0.7143
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0423; mutants: -0.0312
+------------------------------------------------------------
+Generation 2: best 0.7393 (Δ +0.0000)
+[Generation 2] Found 22 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 2 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+  Chromosome 4 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: 0.213 -> 0.45467155644662527
+  Chromosome 7 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 8 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 9 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.smoothing_coeff.v' changed: 0.25 -> 0.18597534137999105
+    Parameter 'collar.width.v' changed: 0.213 -> 0.45467155644662527
+  Chromosome 10 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.length.v' changed: 0.831 -> 0.6474790876344257
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.skirt_flare.v' changed: 1.56 -> 1.2762430810651888
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 16 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.skirt_flare.v' changed: 1.56 -> 1.2177355434948507
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 17 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtLevels
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: 0.213 -> 0.45467155644662527
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.armhole_shape.v' changed: ArmholeCurve -> ArmholeAngle
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: 0.213 -> 0.45467155644662527
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.length.v' changed: 0.831 -> 0.4299302878110902
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 93 -> 102
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 24 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.length.v' changed: 0.831 -> 0.6426255391150411
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 25 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+    Parameter 'shirt.flare.v' changed: 1.0 -> 0.9320072598445435
+  Chromosome 26 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'waistband.waist.v' changed: 1.22 -> 1.8605450455453436
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+[Generation 2] Total of 23 chromosomes with design parameter differences
+Generation 2 completed in 50.82s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)), 2350706881143690474) | Fitness: 0.7223
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)), -3353961977986854625) | Fitness: 0.7223
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)), 2350706881143690474) | Fitness: 0.7223
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('wb_front', 270), ('sl_right_cuff_skirt_b', 90), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('left_btorso', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('right_ftorso', 90), ('wb_back', 270), ('sl_right_cuff_skirt_f', 90), ('right_hood', 90), ('left_hood', 180), ('sl_right_cuff_b', 180)), -3353961977986854625) | Fitness: 0.7223
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6788
+Offspring created with fitness: 0.6599
+Offspring created with fitness: 0.6697
+Offspring created with fitness: 0.6697
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6327
+Offspring created with fitness: 0.7391
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7118
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6697
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.6963
+Mutant created with fitness: 0.6995
+Mutant created with fitness: 0.6963
+Mutant created with fitness: 0.6148
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6875
+Random chromosome created with fitness: 0.6875
+Random chromosome generated with fitness: 0.7160
+Random chromosome created with fitness: 0.7160
+Random chromosome generated with fitness: 0.6601
+Random chromosome created with fitness: 0.6601
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0403; mutants: -0.0278
+------------------------------------------------------------
+Generation 3: best 0.7393 (Δ +0.0000)
+[Generation 3] Found 24 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 1 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 2 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 5 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'left.sleeve.connecting_width.v' changed: 0.2 -> 0.9009270238840914
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.3182880775842488
+  Chromosome 13 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 14 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.213 -> 0.4182291326521519
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 16 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.sleeve_angle.v' changed: 21 -> 49
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: 0.213 -> 0.6744355972109166
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 21 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'meta.wb.v' changed: FittedWB -> StraightWB
+  Chromosome 22 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5590539469081801
+  Chromosome 23 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'sleeve.standing_shoulder_len.v' changed: 5.42 -> 4.879012378435533
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 24 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.8879521499740965
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 25 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'sleeve.standing_shoulder_len.v' changed: 5.42 -> 6.600946002479269
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 26 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.sleeve_angle.v' changed: 21 -> 46
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+[Generation 3] Total of 22 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250623_121603/plots/fitness_curves_20250623_121603.png
+Mean gains plot saved to nesting/run_logs/_20250623_121603/plots/mean_gains_20250623_121603.png
+Delta best plot saved to nesting/run_logs/_20250623_121603/plots/delta_best_20250623_121603.png
+Mutation gains plot saved to nesting/run_logs/_20250623_121603/plots/mutation_gains.png
+Swarm plot data: 120 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250623_121603/plots/fitness_swarm_20250623_121603.png
+Plots updated successfully.
+Generation 3 completed in 57.31s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+‼ offspring task failed: TopologyException: side location conflict at 77.005000285535715 371.97799911321999. This can occur if the input geometry is invalid.
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6963
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.5945
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7236
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.6420
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6564
+Random chromosome created with fitness: 0.6564
+Random chromosome generated with fitness: 0.6579
+Random chromosome created with fitness: 0.6579
+Random chromosome generated with fitness: 0.6621
+Random chromosome created with fitness: 0.6621
+Collected 11 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0039; mutants: -0.0287
+------------------------------------------------------------
+Generation 4: best 0.7393 (Δ +0.0000)
+[Generation 4] Found 23 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 1 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 2 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 5 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 6 (origin: offspring, last mutation: unknown): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 7 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 8 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.3653346034097593
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.6516190305761727
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.length.v' changed: 0.406 -> 0.7051773668890731
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 13 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 14 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.f_bezier_x.v' changed: 0.827 -> 0.896857003020473
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.sleeve_angle.v' changed: 21 -> 11
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 16 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 17 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.sleeve.standing_shoulder_len.v' changed: 5.42 -> 9.675788901109382
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.sleeve_angle.v' changed: 21 -> 49
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 19 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 93 -> 102
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.length.v' changed: 0.831 -> 0.5414980016949269
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.17671691943868878
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.collar.bc_angle.v' changed: 79 -> 99
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 25 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'sleeve.length.v' changed: 0.831 -> 0.7075934116308011
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+[Generation 4] Total of 26 chromosomes with design parameter differences
+Generation 4 completed in 54.83s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7393
+‼ offspring task failed: TopologyException: side location conflict at 82.620454297206422 342.998503634793. This can occur if the input geometry is invalid.
+Offspring created with fitness: 0.6503
+Offspring created with fitness: 0.6503
+Offspring created with fitness: 0.6590
+Offspring created with fitness: 0.6503
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6417
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6662
+Offspring created with fitness: 0.6778
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.6963
+Mutant created with fitness: 0.6849
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.6662
+Mutant created with fitness: 0.6963
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6429
+Random chromosome created with fitness: 0.6429
+Random chromosome generated with fitness: 0.6649
+Random chromosome created with fitness: 0.6649
+Random chromosome generated with fitness: 0.6700
+Random chromosome created with fitness: 0.6700
+Collected 11 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0527; mutants: -0.0237
+------------------------------------------------------------
+Generation 5: best 0.7393 (Δ +0.0000)
+[Generation 5] Found 24 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 1 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 2 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 5 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 7 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 8 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 93 -> 91
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.36381204226123853
+  Chromosome 10 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.flare.v' changed: 1.03 -> 0.9315594320539964
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.827 -> 0.7448249857015864
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.sleeve_angle.v' changed: 21 -> 28
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 14 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.length.v' changed: 0.406 -> 0.41187720211521894
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 79 -> 108
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 17 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.sleeve.connect_ruffle.v' changed: 1.46 -> 1.411904729645113
+  Chromosome 18 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.sleeve.standing_shoulder_len.v' changed: 5.42 -> 5.522081392334557
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.length.v' changed: 0.406 -> 0.3772615124144053
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.end_width.v' changed: 1.0 -> 1.6586284035868744
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 23 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.sleeve.connect_ruffle.v' changed: 1.46 -> 1.863951752593538
+  Chromosome 24 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 79 -> 107
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+[Generation 5] Total of 26 chromosomes with design parameter differences
+Generation 5 completed in 56.89s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6148
+Offspring created with fitness: 0.6780
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6780
+Offspring created with fitness: 0.6780
+Offspring created with fitness: 0.6963
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7217
+Mutant created with fitness: 0.7118
+Mutant created with fitness: 0.6662
+Mutant created with fitness: 0.6609
+Mutant created with fitness: 0.6168
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6814
+Random chromosome created with fitness: 0.6814
+Random chromosome generated with fitness: 0.7241
+Random chromosome created with fitness: 0.7241
+Random chromosome generated with fitness: 0.6603
+Random chromosome created with fitness: 0.6603
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0293; mutants: -0.0355
+------------------------------------------------------------
+Generation 6: best 0.7393 (Δ +0.0000)
+[Generation 6] Found 26 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 1 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 2 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 5 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 6 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 7 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 8 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.sleeve.smoothing_coeff.v' changed: 0.25 -> 0.29998005374964465
+  Chromosome 9 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.armhole_shape.v' changed: ArmholeCurve -> ArmholeAngle
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 10 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'pants.length.v' changed: 0.406 -> 0.7878051242894837
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.827 -> 0.3256284220328319
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtManyPanels
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 14 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 93 -> 94
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 15 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 19 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.length.v' changed: 0.831 -> 0.47969778883926084
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.8523856045231052
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 93 -> 86
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 23 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 26 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+[Generation 6] Total of 27 chromosomes with design parameter differences
+Generation 6 completed in 59.68s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6380
+Offspring created with fitness: 0.6877
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7118
+Offspring created with fitness: 0.6662
+Offspring created with fitness: 0.6963
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.6763
+Mutant created with fitness: 0.7118
+Mutant created with fitness: 0.6662
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6543
+Random chromosome created with fitness: 0.6543
+Random chromosome generated with fitness: 0.6834
+Random chromosome created with fitness: 0.6834
+Random chromosome generated with fitness: 0.6976
+Random chromosome created with fitness: 0.6976
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0247; mutants: -0.0182
+------------------------------------------------------------
+Generation 7: best 0.7393 (Δ +0.0000)
+[Generation 7] Found 25 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 1 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 2 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 5 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 6 (origin: offspring, last mutation: unknown): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 7 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'meta.upper.v' changed: FittedShirt -> None
+  Chromosome 8 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'meta.wb.v' changed: FittedWB -> None
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 10 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'shirt.flare.v' changed: 1.0 -> 1.3416655456127413
+  Chromosome 11 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.1333175567287421
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.sleeve_angle.v' changed: 21 -> 16
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 14 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.213 -> 0.16170227631811074
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 15 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 16 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 79 -> 80
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 17 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 18 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'pants.rise.v' changed: 0.974 -> 0.9149864914156082
+  Chromosome 19 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.10342967334250006
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 93 -> 96
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 23 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.8592019907154151
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 24 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.length.v' changed: 0.831 -> 0.5121661332025561
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 26 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+[Generation 7] Total of 27 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250623_121603/plots/fitness_curves_20250623_121603.png
+Mean gains plot saved to nesting/run_logs/_20250623_121603/plots/mean_gains_20250623_121603.png
+Delta best plot saved to nesting/run_logs/_20250623_121603/plots/delta_best_20250623_121603.png
+Mutation gains plot saved to nesting/run_logs/_20250623_121603/plots/mutation_gains.png
+Swarm plot data: 238 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250623_121603/plots/fitness_swarm_20250623_121603.png
+Plots updated successfully.
+Generation 7 completed in 55.20s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6503
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7217
+Offspring created with fitness: 0.7217
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6950
+Offspring created with fitness: 0.6963
+Offspring created with fitness: 0.6662
+Offspring created with fitness: 0.7060
+Offspring created with fitness: 0.6662
+Offspring created with fitness: 0.6963
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7217
+Mutant created with fitness: 0.7389
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.6963
+Mutant created with fitness: 0.6963
+Mutant created with fitness: 0.6893
+Mutant created with fitness: 0.7376
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7262
+Random chromosome created with fitness: 0.7262
+Random chromosome generated with fitness: 0.6963
+Random chromosome created with fitness: 0.6963
+Random chromosome generated with fitness: 0.6910
+Random chromosome created with fitness: 0.6910
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0362; mutants: -0.0173
+------------------------------------------------------------
+Generation 8: best 0.7393 (Δ +0.0000)
+[Generation 8] Found 26 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 1 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 2 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 5 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 6 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.sleeve.smoothing_coeff.v' changed: 0.25 -> 0.170053483409222
+  Chromosome 7 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 8 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'meta.wb.v' changed: FittedWB -> None
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> CircleArcNeckHalf
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 13 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 14 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.length.v' changed: 0.831 -> 0.7711191846324018
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 17 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 19 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.cuff.type.v' changed: CuffSkirt -> CuffBandSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'waistband.waist.v' changed: 1.22 -> 1.0244034035843599
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.length.v' changed: 0.406 -> 0.5889371154465195
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.sleeve_angle.v' changed: 21 -> 13
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 25 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.length.v' changed: 0.831 -> 0.8330559019554079
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 26 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'sleeve.length.v' changed: 0.831 -> 1.10177428230181
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+[Generation 8] Total of 27 chromosomes with design parameter differences
+Generation 8 completed in 59.90s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6503
+Offspring created with fitness: 0.6503
+Offspring created with fitness: 0.7393
+‼ offspring task failed: TopologyException: side location conflict at 83.307736207073106 351.01180004096165. This can occur if the input geometry is invalid.
+Offspring created with fitness: 0.6819
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6999
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7018
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.6780
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7217
+Mutant created with fitness: 0.6662
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6507
+Random chromosome created with fitness: 0.6507
+Random chromosome generated with fitness: 0.6635
+Random chromosome created with fitness: 0.6635
+Random chromosome generated with fitness: 0.5885
+Random chromosome created with fitness: 0.5885
+Collected 11 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0284; mutants: -0.0169
+------------------------------------------------------------
+Generation 9: best 0.7393 (Δ +0.0000)
+[Generation 9] Found 23 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 1 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 2 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 5 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 6 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'meta.upper.v' changed: FittedShirt -> None
+  Chromosome 7 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 8 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 9 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.connect_ruffle.v' changed: 1.46 -> 1.193761880327171
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.07776392899893561
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.46877375881434835
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 14 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.213 -> 0.49918523388816294
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 15 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.8570380916569007
+  Chromosome 17 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.sleeve.connect_ruffle.v' changed: 1.46 -> 1.28662414023476
+  Chromosome 18 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 19 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.length.v' changed: 0.406 -> 0.34200339952322467
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.sleeve.cuff.skirt_ruffle.v' changed: 1.0 -> 1.1901632867871526
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 1.4912470630451926
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.3898586423038723
+  Chromosome 24 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'pants.cuff.type.v' changed: CuffSkirt -> None
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 25 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'shirt.width.v' changed: 1.19 -> 1.0896457420339338
+[Generation 9] Total of 26 chromosomes with design parameter differences
+Generation 9 completed in 54.18s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6503
+Offspring created with fitness: 0.6503
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6780
+Offspring created with fitness: 0.7022
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.7393
+Offspring created with fitness: 0.6963
+Offspring created with fitness: 0.6780
+Offspring created with fitness: 0.6963
+Offspring created with fitness: 0.6662
+Offspring created with fitness: 0.6148
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.6780
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7393
+Mutant created with fitness: 0.7044
+Mutant created with fitness: 0.6292
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6880
+Random chromosome created with fitness: 0.6880
+Random chromosome generated with fitness: 0.6779
+Random chromosome created with fitness: 0.6779
+Random chromosome generated with fitness: 0.6821
+Random chromosome created with fitness: 0.6821
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0518; mutants: -0.0229
+------------------------------------------------------------
+Generation 10: best 0.7393 (Δ +0.0000)
+[Generation 10] Found 25 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 1 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 2 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 4 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 5 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 6 (origin: offspring, last mutation: unknown): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 7 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.827 -> 0.4949127775344645
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 9 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 0.9373442561318208
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 10 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'waistband.waist.v' changed: 1.22 -> 1.624837415094811
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.5281262252048463
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> GodetSkirt
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 14 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 0.9626256642256505
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 15 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 16 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 79 -> 82
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 18 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'pants.width.v' changed: 1.13 -> 1.1466639706290715
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 19 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.sleeve.cuff.type.v' changed: CuffBandSkirt -> CuffSkirt
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 1.4345888960212023
+    Parameter 'left.sleeve.cuff.top_ruffle.v' changed: 2.52 -> 1.461351326863844
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 93 -> 110
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+    Parameter 'left.sleeve.cuff.skirt_ruffle.v' changed: 1.0 -> 1.250865508296608
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 24 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.827 -> 0.6171024189574601
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 25 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.7565948766674769
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+  Chromosome 26 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'sleeve.sleeve_angle.v' changed: 21 -> 27
+    Parameter 'collar.fc_depth.v' changed: 0.475 -> 0.31214344635660257
+[Generation 10] Total of 27 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 11 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250623_121603/plots/fitness_curves_20250623_121603.png
+Mean gains plot saved to nesting/run_logs/_20250623_121603/plots/mean_gains_20250623_121603.png
+Delta best plot saved to nesting/run_logs/_20250623_121603/plots/delta_best_20250623_121603.png
+Mutation gains plot saved to nesting/run_logs/_20250623_121603/plots/mutation_gains.png
+Swarm plot data: 327 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250623_121603/plots/fitness_swarm_20250623_121603.png
+Plots updated successfully.
+Generation 10 completed in 57.82s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7393
+Elite 1: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 2: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 3: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -7670070905777890893) | Fitness: 0.7393
+Elite 4: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 5: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), -5097780271721702164) | Fitness: 0.7393
+Elite 6: ((('right_btorso', 0), ('right_sleeve_f', 270), ('left_sleeve_b', 180), ('left_sleeve_f', 90), ('left_ftorso', 0), ('right_sleeve_b', 180), ('left_btorso', 90), ('right_ftorso', 90), ('right_hood', 90), ('left_hood', 180), ('wb_front', 270), ('wb_back', 270), ('sl_right_cuff_skirt_b', 90), ('sl_left_cuff_skirt_b', 90), ('sl_left_cuff_b', 0), ('sl_right_cuff_f', 90), ('sl_left_cuff_skirt_f', 180), ('sl_left_cuff_f', 270), ('sl_right_cuff_skirt_f', 90), ('sl_right_cuff_b', 180)), 1533250504227621931) | Fitness: 0.7393
+------------------------------------------------------------
+Evolution completed.
+Total time: 567.48 seconds
+Updating plots…
+Plotting 11 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250623_121603/plots/fitness_curves_20250623_121603.png
+Mean gains plot saved to nesting/run_logs/_20250623_121603/plots/mean_gains_20250623_121603.png
+Delta best plot saved to nesting/run_logs/_20250623_121603/plots/delta_best_20250623_121603.png
+Mutation gains plot saved to nesting/run_logs/_20250623_121603/plots/mutation_gains.png
+Swarm plot data: 327 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250623_121603/plots/fitness_swarm_20250623_121603.png
+Plots updated successfully.
+------------------------------------------------------------
+Generating report of best result...
+Initial fitness: 0.722265
+Final fitness:   0.739325
+Improvement:     0.017060 (2.36%)
+Found 1 changed parameters in the best result:
+  collar.fc_depth: 0.475 -> 0.31214344635660257
+Full report saved to nesting/run_logs/_20250623_121603/best_result_changes.csv

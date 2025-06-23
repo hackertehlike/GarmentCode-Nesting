@@ -1,0 +1,2373 @@
+------------------------------------------------------------
+Evolution initialized with 30 chromosomes, 6 elites, 12 offspring, 9 mutants, 3 randoms.
+Design parameters loaded: 619 parameters found
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x13afe7310>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x13afe7310>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x103e6dbd0>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'DEFAULT_PATTERN_PATH': <class 'str'>, 'DEFAULT_DESIGN_PARAM_PATH': <class 'str'>, 'DEFAULT_BODY_PARAM_PATH': <class 'str'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'PRESERVE_HOLES': <class 'bool'>, 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1'], 'GRAVITATE_ONCE': <class 'bool'>, 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DEFAULT_PATTERN_PATH': 'nesting-assets/default_pattern.json', 'DEFAULT_DESIGN_PARAM_PATH': 'nesting-assets/default_design_params.yaml', 'DEFAULT_BODY_PARAM_PATH': 'nesting-assets/default_body_measurements.yaml', 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1'], 'SortKey': typing.Literal['bbox_area', 'hull_area', 'aspect_ratio'], 'SELECTED_DECODER': 'NFP', 'PRESERVE_HOLES': True, 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1', 'OX_K': 1, 'NUM_SPLITS': 30, 'GRAVITATE_ONCE': True, 'GRAVITATE_STEP': 2, 'SORT_BY': 'hull_area', 'POPULATION_SIZE': 30, 'NUM_GENERATIONS': 10, 'MUTATION_RATE': 0.9, 'POPULATION_WEIGHTS': {'elites': 0.2, 'offspring': 0.4, 'mutants': 0.3, 'randoms': 0.1}, 'EXCLUDED_PARAM_PATHS': ['*component*', '*range*'], 'MUTATION_WEIGHTS': {'rotate': 0, 'swap': 0, 'inversion': 0, 'insertion': 0, 'scramble': 0, 'split': 0, 'design_param': 1}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 4, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs/', 'LOG_TIME': True, 'LOG_DESIGN_PARAM_PATHS': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 0.1, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 140, 'CONTAINER_HEIGHT_CM': 400, 'SEAM_ALLOWANCE_CM': 0, '__dict__': <function __dict__ at 0x13afd3c10>}
+Generating initial population...
+Random chromosome generated with fitness: 0.5882
+Random chromosome generated with fitness: 0.7299
+Random chromosome generated with fitness: 0.6574
+Random chromosome generated with fitness: 0.6718
+Random chromosome generated with fitness: 0.6279
+Random chromosome generated with fitness: 0.6112
+Random chromosome generated with fitness: 0.5576
+Random chromosome generated with fitness: 0.6214
+Random chromosome generated with fitness: 0.6437
+Random chromosome generated with fitness: 0.5798
+Random chromosome generated with fitness: 0.5449
+Random chromosome generated with fitness: 0.7392
+Random chromosome generated with fitness: 0.7114
+Random chromosome generated with fitness: 0.6754
+Random chromosome generated with fitness: 0.6096
+Random chromosome generated with fitness: 0.7130
+Random chromosome generated with fitness: 0.5730
+Random chromosome generated with fitness: 0.5916
+Random chromosome generated with fitness: 0.6850
+Random chromosome generated with fitness: 0.6185
+Random chromosome generated with fitness: 0.7043
+Random chromosome generated with fitness: 0.7699
+Random chromosome generated with fitness: 0.6149
+Random chromosome generated with fitness: 0.6266
+Random chromosome generated with fitness: 0.5962
+Random chromosome generated with fitness: 0.5836
+Random chromosome generated with fitness: 0.7251
+Random chromosome generated with fitness: 0.5914
+Random chromosome generated with fitness: 0.6551
+Random chromosome generated with fitness: 0.6188
+------------------------------------------------------------
+Initial population of 30 layouts generated.
+Layout 0: [('left_btorso', 180), ('wb_back', 180), ('left_ftorso', 90), ('wb_front', 270), ('right_btorso', 180), ('right_ftorso', 270)] | Fitness: 0.6279
+Layout 1: [('left_ftorso', 180), ('left_btorso', 90), ('wb_back', 0), ('right_ftorso', 270), ('right_btorso', 270), ('wb_front', 270)] | Fitness: 0.6574
+Layout 2: [('left_btorso', 180), ('right_btorso', 0), ('left_ftorso', 90), ('wb_back', 270), ('right_ftorso', 90), ('wb_front', 90)] | Fitness: 0.6718
+Layout 3: [('wb_front', 270), ('wb_back', 180), ('right_btorso', 0), ('left_ftorso', 270), ('right_ftorso', 180), ('left_btorso', 90)] | Fitness: 0.5449
+Layout 4: [('left_btorso', 0), ('wb_back', 90), ('left_ftorso', 270), ('wb_front', 180), ('right_ftorso', 180), ('right_btorso', 180)] | Fitness: 0.5882
+Layout 5: [('left_ftorso', 180), ('wb_back', 90), ('left_btorso', 180), ('right_btorso', 90), ('wb_front', 90), ('right_ftorso', 0)] | Fitness: 0.5576
+Layout 6: [('wb_back', 90), ('right_btorso', 90), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 90), ('right_ftorso', 90)] | Fitness: 0.6112
+Layout 7: [('wb_front', 90), ('left_btorso', 180), ('left_ftorso', 270), ('wb_back', 90), ('right_btorso', 90), ('right_ftorso', 0)] | Fitness: 0.7392
+Layout 8: [('wb_front', 180), ('wb_back', 180), ('right_ftorso', 270), ('left_btorso', 0), ('left_ftorso', 180), ('right_btorso', 270)] | Fitness: 0.6214
+Layout 9: [('left_ftorso', 270), ('right_ftorso', 180), ('right_btorso', 0), ('left_btorso', 270), ('wb_front', 0), ('wb_back', 90)] | Fitness: 0.5798
+Layout 10: [('wb_front', 90), ('right_ftorso', 180), ('left_btorso', 90), ('left_ftorso', 270), ('right_btorso', 0), ('wb_back', 0)] | Fitness: 0.6437
+Layout 11: [('wb_front', 180), ('right_ftorso', 180), ('wb_back', 90), ('left_btorso', 270), ('right_btorso', 0), ('left_ftorso', 180)] | Fitness: 0.7299
+Layout 12: [('right_ftorso', 90), ('right_btorso', 180), ('left_ftorso', 180), ('left_btorso', 90), ('wb_front', 270), ('wb_back', 270)] | Fitness: 0.7114
+Layout 13: [('left_btorso', 0), ('wb_front', 0), ('wb_back', 0), ('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 180)] | Fitness: 0.5730
+Layout 14: [('right_ftorso', 90), ('wb_back', 90), ('left_ftorso', 180), ('right_btorso', 180), ('wb_front', 180), ('left_btorso', 180)] | Fitness: 0.5916
+Layout 15: [('wb_front', 270), ('wb_back', 270), ('right_ftorso', 0), ('right_btorso', 180), ('left_ftorso', 270), ('left_btorso', 90)] | Fitness: 0.6096
+Layout 16: [('wb_front', 270), ('left_btorso', 90), ('left_ftorso', 0), ('wb_back', 90), ('right_btorso', 180), ('right_ftorso', 0)] | Fitness: 0.6850
+Layout 17: [('right_btorso', 0), ('left_ftorso', 270), ('right_ftorso', 180), ('left_btorso', 270), ('wb_back', 180), ('wb_front', 270)] | Fitness: 0.6754
+Layout 18: [('left_btorso', 0), ('wb_front', 180), ('right_ftorso', 90), ('wb_back', 180), ('right_btorso', 270), ('left_ftorso', 270)] | Fitness: 0.6266
+Layout 19: [('wb_front', 180), ('right_ftorso', 180), ('right_btorso', 270), ('wb_back', 180), ('left_btorso', 180), ('left_ftorso', 0)] | Fitness: 0.6185
+Layout 20: [('wb_front', 90), ('left_btorso', 0), ('left_ftorso', 90), ('wb_back', 90), ('right_btorso', 90), ('right_ftorso', 90)] | Fitness: 0.7130
+Layout 21: [('wb_back', 180), ('right_ftorso', 180), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_btorso', 0)] | Fitness: 0.6149
+Layout 22: [('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)] | Fitness: 0.7699
+Layout 23: [('wb_front', 270), ('right_btorso', 0), ('wb_back', 180), ('left_btorso', 180), ('right_ftorso', 0), ('left_ftorso', 180)] | Fitness: 0.7043
+Layout 24: [('wb_back', 0), ('left_btorso', 90), ('right_btorso', 270), ('wb_front', 0), ('left_ftorso', 90), ('right_ftorso', 180)] | Fitness: 0.5962
+Layout 25: [('wb_back', 180), ('wb_front', 0), ('left_btorso', 270), ('left_ftorso', 0), ('right_ftorso', 0), ('right_btorso', 90)] | Fitness: 0.5836
+Layout 26: [('wb_back', 90), ('wb_front', 270), ('left_btorso', 180), ('right_btorso', 180), ('right_ftorso', 270), ('left_ftorso', 0)] | Fitness: 0.7251
+Layout 27: [('wb_back', 180), ('left_ftorso', 180), ('right_btorso', 270), ('right_ftorso', 90), ('wb_front', 0), ('left_btorso', 0)] | Fitness: 0.6551
+Layout 28: [('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('left_btorso', 270), ('right_ftorso', 0), ('wb_front', 270)] | Fitness: 0.6188
+Layout 29: [('wb_front', 180), ('left_btorso', 270), ('left_ftorso', 0), ('wb_back', 0), ('right_ftorso', 0), ('right_btorso', 90)] | Fitness: 0.5914
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7699
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 2: ((('wb_front', 90), ('left_btorso', 180), ('left_ftorso', 270), ('wb_back', 90), ('right_btorso', 90), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7392
+Elite 3: ((('wb_front', 180), ('right_ftorso', 180), ('wb_back', 90), ('left_btorso', 270), ('right_btorso', 0), ('left_ftorso', 180)), 7440659347969363816) | Fitness: 0.7299
+Elite 4: ((('wb_back', 90), ('wb_front', 270), ('left_btorso', 180), ('right_btorso', 180), ('right_ftorso', 270), ('left_ftorso', 0)), 7440659347969363816) | Fitness: 0.7251
+Elite 5: ((('wb_front', 90), ('left_btorso', 0), ('left_ftorso', 90), ('wb_back', 90), ('right_btorso', 90), ('right_ftorso', 90)), 7440659347969363816) | Fitness: 0.7130
+Elite 6: ((('right_ftorso', 90), ('right_btorso', 180), ('left_ftorso', 180), ('left_btorso', 90), ('wb_front', 270), ('wb_back', 270)), 7440659347969363816) | Fitness: 0.7114
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.6855
+‼ offspring task failed: TopologyException: side location conflict at 8.9321579486918381 365.42582906613933. This can occur if the input geometry is invalid.
+Offspring created with fitness: 0.7101
+Offspring created with fitness: 0.7508
+Offspring created with fitness: 0.7133
+Offspring created with fitness: 0.5376
+Offspring created with fitness: 0.7324
+Offspring created with fitness: 0.6467
+Offspring created with fitness: 0.5967
+Offspring created with fitness: 0.6214
+Offspring created with fitness: 0.6917
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7114
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7251
+Mutant created with fitness: 0.7034
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7251
+Mutant created with fitness: 0.7452
+Mutant created with fitness: 0.7013
+Mutant created with fitness: 0.6886
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6501
+Random chromosome created with fitness: 0.6501
+Random chromosome generated with fitness: 0.7223
+Random chromosome created with fitness: 0.7223
+Random chromosome generated with fitness: 0.6232
+Random chromosome created with fitness: 0.6232
+Collected 11 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0803; mutants: -0.0110
+------------------------------------------------------------
+Generation 1: best 0.7699 (Δ +0.0000)
+[Generation 1] Found 18 chromosomes with design_param as last mutation
+  Chromosome 10 (origin: offspring, last mutation: design_param): 8 parameter differences
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'left.collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.v' changed: CircleNeckHalf -> TrapezoidNeckHalf
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.4 -> 1.1570331002109953
+  Chromosome 17 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.3048000256095843
+  Chromosome 22 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.43769900817455304
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.3482462898812387
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.b_bezier_x.v' changed: 0.15 -> 0.21886155616802083
+[Generation 1] Total of 7 chromosomes with design parameter differences
+Generation 1 completed in 3.55s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7699
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 4: ((('wb_front', 90), ('wb_back', 90), ('left_btorso', 0), ('left_ftorso', 90), ('right_btorso', 90), ('right_ftorso', 90)), 7440659347969363816) | Fitness: 0.7508
+Elite 5: ((('wb_front', 90), ('left_btorso', 0), ('left_ftorso', 90), ('wb_back', 90), ('right_btorso', 90), ('right_ftorso', 90)), -3943400072202617770) | Fitness: 0.7452
+Elite 6: ((('wb_front', 90), ('left_btorso', 180), ('left_ftorso', 270), ('wb_back', 90), ('right_btorso', 90), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7392
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7699
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 4: ((('wb_front', 90), ('wb_back', 90), ('left_btorso', 0), ('left_ftorso', 90), ('right_btorso', 90), ('right_ftorso', 90)), 7440659347969363816) | Fitness: 0.7508
+Elite 5: ((('wb_front', 90), ('left_btorso', 0), ('left_ftorso', 90), ('wb_back', 90), ('right_btorso', 90), ('right_ftorso', 90)), -3943400072202617770) | Fitness: 0.7452
+Elite 6: ((('wb_front', 90), ('left_btorso', 180), ('left_ftorso', 270), ('wb_back', 90), ('right_btorso', 90), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7392
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6989
+Offspring created with fitness: 0.6942
+Offspring created with fitness: 0.7508
+Offspring created with fitness: 0.5967
+Offspring created with fitness: 0.7132
+Offspring created with fitness: 0.7357
+Offspring created with fitness: 0.5731
+Offspring created with fitness: 0.5966
+Offspring created with fitness: 0.6275
+Offspring created with fitness: 0.7204
+Offspring created with fitness: 0.6552
+Offspring created with fitness: 0.7045
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7508
+Mutant created with fitness: 0.7508
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7424
+Mutant created with fitness: 0.7452
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7033
+Mutant created with fitness: 0.7392
+Mutant created with fitness: 0.7699
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6159
+Random chromosome created with fitness: 0.6159
+Random chromosome generated with fitness: 0.5817
+Random chromosome created with fitness: 0.5817
+Random chromosome generated with fitness: 0.5825
+Random chromosome created with fitness: 0.5825
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0908; mutants: -0.0105
+------------------------------------------------------------
+Generation 2: best 0.7699 (Δ +0.0000)
+[Generation 2] Found 25 chromosomes with design_param as last mutation
+  Chromosome 4 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.43769900817455304
+  Chromosome 6 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'shirt.strapless.v' changed: False -> True
+    Parameter 'shirt.strapless.range.1' changed: False -> None
+  Chromosome 7 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 95 -> 87
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.43769900817455304
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.2748625502383202
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'shirt.length.v' changed: 1.2 -> 3.1160251309005265
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.43769900817455304
+  Chromosome 18 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.v' changed: FittedShirt -> None
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 93
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.43769900817455304
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 95 -> 74
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.6584302727651736
+  Chromosome 26 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+[Generation 2] Total of 14 chromosomes with design parameter differences
+Generation 2 completed in 3.57s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7699
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 4244123833582875364) | Fitness: 0.7699
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 6236033254050282844) | Fitness: 0.7699
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7699
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 4244123833582875364) | Fitness: 0.7699
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 6236033254050282844) | Fitness: 0.7699
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.7133
+Offspring created with fitness: 0.6760
+Offspring created with fitness: 0.6942
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.6275
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.6102
+Offspring created with fitness: 0.6760
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.6244
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7033
+Mutant created with fitness: 0.7424
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.6068
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.6068
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6293
+Random chromosome created with fitness: 0.6293
+Random chromosome generated with fitness: 0.5846
+Random chromosome created with fitness: 0.5846
+Random chromosome generated with fitness: 0.5967
+Random chromosome created with fitness: 0.5967
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0801; mutants: -0.0656
+------------------------------------------------------------
+Generation 3: best 0.7699 (Δ +0.0000)
+[Generation 3] Found 24 chromosomes with design_param as last mutation
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+  Chromosome 5 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+  Chromosome 9 (origin: offspring, last mutation: design_param): 8 parameter differences
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'left.collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.v' changed: CircleNeckHalf -> CircleArcNeckHalf
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.08811093026476219
+  Chromosome 11 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.b_flip_curve.range.1' changed: False -> None
+    Parameter 'collar.b_flip_curve.v' changed: False -> True
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 101
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.7079422359166705
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+  Chromosome 14 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+  Chromosome 15 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 87
+  Chromosome 16 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.b_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.b_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.b_collar.v' changed: CircleNeckHalf -> SquareNeckHalf
+    Parameter 'collar.b_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.b_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'collar.b_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+    Parameter 'collar.b_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 17 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'sleeve.sleeveless.v' changed: True -> False
+    Parameter 'sleeve.sleeveless.range.0' changed: True -> False
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 73
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.b_bezier_x.v' changed: 0.15 -> 0.3490660914142022
+  Chromosome 21 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'left.collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.v' changed: CircleNeckHalf -> CircleArcNeckHalf
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.width.v' changed: 1.05 -> 1.1874819148317504
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+  Chromosome 26 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 1.4039916790717255
+[Generation 3] Total of 18 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_194914/plots/fitness_curves_20250622_194914.png
+Mean gains plot saved to nesting/run_logs/_20250622_194914/plots/mean_gains_20250622_194914.png
+Delta best plot saved to nesting/run_logs/_20250622_194914/plots/delta_best_20250622_194914.png
+Mutation gains plot saved to nesting/run_logs/_20250622_194914/plots/mutation_gains.png
+Swarm plot data: 119 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_194914/plots/fitness_swarm_20250622_194914.png
+Plots updated successfully.
+Generation 3 completed in 5.42s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7699
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 4244123833582875364) | Fitness: 0.7699
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 6236033254050282844) | Fitness: 0.7699
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7699
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 4244123833582875364) | Fitness: 0.7699
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 6236033254050282844) | Fitness: 0.7699
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7023
+Offspring created with fitness: 0.6275
+Offspring created with fitness: 0.6373
+Offspring created with fitness: 0.6939
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.6372
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.6942
+Offspring created with fitness: 0.6939
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.6942
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7033
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7451
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.6068
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7449
+Mutant created with fitness: 0.6068
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6143
+Random chromosome created with fitness: 0.6143
+Random chromosome generated with fitness: 0.5889
+Random chromosome created with fitness: 0.5889
+Random chromosome generated with fitness: 0.6990
+Random chromosome created with fitness: 0.6990
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0783; mutants: -0.0520
+------------------------------------------------------------
+Generation 4: best 0.7790 (Δ +0.0091)
+[Generation 4] Found 26 chromosomes with design_param as last mutation
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+  Chromosome 5 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+  Chromosome 6 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: 0.2 -> 0.7725152699127271
+  Chromosome 8 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.shirt.strapless.v' changed: False -> True
+    Parameter 'left.shirt.strapless.range.1' changed: False -> None
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'shirt.flare.v' changed: 1.0 -> 1.108603317170093
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 91
+  Chromosome 12 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 13 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+    Parameter 'collar.bc_angle.v' changed: 95 -> 101
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+  Chromosome 15 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 97
+  Chromosome 16 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> AsymmSkirtCircle
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+  Chromosome 17 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.34504391410879964
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+  Chromosome 19 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3060068699604457
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.4997274621480455
+  Chromosome 20 (origin: mutant, last mutation: design_param): 8 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.5686730965403959
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 95 -> 70
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 94
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+[Generation 4] Total of 18 chromosomes with design parameter differences
+Generation 4 completed in 3.77s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7790
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 4244123833582875364) | Fitness: 0.7699
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7790
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 4244123833582875364) | Fitness: 0.7699
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.6760
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.6942
+Offspring created with fitness: 0.6760
+Offspring created with fitness: 0.7165
+Offspring created with fitness: 0.7132
+Offspring created with fitness: 0.6275
+Offspring created with fitness: 0.6175
+Offspring created with fitness: 0.7196
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.6514
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7033
+Mutant created with fitness: 0.7034
+Mutant created with fitness: 0.7790
+Mutant created with fitness: 0.7034
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7196
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7033
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7178
+Random chromosome created with fitness: 0.7178
+Random chromosome generated with fitness: 0.6291
+Random chromosome created with fitness: 0.6291
+Random chromosome generated with fitness: 0.5242
+Random chromosome created with fitness: 0.5242
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0830; mutants: -0.0362
+------------------------------------------------------------
+Generation 5: best 0.7790 (Δ +0.0000)
+[Generation 5] Found 23 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 4 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+  Chromosome 8 (origin: offspring, last mutation: unknown): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.3809779699659928
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 91
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.521523682968267
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 95 -> 85
+  Chromosome 15 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'shirt.flare.v' changed: 1.0 -> 1.29483708498517
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 17 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 95 -> 72
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'shirt.width.v' changed: 1.05 -> 1.1459590203822065
+  Chromosome 20 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'shirt.flare.v' changed: 1.0 -> 1.4482890805363455
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 86
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.05246274915168913
+  Chromosome 24 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.bc_angle.v' changed: 95 -> 108
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 26 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 95 -> 99
+[Generation 5] Total of 17 chromosomes with design parameter differences
+Generation 5 completed in 3.32s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7790
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 121144643037993441) | Fitness: 0.7790
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7790
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 121144643037993441) | Fitness: 0.7790
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.6760
+Offspring created with fitness: 0.7134
+Offspring created with fitness: 0.7196
+Offspring created with fitness: 0.7196
+Offspring created with fitness: 0.7196
+Offspring created with fitness: 0.7196
+Offspring created with fitness: 0.6514
+Offspring created with fitness: 0.6325
+Offspring created with fitness: 0.6959
+Offspring created with fitness: 0.6939
+Offspring created with fitness: 0.7790
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.6514
+Mutant created with fitness: 0.7196
+Mutant created with fitness: 0.7034
+Mutant created with fitness: 0.7196
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.6068
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7196
+Mutant created with fitness: 0.6514
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6572
+Random chromosome created with fitness: 0.6572
+Random chromosome generated with fitness: 0.7345
+Random chromosome created with fitness: 0.7345
+Random chromosome generated with fitness: 0.6654
+Random chromosome created with fitness: 0.6654
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0739; mutants: -0.0730
+------------------------------------------------------------
+Generation 6: best 0.7848 (Δ +0.0058)
+[Generation 6] Found 23 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 1 (origin: offspring, last mutation: unknown): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 2 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 8 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+  Chromosome 9 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.786577567690167
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 10 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'shirt.width.v' changed: 1.05 -> 1.2509306461381675
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 11 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'shirt.flare.v' changed: 1.0 -> 0.9121433135018149
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 12 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'shirt.width.v' changed: 1.05 -> 1.1103431212655808
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 13 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.shirt.width.v' changed: 1.05 -> 1.2182860048974211
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 14 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'waistband.waist.v' changed: 1.0 -> 1.2772325705885352
+  Chromosome 15 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: 0.2 -> 0.27709426863158215
+  Chromosome 17 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 90
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 18 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 19 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 21 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.9363510236283052
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.width.v' changed: 1.05 -> 1.2052356813124956
+  Chromosome 24 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 25 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'shirt.width.v' changed: 1.05 -> 1.1216965040916373
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 26 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.shirt.width.v' changed: 1.05 -> 1.1568195668287569
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+[Generation 6] Total of 20 chromosomes with design parameter differences
+Generation 6 completed in 3.46s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7848
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 121144643037993441) | Fitness: 0.7790
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -6696884420712152802) | Fitness: 0.7790
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7848
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 121144643037993441) | Fitness: 0.7790
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -6696884420712152802) | Fitness: 0.7790
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('wb_back', 0), ('wb_front', 180), ('right_ftorso', 0)), 7440659347969363816) | Fitness: 0.7699
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.7196
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.7765
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.6309
+Offspring created with fitness: 0.7196
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.6514
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7196
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7790
+Mutant created with fitness: 0.6514
+Mutant created with fitness: 0.7790
+Mutant created with fitness: 0.7699
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7790
+Mutant created with fitness: 0.7848
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7538
+Random chromosome created with fitness: 0.7538
+Random chromosome generated with fitness: 0.6372
+Random chromosome created with fitness: 0.6372
+Random chromosome generated with fitness: 0.5274
+Random chromosome created with fitness: 0.5274
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0345; mutants: -0.0208
+------------------------------------------------------------
+Generation 7: best 0.7848 (Δ +0.0000)
+[Generation 7] Found 25 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 1 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 2 (origin: offspring, last mutation: unknown): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 3 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 4 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 90
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 6 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 7 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.b_flip_curve.range.1' changed: False -> None
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_flip_curve.v' changed: False -> True
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 8 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.5195041676455093
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 9 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.bc_angle.v' changed: 95 -> 80
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 10 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.fc_depth.v' changed: 0.4 -> 0.7002818498355403
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 11 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.944285824538863
+  Chromosome 12 (origin: offspring, last mutation: design_param): 8 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 13 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 90
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.8459070349428701
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 14 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.fc_angle.v' changed: 95 -> 110
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 15 (origin: offspring, last mutation: design_param): 17 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'left.collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 16 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 90
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 17 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 0.7018676268960676
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 18 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.bc_angle.v' changed: 95 -> 97
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 20 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'left.collar.b_flip_curve.range.1' changed: False -> None
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.b_flip_curve.v' changed: False -> True
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 21 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 90
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.shirt.flare.v' changed: 1.0 -> 1.3026266550555365
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 22 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 90
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'flare-skirt.cut.width.v' changed: 0.1 -> 0.16408457615311323
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.9114397938796781
+  Chromosome 24 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 25 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 90
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> AsymmSkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 26 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+[Generation 7] Total of 25 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_194914/plots/fitness_curves_20250622_194914.png
+Mean gains plot saved to nesting/run_logs/_20250622_194914/plots/mean_gains_20250622_194914.png
+Delta best plot saved to nesting/run_logs/_20250622_194914/plots/delta_best_20250622_194914.png
+Mutation gains plot saved to nesting/run_logs/_20250622_194914/plots/mutation_gains.png
+Swarm plot data: 239 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_194914/plots/fitness_swarm_20250622_194914.png
+Plots updated successfully.
+Generation 7 completed in 4.16s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7848
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -3919856645181057992) | Fitness: 0.7848
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 121144643037993441) | Fitness: 0.7790
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7848
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -3919856645181057992) | Fitness: 0.7848
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -2464104792816331924) | Fitness: 0.7790
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 121144643037993441) | Fitness: 0.7790
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.6412
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7437
+Offspring created with fitness: 0.6118
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.7196
+Offspring created with fitness: 0.7790
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.6804
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: list.remove(x): x not in list
+‼ mutant task failed: list.remove(x): x not in list
+Mutant created with fitness: 0.6989
+Mutant created with fitness: 0.7790
+Mutant created with fitness: 0.7790
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7790
+Mutant created with fitness: 0.6514
+Mutant created with fitness: 0.7848
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6355
+Random chromosome created with fitness: 0.6355
+Random chromosome generated with fitness: 0.7098
+Random chromosome created with fitness: 0.7098
+Random chromosome generated with fitness: 0.6949
+Random chromosome created with fitness: 0.6949
+Collected 12 offspring, 7 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0444; mutants: -0.0297
+------------------------------------------------------------
+Generation 8: best 0.7848 (Δ +0.0000)
+[Generation 8] Found 23 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 1 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 2 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 3 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 4 (origin: offspring, last mutation: unknown): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 5 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 6 (origin: offspring, last mutation: unknown): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 7 (origin: offspring, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 8 (origin: offspring, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'shirt.strapless.v' changed: False -> True
+    Parameter 'shirt.strapless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 9 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.bc_angle.v' changed: 95 -> 92
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 10 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 11 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 12 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 95 -> 93
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 13 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 14 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 15 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.3631855463948552
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 16 (origin: offspring, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'sleeve.sleeveless.v' changed: True -> False
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 17 (origin: offspring, last mutation: design_param): 14 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'sleeve.sleeveless.v' changed: True -> False
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 18 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'shirt.strapless.v' changed: False -> True
+    Parameter 'shirt.strapless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 19 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 20 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 21 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 22 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.3003132237545684
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 23 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.3008914947826511
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.shirt.width.v' changed: 1.05 -> 1.046682092314899
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 24 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtManyPanels
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+[Generation 8] Total of 25 chromosomes with design parameter differences
+Generation 8 completed in 5.95s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7848
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -3919856645181057992) | Fitness: 0.7848
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -8257266474783517855) | Fitness: 0.7848
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 6898447148757785039) | Fitness: 0.7848
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 5136953241371580270) | Fitness: 0.7848
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7848
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -3919856645181057992) | Fitness: 0.7848
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -8257266474783517855) | Fitness: 0.7848
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 6898447148757785039) | Fitness: 0.7848
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 5136953241371580270) | Fitness: 0.7848
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7398
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.6804
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.5878
+Offspring created with fitness: 0.5878
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7398
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.5878
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7848
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6099
+Random chromosome created with fitness: 0.6099
+Random chromosome generated with fitness: 0.5242
+Random chromosome created with fitness: 0.5242
+Random chromosome generated with fitness: 0.6812
+Random chromosome created with fitness: 0.6812
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0453; mutants: -0.0269
+------------------------------------------------------------
+Generation 9: best 0.7848 (Δ +0.0000)
+[Generation 9] Found 24 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 1 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 2 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 3 (origin: offspring, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 4 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 5 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.3631855463948552
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 6 (origin: offspring, last mutation: unknown): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 7 (origin: offspring, last mutation: unknown): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 8 (origin: offspring, last mutation: unknown): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 9 (origin: offspring, last mutation: design_param): 14 parameter differences
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+  Chromosome 10 (origin: offspring, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 11 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 12 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 13 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 14 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 15 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 16 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 17 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 18 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.bc_angle.v' changed: 95 -> 108
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 19 (origin: mutant, last mutation: design_param): 14 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'left.sleeve.sleeve_angle.v' changed: 10 -> 27
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 20 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.35950659725201145
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 21 (origin: mutant, last mutation: design_param): 14 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.sleeve.cuff.cuff_len.v' changed: 0.1 -> 0.06663714504077947
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 22 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> Skirt2
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.3631855463948552
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 23 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 24 (origin: mutant, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 25 (origin: mutant, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 26 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> GodetSkirt
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+[Generation 9] Total of 27 chromosomes with design parameter differences
+Generation 9 completed in 3.48s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7848
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -3919856645181057992) | Fitness: 0.7848
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -8257266474783517855) | Fitness: 0.7848
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 6898447148757785039) | Fitness: 0.7848
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 5136953241371580270) | Fitness: 0.7848
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7848
+Elite 1: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 2: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 7054211480705558019) | Fitness: 0.7848
+Elite 3: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -3919856645181057992) | Fitness: 0.7848
+Elite 4: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), -8257266474783517855) | Fitness: 0.7848
+Elite 5: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 6898447148757785039) | Fitness: 0.7848
+Elite 6: ((('right_btorso', 270), ('left_btorso', 180), ('left_ftorso', 0), ('right_ftorso', 0), ('wb_back', 0), ('wb_front', 180)), 5136953241371580270) | Fitness: 0.7848
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7398
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.7398
+Offspring created with fitness: 0.7848
+Offspring created with fitness: 0.6118
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7814
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7398
+Mutant created with fitness: 0.6589
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7398
+Mutant created with fitness: 0.7848
+Mutant created with fitness: 0.7398
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6538
+Random chromosome created with fitness: 0.6538
+Random chromosome generated with fitness: 0.7198
+Random chromosome created with fitness: 0.7198
+Random chromosome generated with fitness: 0.6849
+Random chromosome created with fitness: 0.6849
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0219; mutants: -0.0293
+------------------------------------------------------------
+Generation 10: best 0.7848 (Δ +0.0000)
+[Generation 10] Found 26 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 1 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 2 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 3 (origin: offspring, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 4 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 5 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.3631855463948552
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 6 (origin: offspring, last mutation: unknown): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 7 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 8 (origin: offspring, last mutation: design_param): 15 parameter differences
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.3631855463948552
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+  Chromosome 9 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.487708969809304
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 10 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.fc_angle.v' changed: 95 -> 90
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 11 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.7128256578675214
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 12 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.6898340369531287
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 13 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.fc_angle.v' changed: 95 -> 96
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 14 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 15 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 16 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.7857286147201173
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 17 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'shirt.length.v' changed: 1.2 -> 2.896741078639043
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 18 (origin: mutant, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.55 -> 0.756525272229174
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.3631855463948552
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 19 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 20 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.3631855463948552
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 21 (origin: mutant, last mutation: design_param): 13 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.3631855463948552
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'collar.b_bezier_x.v' changed: 0.15 -> 0.945011242262487
+  Chromosome 22 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.width.v' changed: 0.2 -> 0.7033947575965982
+    Parameter 'collar.f_bezier_y.v' changed: 0.55 -> 0.9266032510940342
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 23 (origin: mutant, last mutation: design_param): 14 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'left.sleeve.cuff.skirt_fraction.v' changed: 0.5 -> 0.6578974450842747
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 24 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.3265863055148675
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 25 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.15 -> 0.15799687456232023
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+  Chromosome 26 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.width.v' changed: 0.2 -> 0.8900824144080148
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.512743805563682
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+[Generation 10] Total of 27 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 11 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_194914/plots/fitness_curves_20250622_194914.png
+Mean gains plot saved to nesting/run_logs/_20250622_194914/plots/mean_gains_20250622_194914.png
+Delta best plot saved to nesting/run_logs/_20250622_194914/plots/delta_best_20250622_194914.png
+Mutation gains plot saved to nesting/run_logs/_20250622_194914/plots/mutation_gains.png
+Swarm plot data: 327 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_194914/plots/fitness_swarm_20250622_194914.png
+Plots updated successfully.
+Generation 10 completed in 4.17s.
+------------------------------------------------------------
+Early‑stopping: fitness plateau for 10 generations.
+------------------------------------------------------------
+Evolution completed.
+Total time: 42.79 seconds

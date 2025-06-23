@@ -1,0 +1,1928 @@
+------------------------------------------------------------
+Evolution initialized with 30 chromosomes, 6 elites, 12 offspring, 9 mutants, 3 randoms.
+Design parameters loaded: 619 parameters found
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x1338471f0>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x1338471f0>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x105b51c00>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'DEFAULT_PATTERN_PATH': <class 'str'>, 'DEFAULT_DESIGN_PARAM_PATH': <class 'str'>, 'DEFAULT_BODY_PARAM_PATH': <class 'str'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'PRESERVE_HOLES': <class 'bool'>, 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1'], 'GRAVITATE_ONCE': <class 'bool'>, 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DEFAULT_PATTERN_PATH': 'nesting-assets/default_pattern.json', 'DEFAULT_DESIGN_PARAM_PATH': 'nesting-assets/default_design_params.yaml', 'DEFAULT_BODY_PARAM_PATH': 'nesting-assets/default_body_measurements.yaml', 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1'], 'SortKey': typing.Literal['bbox_area', 'hull_area', 'aspect_ratio'], 'SELECTED_DECODER': 'NFP', 'PRESERVE_HOLES': True, 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1', 'OX_K': 1, 'NUM_SPLITS': 30, 'GRAVITATE_ONCE': True, 'GRAVITATE_STEP': 2, 'SORT_BY': 'hull_area', 'POPULATION_SIZE': 30, 'NUM_GENERATIONS': 10, 'MUTATION_RATE': 0.9, 'POPULATION_WEIGHTS': {'elites': 0.2, 'offspring': 0.4, 'mutants': 0.3, 'randoms': 0.1}, 'EXCLUDED_PARAM_PATHS': ['*component*'], 'MUTATION_WEIGHTS': {'rotate': 0, 'swap': 0, 'inversion': 0, 'insertion': 0, 'scramble': 0, 'split': 0, 'design_param': 1}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 4, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs/', 'LOG_TIME': True, 'LOG_DESIGN_PARAM_PATHS': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 0.1, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 140, 'CONTAINER_HEIGHT_CM': 400, 'SEAM_ALLOWANCE_CM': 0, '__dict__': <function __dict__ at 0x133831c10>}
+Generating initial population...
+Random chromosome generated with fitness: 0.6450
+Random chromosome generated with fitness: 0.6666
+Random chromosome generated with fitness: 0.5684
+Random chromosome generated with fitness: 0.7042
+Random chromosome generated with fitness: 0.6663
+Random chromosome generated with fitness: 0.6953
+Random chromosome generated with fitness: 0.6000
+Random chromosome generated with fitness: 0.6528
+Random chromosome generated with fitness: 0.7163
+Random chromosome generated with fitness: 0.5976
+Random chromosome generated with fitness: 0.6931
+Random chromosome generated with fitness: 0.6857
+Random chromosome generated with fitness: 0.6917
+Random chromosome generated with fitness: 0.7152
+Random chromosome generated with fitness: 0.7280
+Random chromosome generated with fitness: 0.6480
+Random chromosome generated with fitness: 0.6920
+Random chromosome generated with fitness: 0.6945
+Random chromosome generated with fitness: 0.6617
+Random chromosome generated with fitness: 0.7350
+Random chromosome generated with fitness: 0.6909
+Random chromosome generated with fitness: 0.6416
+Random chromosome generated with fitness: 0.5989
+Random chromosome generated with fitness: 0.6711
+Random chromosome generated with fitness: 0.7614
+Random chromosome generated with fitness: 0.6658
+Random chromosome generated with fitness: 0.5627
+Random chromosome generated with fitness: 0.6054
+Random chromosome generated with fitness: 0.6770
+Random chromosome generated with fitness: 0.7324
+------------------------------------------------------------
+Initial population of 30 layouts generated.
+Layout 0: [('right_btorso', 0), ('wb_front', 90), ('wb_back', 270), ('right_ftorso', 0), ('left_btorso', 270), ('left_ftorso', 180)] | Fitness: 0.7163
+Layout 1: [('right_ftorso', 90), ('wb_back', 270), ('left_btorso', 270), ('right_btorso', 0), ('wb_front', 270), ('left_ftorso', 180)] | Fitness: 0.6931
+Layout 2: [('left_btorso', 90), ('right_btorso', 180), ('left_ftorso', 90), ('right_ftorso', 270), ('wb_back', 90), ('wb_front', 270)] | Fitness: 0.6666
+Layout 3: [('wb_back', 270), ('left_ftorso', 90), ('right_ftorso', 270), ('right_btorso', 0), ('wb_front', 0), ('left_btorso', 180)] | Fitness: 0.5684
+Layout 4: [('left_btorso', 0), ('wb_front', 90), ('right_ftorso', 0), ('right_btorso', 0), ('wb_back', 90), ('left_ftorso', 90)] | Fitness: 0.7042
+Layout 5: [('wb_back', 270), ('wb_front', 180), ('right_btorso', 90), ('left_btorso', 180), ('left_ftorso', 90), ('right_ftorso', 180)] | Fitness: 0.6450
+Layout 6: [('left_ftorso', 0), ('right_btorso', 270), ('wb_front', 0), ('right_ftorso', 270), ('wb_back', 270), ('left_btorso', 180)] | Fitness: 0.6953
+Layout 7: [('wb_front', 90), ('left_btorso', 270), ('right_ftorso', 0), ('right_btorso', 180), ('wb_back', 90), ('left_ftorso', 270)] | Fitness: 0.6000
+Layout 8: [('left_ftorso', 270), ('right_ftorso', 90), ('left_btorso', 90), ('wb_front', 180), ('wb_back', 0), ('right_btorso', 270)] | Fitness: 0.6857
+Layout 9: [('wb_front', 90), ('right_ftorso', 180), ('left_ftorso', 180), ('left_btorso', 180), ('right_btorso', 90), ('wb_back', 90)] | Fitness: 0.5976
+Layout 10: [('left_btorso', 0), ('right_btorso', 270), ('wb_back', 270), ('right_ftorso', 180), ('wb_front', 270), ('left_ftorso', 180)] | Fitness: 0.6663
+Layout 11: [('right_btorso', 180), ('wb_back', 0), ('left_ftorso', 180), ('wb_front', 270), ('right_ftorso', 270), ('left_btorso', 180)] | Fitness: 0.6528
+Layout 12: [('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 180), ('right_ftorso', 90), ('left_btorso', 0)] | Fitness: 0.6917
+Layout 13: [('left_btorso', 0), ('right_ftorso', 180), ('wb_back', 0), ('right_btorso', 0), ('wb_front', 90), ('left_ftorso', 0)] | Fitness: 0.6480
+Layout 14: [('left_ftorso', 0), ('right_btorso', 90), ('wb_front', 270), ('left_btorso', 270), ('wb_back', 0), ('right_ftorso', 0)] | Fitness: 0.7152
+Layout 15: [('wb_front', 270), ('left_btorso', 0), ('left_ftorso', 90), ('right_ftorso', 270), ('right_btorso', 90), ('wb_back', 270)] | Fitness: 0.6945
+Layout 16: [('right_btorso', 270), ('right_ftorso', 270), ('left_ftorso', 270), ('wb_front', 180), ('wb_back', 90), ('left_btorso', 180)] | Fitness: 0.6920
+Layout 17: [('left_ftorso', 0), ('right_btorso', 180), ('wb_back', 0), ('right_ftorso', 180), ('wb_front', 180), ('left_btorso', 270)] | Fitness: 0.7280
+Layout 18: [('right_btorso', 0), ('wb_front', 270), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 270), ('wb_back', 180)] | Fitness: 0.7350
+Layout 19: [('wb_front', 0), ('right_ftorso', 270), ('left_ftorso', 90), ('right_btorso', 0), ('wb_back', 90), ('left_btorso', 180)] | Fitness: 0.6909
+Layout 20: [('wb_front', 0), ('right_ftorso', 270), ('right_btorso', 0), ('left_btorso', 0), ('left_ftorso', 0), ('wb_back', 90)] | Fitness: 0.6617
+Layout 21: [('left_btorso', 90), ('wb_back', 0), ('wb_front', 180), ('left_ftorso', 90), ('right_btorso', 180), ('right_ftorso', 180)] | Fitness: 0.5989
+Layout 22: [('wb_back', 0), ('right_ftorso', 180), ('wb_front', 270), ('left_btorso', 90), ('left_ftorso', 180), ('right_btorso', 180)] | Fitness: 0.6416
+Layout 23: [('left_ftorso', 180), ('left_btorso', 0), ('wb_front', 0), ('wb_back', 270), ('right_ftorso', 90), ('right_btorso', 0)] | Fitness: 0.6711
+Layout 24: [('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)] | Fitness: 0.7614
+Layout 25: [('wb_back', 180), ('right_ftorso', 0), ('wb_front', 0), ('left_btorso', 270), ('left_ftorso', 90), ('right_btorso', 180)] | Fitness: 0.6770
+Layout 26: [('wb_front', 270), ('left_btorso', 90), ('left_ftorso', 180), ('right_ftorso', 180), ('right_btorso', 270), ('wb_back', 270)] | Fitness: 0.5627
+Layout 27: [('left_btorso', 270), ('right_ftorso', 270), ('wb_front', 0), ('right_btorso', 0), ('wb_back', 0), ('left_ftorso', 90)] | Fitness: 0.6658
+Layout 28: [('left_ftorso', 180), ('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 90), ('wb_back', 180), ('wb_front', 270)] | Fitness: 0.6054
+Layout 29: [('right_btorso', 90), ('left_ftorso', 180), ('wb_back', 90), ('left_btorso', 90), ('wb_front', 0), ('right_ftorso', 270)] | Fitness: 0.7324
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7614
+Elite 1: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), 5428640138002443549) | Fitness: 0.7614
+Elite 2: ((('right_btorso', 0), ('wb_front', 270), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 270), ('wb_back', 180)), 5428640138002443549) | Fitness: 0.7350
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 180), ('wb_back', 90), ('left_btorso', 90), ('wb_front', 0), ('right_ftorso', 270)), 5428640138002443549) | Fitness: 0.7324
+Elite 4: ((('left_ftorso', 0), ('right_btorso', 180), ('wb_back', 0), ('right_ftorso', 180), ('wb_front', 180), ('left_btorso', 270)), 5428640138002443549) | Fitness: 0.7280
+Elite 5: ((('right_btorso', 0), ('wb_front', 90), ('wb_back', 270), ('right_ftorso', 0), ('left_btorso', 270), ('left_ftorso', 180)), 5428640138002443549) | Fitness: 0.7163
+Elite 6: ((('left_ftorso', 0), ('right_btorso', 90), ('wb_front', 270), ('left_btorso', 270), ('wb_back', 0), ('right_ftorso', 0)), 5428640138002443549) | Fitness: 0.7152
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7069
+Offspring created with fitness: 0.7358
+Offspring created with fitness: 0.6792
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.6228
+Offspring created with fitness: 0.7031
+Offspring created with fitness: 0.7135
+Offspring created with fitness: 0.5380
+Offspring created with fitness: 0.7459
+Offspring created with fitness: 0.6617
+Offspring created with fitness: 0.7215
+Offspring created with fitness: 0.5767
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.6152
+Mutant created with fitness: 0.7382
+Mutant created with fitness: 0.7819
+Mutant created with fitness: 0.7163
+Mutant created with fitness: 0.7350
+Mutant created with fitness: 0.7324
+Mutant created with fitness: 0.7324
+Mutant created with fitness: 0.6680
+Mutant created with fitness: 0.6719
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7289
+Random chromosome created with fitness: 0.7289
+Random chromosome generated with fitness: 0.6677
+Random chromosome created with fitness: 0.6677
+Random chromosome generated with fitness: 0.6815
+Random chromosome created with fitness: 0.6815
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0554; mutants: -0.0202
+------------------------------------------------------------
+Generation 1: best 0.7851 (Δ +0.0237)
+[Generation 1] Found 18 chromosomes with design_param as last mutation
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.7173237539081608
+  Chromosome 12 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+  Chromosome 15 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: VNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+  Chromosome 16 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.sleeve.sleeveless.range.0' changed: True -> False
+    Parameter 'left.sleeve.sleeveless.range.1' changed: False -> None
+    Parameter 'left.sleeve.sleeveless.v' changed: True -> False
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.48144920054070994
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'shirt.width.v' changed: 1.15 -> 1.2374301467578834
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.width.v' changed: -0.0755 -> 0.5706914513341258
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'meta.bottom.v' changed: None -> SkirtCircle
+  Chromosome 24 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.679 -> 0.20647764749257835
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.5742064883740179
+  Chromosome 26 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+[Generation 1] Total of 12 chromosomes with design parameter differences
+Generation 1 completed in 2.91s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7851
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 2: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), -4236483302589017163) | Fitness: 0.7819
+Elite 3: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), 5428640138002443549) | Fitness: 0.7614
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 0), ('left_btorso', 270), ('left_ftorso', 180), ('wb_front', 90), ('wb_back', 270)), 5428640138002443549) | Fitness: 0.7459
+Elite 5: ((('left_ftorso', 0), ('right_btorso', 90), ('wb_front', 270), ('left_btorso', 270), ('wb_back', 0), ('right_ftorso', 0)), 5428640138002443549) | Fitness: 0.7382
+Elite 6: ((('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 270), ('wb_front', 270), ('wb_back', 180)), 5428640138002443549) | Fitness: 0.7358
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7851
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 2: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), -4236483302589017163) | Fitness: 0.7819
+Elite 3: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), 5428640138002443549) | Fitness: 0.7614
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 0), ('left_btorso', 270), ('left_ftorso', 180), ('wb_front', 90), ('wb_back', 270)), 5428640138002443549) | Fitness: 0.7459
+Elite 5: ((('left_ftorso', 0), ('right_btorso', 90), ('wb_front', 270), ('left_btorso', 270), ('wb_back', 0), ('right_ftorso', 0)), 5428640138002443549) | Fitness: 0.7382
+Elite 6: ((('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 270), ('wb_front', 270), ('wb_back', 180)), 5428640138002443549) | Fitness: 0.7358
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7288
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.7358
+Offspring created with fitness: 0.7339
+Offspring created with fitness: 0.6908
+Offspring created with fitness: 0.6325
+Offspring created with fitness: 0.7514
+Offspring created with fitness: 0.6480
+Offspring created with fitness: 0.7226
+Offspring created with fitness: 0.7074
+Offspring created with fitness: 0.6443
+Offspring created with fitness: 0.7261
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.6927
+Mutant created with fitness: 0.7384
+Mutant created with fitness: 0.7795
+Mutant created with fitness: 0.7851
+Mutant created with fitness: 0.7819
+Mutant created with fitness: 0.7795
+Mutant created with fitness: 0.6928
+Mutant created with fitness: 0.7459
+Mutant created with fitness: 0.7459
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7064
+Random chromosome created with fitness: 0.7064
+Random chromosome generated with fitness: 0.6652
+Random chromosome created with fitness: 0.6652
+Random chromosome generated with fitness: 0.5991
+Random chromosome created with fitness: 0.5991
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0613; mutants: -0.0078
+------------------------------------------------------------
+Generation 2: best 0.7851 (Δ +0.0000)
+[Generation 2] Found 25 chromosomes with design_param as last mutation
+  Chromosome 1 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.bc_angle.v' changed: 108 -> 92
+  Chromosome 10 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.54 -> 0.7936609824408701
+  Chromosome 12 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.32979940516083944
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.9283022769287946
+  Chromosome 14 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.54 -> 1.5664464261780688
+  Chromosome 15 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.8302637140970425
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.width.v' changed: 1.15 -> 1.2171445966780134
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+  Chromosome 22 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.8203827790740645
+  Chromosome 23 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'shirt.width.v' changed: 1.15 -> 1.2355487838265333
+  Chromosome 25 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'pants.cuff.skirt_fraction.v' changed: 0.835 -> 0.4882475283598081
+[Generation 2] Total of 13 chromosomes with design parameter differences
+Generation 2 completed in 3.23s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7851
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 4: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), -4236483302589017163) | Fitness: 0.7819
+Elite 5: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), -5915982720463819599) | Fitness: 0.7819
+Elite 6: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), -4236483302589017163) | Fitness: 0.7795
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7851
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 4: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), -4236483302589017163) | Fitness: 0.7819
+Elite 5: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), -5915982720463819599) | Fitness: 0.7819
+Elite 6: ((('right_btorso', 90), ('wb_back', 270), ('left_ftorso', 0), ('wb_front', 90), ('left_btorso', 180), ('right_ftorso', 180)), -4236483302589017163) | Fitness: 0.7795
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7421
+‼ offspring task failed: TopologyException: side location conflict at 15.356053189756746 387.02931303069323. This can occur if the input geometry is invalid.
+Offspring created with fitness: 0.7421
+Offspring created with fitness: 0.7026
+Offspring created with fitness: 0.6908
+Offspring created with fitness: 0.7055
+Offspring created with fitness: 0.6526
+Offspring created with fitness: 0.6908
+Offspring created with fitness: 0.6526
+Offspring created with fitness: 0.6526
+Offspring created with fitness: 0.6846
+Offspring created with fitness: 0.6908
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7812
+Mutant created with fitness: 0.7851
+Mutant created with fitness: 0.7234
+Mutant created with fitness: 0.7851
+Mutant created with fitness: 0.7669
+Mutant created with fitness: 0.7845
+Mutant created with fitness: 0.7819
+Mutant created with fitness: 0.7819
+Mutant created with fitness: 0.7795
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7219
+Random chromosome created with fitness: 0.7219
+Random chromosome generated with fitness: 0.6825
+Random chromosome created with fitness: 0.6825
+Random chromosome generated with fitness: 0.6146
+Random chromosome created with fitness: 0.6146
+Collected 11 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0930; mutants: -0.0081
+------------------------------------------------------------
+Generation 3: best 0.7851 (Δ +0.0000)
+[Generation 3] Found 25 chromosomes with design_param as last mutation
+  Chromosome 3 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+  Chromosome 4 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.8203827790740645
+  Chromosome 5 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+  Chromosome 6 (origin: offspring, last mutation: unknown): 2 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.8203827790740645
+  Chromosome 7 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+  Chromosome 13 (origin: offspring, last mutation: design_param): 7 parameter differences
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 15 (origin: offspring, last mutation: design_param): 8 parameter differences
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleNeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.8203827790740645
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.b_bezier_x.v' changed: 0.679 -> 0.1396824837610795
+  Chromosome 17 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+    Parameter 'collar.width.v' changed: -0.0755 -> -0.32259966194999923
+  Chromosome 19 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_depth.v' changed: 0 -> 0.8075976845074915
+  Chromosome 20 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 21 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.bc_depth.v' changed: 0 -> 0.25151022929666
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+  Chromosome 22 (origin: mutant, last mutation: design_param): 6 parameter differences
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleNeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 23 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.8203827790740645
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+  Chromosome 24 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.679 -> 0.45950792121319206
+  Chromosome 25 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.collar.f_flip_curve.v' changed: False -> True
+    Parameter 'collar.bc_angle.v' changed: 108 -> 83
+    Parameter 'left.collar.f_flip_curve.range.1' changed: False -> None
+[Generation 3] Total of 17 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_145842/plots/fitness_curves_20250622_145842.png
+Mean gains plot saved to nesting/run_logs/_20250622_145842/plots/mean_gains_20250622_145842.png
+Delta best plot saved to nesting/run_logs/_20250622_145842/plots/delta_best_20250622_145842.png
+Mutation gains plot saved to nesting/run_logs/_20250622_145842/plots/mutation_gains.png
+Swarm plot data: 119 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_145842/plots/fitness_swarm_20250622_145842.png
+Plots updated successfully.
+Generation 3 completed in 3.73s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7851
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5076562187658500205) | Fitness: 0.7851
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -3723515763994790436) | Fitness: 0.7845
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7851
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5076562187658500205) | Fitness: 0.7851
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -3723515763994790436) | Fitness: 0.7845
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.6908
+Offspring created with fitness: 0.7026
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.6647
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.6908
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7851
+Mutant created with fitness: 0.6647
+Mutant created with fitness: 0.6647
+Mutant created with fitness: 0.7851
+Mutant created with fitness: 0.6647
+Mutant created with fitness: 0.6908
+Mutant created with fitness: 0.7026
+Mutant created with fitness: 0.6908
+Mutant created with fitness: 0.7881
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6879
+Random chromosome created with fitness: 0.6879
+Random chromosome generated with fitness: 0.6253
+Random chromosome created with fitness: 0.6253
+Random chromosome generated with fitness: 0.6037
+Random chromosome created with fitness: 0.6037
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0326; mutants: -0.0698
+------------------------------------------------------------
+Generation 4: best 0.7881 (Δ +0.0030)
+[Generation 4] Found 27 chromosomes with design_param as last mutation
+  Chromosome 4 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 5 (origin: mutant, last mutation: design_param): 6 parameter differences
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleNeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 6 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 102
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 8 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 105
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 72
+  Chromosome 10 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleNeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 11 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.39826692748314535
+  Chromosome 12 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'collar.component.style.v' changed: None -> Turtle
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 104
+  Chromosome 15 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 17 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.bc_angle.v' changed: 108 -> 73
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+  Chromosome 19 (origin: mutant, last mutation: design_param): 6 parameter differences
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleNeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 20 (origin: mutant, last mutation: design_param): 7 parameter differences
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleNeckHalf
+    Parameter 'collar.fc_angle.v' changed: 76 -> 97
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.23538615710884747
+  Chromosome 22 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.5088375011250194
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.b_flip_curve.range.1' changed: False -> None
+    Parameter 'collar.b_flip_curve.v' changed: False -> True
+  Chromosome 26 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+[Generation 4] Total of 18 chromosomes with design parameter differences
+Generation 4 completed in 3.09s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7881
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5076562187658500205) | Fitness: 0.7851
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7881
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5076562187658500205) | Fitness: 0.7851
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.6647
+Offspring created with fitness: 0.7845
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.6908
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.6747
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.6637
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.7273
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: list.remove(x): x not in list
+Mutant created with fitness: 0.6647
+Mutant created with fitness: 0.7790
+Mutant created with fitness: 0.6908
+Mutant created with fitness: 0.6647
+Mutant created with fitness: 0.6526
+Mutant created with fitness: 0.7026
+Mutant created with fitness: 0.7176
+Mutant created with fitness: 0.7522
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7422
+Random chromosome created with fitness: 0.7422
+Random chromosome generated with fitness: 0.6767
+Random chromosome created with fitness: 0.6767
+Random chromosome generated with fitness: 0.6958
+Random chromosome created with fitness: 0.6958
+Collected 12 offspring, 8 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0426; mutants: -0.0828
+------------------------------------------------------------
+Generation 5: best 0.7881 (Δ +0.0000)
+[Generation 5] Found 25 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 5 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 7 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 8 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.5868508575207894
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 10 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 12 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.width.v' changed: -0.0755 -> 0.33401556541767086
+  Chromosome 14 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 16 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 99
+  Chromosome 17 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.11372587501040293
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 76 -> 72
+  Chromosome 19 (origin: mutant, last mutation: design_param): 8 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CurvyNeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 21 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_angle.v' changed: 76 -> 86
+  Chromosome 22 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'shirt.length.v' changed: 2.53 -> 1.738753756000071
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 23 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 24 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'collar.fc_angle.v' changed: 76 -> 79
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 25 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+[Generation 5] Total of 17 chromosomes with design parameter differences
+Generation 5 completed in 2.87s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7881
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -2067756264466227479) | Fitness: 0.7881
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 2362766508076531747) | Fitness: 0.7881
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7881
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -2067756264466227479) | Fitness: 0.7881
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 2362766508076531747) | Fitness: 0.7881
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 5428640138002443549) | Fitness: 0.7851
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7088
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.6544
+Offspring created with fitness: 0.7522
+Offspring created with fitness: 0.7851
+Offspring created with fitness: 0.7026
+Offspring created with fitness: 0.7641
+Offspring created with fitness: 0.6943
+Offspring created with fitness: 0.7176
+Offspring created with fitness: 0.7881
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: TopologyException: side location conflict at 6.6000000000000005 367.9951000551572. This can occur if the input geometry is invalid.
+‼ mutant task failed: TopologyException: side location conflict at 6.6000000000000005 371.5436576923077. This can occur if the input geometry is invalid.
+Mutant created with fitness: 0.6647
+Mutant created with fitness: 0.7881
+Mutant created with fitness: 0.7026
+Mutant created with fitness: 0.7176
+Mutant created with fitness: 0.7522
+Mutant created with fitness: 0.6544
+Mutant created with fitness: 0.6930
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7411
+Random chromosome created with fitness: 0.7411
+Random chromosome generated with fitness: 0.7409
+Random chromosome created with fitness: 0.7409
+Random chromosome generated with fitness: 0.5838
+Random chromosome created with fitness: 0.5838
+Collected 12 offspring, 7 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0435; mutants: -0.0769
+------------------------------------------------------------
+Generation 6: best 0.7881 (Δ +0.0000)
+[Generation 6] Found 25 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 1 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 2 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 3 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 6 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 7 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 9 (origin: offspring, last mutation: design_param): 2 parameter differences
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.27583448903795166
+  Chromosome 10 (origin: offspring, last mutation: design_param): 7 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.8782892494083266
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 11 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.54 -> 1.1564591259262014
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 12 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.bottom.v' changed: None -> AsymmSkirtCircle
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.54 -> 1.196838728594928
+  Chromosome 14 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'collar.b_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.b_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.b_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'collar.b_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.b_collar.v' changed: CircleNeckHalf -> VNeckHalf
+    Parameter 'collar.b_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'collar.b_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 15 (origin: offspring, last mutation: design_param): 5 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'collar.width.v' changed: -0.0755 -> 0.7192744007527936
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 16 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 17 (origin: offspring, last mutation: design_param): 5 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.collar.b_bezier_x.v' changed: 0.679 -> 0.6893675076564205
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 18 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.f_bezier_x.v' changed: 0.3 -> 0.5046948715487009
+  Chromosome 19 (origin: mutant, last mutation: design_param): 5 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.8327057531226387
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 20 (origin: mutant, last mutation: design_param): 1 parameter differences
+    Parameter 'left.shirt.width.v' changed: 1.15 -> 1.2729113012647353
+  Chromosome 21 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 22 (origin: mutant, last mutation: design_param): 5 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.54 -> 1.5833006866840784
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 23 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 24 (origin: mutant, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+[Generation 6] Total of 22 chromosomes with design parameter differences
+Generation 6 completed in 3.01s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7881
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -2067756264466227479) | Fitness: 0.7881
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 2362766508076531747) | Fitness: 0.7881
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -5439732504589889718) | Fitness: 0.7881
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 2362766508076531747) | Fitness: 0.7881
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7881
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -2067756264466227479) | Fitness: 0.7881
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 2362766508076531747) | Fitness: 0.7881
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -5439732504589889718) | Fitness: 0.7881
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 2362766508076531747) | Fitness: 0.7881
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7265
+Offspring created with fitness: 0.7176
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7491
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.6544
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.6930
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.6544
+Mutant created with fitness: 0.7881
+Mutant created with fitness: 0.7881
+Mutant created with fitness: 0.7879
+Mutant created with fitness: 0.7881
+Mutant created with fitness: 0.6370
+Mutant created with fitness: 0.7976
+Mutant created with fitness: 0.7522
+Mutant created with fitness: 0.7383
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7940
+Random chromosome created with fitness: 0.7940
+Random chromosome generated with fitness: 0.7485
+Random chromosome created with fitness: 0.7485
+Random chromosome generated with fitness: 0.6464
+Random chromosome created with fitness: 0.6464
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0333; mutants: -0.0401
+------------------------------------------------------------
+Generation 7: best 0.7976 (Δ +0.0095)
+[Generation 7] Found 25 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 1 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 2 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 3 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 4 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 5 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 6 (origin: offspring, last mutation: unknown): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 7 (origin: offspring, last mutation: unknown): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 8 (origin: offspring, last mutation: design_param): 5 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'pants.length.v' changed: 0.681 -> 0.5731889437610476
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 9 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'collar.fc_angle.v' changed: 76 -> 104
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 10 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 85
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 11 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 12 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 13 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 14 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 15 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 16 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.collar.bc_angle.v' changed: 108 -> 81
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 17 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 18 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 19 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 20 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 21 (origin: mutant, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 22 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 23 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 24 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 25 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 26 (origin: mutant, last mutation: design_param): 7 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.54 -> 1.3044947942357874
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+    Parameter 'left.enable_asym.v' changed: False -> True
+[Generation 7] Total of 27 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_145842/plots/fitness_curves_20250622_145842.png
+Mean gains plot saved to nesting/run_logs/_20250622_145842/plots/mean_gains_20250622_145842.png
+Delta best plot saved to nesting/run_logs/_20250622_145842/plots/delta_best_20250622_145842.png
+Mutation gains plot saved to nesting/run_logs/_20250622_145842/plots/mutation_gains.png
+Swarm plot data: 236 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_145842/plots/fitness_swarm_20250622_145842.png
+Plots updated successfully.
+Generation 7 completed in 3.38s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7976
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 2: ((('right_ftorso', 180), ('right_btorso', 270), ('left_btorso', 90), ('left_ftorso', 0), ('wb_front', 180), ('wb_back', 180)), 5428640138002443549) | Fitness: 0.7940
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -2067756264466227479) | Fitness: 0.7881
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 2362766508076531747) | Fitness: 0.7881
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7976
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 2: ((('right_ftorso', 180), ('right_btorso', 270), ('left_btorso', 90), ('left_ftorso', 0), ('wb_front', 180), ('wb_back', 180)), 5428640138002443549) | Fitness: 0.7940
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -2067756264466227479) | Fitness: 0.7881
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 2362766508076531747) | Fitness: 0.7881
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7638
+Offspring created with fitness: 0.6458
+Offspring created with fitness: 0.6138
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.7003
+Offspring created with fitness: 0.6852
+Offspring created with fitness: 0.6544
+Offspring created with fitness: 0.7176
+Offspring created with fitness: 0.6930
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.6615
+Mutant created with fitness: 0.7576
+Mutant created with fitness: 0.7576
+Mutant created with fitness: 0.7881
+Mutant created with fitness: 0.7109
+Mutant created with fitness: 0.7976
+Mutant created with fitness: 0.7881
+Mutant created with fitness: 0.7176
+Mutant created with fitness: 0.7003
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6487
+Random chromosome created with fitness: 0.6487
+Random chromosome generated with fitness: 0.6825
+Random chromosome created with fitness: 0.6825
+Random chromosome generated with fitness: 0.7079
+Random chromosome created with fitness: 0.7079
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0744; mutants: -0.0500
+------------------------------------------------------------
+Generation 8: best 0.7976 (Δ +0.0000)
+[Generation 8] Found 25 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 2 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 3 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 4 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 5 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 6 (origin: offspring, last mutation: unknown): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 7 (origin: offspring, last mutation: design_param): 6 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 8 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 9 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'collar.fc_depth.v' changed: 0.4 -> 1.9614696997794059
+  Chromosome 10 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 11 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 101
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 12 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 13 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 14 (origin: offspring, last mutation: design_param): 7 parameter differences
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.17328074038546692
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 15 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 16 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'collar.f_bezier_y.v' changed: 0.898 -> 0.5853041415968493
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 17 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.13079755527584225
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 19 (origin: mutant, last mutation: design_param): 2 parameter differences
+    Parameter 'collar.b_flip_curve.range.1' changed: False -> None
+    Parameter 'collar.b_flip_curve.v' changed: False -> True
+  Chromosome 21 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 72
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 22 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: VNeckHalf -> CircleNeckHalf
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 23 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 24 (origin: mutant, last mutation: design_param): 5 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'meta.wb.v' changed: StraightWB -> None
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 25 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'collar.f_bezier_y.v' changed: 0.898 -> 0.4550632617148731
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 26 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.bc_angle.v' changed: 108 -> 76
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+[Generation 8] Total of 24 chromosomes with design parameter differences
+Generation 8 completed in 3.05s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7976
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 798090074639590483) | Fitness: 0.7976
+Elite 5: ((('right_ftorso', 180), ('right_btorso', 270), ('left_btorso', 90), ('left_ftorso', 0), ('wb_front', 180), ('wb_back', 180)), 5428640138002443549) | Fitness: 0.7940
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7976
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 798090074639590483) | Fitness: 0.7976
+Elite 5: ((('right_ftorso', 180), ('right_btorso', 270), ('left_btorso', 90), ('left_ftorso', 0), ('wb_front', 180), ('wb_back', 180)), 5428640138002443549) | Fitness: 0.7940
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7765085692855110386) | Fitness: 0.7881
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7940
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.7881
+Offspring created with fitness: 0.6884
+Offspring created with fitness: 0.6830
+Offspring created with fitness: 0.7225
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.7688
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.6579
+Offspring created with fitness: 0.6884
+Offspring created with fitness: 0.7881
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7976
+Mutant created with fitness: 0.7976
+Mutant created with fitness: 0.7003
+Mutant created with fitness: 0.7176
+Mutant created with fitness: 0.7976
+Mutant created with fitness: 0.7003
+Mutant created with fitness: 0.7003
+Mutant created with fitness: 0.7881
+Mutant created with fitness: 0.6884
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6424
+Random chromosome created with fitness: 0.6424
+Random chromosome generated with fitness: 0.6663
+Random chromosome created with fitness: 0.6663
+Random chromosome generated with fitness: 0.6635
+Random chromosome created with fitness: 0.6635
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0504; mutants: -0.0524
+------------------------------------------------------------
+Generation 9: best 0.7976 (Δ +0.0000)
+[Generation 9] Found 26 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 1 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 2 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 3 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 5 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 6 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 102
+  Chromosome 7 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.width.v' changed: -0.0755 -> 0.12491385552117507
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 8 (origin: offspring, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 9 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'shirt.width.v' changed: 1.15 -> 1.0748447578723197
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 10 (origin: offspring, last mutation: design_param): 16 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 11 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 12 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 13 (origin: offspring, last mutation: design_param): 1 parameter differences
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.38340409729228353
+  Chromosome 14 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.b_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+    Parameter 'left.collar.b_flip_curve.range.1' changed: False -> None
+  Chromosome 15 (origin: offspring, last mutation: design_param): 5 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'collar.fc_depth.v' changed: 0.4 -> 1.948529930604219
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 16 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'shirt.width.v' changed: 1.15 -> 1.038573438197669
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 17 (origin: offspring, last mutation: design_param): 4 parameter differences
+    Parameter 'left.collar.bc_angle.v' changed: 108 -> 103
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 18 (origin: mutant, last mutation: design_param): 13 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.upper.range.1' changed: Shirt -> None
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.upper.range.0' changed: FittedShirt -> Shirt
+    Parameter 'meta.upper.v' changed: FittedShirt -> Shirt
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 19 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 20 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.b_bezier_x.v' changed: 0.679 -> 0.8607495269645751
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 21 (origin: mutant, last mutation: design_param): 3 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 22 (origin: mutant, last mutation: design_param): 8 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 23 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 24 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.bc_angle.v' changed: 108 -> 110
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 25 (origin: mutant, last mutation: design_param): 4 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'meta.bottom.v' changed: None -> SkirtManyPanels
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 26 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'shirt.flare.v' changed: 1.54 -> 1.3293402777817591
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+[Generation 9] Total of 26 chromosomes with design parameter differences
+Generation 9 completed in 3.18s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7976
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 798090074639590483) | Fitness: 0.7976
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -2004197433795043255) | Fitness: 0.7976
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7976
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 798090074639590483) | Fitness: 0.7976
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -2004197433795043255) | Fitness: 0.7976
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.7677
+Offspring created with fitness: 0.7003
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.6871
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.7677
+Offspring created with fitness: 0.7976
+Offspring created with fitness: 0.7976
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+Mutant created with fitness: 0.7164
+Mutant created with fitness: 0.7976
+Mutant created with fitness: 0.7677
+Mutant created with fitness: 0.7003
+Mutant created with fitness: 0.6883
+Mutant created with fitness: 0.6884
+Mutant created with fitness: 0.6869
+Mutant created with fitness: 0.6897
+Mutant created with fitness: 0.7976
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7573
+Random chromosome created with fitness: 0.7573
+Random chromosome generated with fitness: 0.7353
+Random chromosome created with fitness: 0.7353
+Random chromosome generated with fitness: 0.7245
+Random chromosome created with fitness: 0.7245
+Collected 12 offspring, 9 mutants, 3 randoms.
+Avg offspring gain vs parent: -0.0223; mutants: -0.0717
+------------------------------------------------------------
+Generation 10: best 0.7976 (Δ +0.0000)
+[Generation 10] Found 25 chromosomes with design_param as last mutation
+  Chromosome 0 (origin: mutant, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 1 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 2 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 3 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 4 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 5 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.b_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+    Parameter 'left.collar.b_flip_curve.range.1' changed: False -> None
+  Chromosome 6 (origin: offspring, last mutation: unknown): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 7 (origin: offspring, last mutation: unknown): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 8 (origin: offspring, last mutation: design_param): 13 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'levels-skirt.rise.v' changed: 0.715 -> 0.698752599230978
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.b_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+    Parameter 'left.collar.b_flip_curve.range.1' changed: False -> None
+  Chromosome 9 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.b_bezier_y.v' changed: 0.1 -> 0.7109190278876599
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 10 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 11 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.b_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+    Parameter 'left.collar.b_flip_curve.range.1' changed: False -> None
+  Chromosome 12 (origin: offspring, last mutation: design_param): 11 parameter differences
+    Parameter 'left.collar.bc_angle.v' changed: 108 -> 106
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 13 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 14 (origin: offspring, last mutation: design_param): 9 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+  Chromosome 15 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+    Parameter 'left.shirt.width.v' changed: 1.15 -> 1.240237647943733
+  Chromosome 16 (origin: offspring, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 17 (origin: offspring, last mutation: design_param): 12 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'meta.wb.v' changed: StraightWB -> FittedWB
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'meta.wb.range.0' changed: StraightWB -> FittedWB
+    Parameter 'meta.wb.range.1' changed: FittedWB -> None
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 18 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'collar.bc_depth.v' changed: 0 -> 0.8716421942021741
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 19 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'levels-skirt.base_length_frac.v' changed: 0.5 -> 0.26049656180344244
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 20 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'left.shirt.flare.v' changed: 1.54 -> 1.4566794531512912
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 21 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.b_bezier_y.v' changed: 0.1 -> 0.42374107986755294
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 22 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'shirt.flare.v' changed: 1.54 -> 1.1534967638547933
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 23 (origin: mutant, last mutation: design_param): 12 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.b_flip_curve.v' changed: False -> True
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+    Parameter 'left.collar.b_flip_curve.range.1' changed: False -> None
+  Chromosome 24 (origin: mutant, last mutation: design_param): 10 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.f_bezier_x.v' changed: 0.3 -> 0.12866953552202093
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 25 (origin: mutant, last mutation: design_param): 17 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.b_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'collar.b_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'collar.b_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'collar.b_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'collar.b_collar.v' changed: CircleNeckHalf -> Bezier2NeckHalf
+    Parameter 'collar.b_collar.range.1' changed: CurvyNeckHalf -> VNeckHalf
+    Parameter 'collar.b_collar.range.0' changed: CircleNeckHalf -> CurvyNeckHalf
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+  Chromosome 26 (origin: mutant, last mutation: design_param): 11 parameter differences
+    Parameter 'left.enable_asym.range.1' changed: False -> None
+    Parameter 'left.collar.f_collar.range.6' changed: Bezier2NeckHalf -> None
+    Parameter 'left.collar.f_collar.range.5' changed: CircleArcNeckHalf -> Bezier2NeckHalf
+    Parameter 'left.collar.f_collar.v' changed: VNeckHalf -> CircleArcNeckHalf
+    Parameter 'waistband.width.v' changed: 0.2 -> 0.6699487742934368
+    Parameter 'left.collar.f_bezier_y.v' changed: 0.898 -> 0.4025918618730309
+    Parameter 'left.collar.f_collar.range.2' changed: VNeckHalf -> SquareNeckHalf
+    Parameter 'left.collar.f_collar.range.3' changed: SquareNeckHalf -> TrapezoidNeckHalf
+    Parameter 'left.collar.fc_angle.v' changed: 76 -> 77
+    Parameter 'left.collar.f_collar.range.4' changed: TrapezoidNeckHalf -> CircleArcNeckHalf
+    Parameter 'left.enable_asym.v' changed: False -> True
+[Generation 10] Total of 27 chromosomes with design parameter differences
+Flushing metrics to CSV…
+Updating plots…
+Plotting 11 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_145842/plots/fitness_curves_20250622_145842.png
+Mean gains plot saved to nesting/run_logs/_20250622_145842/plots/mean_gains_20250622_145842.png
+Delta best plot saved to nesting/run_logs/_20250622_145842/plots/delta_best_20250622_145842.png
+Mutation gains plot saved to nesting/run_logs/_20250622_145842/plots/mutation_gains.png
+Swarm plot data: 326 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_145842/plots/fitness_swarm_20250622_145842.png
+Plots updated successfully.
+Generation 10 completed in 3.46s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7976
+Elite 1: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 2: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 3: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -7524577248619910517) | Fitness: 0.7976
+Elite 4: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), 798090074639590483) | Fitness: 0.7976
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -8086097905528145348) | Fitness: 0.7976
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 180), ('wb_back', 270), ('wb_front', 90)), -2004197433795043255) | Fitness: 0.7976
+------------------------------------------------------------
+Evolution completed.
+Total time: 33.55 seconds

@@ -21,7 +21,7 @@ PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"
 OX_K = 1
-NUM_SPLITS = 30  # number of splits for the split mutation operator
+NUM_SPLITS = 1  # number of splits for the split mutation operator
 
 
 # ——— placement settings —————————————————————————————————————
@@ -41,10 +41,10 @@ MUTATION_RATE         = 0.5
 
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
-    "elites": 0.2,  # weight for elite population
-    "offspring": 0.4,  # weight for offspring population
-    "mutants": 0.3,  # weight for mutants population
-    "randoms": 0.1,  # weight for random population
+    "elites": 0.25,  # weight for elite population
+    "offspring": 0.25,  # weight for offspring population
+    "mutants": 0.25,  # weight for mutants population
+    "randoms": 0.25,  # weight for random population
 }
 
 

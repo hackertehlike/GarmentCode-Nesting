@@ -260,7 +260,7 @@ def _apply_parameter_hierarchy(dp: Dict) -> None:
                 return None
             current = current[part]
         return current
-    x
+    
     # Helper function to set a nested parameter value
     def _set_nested(params: Dict, path: str, value: Optional[Dict]) -> None:
         parts = path.split('.')

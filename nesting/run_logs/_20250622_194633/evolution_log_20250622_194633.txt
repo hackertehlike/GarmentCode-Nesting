@@ -1,0 +1,689 @@
+------------------------------------------------------------
+Evolution initialized with 30 chromosomes, 6 elites, 12 offspring, 9 mutants, 3 randoms.
+Design parameters loaded: 619 parameters found
+------------------------------------------------------------
+Starting evolution…
+------------------------------------------------------------
+Config: {'__name__': 'nesting.config', '__doc__': None, '__package__': 'nesting', '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x13a74f310>, '__spec__': ModuleSpec(name='nesting.config', loader=<_frozen_importlib_external.SourceFileLoader object at 0x13a74f310>, origin='/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py'), '__file__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/config.py', '__cached__': '/Users/aysegulbarlas/codestuff/GarmentCode/nesting/__pycache__/config.cpython-39.pyc', '__builtins__': {'__name__': 'builtins', '__doc__': "Built-in functions, exceptions, and other objects.\n\nNoteworthy: None is the `nil' object; Ellipsis represents `...' in slices.", '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), '__build_class__': <built-in function __build_class__>, '__import__': <built-in function __import__>, 'abs': <built-in function abs>, 'all': <built-in function all>, 'any': <built-in function any>, 'ascii': <built-in function ascii>, 'bin': <built-in function bin>, 'breakpoint': <built-in function breakpoint>, 'callable': <built-in function callable>, 'chr': <built-in function chr>, 'compile': <built-in function compile>, 'delattr': <built-in function delattr>, 'dir': <built-in function dir>, 'divmod': <built-in function divmod>, 'eval': <built-in function eval>, 'exec': <built-in function exec>, 'format': <built-in function format>, 'getattr': <built-in function getattr>, 'globals': <built-in function globals>, 'hasattr': <built-in function hasattr>, 'hash': <built-in function hash>, 'hex': <built-in function hex>, 'id': <built-in function id>, 'input': <built-in function input>, 'isinstance': <built-in function isinstance>, 'issubclass': <built-in function issubclass>, 'iter': <built-in function iter>, 'len': <built-in function len>, 'locals': <built-in function locals>, 'max': <built-in function max>, 'min': <built-in function min>, 'next': <built-in function next>, 'oct': <built-in function oct>, 'ord': <built-in function ord>, 'pow': <built-in function pow>, 'print': <built-in function print>, 'repr': <built-in function repr>, 'round': <built-in function round>, 'setattr': <built-in function setattr>, 'sorted': <built-in function sorted>, 'sum': <built-in function sum>, 'vars': <built-in function vars>, 'None': None, 'Ellipsis': Ellipsis, 'NotImplemented': NotImplemented, 'False': False, 'True': True, 'bool': <class 'bool'>, 'memoryview': <class 'memoryview'>, 'bytearray': <class 'bytearray'>, 'bytes': <class 'bytes'>, 'classmethod': <class 'classmethod'>, 'complex': <class 'complex'>, 'dict': <class 'dict'>, 'enumerate': <class 'enumerate'>, 'filter': <class 'filter'>, 'float': <class 'float'>, 'frozenset': <class 'frozenset'>, 'property': <class 'property'>, 'int': <class 'int'>, 'list': <class 'list'>, 'map': <class 'map'>, 'object': <class 'object'>, 'range': <class 'range'>, 'reversed': <class 'reversed'>, 'set': <class 'set'>, 'slice': <class 'slice'>, 'staticmethod': <class 'staticmethod'>, 'str': <class 'str'>, 'super': <class 'super'>, 'tuple': <class 'tuple'>, 'type': <class 'type'>, 'zip': <class 'zip'>, '__debug__': True, 'BaseException': <class 'BaseException'>, 'Exception': <class 'Exception'>, 'TypeError': <class 'TypeError'>, 'StopAsyncIteration': <class 'StopAsyncIteration'>, 'StopIteration': <class 'StopIteration'>, 'GeneratorExit': <class 'GeneratorExit'>, 'SystemExit': <class 'SystemExit'>, 'KeyboardInterrupt': <class 'KeyboardInterrupt'>, 'ImportError': <class 'ImportError'>, 'ModuleNotFoundError': <class 'ModuleNotFoundError'>, 'OSError': <class 'OSError'>, 'EnvironmentError': <class 'OSError'>, 'IOError': <class 'OSError'>, 'EOFError': <class 'EOFError'>, 'RuntimeError': <class 'RuntimeError'>, 'RecursionError': <class 'RecursionError'>, 'NotImplementedError': <class 'NotImplementedError'>, 'NameError': <class 'NameError'>, 'UnboundLocalError': <class 'UnboundLocalError'>, 'AttributeError': <class 'AttributeError'>, 'SyntaxError': <class 'SyntaxError'>, 'IndentationError': <class 'IndentationError'>, 'TabError': <class 'TabError'>, 'LookupError': <class 'LookupError'>, 'IndexError': <class 'IndexError'>, 'KeyError': <class 'KeyError'>, 'ValueError': <class 'ValueError'>, 'UnicodeError': <class 'UnicodeError'>, 'UnicodeEncodeError': <class 'UnicodeEncodeError'>, 'UnicodeDecodeError': <class 'UnicodeDecodeError'>, 'UnicodeTranslateError': <class 'UnicodeTranslateError'>, 'AssertionError': <class 'AssertionError'>, 'ArithmeticError': <class 'ArithmeticError'>, 'FloatingPointError': <class 'FloatingPointError'>, 'OverflowError': <class 'OverflowError'>, 'ZeroDivisionError': <class 'ZeroDivisionError'>, 'SystemError': <class 'SystemError'>, 'ReferenceError': <class 'ReferenceError'>, 'MemoryError': <class 'MemoryError'>, 'BufferError': <class 'BufferError'>, 'Warning': <class 'Warning'>, 'UserWarning': <class 'UserWarning'>, 'DeprecationWarning': <class 'DeprecationWarning'>, 'PendingDeprecationWarning': <class 'PendingDeprecationWarning'>, 'SyntaxWarning': <class 'SyntaxWarning'>, 'RuntimeWarning': <class 'RuntimeWarning'>, 'FutureWarning': <class 'FutureWarning'>, 'ImportWarning': <class 'ImportWarning'>, 'UnicodeWarning': <class 'UnicodeWarning'>, 'BytesWarning': <class 'BytesWarning'>, 'ResourceWarning': <class 'ResourceWarning'>, 'ConnectionError': <class 'ConnectionError'>, 'BlockingIOError': <class 'BlockingIOError'>, 'BrokenPipeError': <class 'BrokenPipeError'>, 'ChildProcessError': <class 'ChildProcessError'>, 'ConnectionAbortedError': <class 'ConnectionAbortedError'>, 'ConnectionRefusedError': <class 'ConnectionRefusedError'>, 'ConnectionResetError': <class 'ConnectionResetError'>, 'FileExistsError': <class 'FileExistsError'>, 'FileNotFoundError': <class 'FileNotFoundError'>, 'IsADirectoryError': <class 'IsADirectoryError'>, 'NotADirectoryError': <class 'NotADirectoryError'>, 'InterruptedError': <class 'InterruptedError'>, 'PermissionError': <class 'PermissionError'>, 'ProcessLookupError': <class 'ProcessLookupError'>, 'TimeoutError': <class 'TimeoutError'>, 'open': <built-in function open>, 'quit': Use quit() or Ctrl-D (i.e. EOF) to exit, 'exit': Use exit() or Ctrl-D (i.e. EOF) to exit, 'copyright': Copyright (c) 2001-2023 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands
+    for supporting Python development.  See www.python.org for more information., 'license': Type license() to see the full license text, 'help': Type help() for interactive help, or help(object) for help about object., '__pybind11_internals_v4_clang_libcpp_cxxabi1002__': <capsule object NULL at 0x104141c00>}, '__annotations__': {'MULTITHREADING': <class 'bool'>, 'VERBOSE': <class 'bool'>, 'DEFAULT_PATTERN_PATH': <class 'str'>, 'DEFAULT_DESIGN_PARAM_PATH': <class 'str'>, 'DEFAULT_BODY_PARAM_PATH': <class 'str'>, 'SELECTED_DECODER': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'PRESERVE_HOLES': <class 'bool'>, 'SELECTED_FITNESS_METRIC': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'SELECTED_CROSSOVER': typing.Literal['pmx', 'ox1'], 'GRAVITATE_ONCE': <class 'bool'>, 'POPULATION_WEIGHTS': typing.Mapping[str, float], 'ENABLE_DYNAMIC_STOPPING': <class 'bool'>, 'EARLY_STOP_WINDOW': <class 'int'>, 'EARLY_STOP_TOLERANCE': <class 'float'>, 'ENABLE_EXTENSION': <class 'bool'>, 'EXTEND_WINDOW': <class 'int'>, 'EXTEND_THRESHOLD': <class 'float'>, 'MAX_GENERATIONS': <class 'int'>, 'GENERATION_PER_FLUSH': <class 'int'>}, 'math': <module 'math' from '/Users/aysegulbarlas/miniconda3/envs/garment/lib/python3.9/lib-dynload/math.cpython-39-darwin.so'>, 'Literal': typing.Literal, 'Mapping': typing.Mapping, 'MULTITHREADING': True, 'VERBOSE': True, 'DEFAULT_PATTERN_PATH': 'nesting-assets/default_pattern.json', 'DEFAULT_DESIGN_PARAM_PATH': 'nesting-assets/default_design_params.yaml', 'DEFAULT_BODY_PARAM_PATH': 'nesting-assets/default_body_measurements.yaml', 'DecoderName': typing.Literal['BL', 'Greedy', 'NFP', 'Random', 'Jostle'], 'MetricName': typing.Literal['usage_bb', 'concave_hull', 'rest_length'], 'CrossoverName': typing.Literal['pmx', 'ox1'], 'SortKey': typing.Literal['bbox_area', 'hull_area', 'aspect_ratio'], 'SELECTED_DECODER': 'NFP', 'PRESERVE_HOLES': True, 'SELECTED_FITNESS_METRIC': 'concave_hull', 'SELECTED_CROSSOVER': 'ox1', 'OX_K': 1, 'NUM_SPLITS': 30, 'GRAVITATE_ONCE': True, 'GRAVITATE_STEP': 2, 'SORT_BY': 'hull_area', 'POPULATION_SIZE': 30, 'NUM_GENERATIONS': 10, 'MUTATION_RATE': 0.9, 'POPULATION_WEIGHTS': {'elites': 0.2, 'offspring': 0.4, 'mutants': 0.3, 'randoms': 0.1}, 'EXCLUDED_PARAM_PATHS': ['*component*', '*range*'], 'MUTATION_WEIGHTS': {'rotate': 0, 'swap': 0, 'inversion': 0, 'insertion': 0, 'scramble': 0, 'split': 0, 'design_param': 1}, 'ENABLE_DYNAMIC_STOPPING': True, 'EARLY_STOP_WINDOW': 10, 'EARLY_STOP_TOLERANCE': 0.01, 'ENABLE_EXTENSION': True, 'EXTEND_WINDOW': 10, 'EXTEND_THRESHOLD': 0.1, 'MAX_GENERATIONS': 200, 'GENERATION_PER_FLUSH': 4, 'SAVE_LOGS': True, 'SAVE_LOGS_PATH': 'nesting/run_logs/', 'LOG_TIME': True, 'LOG_DESIGN_PARAM_PATHS': True, 'HULL_TRIM_RATIO': 10, 'INTERIOR_SAMPLE_SPACING': 5, 'BOUNDARY_SAMPLE_SPACING': 3, 'SNAP': False, 'SNAP_TOLERANCE': 0.1, 'SAMPLES_PER_EDGE': 4, 'ENABLE_ROTATIONS': True, 'ALLOWED_ROTATIONS': [0, 90, 180, 270], 'NUM_COPIES': 0, 'CONTAINER_WIDTH_CM': 140, 'CONTAINER_HEIGHT_CM': 400, 'SEAM_ALLOWANCE_CM': 0, '__dict__': <function __dict__ at 0x13a73bc10>}
+Generating initial population...
+Random chromosome generated with fitness: 0.6143
+Random chromosome generated with fitness: 0.7252
+Random chromosome generated with fitness: 0.6115
+Random chromosome generated with fitness: 0.7475
+Random chromosome generated with fitness: 0.6997
+Random chromosome generated with fitness: 0.6972
+Random chromosome generated with fitness: 0.7219
+Random chromosome generated with fitness: 0.6828
+Random chromosome generated with fitness: 0.7236
+Random chromosome generated with fitness: 0.6527
+Random chromosome generated with fitness: 0.6627
+Random chromosome generated with fitness: 0.7307
+Random chromosome generated with fitness: 0.6969
+Random chromosome generated with fitness: 0.7254
+Random chromosome generated with fitness: 0.6528
+Random chromosome generated with fitness: 0.6742
+Random chromosome generated with fitness: 0.7351
+Random chromosome generated with fitness: 0.6085
+Random chromosome generated with fitness: 0.6979
+Random chromosome generated with fitness: 0.6731
+Random chromosome generated with fitness: 0.7173
+Random chromosome generated with fitness: 0.6042
+Random chromosome generated with fitness: 0.6094
+Random chromosome generated with fitness: 0.6651
+Random chromosome generated with fitness: 0.6887
+Random chromosome generated with fitness: 0.7224
+Random chromosome generated with fitness: 0.7564
+Random chromosome generated with fitness: 0.7363
+Random chromosome generated with fitness: 0.6959
+Random chromosome generated with fitness: 0.6258
+------------------------------------------------------------
+Initial population of 30 layouts generated.
+Layout 0: [('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 180), ('right_btorso', 180)] | Fitness: 0.6527
+Layout 1: [('right_ftorso', 90), ('left_btorso', 180), ('right_btorso', 270), ('left_ftorso', 90)] | Fitness: 0.7252
+Layout 2: [('right_ftorso', 180), ('left_ftorso', 90), ('right_btorso', 180), ('left_btorso', 90)] | Fitness: 0.6115
+Layout 3: [('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)] | Fitness: 0.7475
+Layout 4: [('right_btorso', 90), ('left_ftorso', 270), ('left_btorso', 90), ('right_ftorso', 270)] | Fitness: 0.7307
+Layout 5: [('right_ftorso', 90), ('left_btorso', 270), ('right_btorso', 270), ('left_ftorso', 180)] | Fitness: 0.6997
+Layout 6: [('right_btorso', 90), ('left_ftorso', 270), ('right_ftorso', 270), ('left_btorso', 180)] | Fitness: 0.6627
+Layout 7: [('right_ftorso', 0), ('left_btorso', 0), ('right_btorso', 270), ('left_ftorso', 90)] | Fitness: 0.6143
+Layout 8: [('right_btorso', 270), ('left_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 90)] | Fitness: 0.7236
+Layout 9: [('right_ftorso', 0), ('left_ftorso', 0), ('right_btorso', 0), ('left_btorso', 270)] | Fitness: 0.6828
+Layout 10: [('right_ftorso', 270), ('right_btorso', 90), ('left_btorso', 0), ('left_ftorso', 90)] | Fitness: 0.7219
+Layout 11: [('left_btorso', 180), ('right_btorso', 270), ('left_ftorso', 180), ('right_ftorso', 270)] | Fitness: 0.6972
+Layout 12: [('right_ftorso', 0), ('left_ftorso', 0), ('left_btorso', 90), ('right_btorso', 90)] | Fitness: 0.6969
+Layout 13: [('right_ftorso', 0), ('left_btorso', 0), ('left_ftorso', 90), ('right_btorso', 0)] | Fitness: 0.6731
+Layout 14: [('left_ftorso', 90), ('right_btorso', 0), ('right_ftorso', 0), ('left_btorso', 0)] | Fitness: 0.7254
+Layout 15: [('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 90), ('left_btorso', 270)] | Fitness: 0.6528
+Layout 16: [('left_ftorso', 270), ('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180)] | Fitness: 0.6042
+Layout 17: [('right_btorso', 90), ('left_btorso', 180), ('right_ftorso', 180), ('left_ftorso', 90)] | Fitness: 0.6742
+Layout 18: [('right_ftorso', 90), ('left_btorso', 180), ('right_btorso', 0), ('left_ftorso', 180)] | Fitness: 0.6979
+Layout 19: [('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 180), ('right_ftorso', 0)] | Fitness: 0.6651
+Layout 20: [('left_btorso', 0), ('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 180)] | Fitness: 0.7351
+Layout 21: [('left_btorso', 180), ('right_ftorso', 90), ('left_ftorso', 90), ('right_btorso', 0)] | Fitness: 0.6094
+Layout 22: [('right_ftorso', 180), ('left_ftorso', 270), ('left_btorso', 270), ('right_btorso', 270)] | Fitness: 0.7173
+Layout 23: [('left_btorso', 90), ('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 90)] | Fitness: 0.6085
+Layout 24: [('right_btorso', 180), ('right_ftorso', 180), ('left_ftorso', 270), ('left_btorso', 270)] | Fitness: 0.6887
+Layout 25: [('left_ftorso', 90), ('left_btorso', 270), ('right_btorso', 90), ('right_ftorso', 0)] | Fitness: 0.7224
+Layout 26: [('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)] | Fitness: 0.7564
+Layout 27: [('right_ftorso', 180), ('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 0)] | Fitness: 0.7363
+Layout 28: [('left_btorso', 180), ('left_ftorso', 270), ('right_btorso', 270), ('right_ftorso', 0)] | Fitness: 0.6258
+Layout 29: [('left_ftorso', 270), ('left_btorso', 90), ('right_btorso', 270), ('right_ftorso', 270)] | Fitness: 0.6959
+------------------------------------------------------------
+Population generation completed.
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+Elite 3: ((('right_ftorso', 180), ('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7363
+Elite 4: ((('left_btorso', 0), ('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7351
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 270), ('left_btorso', 90), ('right_ftorso', 270)), 1129624355435861758) | Fitness: 0.7307
+Elite 6: ((('left_ftorso', 90), ('right_btorso', 0), ('right_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7254
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6903
+Random chromosome created with fitness: 0.6903
+Random chromosome generated with fitness: 0.7054
+Random chromosome created with fitness: 0.7054
+Random chromosome generated with fitness: 0.7103
+Random chromosome created with fitness: 0.7103
+Collected 0 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 1: best 0.7564 (Δ +0.0000)
+[Generation 1] Found 0 chromosomes with design_param as last mutation
+Generation 1 completed in 0.23s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+Elite 3: ((('right_ftorso', 180), ('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7363
+Elite 4: ((('left_btorso', 0), ('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7351
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 270), ('left_btorso', 90), ('right_ftorso', 270)), 1129624355435861758) | Fitness: 0.7307
+Elite 6: ((('left_ftorso', 90), ('right_btorso', 0), ('right_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7254
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+Elite 3: ((('right_ftorso', 180), ('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7363
+Elite 4: ((('left_btorso', 0), ('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7351
+Elite 5: ((('right_btorso', 90), ('left_ftorso', 270), ('left_btorso', 90), ('right_ftorso', 270)), 1129624355435861758) | Fitness: 0.7307
+Elite 6: ((('left_ftorso', 90), ('right_btorso', 0), ('right_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7254
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Offspring created with fitness: 0.7564
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7227
+Random chromosome created with fitness: 0.7227
+Random chromosome generated with fitness: 0.7007
+Random chromosome created with fitness: 0.7007
+Random chromosome generated with fitness: 0.7064
+Random chromosome created with fitness: 0.7064
+Collected 1 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 2: best 0.7564 (Δ +0.0000)
+[Generation 2] Found 0 chromosomes with design_param as last mutation
+Generation 2 completed in 0.22s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+Elite 4: ((('right_ftorso', 180), ('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7363
+Elite 5: ((('left_btorso', 0), ('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7351
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 270), ('left_btorso', 90), ('right_ftorso', 270)), 1129624355435861758) | Fitness: 0.7307
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+Elite 4: ((('right_ftorso', 180), ('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7363
+Elite 5: ((('left_btorso', 0), ('right_btorso', 0), ('right_ftorso', 0), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7351
+Elite 6: ((('right_btorso', 90), ('left_ftorso', 270), ('left_btorso', 90), ('right_ftorso', 270)), 1129624355435861758) | Fitness: 0.7307
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Offspring created with fitness: 0.7564
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7394
+Random chromosome created with fitness: 0.7394
+Random chromosome generated with fitness: 0.7186
+Random chromosome created with fitness: 0.7186
+Random chromosome generated with fitness: 0.6789
+Random chromosome created with fitness: 0.6789
+Collected 1 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 3: best 0.7564 (Δ +0.0000)
+[Generation 3] Found 0 chromosomes with design_param as last mutation
+Flushing metrics to CSV…
+Updating plots…
+Plotting 4 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_194633/plots/fitness_curves_20250622_194633.png
+Mean gains plot saved to nesting/run_logs/_20250622_194633/plots/mean_gains_20250622_194633.png
+Delta best plot saved to nesting/run_logs/_20250622_194633/plots/delta_best_20250622_194633.png
+Mutation gains plot saved to nesting/run_logs/_20250622_194633/plots/mutation_gains.png
+Swarm plot data: 59 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_194633/plots/fitness_swarm_20250622_194633.png
+Plots updated successfully.
+Generation 3 completed in 0.74s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+Elite 5: ((('right_btorso', 270), ('left_ftorso', 180), ('right_ftorso', 180), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7394
+Elite 6: ((('right_ftorso', 180), ('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7363
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+Elite 5: ((('right_btorso', 270), ('left_ftorso', 180), ('right_ftorso', 180), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7394
+Elite 6: ((('right_ftorso', 180), ('right_btorso', 0), ('left_ftorso', 0), ('left_btorso', 0)), 1129624355435861758) | Fitness: 0.7363
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Offspring created with fitness: 0.7564
+Offspring created with fitness: 0.7564
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6785
+Random chromosome created with fitness: 0.6785
+Random chromosome generated with fitness: 0.6731
+Random chromosome created with fitness: 0.6731
+Random chromosome generated with fitness: 0.7431
+Random chromosome created with fitness: 0.7431
+Collected 2 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 4: best 0.7564 (Δ +0.0000)
+[Generation 4] Found 0 chromosomes with design_param as last mutation
+Generation 4 completed in 0.23s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6694
+Random chromosome created with fitness: 0.6694
+Random chromosome generated with fitness: 0.6897
+Random chromosome created with fitness: 0.6897
+Random chromosome generated with fitness: 0.6907
+Random chromosome created with fitness: 0.6907
+Collected 0 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 5: best 0.7564 (Δ +0.0000)
+[Generation 5] Found 0 chromosomes with design_param as last mutation
+Generation 5 completed in 0.21s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_ftorso', 90), ('left_btorso', 0), ('right_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7475
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Offspring created with fitness: 0.7564
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7206
+Random chromosome created with fitness: 0.7206
+Random chromosome generated with fitness: 0.7437
+Random chromosome created with fitness: 0.7437
+Random chromosome generated with fitness: 0.6779
+Random chromosome created with fitness: 0.6779
+Collected 1 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 6: best 0.7564 (Δ +0.0000)
+[Generation 6] Found 0 chromosomes with design_param as last mutation
+Generation 6 completed in 0.21s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7564
+Elite 1: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.7471
+Random chromosome created with fitness: 0.7471
+Random chromosome generated with fitness: 0.7602
+Random chromosome created with fitness: 0.7602
+Random chromosome generated with fitness: 0.6786
+Random chromosome created with fitness: 0.6786
+Collected 0 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 7: best 0.7602 (Δ +0.0038)
+[Generation 7] Found 0 chromosomes with design_param as last mutation
+Flushing metrics to CSV…
+Updating plots…
+Plotting 8 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_194633/plots/fitness_curves_20250622_194633.png
+Mean gains plot saved to nesting/run_logs/_20250622_194633/plots/mean_gains_20250622_194633.png
+Delta best plot saved to nesting/run_logs/_20250622_194633/plots/delta_best_20250622_194633.png
+Mutation gains plot saved to nesting/run_logs/_20250622_194633/plots/mutation_gains.png
+Swarm plot data: 98 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_194633/plots/fitness_swarm_20250622_194633.png
+Plots updated successfully.
+Generation 7 completed in 0.49s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7602
+Elite 1: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7602
+Elite 1: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 2: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Offspring created with fitness: 0.7602
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6683
+Random chromosome created with fitness: 0.6683
+Random chromosome generated with fitness: 0.6530
+Random chromosome created with fitness: 0.6530
+Random chromosome generated with fitness: 0.6950
+Random chromosome created with fitness: 0.6950
+Collected 1 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 8: best 0.7602 (Δ +0.0000)
+[Generation 8] Found 0 chromosomes with design_param as last mutation
+Generation 8 completed in 0.21s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7602
+Elite 1: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 2: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7602
+Elite 1: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 2: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Offspring created with fitness: 0.7564
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.6555
+Random chromosome created with fitness: 0.6555
+Random chromosome generated with fitness: 0.7517
+Random chromosome created with fitness: 0.7517
+Random chromosome generated with fitness: 0.6638
+Random chromosome created with fitness: 0.6638
+Collected 1 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 9: best 0.7602 (Δ +0.0000)
+[Generation 9] Found 0 chromosomes with design_param as last mutation
+Generation 9 completed in 0.26s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7602
+Elite 1: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 2: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+------------------------------------------------------------
+Next generation…
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7602
+Elite 1: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 2: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 3: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Phase A: submitting offspring tasks…
+Phase A: collecting offspring results…
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ offspring task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Offspring created with fitness: 0.7564
+Phase B: submitting mutant tasks…
+Phase B: collecting mutant results…
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+‼ mutant task failed: free variable 'fnmatch' referenced before assignment in enclosing scope
+Phase C: submitting random-chromosome tasks…
+Phase C: collecting random-chromosome results…
+Random chromosome generated with fitness: 0.5742
+Random chromosome created with fitness: 0.5742
+Random chromosome generated with fitness: 0.6818
+Random chromosome created with fitness: 0.6818
+Random chromosome generated with fitness: 0.7725
+Random chromosome created with fitness: 0.7725
+Collected 1 offspring, 0 mutants, 3 randoms.
+Avg offspring gain vs parent: +0.0000; mutants: +0.0000
+------------------------------------------------------------
+Generation 10: best 0.7725 (Δ +0.0122)
+[Generation 10] Found 0 chromosomes with design_param as last mutation
+Flushing metrics to CSV…
+Updating plots…
+Plotting 11 generations of metrics.
+Fitness curves plot saved to nesting/run_logs/_20250622_194633/plots/fitness_curves_20250622_194633.png
+Mean gains plot saved to nesting/run_logs/_20250622_194633/plots/mean_gains_20250622_194633.png
+Delta best plot saved to nesting/run_logs/_20250622_194633/plots/delta_best_20250622_194633.png
+Mutation gains plot saved to nesting/run_logs/_20250622_194633/plots/mutation_gains.png
+Swarm plot data: 128 points
+Swarm plot created.
+Swarm plot saved to nesting/run_logs/_20250622_194633/plots/fitness_swarm_20250622_194633.png
+Plots updated successfully.
+Generation 10 completed in 0.57s.
+------------------------------------------------------------
+Returning elite layouts. Best fitness: 0.7725
+Elite 1: ((('right_ftorso', 90), ('right_btorso', 270), ('left_btorso', 0), ('left_ftorso', 90)), 1129624355435861758) | Fitness: 0.7725
+Elite 2: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 3: ((('right_btorso', 90), ('left_btorso', 0), ('right_ftorso', 180), ('left_ftorso', 180)), 1129624355435861758) | Fitness: 0.7602
+Elite 4: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 5: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+Elite 6: ((('right_btorso', 0), ('right_ftorso', 270), ('left_ftorso', 270), ('left_btorso', 90)), 1129624355435861758) | Fitness: 0.7564
+------------------------------------------------------------
+Evolution completed.
+Total time: 4.92 seconds

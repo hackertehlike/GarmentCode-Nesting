@@ -175,15 +175,8 @@ class Piece:
             split_line = LineString([(midx, miny - 1.0), (midx, maxy + 1.0)])
 
             # Split only the inner polygon
-            try:
-                result_inner = shapely_split(poly_inner, split_line)
-            except TopologyException:
-                # If split fails, fallback to two identical copies
-                new1 = copy.deepcopy(self)
-                new1.id = f"{self.id}_s1"
-                new2 = copy.deepcopy(self)
-                new2.id = f"{self.id}_s2"
-                return new1, new2
+            result_inner = shapely_split(poly_inner, split_line)
+            
 
             parts_inner: list[Polygon] = [g for g in result_inner.geoms if isinstance(g, Polygon)]
 
