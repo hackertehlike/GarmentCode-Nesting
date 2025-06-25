@@ -4,7 +4,7 @@ import math
 from typing import Literal, Mapping
 
 # ——— general settings —————————————————————————————————————
-MULTITHREADING: bool = True
+MULTITHREADING: bool = False
 VERBOSE: bool = True
 DEFAULT_PATTERN_PATH: str = "nesting-assets/default_pattern.json"
 DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/default_design_params.yaml"

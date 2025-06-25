@@ -77,6 +77,11 @@ class Chromosome(Layout):
         # Track origin and last mutation type
         self.origin: str | None = origin
         self.last_mutation: str | None = None
+        
+        # Add tracking for mutation statistics
+        self.old_fitness: float | None = None
+        self.new_fitness: float | None = None
+        self.mutation_improvement: float | None = None
 
     @property
     def genes(self) -> list[Piece]:
@@ -113,7 +118,7 @@ class Chromosome(Layout):
         if mutation == "split":
             # Split up to config.NUM_SPLITS random unsplit genes
             max_splits = min(config.NUM_SPLITS, len(self.genes))
-            num_splits = random.randint(5, max_splits)
+            num_splits = random.randint(1, max_splits)
             for _ in range(num_splits):
                 # pick an unsplit gene (parent_id is None)
                 unsplit_idxs = [i for i, g in enumerate(self.genes) if g.parent_id is None]
@@ -551,7 +556,7 @@ class Chromosome(Layout):
                     placed_ids.add(gene.id)
 
         # ------------------------------------------------------------------
-        # 3) finally, copy any still-missing components from parent 1 --------
+        # finally, copy any still-missing components from parent 1 --------
         # ------------------------------------------------------------------
         for gid in parent_genes["self"]:
             if gid in chosen_source:
@@ -565,7 +570,7 @@ class Chromosome(Layout):
                     placed_ids.add(gene.id)
 
         # ------------------------------------------------------------------
-        # 4) finished -------------------------------------------------------
+        # finished -------------------------------------------------------
         # ------------------------------------------------------------------
         if config.LOG_TIME:
             dt = time.time() - t0
@@ -673,68 +678,68 @@ def safe_randomize_param(design_sampler, params, path_parts):
     # Make a deep copy of the range to avoid modifying the original
     range_values = copy.deepcopy(param_node.get('range', []))
     
-    # Get default probability
-    def_prob = param_node.get('default_prob', None)
-    
-    # Use the default value with probability def_prob
-    if def_prob is not None and random.random() < def_prob:
-        # Keep the default (current) value
-        new_value = old_value
-    else:
-        # Generate a new random value based on type
-        if 'select' in p_type or 'file' in p_type:  # Discrete types (excluding bool)
-            # Handle None in select_null type
-            if p_type == 'select_null' and None not in range_values:
-                range_values = range_values + [None]
-                
-            # Exclude default value if def_prob is set
-            if def_prob is not None and old_value in range_values:
-                range_values = [v for v in range_values if v != old_value]
-                
-            # If no values left after exclusion, use the original range
-            if not range_values:
-                range_values = copy.deepcopy(param_node.get('range', []))
-                
-            # Select random value
-            if range_values:
-                new_value = random.choice(range_values)
-            else:
-                # If no range values at all, keep the old value
-                new_value = old_value
-                
-        elif p_type == 'int':
-            if len(range_values) >= 2:
-                # Ensure we get a different value if possible
-                if def_prob is not None and range_values[1] - range_values[0] > 1:
-                    while True:
-                        new_value = random.randint(range_values[0], range_values[1])
-                        if new_value != old_value:
-                            break
-                else:
-                    new_value = random.randint(range_values[0], range_values[1])
-            else:
-                # No proper range, keep old value
-                new_value = old_value
-                
-        elif p_type == 'float':
-            if len(range_values) >= 2:
-                # Ensure we get a noticeably different value
-                if def_prob is not None:
-                    while True:
-                        new_value = random.uniform(range_values[0], range_values[1])
-                        # Check if different enough (at least 1% of range)
-                        range_span = range_values[1] - range_values[0]
-                        min_diff = max(0.01 * range_span, 1e-6)
-                        if abs(new_value - old_value) > min_diff:
-                            break
-                else:
-                    new_value = random.uniform(range_values[0], range_values[1])
-            else:
-                # No proper range, keep old value
-                new_value = old_value
+    # Determine if the parameter actually has variability
+    if 'select' in p_type or 'file' in p_type:
+        # Discrete parameters
+        if p_type == 'select_null' and None not in range_values:
+            range_values = range_values + [None]
+        unique_vals = list(dict.fromkeys(range_values))
+        if len(unique_vals) <= 1:
+            if config.VERBOSE:
+                print(f"[safe_randomize_param] Parameter '{param_path}' has a single valid choice, skipping")
+            return old_value, old_value
+
+        # Remove the old value when possible
+        candidates = [v for v in unique_vals if v != old_value]
+        if not candidates:
+            if config.VERBOSE:
+                print(f"[safe_randomize_param] Parameter '{param_path}' only allows the current value, skipping")
+            return old_value, old_value
+
+        new_value = random.choice(candidates)
+
+    elif p_type == 'int':
+        if len(range_values) < 2 or range_values[0] == range_values[1]:
+            if config.VERBOSE:
+                print(f"[safe_randomize_param] Parameter '{param_path}' has a degenerate int range, skipping")
+            return old_value, old_value
+
+        lower, upper = range_values[0], range_values[1]
+        attempts = 0
+        while attempts < 10:
+            new_value = random.randint(lower, upper)
+            if new_value != old_value:
+                break
+            attempts += 1
         else:
-            # Unknown type, keep old value
-            new_value = old_value
+            if config.VERBOSE:
+                print(f"[safe_randomize_param] Could not find new int value for '{param_path}', skipping")
+            return old_value, old_value
+
+    elif p_type == 'float':
+        if len(range_values) < 2 or range_values[0] == range_values[1]:
+            if config.VERBOSE:
+                print(f"[safe_randomize_param] Parameter '{param_path}' has a degenerate float range, skipping")
+            return old_value, old_value
+
+        lower, upper = range_values[0], range_values[1]
+        range_span = upper - lower
+        min_diff = max(0.01 * range_span, 1e-6)
+        attempts = 0
+        while attempts < 10:
+            new_value = random.uniform(lower, upper)
+            if abs(new_value - old_value) > min_diff:
+                break
+            attempts += 1
+        else:
+            if config.VERBOSE:
+                print(f"[safe_randomize_param] Could not find new float value for '{param_path}', skipping")
+            return old_value, old_value
+
+    else:
+        if config.VERBOSE:
+            print(f"[safe_randomize_param] Unsupported parameter type '{p_type}' for '{param_path}', skipping")
+        return old_value, old_value
     
     # Set only the 'v' value without touching the range
     param_node['v'] = new_value

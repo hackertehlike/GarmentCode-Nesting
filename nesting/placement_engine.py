@@ -355,6 +355,14 @@ class PlacementEngine:
 
             hull = Polygon(snapped)
 
+        # Check if the resulting hull is valid before returning it
+        if not hull.is_valid:
+            print("[alpha_shape] Generated an invalid geometry - this chromosome will be discarded")
+            # Create an empty polygon as fallback
+            empty_hull = Polygon()
+            self._last_hull = empty_hull
+            return empty_hull
+    
         self._last_hull = hull
         return hull
 
