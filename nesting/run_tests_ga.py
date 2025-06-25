@@ -168,6 +168,145 @@ def flush_results(rows: list[dict], timestamp: str = None) -> None:
     print(f"Results saved to {csv_path} and plots saved to {plots_dir}")
 
 
+def flush_meta_stats(rows: list[dict], design_changes: list[dict], timestamp: str) -> None:
+    """Generate meta statistics across all runs and save to disk."""
+    results_dir = Path("./ga_benchmark_results") / "meta"
+    results_dir.mkdir(parents=True, exist_ok=True)
+
+    df = pd.DataFrame(rows)
+    changes_df = pd.DataFrame(design_changes)
+
+    # ---- FITNESS Δ BY MUTATION TYPE --------------------------------
+    gain_cols = [c for c in df.columns if c.startswith("mut_gain_")]
+    if gain_cols:
+        # Extract pattern information for plotting
+        gains_long = (
+            df[gain_cols + ["generation", "pattern"]]
+            .melt(id_vars=["generation", "pattern"],
+                  var_name="mutation", value_name="gain")
+            .dropna()
+        )
+        gains_long["mutation"] = gains_long["mutation"].str.replace("mut_gain_", "")
+
+        # save raw table
+        gains_long.to_csv(results_dir / f"mut_fitness_gains_{timestamp}.csv",
+                          index=False)
+
+        # Plot 1: Create enhanced box+swarm plot combination
+        plt.figure(figsize=(12, 7))
+        # Create box plot for statistical summary
+        ax = sns.boxplot(
+            data=gains_long, 
+            x="mutation", 
+            y="gain",
+            color="lightgrey",
+            fliersize=0  # Don't show outliers in the box plot
+        )
+        
+        # Add swarm plot on top to show individual data points
+        sns.swarmplot(
+            data=gains_long, 
+            x="mutation", 
+            y="gain", 
+            hue="pattern",  # Color by pattern instead of generation
+            dodge=True,     # Separate points by hue category
+            size=4,
+            alpha=0.7,
+            ax=ax
+        )
+        
+        plt.axhline(0, ls="--", c="r", lw=0.8, alpha=0.5)
+        plt.title("Fitness Change (Δ) by Mutation Type Across Patterns")
+        plt.ylabel("Δ Fitness vs Parent")
+        plt.xlabel("Mutation Type")
+        plt.xticks(rotation=45)
+        plt.legend(title="Pattern", bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        plt.savefig(results_dir / f"mut_fitness_gains_swarm_{timestamp}.png")
+        plt.close()
+        
+        # Plot 2: Create enhanced violin plot
+        plt.figure(figsize=(12, 7))
+        sns.violinplot(
+            data=gains_long, 
+            x="mutation", 
+            y="gain", 
+            inner="stick",  # Show individual data points as sticks inside the violin
+            palette="Set3",
+            cut=0  # Don't extend the violin past the observed data points
+        )
+        plt.axhline(0, ls="--", c="r", lw=0.8, alpha=0.5)
+        plt.title("Fitness Change (Δ) by Mutation Type Across Patterns")
+        plt.ylabel("Δ Fitness vs Parent")
+        plt.xlabel("Mutation Type")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig(results_dir / f"mut_fitness_gains_violin_{timestamp}.png")
+        plt.close()
+
+        # summary stats
+        summary = (
+            gains_long.groupby(["mutation", "pattern"])["gain"]
+            .agg(["mean", "std", "count", "min", "max"])
+            .reset_index()
+        )
+        summary.to_csv(results_dir / f"mut_gain_summary_{timestamp}.csv",
+                       index=False)
+        
+        # Also create overall summary by mutation type
+        overall_summary = (
+            gains_long.groupby("mutation")["gain"]
+            .agg(["mean", "std", "count", "min", "max"])
+            .reset_index()
+        )
+        overall_summary.to_csv(results_dir / f"mut_gain_overall_summary_{timestamp}.csv",
+                       index=False)
+
+    if df.empty:
+        return
+
+    # improvement per run
+    improvements = []
+    for pattern, grp in df.groupby("pattern"):
+        grp = grp.sort_values("generation")
+        if grp.empty:
+            continue
+        first = grp.iloc[0]["best_fitness"]
+        last = grp.iloc[-1]["best_fitness"]
+        improvements.append({"pattern": pattern, "improvement": last - first})
+
+    imp_df = pd.DataFrame(improvements)
+    imp_df.to_csv(results_dir / f"run_improvements_{timestamp}.csv", index=False)
+
+    # best origin counts
+    if "best_origin" in df.columns:
+        counts = df["best_origin"].value_counts().reset_index()
+        counts.columns = ["origin", "count"]
+        counts.to_csv(results_dir / f"best_origin_counts_{timestamp}.csv", index=False)
+
+        plt.figure(figsize=(6, 4))
+        sns.barplot(data=counts, x="origin", y="count")
+        plt.title("Best chromosome origin frequency")
+        plt.tight_layout()
+        plt.savefig(results_dir / f"best_origin_counts_{timestamp}.png")
+        plt.close()
+
+    # avg best fitness across runs
+    avg_gen = df.groupby("generation")["best_fitness"].mean().reset_index()
+    avg_gen.to_csv(results_dir / f"avg_best_fitness_{timestamp}.csv", index=False)
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(avg_gen["generation"], avg_gen["best_fitness"], marker="o")
+    plt.xlabel("Generation")
+    plt.ylabel("Average best fitness")
+    plt.title("Average best fitness across runs")
+    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.tight_layout()
+    plt.savefig(results_dir / f"avg_best_fitness_{timestamp}.png")
+    plt.close()
+
+
+
 def load_pieces(json_path: Path) -> dict[str, Piece]:
     extractor = PatternPathExtractor(json_path)
     pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE)
@@ -226,10 +365,19 @@ def load_design_params(json_path: Path) -> tuple:
     
     return design_params, body_params, design_sampler
 
-def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern_name: str, json_path: Path) -> list[dict]:
-    """Run GA on a pattern and collect per generation metrics."""
+def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern_name: str, json_path: Path) -> tuple[list[dict], list[dict]]:
+    """Run GA on a pattern and collect per generation metrics.
+
+    Returns
+    -------
+    results : list[dict]
+        Per-generation metrics for this GA run.
+    design_changes : list[dict]
+        Records of design parameter mutations that actually changed a value.
+    """
     start_time = time.time()
     results: list[dict] = []
+    design_changes: list[dict] = []
 
     design_params, body_params, design_sampler = load_design_params(json_path)
 
@@ -272,6 +420,7 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
         "pattern": pattern_name,
         "generation": int(row.get("generation", 0)),
         "best_fitness": row.get("best_fit", best_chrom.fitness),
+        "best_origin": best_chrom.origin,
         "avg_fitness": row.get("avg_child_fitness", 0.0),
         "usage_bb": decoder.usage_BB(),
         "concave_hull": decoder.concave_hull_utilization(),
@@ -301,6 +450,7 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
             "pattern": pattern_name,
             "generation": int(row.get("generation", gen)),
             "best_fitness": row.get("best_fit", best_chrom.fitness),
+            "best_origin": best_chrom.origin,
             "avg_fitness": row.get("avg_child_fitness", 0.0),
             "usage_bb": decoder.usage_BB(),
             "concave_hull": decoder.concave_hull_utilization(),
@@ -325,8 +475,14 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
     if config.SAVE_LOGS:
         evo.update_plots()
         evo.output_best_result()
-        
-    return results
+
+    # collect design parameter changes
+    if hasattr(evo, "design_param_changes"):
+        for dc in evo.design_param_changes:
+            dc["pattern"] = pattern_name
+        design_changes.extend(evo.design_param_changes)
+
+    return results, design_changes
 
 
 def main():
@@ -342,7 +498,8 @@ def main():
     
     # Create container with dimensions from config
     container = Container(config.CONTAINER_WIDTH_CM, config.CONTAINER_HEIGHT_CM)
-    all_results = []
+    all_results: list[dict] = []
+    all_changes: list[dict] = []
 
     test_files = json_files
     
@@ -367,18 +524,21 @@ def main():
         pieces = load_pieces(json_path)
         print(f"Loaded {len(pieces)} pieces from {pattern_name}")
         
-        results = run_ga_with_tracking(
+        results, changes = run_ga_with_tracking(
             copy.deepcopy(pieces),
             container,
             pattern_name,
             json_path,
         )
         all_results.extend(results)
+        all_changes.extend(changes)
 
         flush_results(all_results, timestamp)
+        flush_meta_stats(all_results, all_changes, timestamp)
 
     # Final save of all results
     flush_results(all_results, timestamp)
+    flush_meta_stats(all_results, all_changes, timestamp)
     print(f"\nGA benchmark completed at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"Total benchmarks: {len(test_files)} patterns processed")
 

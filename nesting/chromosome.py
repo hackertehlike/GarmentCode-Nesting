@@ -1,16 +1,14 @@
 # chromosome.py
 
 from __future__ import annotations
-from collections import OrderedDict
-from itertools import chain
 import time
 import random
 import copy
-from typing import Callable
-from pathlib import Path
-import csv
 import json
+import csv
 from fnmatch import fnmatch
+from pathlib import Path
+from typing import Callable, Iterable, Sequence, Any
 
 from .layout import Piece, Container, Layout, LayoutView
 from .placement_engine import DECODER_REGISTRY
@@ -28,12 +26,97 @@ def register_metric(name: str):
         return fn
     return deco
 
-def _run_decoder(chromosome: Chromosome, decoder_name: str):
-    view = LayoutView(chromosome.genes)
+# ──────────────────────────────────────────────────────────────────────────────
+# Utility helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+JsonDict = dict[str, Any]
+
+
+def _run_decoder(chrom: "Chromosome", decoder_name: str):
+    """Helper to instantiate & run the placement decoder."""
+    view = LayoutView(chrom.genes)
     Decoder = DECODER_REGISTRY[decoder_name]
-    decoder = Decoder(view, chromosome.container)
-    decoder.decode()
-    return decoder
+    dec = Decoder(view, chrom.container)
+    dec.decode()
+    return dec
+
+
+def _weighted_choice(options: dict[str, float]) -> str:
+    """Return a key from *options* using their values as weights."""
+    choices, weights = zip(*options.items())
+    return random.choices(choices, weights)[0]
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Design‑parameter helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+def _flatten_param_paths(node: JsonDict, prefix: list[str] | None = None) -> list[str]:
+    """Return all *non‑meta* leaf‑paths that contain a ``v`` key."""
+    prefix = prefix or []
+    paths: list[str] = []
+    for k, v in node.items():
+        if k == "meta":
+            continue  # never touch meta‑data
+        if isinstance(v, dict):
+            if "v" in v:
+                paths.append(".".join(prefix + [k]))
+            else:
+                paths += _flatten_param_paths(v, prefix + [k])
+    return paths
+
+
+def _filter_excluded(paths: Sequence[str]) -> list[str]:
+    patterns = config.EXCLUDED_PARAM_PATHS or []
+    if not patterns:
+        return list(paths)
+    return [p for p in paths if not any(fnmatch(p, pat) for pat in patterns)]
+
+
+def _numeric_range_ok(node: JsonDict) -> bool:
+    rng = node.get("range", [])
+    return len(rng) >= 2 and all(isinstance(x, (int, float)) for x in rng[:2])
+
+
+def _choose_numeric_param(params: JsonDict, paths: Sequence[str]) -> str | None:
+    """Return a random numeric *path* or *None* if none available."""
+    numeric = [p for p in paths if _numeric_range_ok(nested_get(params, p.split(".")))]
+    return random.choice(numeric) if numeric else None
+
+
+def _random_value(old: Any, p_type: str, rng: Sequence[float | int]):
+    """Return a *new* value that differs from *old* by ≤ 20 % of *range* width."""
+    lower, upper = rng[0], rng[1]
+    span = upper - lower
+    max_delta = config.PARAM_CHANGE_MARGIN * span  # 20 % of the *total* range, not of *old*
+
+    if span <= 0:
+        return old  # degenerate range – nothing we can do
+
+    # integer parameters --------------------------------------------------
+    if p_type == "int":
+        vals = list(range(int(lower), int(upper) + 1))
+        candidates = [v for v in vals if abs(v - old) <= max_delta and v != old]
+        if not candidates:
+            candidates = [v for v in vals if v != int(old)] or vals
+        return random.choice(candidates)
+
+    # float parameters ----------------------------------------------------
+    attempts = 0
+    while attempts < 100:
+        cand = random.uniform(lower, upper)
+        if abs(cand - old) <= max_delta and cand != old:
+            return cand
+        attempts += 1
+    # fallback – choose a value slightly different from old but within max_delta
+    if old + max_delta <= upper:
+        return old + max_delta / 2
+    elif old - max_delta >= lower:
+        return old - max_delta / 2
+    else:
+        # If we can't stay within both the bounds and max_delta, just pick a different value
+        return lower if abs(old - lower) > 1e-6 else upper
 
 @register_metric("usage_bb")
 def fitness_usage_bb(chromosome: Chromosome, decoder: str):
@@ -78,6 +161,13 @@ class Chromosome(Layout):
         self.origin: str | None = origin
         self.last_mutation: str | None = None
         
+        # For backwards compatibility, if the origin is crossover, set last_mutation to crossover_params
+        if origin == "crossover":
+            self.last_mutation = "crossover_params"
+        
+        # Initialize empty list to track parameter changes in the current generation
+        self.param_changes_this_gen = []
+        
         # Add tracking for mutation statistics
         self.old_fitness: float | None = None
         self.new_fitness: float | None = None
@@ -92,302 +182,150 @@ class Chromosome(Layout):
         metric_fn = METRIC_REGISTRY[config.SELECTED_FITNESS_METRIC]
         self.fitness = metric_fn(self, config.SELECTED_DECODER)
 
-    def mutate(self) -> Chromosome:
-        """
-        Perform a single mutation on the chromosome. Mutation types and
-        their probabilities are read from config.MUTATION_WEIGHTS.
-        """
+    def mutate(self) -> "Chromosome":
+        """Pick a mutation based on :pydata:`config.MUTATION_WEIGHTS` and apply it."""
         start = time.time()
-
-        # Choose mutation type according to weights
-        mutation_types, weights = zip(*config.MUTATION_WEIGHTS.items())
+        self.last_mutation = mutation = _weighted_choice(config.MUTATION_WEIGHTS)
+        # Clear the parameter changes tracking for this generation
+        self.param_changes_this_gen = []
         
-        # Always print which mutation types are available with their weights
         if config.VERBOSE:
-            print(f"[Chromosome.mutate] Available mutations: {list(zip(mutation_types, weights))}")
-            
-        mutation = random.choices(mutation_types, weights=weights, k=1)[0]
-        self.last_mutation = mutation
-        
-        # Always print which mutation was selected
-        if config.VERBOSE:
-            print(f"[Chromosome.mutate] Selected mutation: {mutation}")
+            print(f"[Chromosome.mutate] → {mutation}")
 
-        n = len(self.genes)
+        # dispatch table maps mutation‑name → handler method
+        handler = {
+            "split": self._mutate_split,
+            "rotate": self._mutate_rotate,
+            "swap": self._mutate_swap,
+            "inversion": self._mutate_inversion,
+            "insertion": self._mutate_insertion,
+            "scramble": self._mutate_scramble,
+            "design_params": self._mutate_design_params,
+        }.get(mutation)
 
-        if mutation == "split":
-            # Split up to config.NUM_SPLITS random unsplit genes
-            max_splits = min(config.NUM_SPLITS, len(self.genes))
-            num_splits = random.randint(1, max_splits)
-            for _ in range(num_splits):
-                # pick an unsplit gene (parent_id is None)
-                unsplit_idxs = [i for i, g in enumerate(self.genes) if g.parent_id is None]
-                if not unsplit_idxs:
-                    break
-                # Favor larger pieces: weight by bounding-box area
-                areas = []
-                for i in unsplit_idxs:
-                    # ensure bounding box is up to date
-                    self.genes[i].update_bbox()
-                    areas.append(self.genes[i].bbox_area)
-                idx = random.choices(unsplit_idxs, weights=areas, k=1)[0]
-                piece = self.genes[idx]
-                left, right = piece.split()
-                # replace original with left and right
-                self.genes.pop(idx)
-                self.genes.insert(idx, left)
-                self.genes.insert(idx + 1, right)
-                # relocate one of the split halves to a random position
-                child_to_move = random.choice([left, right])
-                # remove the chosen child from its current position
-                cur_pos = self.genes.index(child_to_move)
-                self.genes.pop(cur_pos)
-                # choose a new insert index across the genes list
-                new_pos = random.randrange(len(self.genes) + 1)
-                self.genes.insert(new_pos, child_to_move)
-                if config.VERBOSE:
-                    print(f"[Chromosome.mutate] relocated {child_to_move.id} to position {new_pos}")
-                if config.VERBOSE:
-                    print(f"[Chromosome.mutate] split {piece.id} into {left.id} and {right.id}")
-            # print resulting gene sequence
-            if config.VERBOSE:
-                print(f"[Chromosome.mutate] new genes: {[p.id for p in self.genes]}")
-
-        elif mutation == "rotate":
-            # Pick how many genes to rotate (1..n), then apply in batch
-            num_genes = random.randint(1, n)
-            # Pre‐generate (idx, angle) pairs via comprehension
-            indices_and_angles = [
-                (random.randrange(n), random.choice(config.ALLOWED_ROTATIONS))
-                for _ in range(num_genes)
-            ]
-            for idx, angle in indices_and_angles:
-                self.genes[idx].rotate(angle)
-
-        elif mutation == "swap":
-            i, j = random.sample(range(n), 2)
-            self.genes[i], self.genes[j] = self.genes[j], self.genes[i]
-
-        elif mutation == "inversion":
-            i, j = sorted(random.sample(range(n), 2))
-            # Reverse the slice [i:j+1] in one step
-            self.genes[i : j + 1] = self.genes[i : j + 1][::-1]
-
-        elif mutation == "insertion":
-            i = random.randrange(n)
-            gene = self.genes.pop(i)
-            j = random.randrange(n)
-            self.genes.insert(j, gene)
-
-        elif mutation == "scramble":
-            i, j = sorted(random.sample(range(n), 2))
-            sub = self.genes[i : j + 1]
-            random.shuffle(sub)
-            self.genes[i : j + 1] = sub
-
-        elif mutation == "design_param":
-            # Design parameter mutation
-            # This mutation randomly changes one design parameter
-            # Parameters can be filtered out using:
-            # 1. Panel ID filtering - only parameters that affect current panels
-            # 2. EXCLUDED_PARAM_PATHS - parameters explicitly excluded in config
-            
-            if self.design_params is None or self.design_sampler is None or self.body_params is None:
-                
-                if self.design_params is None:
-                    print("[Chromosome.mutate] Missing design_params")
-                if self.design_sampler is None:
-                    print("[Chromosome.mutate] Missing design_sampler")
-                if self.body_params is None:
-                    print("[Chromosome.mutate] Missing body_params")
-            
-            else:
-                if config.VERBOSE:
-                    print("[Chromosome.mutate] Starting design_param mutation")
-                
-                # flatten parameter paths
-                param_paths: list[str] = []
-
-                def _collect(node, prefix=[]):
-                    for k, v in node.items():
-                        if isinstance(v, dict) and "v" in v:
-                            param_paths.append(".".join(prefix + [k]))
-                        elif isinstance(v, dict):
-                            _collect(v, prefix + [k])
-
-                _collect(self.design_params)
-
-                # Filter out excluded parameter paths using fnmatch patterns
-                if config.EXCLUDED_PARAM_PATHS:
-                    param_paths = [
-                        p
-                        for p in param_paths
-                        if not any(fnmatch(p, pat) for pat in config.EXCLUDED_PARAM_PATHS)
-                    ]
-
-                if config.VERBOSE:
-                    print(f"[Chromosome.mutate] Found {len(param_paths)} possible parameters to mutate")
-                
-                # Always log whether we can find parameters to mutate
-                if not param_paths:
-                    print("[Chromosome.mutate] ERROR: No mutable parameters found in design_params")
-                    print("[Chromosome.mutate] design_params structure:")
-                    # Using the globally imported json module
-                    print(json.dumps(self.design_params, indent=2)[:500] + "..." if len(json.dumps(self.design_params)) > 500 else json.dumps(self.design_params, indent=2))
-
-                else:
-                    # Get the panel IDs from the current genes
-                    panel_ids = {g.id for g in self.genes}
-                    
-                    # Import filter_parameters from panel_mapping
-                    from nesting.panel_mapping import filter_parameters, PARAM_TO_PATTERNS
-                    
-                    # Get the filtered parameters that affect the current panels
-                    filtered_params = filter_parameters(self.design_params, panel_ids)
-                    
-                    # Extract filtered parameter paths
-                    filtered_param_paths = []
-                    
-                    def _collect_filtered(node, prefix=[]):
-                        for k, v in node.items():
-                            if isinstance(v, dict) and "v" in v:
-                                filtered_param_paths.append(".".join(prefix + [k]))
-                            elif isinstance(v, dict):
-                                _collect_filtered(v, prefix + [k])
-                    
-                    _collect_filtered(filtered_params)
-                    
-                    if config.VERBOSE:
-                        print(f"[Chromosome.mutate] Found {len(filtered_param_paths)} filtered parameters that affect current panels")
-                    
-                    # Filter out excluded parameter paths using wildcard support
-                    
-                    def is_excluded(param_path):
-                        return any(fnmatch(param_path, pattern) for pattern in config.EXCLUDED_PARAM_PATHS)
-                    
-                    valid_param_paths = [p for p in param_paths if not is_excluded(p)]
-                    valid_filtered_paths = [p for p in filtered_param_paths if not is_excluded(p)]
-                    
-                    if config.VERBOSE:
-                        excluded_count = len(param_paths) - len(valid_param_paths)
-                        if excluded_count > 0:
-                            print(f"[Chromosome.mutate] Excluded {excluded_count} parameters based on EXCLUDED_PARAM_PATHS")
-                            excluded_examples = [p for p in param_paths if is_excluded(p)][:5]  # Show up to 5 examples
-                            if excluded_examples:
-                                examples_str = ", ".join(excluded_examples)
-                                print(f"[Chromosome.mutate] Examples of excluded parameters: {examples_str}")
-                    
-                    # If all parameters are excluded, log warning and return without mutation
-                    if not valid_param_paths:
-                        print("[Chromosome.mutate] WARNING: All parameters are excluded by EXCLUDED_PARAM_PATHS, skipping mutation")
-                        return self
-                    
-                    # Rejection sampling: try to find a parameter that affects the current panels
-                    max_attempts = 10  # Prevent infinite loops
-                    attempts = 0
-                    chosen = None
-                    
-                    while attempts < max_attempts:
-                        candidate = random.choice(valid_param_paths)
-                        if candidate in valid_filtered_paths:
-                            chosen = candidate
-                            break
-                        attempts += 1
-                    
-                    # If we couldn't find a relevant parameter after max attempts, just use any parameter
-                    if chosen is None:
-                        chosen = random.choice(valid_param_paths)
-                        if config.VERBOSE:
-                            print(f"[Chromosome.mutate] Could not find relevant parameter after {max_attempts} attempts, using random parameter")
-                    
-                    if config.VERBOSE:
-                        old_value = nested_get(self.design_params, chosen.split("."))
-                        print(f"[Chromosome.mutate] Selected parameter: '{chosen}' with current value: {old_value}")
-                    
-                    new_params = copy.deepcopy(self.design_params)
-                    
-                    # Use our safe randomization function to avoid modifying ranges
-                    old_value, new_value = safe_randomize_param(self.design_sampler, new_params, chosen.split("."))
-                    
-                    if config.VERBOSE:
-                        print(f"[Chromosome.mutate] Changed '{chosen}' from {old_value} to {new_value}")
-                    
-                    self.design_params = new_params
-                    
-                    if config.VERBOSE:
-                        print(f"[Chromosome.mutate] Changed '{chosen}' from {old_value} to {new_value}")
-                    
-                    self.design_params = new_params
-
-                    from assets.garment_programs.meta_garment import MetaGarment
-                    from nesting.path_extractor import PatternPathExtractor
-                    from nesting.panel_mapping import affected_panels, select_genes
-                    import tempfile
-
-                    if config.VERBOSE:
-                        print(f"[Chromosome.mutate] Regenerating garment with MetaGarment")
-                    
-                    mg = MetaGarment("design_mut", self.body_params, self.design_params)
-                    pattern = mg.assembly()
-                    with tempfile.TemporaryDirectory() as td:
-                        out_dir = Path(td)
-                        pattern.serialize(out_dir, to_subfolder=False, with_3d=False, with_text=False, view_ids=False)
-                        spec_path = out_dir / f"{pattern.name}_specification.json"
-                        extractor = PatternPathExtractor(spec_path)
-                        new_pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE)
-                        for p in new_pieces.values():
-                            p.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
-                    
-                    if config.VERBOSE:
-                        print(f"[Chromosome.mutate] Generated {len(new_pieces)} new panel pieces")
-
-                    changed = affected_panels([chosen])
-                    if config.VERBOSE:
-                        print(f"[Chromosome.mutate] Parameter '{chosen}' affects panel patterns: {changed}")
-                    
-                    affected_ids = select_genes(new_pieces.keys(), changed)
-                    if config.VERBOSE:
-                        print(f"[Chromosome.mutate] Will update {len(affected_ids)} panel pieces: {affected_ids}")
-
-                    update_count = 0
-                    update_records = []
-                    for i, g in enumerate(self.genes):
-                        if g.id in affected_ids:
-                            old_path = copy.deepcopy(g.outer_path)
-                            new_piece = copy.deepcopy(new_pieces[g.id])
-                            new_piece.rotation = g.rotation
-                            new_piece.translation = g.translation
-                            self.genes[i] = new_piece
-                            update_count += 1
-                            update_records.append((g.id, old_path, new_piece.outer_path))
-
-                    if config.VERBOSE:
-                        print(f"[Chromosome.mutate] Successfully updated {update_count} panel pieces")
-
-                    if update_records and (config.VERBOSE or config.LOG_DESIGN_PARAM_PATHS):
-                        log_file = Path(config.SAVE_LOGS_PATH) / "design_param_paths.csv"
-                        header_needed = not log_file.exists()
-                        with log_file.open("a", newline="") as fh:
-                            writer = csv.writer(fh)
-                            if header_needed:
-                                writer.writerow(["piece_id", "old_outer_path", "new_outer_path"])
-                            for rec in update_records:
-                                piece_id, old_p, new_p = rec
-                                writer.writerow([
-                                    piece_id,
-                                    json.dumps(old_p),
-                                    json.dumps(new_p),
-                                ])
-
-        else:
+        if handler is None:
             raise ValueError(f"Unknown mutation type: {mutation}")
+        handler()  # perform the actual work
 
-        end = time.time()
         if config.LOG_TIME:
-            print(f"[Chromosome.mutate] '{mutation}' took {end - start:.4f} s")
-        
-        
+            print(f"[Chromosome.mutate] {mutation} took {time.time() - start:.3f}s")
         return self
+
+    # ── simple mutations ───────────────────────────────────────────────
+
+    def _mutate_split(self):
+        max_splits = min(config.NUM_SPLITS, len(self.genes))
+        for _ in range(random.randint(1, max_splits)):
+            unsplit = [i for i, g in enumerate(self.genes) if g.parent_id is None]
+            if not unsplit:
+                break
+            idx = random.choices(unsplit, weights=[self.genes[i].bbox_area for i in unsplit])[0]
+            left, right = self.genes[idx].split()
+            self.genes[idx:idx + 1] = [left, right]
+            # randomly relocate one half
+            child = random.choice([left, right])
+            self.genes.remove(child)
+            self.genes.insert(random.randrange(len(self.genes) + 1), child)
+
+    def _mutate_rotate(self):
+        for _ in range(random.randint(1, len(self.genes))):
+            idx = random.randrange(len(self.genes))
+            self.genes[idx].rotate(random.choice(config.ALLOWED_ROTATIONS))
+
+    def _mutate_swap(self):
+        i, j = random.sample(range(len(self.genes)), 2)
+        self.genes[i], self.genes[j] = self.genes[j], self.genes[i]
+
+    def _mutate_inversion(self):
+        i, j = sorted(random.sample(range(len(self.genes)), 2))
+        self.genes[i:j + 1] = reversed(self.genes[i:j + 1])
+
+    def _mutate_insertion(self):
+        i = random.randrange(len(self.genes))
+        self.genes.insert(random.randrange(len(self.genes)), self.genes.pop(i))
+
+    def _mutate_scramble(self):
+        i, j = sorted(random.sample(range(len(self.genes)), 2))
+        subset = self.genes[i:j + 1]
+        random.shuffle(subset)
+        self.genes[i:j + 1] = subset
+
+    # ── heavy‑weight design‑parameter mutation ──────────────────────────
+
+    def _mutate_design_params(self):
+        if not (self.design_params and self.design_sampler and self.body_params):
+            if config.VERBOSE:
+                print("[Chromosome] design‑param mutation skipped – missing prerequisites")
+            return
+
+        all_paths = _filter_excluded(_flatten_param_paths(self.design_params))
+        path = _choose_numeric_param(self.design_params, all_paths)
+        if path is None:
+            if config.VERBOSE:
+                print("[Chromosome] No numeric design‑params left to mutate → skip")
+            return
+
+        node = nested_get(self.design_params, path.split("."))
+        p_type = node.get("type", "float")
+        old_val = node["v"]
+        new_val = _random_value(old_val, p_type, node["range"])
+        nested_set(self.design_params, path.split(".") + ["v"], new_val)
+        
+        # Store this specific parameter change for tracking
+        if not hasattr(self, 'param_changes_this_gen'):
+            self.param_changes_this_gen = []
+        
+        # Record that this specific parameter was modified in this generation
+        self.param_changes_this_gen.append({
+            'param_path': path,
+            'old_value': old_val,
+            'new_value': new_val
+        })
+
+        if config.VERBOSE:
+            print(f"[Chromosome] {path}: {old_val} → {new_val}")
+
+        # regenerate the garment & update affected pieces ----------------
+        from assets.garment_programs.meta_garment import MetaGarment
+        from nesting.panel_mapping import affected_panels, select_genes, filter_parameters
+        from nesting.path_extractor import PatternPathExtractor
+        import tempfile
+
+        panel_ids = {g.id for g in self.genes}
+        affected = affected_panels([path])
+        if not any(fnmatch(pid, pat) for pat in affected for pid in panel_ids):
+            # changed param does not influence this chromosome – that's fine
+            return
+
+        mg = MetaGarment("design_mut", self.body_params, self.design_params)
+        pattern = mg.assembly()
+        with tempfile.TemporaryDirectory() as td:
+            spec_file = Path(td) / f"{pattern.name}_specification.json"
+            pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
+                              with_text=False, view_ids=False)
+            extractor = PatternPathExtractor(spec_file)
+            new_pieces = extractor.get_all_panel_pieces(
+                samples_per_edge=config.SAMPLES_PER_EDGE)
+            for piece in new_pieces.values():
+                piece.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+
+        changed_ids = select_genes(new_pieces.keys(), affected)
+        for i, g in enumerate(self.genes):
+            if g.id in changed_ids:
+                new_piece = copy.deepcopy(new_pieces[g.id])
+                new_piece.rotation, new_piece.translation = g.rotation, g.translation
+                self.genes[i] = new_piece
+
+        # optional CSV logging --------------------------------------------------
+        if config.LOG_DESIGN_PARAM_PATHS and changed_ids:
+            log_path = Path(config.SAVE_LOGS_PATH) / "design_param_paths.csv"
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            with log_path.open("a", newline="") as fh:
+                writer = csv.writer(fh)
+                if fh.tell() == 0:
+                    writer.writerow(["piece_id", "param_path", "old_v", "new_v"])
+                for pid in changed_ids:
+                    writer.writerow([pid, path, old_val, new_val])
 
     
     def crossover_ox1(self, other: "Chromosome", k: int = 1) -> "Chromosome":
@@ -427,7 +365,7 @@ class Chromosome(Layout):
         # ------------------------------------------------------------------
         # helpers -----------------------------------------------------------
         # ------------------------------------------------------------------
-        from nesting.panel_mapping import PARAM_TO_PATTERNS, select_genes
+        from nesting.panel_mapping import PARAM_TO_PATTERNS
 
         gene_ids = [g.id for g in self.genes]
 
@@ -579,16 +517,31 @@ class Chromosome(Layout):
 
         child_dp = None
         if self.design_params is not None and other.design_params is not None:
+            # Create a deep copy of the first parent's design_params
             child_dp = copy.deepcopy(self.design_params)
+            
+            # For each parameter group, copy from the appropriate parent
             for param, gid in param_group.items():
                 source = chosen_source.get(gid, "self")
                 parent_dp = self.design_params if source == "self" else other.design_params
                 val = nested_get(parent_dp, param.split("."))
+                # Ensure we do a deep copy of the parameter value
                 nested_set(child_dp, param.split("."), copy.deepcopy(val))
 
-        return Chromosome(child_genes, self.container, origin="crossover",
-                           design_params=child_dp, body_params=self.body_params,
-                           design_sampler=self.design_sampler)
+        # Create the offspring chromosome with the combined genes and design parameters
+        # Ensure we pass a deep copy of child_dp to avoid reference sharing
+        offspring = Chromosome(child_genes, self.container, origin="crossover",
+                          design_params=copy.deepcopy(child_dp), 
+                          body_params=self.body_params,
+                          design_sampler=self.design_sampler)
+        
+        # Set the last_mutation field to indicate that design parameters were inherited during crossover
+        offspring.last_mutation = "crossover_params"
+        
+        # Initialize an empty param_changes_this_gen list to avoid inheriting parent's changes
+        offspring.param_changes_this_gen = []
+        
+        return offspring
 
 
     # def sync_order(self) -> None:
@@ -600,27 +553,27 @@ class Chromosome(Layout):
         An immutable fingerprint including:
         - Gene signature: ((id, rotation), …) in gene order
         - Design parameters hash (if available)
+        - Parent IDs for tracking lineage (if available)
         """
         # Get signature based on genes
         gene_signature = tuple((p.id, p.rotation) for p in self.genes)
         
         # Include design params hash if available
+        design_params_hash = None
         if self.design_params is not None:
             try:
                 # Convert design params to a stable string representation and hash it
                 design_params_str = json.dumps(self.design_params, sort_keys=True)
                 design_params_hash = hash(design_params_str)
-                # Return a tuple containing both the gene signature and design params hash
-                return (gene_signature, design_params_hash)
             except (TypeError, ValueError) as e:
                 # If design params can't be serialized to JSON, fallback to a simple id
                 if config.VERBOSE:
                     print(f"[Chromosome._signature] Warning: Could not hash design params: {e}")
                 # Return just the gene signature with a dummy hash
-                return (gene_signature, hash(id(self.design_params)))
+                design_params_hash = hash(id(self.design_params))
         
-        # If no design params, just return the gene signature
-        return (gene_signature, None)
+        # Return signature components
+        return (gene_signature, design_params_hash)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Chromosome):
@@ -645,106 +598,15 @@ class Chromosome(Layout):
         else:
             return f"Chromosome(genes={genes_str})"
     
-# Helper function to safely randomize parameter values without modifying ranges
-def safe_randomize_param(design_sampler, params, path_parts):
-    """
-    Safely randomize a parameter value without modifying range values.
-    Instead of using the _randomize_value method which modifies ranges in-place,
-    this function manually creates a new random value based on the parameter type
-    and range, then sets only the 'v' field.
-    
-    Only numeric types (int, float) and select types are randomized.
-    Boolean parameters are skipped.
-    """
+def safe_randomize_param(design_sampler: DesignSampler, params: JsonDict,
+                         path_parts: Sequence[str]):
     param_path = ".".join(path_parts)
-    
-    # Get the parameter node
-    param_node = nested_get(params, path_parts)
-    
-    # Check if it's a valid parameter with a 'v' field
-    if not isinstance(param_node, dict) or 'v' not in param_node:
-        raise ValueError(f"Invalid parameter path: {param_path}, node doesn't have a 'v' field")
-    
-    # Get current value, type and range
-    old_value = param_node['v']
-    p_type = param_node.get('type', 'float')  # Default to float if type is missing
-    
-    # Skip boolean parameters
-    if p_type == 'bool' or isinstance(old_value, bool):
-        if config.VERBOSE:
-            print(f"[safe_randomize_param] Skipping boolean parameter '{param_path}'")
-        return old_value, old_value
-    
-    # Make a deep copy of the range to avoid modifying the original
-    range_values = copy.deepcopy(param_node.get('range', []))
-    
-    # Determine if the parameter actually has variability
-    if 'select' in p_type or 'file' in p_type:
-        # Discrete parameters
-        if p_type == 'select_null' and None not in range_values:
-            range_values = range_values + [None]
-        unique_vals = list(dict.fromkeys(range_values))
-        if len(unique_vals) <= 1:
-            if config.VERBOSE:
-                print(f"[safe_randomize_param] Parameter '{param_path}' has a single valid choice, skipping")
-            return old_value, old_value
+    node = nested_get(params, path_parts)
+    if param_path.startswith("meta") or "v" not in node:
+        return node.get("v"), node.get("v")
+    if not _numeric_range_ok(node):
+        return node.get("v"), node.get("v")
 
-        # Remove the old value when possible
-        candidates = [v for v in unique_vals if v != old_value]
-        if not candidates:
-            if config.VERBOSE:
-                print(f"[safe_randomize_param] Parameter '{param_path}' only allows the current value, skipping")
-            return old_value, old_value
-
-        new_value = random.choice(candidates)
-
-    elif p_type == 'int':
-        if len(range_values) < 2 or range_values[0] == range_values[1]:
-            if config.VERBOSE:
-                print(f"[safe_randomize_param] Parameter '{param_path}' has a degenerate int range, skipping")
-            return old_value, old_value
-
-        lower, upper = range_values[0], range_values[1]
-        attempts = 0
-        while attempts < 10:
-            new_value = random.randint(lower, upper)
-            if new_value != old_value:
-                break
-            attempts += 1
-        else:
-            if config.VERBOSE:
-                print(f"[safe_randomize_param] Could not find new int value for '{param_path}', skipping")
-            return old_value, old_value
-
-    elif p_type == 'float':
-        if len(range_values) < 2 or range_values[0] == range_values[1]:
-            if config.VERBOSE:
-                print(f"[safe_randomize_param] Parameter '{param_path}' has a degenerate float range, skipping")
-            return old_value, old_value
-
-        lower, upper = range_values[0], range_values[1]
-        range_span = upper - lower
-        min_diff = max(0.01 * range_span, 1e-6)
-        attempts = 0
-        while attempts < 10:
-            new_value = random.uniform(lower, upper)
-            if abs(new_value - old_value) > min_diff:
-                break
-            attempts += 1
-        else:
-            if config.VERBOSE:
-                print(f"[safe_randomize_param] Could not find new float value for '{param_path}', skipping")
-            return old_value, old_value
-
-    else:
-        if config.VERBOSE:
-            print(f"[safe_randomize_param] Unsupported parameter type '{p_type}' for '{param_path}', skipping")
-        return old_value, old_value
-    
-    # Set only the 'v' value without touching the range
-    param_node['v'] = new_value
-    
-    if config.VERBOSE:
-        print(f"[safe_randomize_param] Changed '{param_path}.v' from {old_value} to {new_value} (preserved ranges)")
-    
-    return old_value, new_value
+    new_val = _random_value(node["v"], node.get("type", "float"), node["range"])
+    nested_set(params, path_parts + ["v"], new_val)
+    return node.get("v"), new_val

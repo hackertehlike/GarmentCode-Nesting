@@ -4,7 +4,7 @@ import math
 from typing import Literal, Mapping
 
 # ——— general settings —————————————————————————————————————
-MULTITHREADING: bool = False
+MULTITHREADING: bool = True
 VERBOSE: bool = True
 DEFAULT_PATTERN_PATH: str = "nesting-assets/default_pattern.json"
 DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/default_design_params.yaml"
@@ -57,6 +57,14 @@ EXCLUDED_PARAM_PATHS = [
     "*flip*"        # Exclude flip parameters (which are typically boolean)
 ]
 
+# Parameter change margin for design parameter mutations (percentage)
+# Can be a single number (symmetric margin) or a tuple/list of (min_change, max_change)
+# Example: 0.2 means parameter can change by up to ±20% of its value/range
+# Example: (-0.1, 0.3) means parameter can decrease by up to 10% and increase by up to 30%
+# Note: For parameters that can be both positive and negative (like opening_dir_mix),
+# special handling is applied to prevent excessive changes when values are close to zero
+PARAM_CHANGE_MARGIN = 0.2
+
 
 # mutation weights
 MUTATION_WEIGHTS = {
@@ -66,7 +74,7 @@ MUTATION_WEIGHTS = {
     "insertion": 0.1,
     "scramble":  0.1,
     "split":     0.2,
-    "design_param": 0.2
+    "design_params": 0.2
 }
 
 
@@ -84,7 +92,7 @@ GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 SAVE_LOGS = True
 SAVE_LOGS_PATH = "nesting/run_logs/"
 LOG_TIME = True
-LOG_DESIGN_PARAM_PATHS = True
+LOG_DESIGN_PARAM_PATHS = False
 
 # ——— concave hull —————————————————————————————————————
 HULL_TRIM_RATIO = 10 # higher number -> more convex
@@ -149,5 +157,6 @@ def __dict__() -> dict:
         "OX_K": OX_K,
         "POPULATION_WEIGHTS": POPULATION_WEIGHTS,
         "PRESERVE_HOLES": PRESERVE_HOLES,
-        "EXCLUDED_PARAM_PATHS": EXCLUDED_PARAM_PATHS
+        "EXCLUDED_PARAM_PATHS": EXCLUDED_PARAM_PATHS,
+        "PARAM_CHANGE_MARGIN": PARAM_CHANGE_MARGIN
     }

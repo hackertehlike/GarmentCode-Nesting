@@ -77,7 +77,16 @@ class Evolution:
         self.gain_plot_path = plots_dir / f"mean_gains_{ts}.png"
         self.swarm_plot_path = plots_dir / f"fitness_swarm_{ts}.png"
         self.delta_best_plot_path = plots_dir / f"delta_best_{ts}.png"
-        self.mut_plot_path = plots_dir / "mutation_gains.png" 
+        # Removed mut_plot_path as we no longer create the average gain per mutation plot
+
+        # Create a new property to store all mutation gains for swarm plotting
+        self._mutation_swarm_data = pd.DataFrame(columns=["mutation_type", "fitness_gain", "generation"])
+        
+        # Create a new path for the mutation swarm plot
+        self.mut_swarm_plot_path = plots_dir / "mutation_gains_swarm.png"
+
+        # Create a violin plot path as well
+        self.mut_violin_plot_path = plots_dir / "mutation_gains_violin.png"
 
         self._metrics_buffer = []
         self._all_metrics = []
@@ -129,7 +138,7 @@ class Evolution:
         self.pop_fitness_history: list[list[float]] = []
         self.mean_offspring_gain: list[float] = []
         self.mean_mutant_gain: list[float] = []
-        self.mutation_perf: dict[str, list[float]] = {}      # per-generation mean gain
+        # Removed mutation_perf as we no longer track per-mutation averages
         
         self._log(
             f"Evolution initialized with {self.population_size} chromosomes, "
@@ -171,11 +180,15 @@ class Evolution:
         #self._log("Generating random chromosome...")
         ids_ = list(self.pieces.keys())
         random.shuffle(ids_)
+        
+        # Ensure we always pass a deep copy of design_params
+        design_params_copy = copy.deepcopy(self.design_params) if self.design_params else None
+        
         chrom = Chromosome(
             [self.pieces[i] for i in ids_], 
             self.container,
             origin="random",
-            design_params=self.design_params, 
+            design_params=design_params_copy, 
             body_params=self.body_params,
             design_sampler=self.design_sampler
         )
@@ -208,6 +221,22 @@ class Evolution:
         else:
             self.population = [self._generate_random_chromosome() for _ in range(self.population_size)]
 
+        # Print debug information about chromosomes
+        if config.VERBOSE:
+            self._log("DEBUG: Checking design_params uniqueness in population:")
+            dp_ids = [id(c.design_params) for c in self.population]
+            unique_ids = set(dp_ids)
+            self._log(f"Population size: {len(self.population)}, Unique design_params objects: {len(unique_ids)}")
+            if len(unique_ids) != len(self.population):
+                self._log("WARNING: Some chromosomes share the same design_params object!")
+                # Find which chromosomes share design_params
+                id_counts = {}
+                for i, dp_id in enumerate(dp_ids):
+                    id_counts.setdefault(dp_id, []).append(i)
+                for dp_id, indices in id_counts.items():
+                    if len(indices) > 1:
+                        self._log(f"design_params object {dp_id} is shared by chromosomes at indices: {indices}")
+        
         self.pop_fitness_history.append([chrom.fitness for chrom in self.population])
         # Record initial generation (gen 0) metrics for plots and CSV
         best0 = max(c.fitness for c in self.population)
@@ -301,6 +330,12 @@ class Evolution:
         #retries = 0
 
         p1, p2 = random.sample(old_pop, 2)
+        
+        # Ensure parents have their own deep copies of design_params
+        if p1.design_params is not None:
+            p1.design_params = copy.deepcopy(p1.design_params)
+        if p2.design_params is not None:
+            p2.design_params = copy.deepcopy(p2.design_params)
 
         # --- crossover ---
         # child = p1.crossover_pmx(p2) if self.pmx else p1.crossover_ox1_k(p2)
@@ -319,8 +354,20 @@ class Evolution:
         # --- fitness evaluation ---
         # use ProcessPoolExecutor to parallelize fitness evaluation
         
-        child.calculate_fitness() 
-
+        child.calculate_fitness()
+        
+        # Debug - verify the child has unique design_params
+        if config.VERBOSE and p1.design_params is not None and child.design_params is not None:
+            p1_id = id(p1.design_params)
+            p2_id = id(p2.design_params) if p2.design_params is not None else None
+            child_id = id(child.design_params)
+            
+            if child_id == p1_id or child_id == p2_id:
+                print(f"WARNING: Child chromosome has the same design_params object as a parent!")
+                print(f"  Parent 1 design_params ID: {p1_id}")
+                print(f"  Parent 2 design_params ID: {p2_id}")
+                print(f"  Child design_params ID: {child_id}")
+                
         #self._log(f"Offspring generated in {time.time() - start:.2f} s")
         return child
 
@@ -395,7 +442,10 @@ class Evolution:
 
                 def do_mutant(parent=parent, parent_f=parent_f):
                     try:
+                        # Create a deep copy of the parent and ensure design_params is deeply copied
                         child = copy.deepcopy(parent)
+                        if child.design_params is not None:
+                            child.design_params = copy.deepcopy(parent.design_params)
                         child.mutate()
                         child.calculate_fitness()
                         if config.VERBOSE:
@@ -418,7 +468,13 @@ class Evolution:
                 mutants.append(child)
                 mut_gains.append(gain)
                 if op_used is not None:
-                    self.mutation_perf.setdefault(op_used, []).append(gain)
+                    # Add to the swarm plot data (no longer tracking per-mutation averages)
+                    new_row = pd.DataFrame({
+                        "mutation_type": [op_used],
+                        "fitness_gain": [gain],
+                        "generation": [self.generation]
+                    })
+                    self._mutation_swarm_data = pd.concat([self._mutation_swarm_data, new_row], ignore_index=True)
                 new_population.append(child)
 
         # ───────────────────
@@ -502,13 +558,10 @@ class Evolution:
             'mean_offspring_gain': mean_offspring_gain,
             'mean_mutant_gain': mean_mutant_gain,
         }
-        row_mut = {
-            f"mut_gain_{k}": (sum(v) / len(v) if v else 0.0)
-            for k, v in self.mutation_perf.items()
-        }
-        row.update(row_mut)
-        self.mutation_perf.clear()  # reset for next generation
-
+        
+        # No need to collect per-mutation-operator average gains anymore
+        # Since we're only using the individual data points for swarm/violin plots
+        
         # Track design parameter changes
         self._track_design_param_changes(self.generation, new_population)
 
@@ -709,21 +762,79 @@ class Evolution:
         # ——— Plot 4: mutation gains (only if there are any mutants) ———
         # Note: In your case, self.n_mutants == 0, so this block is effectively skipped.
         if self.n_mutants != 0:
-            mut_cols = [c for c in df.columns if c.startswith("mut_gain_")]
-            if mut_cols:
-                plt.figure(figsize=(8, 5))
-                for col in mut_cols:
-                    plt.plot(df['generation'], df[col], marker='o', linestyle='-', label=col.removeprefix("mut_gain_"))
-                plt.xlabel("Generation")
-                plt.ylabel("Δ Fitness vs parent")
-                plt.title("Average Fitness Gain per Mutation Operator")
-                plt.axhline(0, linewidth=1)
-                plt.legend(loc="best")
+            # Create the swarm and violin plots for mutation gains (skipping the average line plot)
+            if not self._mutation_swarm_data.empty:
+                plt.figure(figsize=(10, 6))
+                # Create box plot to show distribution statistics
+                ax = sns.boxplot(
+                    data=self._mutation_swarm_data, 
+                    x="mutation_type", 
+                    y="fitness_gain",
+                    color="lightgrey",
+                    fliersize=0  # Don't show outlier points in the box plot
+                )
+                
+                # Add swarm plot on top of the box plot
+                sns.swarmplot(
+                    data=self._mutation_swarm_data, 
+                    x="mutation_type", 
+                    y="fitness_gain", 
+                    hue="generation",
+                    palette="viridis",
+                    ax=ax
+                )
+                
+                # Add a horizontal line at y=0
+                plt.axhline(y=0, color='red', linestyle='--', alpha=0.5)
+                
+                # Improve the plot
+                plt.title("Fitness Gain Distribution by Mutation Type")
+                plt.xlabel("Mutation Type")
+                plt.ylabel("Fitness Gain")
+                plt.xticks(rotation=45)
+                plt.legend(title="Generation", bbox_to_anchor=(1.05, 1), loc='upper left')
                 plt.tight_layout()
-                plt.savefig(self.mut_plot_path)
+                
+                # Save the plot
+                plt.savefig(self.mut_swarm_plot_path)
                 plt.close()
-
-            self._log(f"Mutation gains plot saved to {self.mut_plot_path}")
+                self._log(f"Mutation gains swarm plot saved to {self.mut_swarm_plot_path}")
+                
+                # Create a violin plot as well for a different perspective on the distribution
+                plt.figure(figsize=(10, 6))
+                
+                # Get the y-axis limits from the previous plot to ensure consistency
+                y_min, y_max = ax.get_ylim()
+                
+                # Create violin plot
+                ax_violin = sns.violinplot(
+                    data=self._mutation_swarm_data, 
+                    x="mutation_type", 
+                    y="fitness_gain",
+                    palette="Set3",
+                    inner="stick",  # Show individual data points inside
+                    cut=0  # Don't extend the violin past the observed data points
+                )
+                
+                # Set the same y-limits as the swarm plot for consistency
+                ax_violin.set_ylim(y_min, y_max)
+                
+                # Add a horizontal line at y=0
+                plt.axhline(y=0, color='red', linestyle='--', alpha=0.5)
+                
+                # Improve the plot
+                plt.title("Fitness Gain Distribution by Mutation Type (Violin Plot)")
+                plt.xlabel("Mutation Type")
+                plt.ylabel("Fitness Gain")
+                plt.xticks(rotation=45)
+                plt.tight_layout()
+                
+                # Save the plot
+                plt.savefig(self.mut_violin_plot_path)
+                plt.close()
+                self._log(f"Mutation gains violin plot saved to {self.mut_violin_plot_path}")
+        else:
+            self._log("No mutation data available, skipping mutation gain plots")
 
         # ——— Swarm plot: fitness points per generation ———
         # Ensure we always create `fig, ax` before calling swarmplot.
@@ -766,11 +877,47 @@ class Evolution:
         self._log(f"Swarm plot saved to {self.swarm_plot_path}")
         self._log("Plots updated successfully.")
 
+        # ——— Mutation Swarm plot: fitness gains per mutation type ———
+        if self.n_mutants > 0 and not self._mutation_swarm_data.empty:
+            fig, ax = plt.subplots(figsize=(10, 6))
+
+            # Prepare the data
+            df_mutation_swarm = self._mutation_swarm_data.copy()
+            df_mutation_swarm["generation"] = pd.to_numeric(df_mutation_swarm["generation"], errors="coerce")
+            df_mutation_swarm["fitness_gain"]    = pd.to_numeric(df_mutation_swarm["fitness_gain"], errors="coerce")
+            df_mutation_swarm = df_mutation_swarm.dropna(subset=["generation", "fitness_gain", "mutation_type"])
+
+            self._log(f"Mutation swarm plot data: {len(df_mutation_swarm)} points")
+
+            # Draw the swarmplot on the (now guaranteed) `ax`
+            sns.swarmplot(
+                data=df_mutation_swarm,
+                x="generation",
+                y="fitness_gain",
+                hue="mutation_type",
+                ax=ax,
+                size=3,
+                alpha=0.6,
+                dodge=True   # separates the hue levels slightly
+            )
+
+            self._log("Mutation swarm plot created.")
+
+            ax.set_xlabel("Generation")
+            ax.set_ylabel("Fitness Gain")
+            ax.set_title("Fitness Gain Swarm Plot by Mutation Type")
+            ax.legend(title="Mutation Type", loc="upper left", bbox_to_anchor=(1, 1))
+            fig.tight_layout()
+            fig.savefig(self.mut_swarm_plot_path)
+            plt.close(fig)
+
+            self._log(f"Mutation swarm plot saved to {self.mut_swarm_plot_path}")
+
     def _track_design_param_changes(self, generation: int, population: list[Chromosome]) -> None:
         """
         Track and log design parameter changes in the population.
-        Compares design params of all chromosomes to detect parameter mutations.
-        Enhanced to check ALL chromosomes, not just those marked with design_param mutation.
+        Only reports changes for chromosomes that have been modified in the current generation
+        by using the param_changes_this_gen attribute set during mutation.
         """
         if not hasattr(self, 'design_param_changes'):
             self.design_param_changes = []
@@ -780,39 +927,41 @@ class Evolution:
             self._log(f"[Generation {generation}] No original design parameters available for comparison")
             return
             
-        # First, check specifically for chromosomes with design_param as their last mutation
-        mutated_chroms = [c for c in population if c.last_mutation == "design_param"]
-        self._log(f"[Generation {generation}] Found {len(mutated_chroms)} chromosomes with design_param as last mutation")
-        
-        # Now check ALL chromosomes for any design parameter differences
+        # Count chromosomes with recorded parameter changes in this generation
         mutated_count = 0
         
         for idx, chrom in enumerate(population):
+            # Skip chromosomes with no design parameters
             if chrom.design_params is None:
                 if config.VERBOSE:
                     self._log(f"  Chromosome {idx}: No design parameters available")
                 continue
                 
-            # Use our comparison function
-            diffs = self._compare_design_params(self.design_params, chrom.design_params)
-            
-            if diffs:
-                mutated_count += 1
-                mutation_type = "design_param" if chrom.last_mutation == "design_param" else chrom.last_mutation or "unknown"
-                self._log(f"  Chromosome {idx} (origin: {chrom.origin}, last mutation: {mutation_type}): {len(diffs)} parameter differences")
+            # Skip chromosomes without recorded parameter changes from this generation
+            if not hasattr(chrom, 'param_changes_this_gen') or not chrom.param_changes_this_gen:
+                continue
                 
-                for path, old_val, new_val in diffs:
-                    self._log(f"    Parameter '{path}' changed: {old_val} -> {new_val}")
-                    self.design_param_changes.append({
-                        'generation': generation,
-                        'chromosome': idx,
-                        'chromosome_origin': chrom.origin,
-                        'last_mutation': chrom.last_mutation,
-                        'parameter': path,
-                        'old_value': old_val,
-                        'new_value': new_val,
-                        'fitness': chrom.fitness
-                    })
+            # Process recorded parameter changes for this chromosome
+            mutated_count += 1
+            mutation_type = chrom.last_mutation
+            self._log(f"  Chromosome {idx} (origin: {chrom.origin}, last mutation: {mutation_type}): {len(chrom.param_changes_this_gen)} parameter differences")
+            
+            for change in chrom.param_changes_this_gen:
+                path = change['param_path']
+                old_val = change['old_value']
+                new_val = change['new_value']
+                
+                self._log(f"    Parameter '{path}' changed: {old_val} -> {new_val}")
+                self.design_param_changes.append({
+                    'generation': generation,
+                    'chromosome': idx,
+                    'chromosome_origin': chrom.origin,
+                    'last_mutation': mutation_type,
+                    'parameter': path,
+                    'old_value': old_val,
+                    'new_value': new_val,
+                    'fitness': chrom.fitness
+                })
         
         if mutated_count > 0:
             self._log(f"[Generation {generation}] Total of {mutated_count} chromosomes with design parameter differences")
@@ -1163,4 +1312,30 @@ class Evolution:
                 else:
                     result.append((full_key, item))
         return result
+
+    def _record_design_param_change(self, param_name, old_value, new_value, mutation_type):
+        """Record a design parameter change only if it affects pieces."""
+        # Use the panel_mapping module to check if this parameter affects any pieces
+        from nesting.panel_mapping import affected_panels, select_genes
+        
+        # Get the panel IDs from the current pieces
+        panel_ids = {p.id for p in self.pieces.values()}
+        
+        # Check if the parameter affects any of the current panels
+        affected_panel_patterns = affected_panels([param_name])
+        affected_pieces = select_genes(panel_ids, affected_panel_patterns)
+        
+        # Only record if the parameter affects at least one piece
+        if affected_pieces:
+            self.design_param_changes.append({
+                "param": param_name,
+                "old_value": old_value,
+                "new_value": new_value,
+                "last_mutation": mutation_type,
+                "affected_pieces": len(affected_pieces)
+            })
+            if config.VERBOSE:
+                print(f"[Evolution] Recorded change to '{param_name}' affecting {len(affected_pieces)} pieces")
+        elif config.VERBOSE:
+            print(f"[Evolution] Skipped recording change to '{param_name}' (affects 0 pieces)")
 
