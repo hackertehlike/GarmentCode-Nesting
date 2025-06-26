@@ -547,7 +547,7 @@ class NFPDecoder(PlacementEngine):
 
         return [(p.id, *p.translation, p.rotation) for p in self.placed]
 
-    def _find_best_position(self, piece: Piece, gravitate_on: bool = False) -> Tuple[Optional[float], Optional[float]]:
+    def _find_best_position(self, piece: Piece, gravitate_on: bool = config.NFP_GRAVITATE_ON) -> Tuple[Optional[float], Optional[float]]:
         """
         Place `piece` by generating NFP candidates against each exterior boundary
         ring in self._exterior_contour (Polygon or MultiPolygon).

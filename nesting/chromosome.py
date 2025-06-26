@@ -142,6 +142,49 @@ def fitness_rest_length(chromosome: Chromosome, decoder: str):
     dec = _run_decoder(chromosome, decoder)
     return dec.rest_length()
 
+@register_metric("rest_height")
+def fitness_rest_height(chromosome: Chromosome, decoder: str):
+    dec = _run_decoder(chromosome, decoder)
+    return dec.rest_height()
+
+@register_metric("cc_with_rest_height")
+def fitness_cc_height_combined(chromosome: Chromosome, decoder: str):
+    """
+    Combined fitness metric for concave hull height and rest height.
+    
+    This metric returns the sum of the concave hull height and the rest height.
+    It is useful for evaluating the overall vertical space utilization of the layout.
+    """
+    dec = _run_decoder(chromosome, decoder)
+    cc_height = dec.concave_hull_utilization()
+    rest_height = dec.rest_height()
+    return cc_height + config.REST_PENALTY * rest_height
+
+@register_metric("cc_with_rest_length")
+def fitness_cc_length_combined(chromosome: Chromosome, decoder: str):
+    """
+    Combined fitness metric for concave hull length and rest length.
+    
+    This metric returns the sum of the concave hull length and the rest length.
+    It is useful for evaluating the overall horizontal space utilization of the layout.
+    """
+    dec = _run_decoder(chromosome, decoder)
+    cc_length = dec.concave_hull_utilization()
+    rest_length = dec.rest_length()
+    return cc_length + config.REST_PENALTY * rest_length
+
+@register_metric("bb_cc")
+def fitness_bb_cc(chromosome: Chromosome, decoder: str):
+    """
+    Combined fitness metric for bounding box area and concave hull area.
+    
+    This metric returns the sum of the bounding box area and the concave hull area.
+    It is useful for evaluating the overall space utilization of the layout.
+    """
+    dec = _run_decoder(chromosome, decoder)
+    bb_area = dec.usage_BB()
+    cc_area = dec.concave_hull_utilization()
+    return config.BB_WEIGHT * bb_area + config.CC_WEIGHT * cc_area
 
 # ── Chromosome Definition ───────────────────────────────────────────────────────
 
@@ -262,7 +305,7 @@ class Chromosome(Layout):
     # ── heavy‑weight design‑parameter mutation ──────────────────────────
 
     def _mutate_design_params(self):
-        if not (self.design_params and self.design_sampler and self.body_params):
+        if not (self.design_params and self.body_params):
             if config.VERBOSE:
                 print("[Chromosome] design‑param mutation skipped – missing prerequisites")
             return

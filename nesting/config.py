@@ -6,9 +6,9 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = True
 VERBOSE: bool = True
-DEFAULT_PATTERN_PATH: str = "nesting-assets/default_pattern.json"
-DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/default_design_params.yaml"
-DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/default_body_measurements.yaml"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_0O0DJJWFIT/rand_0O0DJJWFIT_specification.json"
+DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_0O0DJJWFIT/rand_0O0DJJWFIT_design_params.yaml"
+DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_0O0DJJWFIT/rand_0O0DJJWFIT_body_measurements.yaml"
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random", "Jostle"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
@@ -24,20 +24,23 @@ OX_K = 1
 NUM_SPLITS = 1  # number of splits for the split mutation operator
 
 
-# ——— placement settings —————————————————————————————————————
+# ——— decoder settings —————————————————————————————————————
 # BL
-GRAVITATE_ONCE: bool = True  # whether to gravitate the pattern once before starting the GA
+GRAVITATE_ONCE: bool = True  # whether to gravitate the pattern once or continuously
 GRAVITATE_STEP = 2
 # Greedy
 SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
+REST_PENALTY = 0.01  # penalty for rest length in greedy placement, since rest length is in centimeters and cc is in percentage, this should be a small value
+BB_WEIGHT = 0.5  # weight for bounding box utilization in combined fitness metric
+CC_WEIGHT = 0.5  # weight for concave hull utilization in combined fitness metric
 
+# NFP
+NFP_GRAVITATE_ON: bool = False  # whether to gravitate:
 
 # ——— genetic algorithm —————————————————————————————————————
 POPULATION_SIZE       = 40
 NUM_GENERATIONS       = 15
 MUTATION_RATE         = 0.5
-
-
 
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
@@ -55,7 +58,8 @@ EXCLUDED_PARAM_PATHS = [
     "*enable_asym*",
     "*strapless*",
     "*flip*",
-    "*n_panels*"
+    "*n_panels*",
+    "*standing_shoulder*",
 ]
 
 # Parameter change margin for design parameter mutations (percentage)
@@ -100,12 +104,12 @@ SAVE_GENERATION_SVGS = True
 HULL_TRIM_RATIO = 10 # higher number -> more convex
 INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
 BOUNDARY_SAMPLE_SPACING = 3 # how many cm between sampled boundary points, tradeoff between speed and accuracy of the hull
-SNAP = False
+SNAP = True
 SNAP_TOLERANCE = 0.1 # how close points must be to snap to the hull, in percentage of the container size
 
 
 # ——— sampling (path extractor) —————————————————————————————————————
-SAMPLES_PER_EDGE  = 4
+SAMPLES_PER_EDGE  = 7
 ENABLE_ROTATIONS  = True
 ALLOWED_ROTATIONS = [0, 90, 180, 270]  # allowed rotations in degrees, if ENABLE_ROTATIONS is True
 
