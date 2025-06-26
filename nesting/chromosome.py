@@ -87,6 +87,15 @@ def _choose_numeric_param(params: JsonDict, paths: Sequence[str]) -> str | None:
 
 def _random_value(old: Any, p_type: str, rng: Sequence[float | int]):
     """Return a *new* value that differs from *old* by ≤ 20 % of *range* width."""
+    
+    # Handle boolean type explicitly
+    if p_type == "bool" or isinstance(old, bool):
+        return old  # Don't randomize boolean values
+        
+    # Handle None value
+    if old is None:
+        return None
+        
     lower, upper = rng[0], rng[1]
     span = upper - lower
     max_delta = config.PARAM_CHANGE_MARGIN * span  # 20 % of the *total* range, not of *old*
@@ -271,21 +280,26 @@ class Chromosome(Layout):
         new_val = _random_value(old_val, p_type, node["range"])
         nested_set(self.design_params, path.split(".") + ["v"], new_val)
         
-        # Store this specific parameter change for tracking
-        if not hasattr(self, 'param_changes_this_gen'):
-            self.param_changes_this_gen = []
-        
-        # Record that this specific parameter was modified in this generation
-        self.param_changes_this_gen.append({
-            'param_path': path,
-            'old_value': old_val,
-            'new_value': new_val
-        })
+        # Only record the change if the value actually changed
+        if old_val != new_val:
+            # Store this specific parameter change for tracking
+            if not hasattr(self, 'param_changes_this_gen'):
+                self.param_changes_this_gen = []
+            
+            # Record that this specific parameter was modified in this generation
+            self.param_changes_this_gen.append({
+                'param_path': path,
+                'old_value': old_val,
+                'new_value': new_val
+            })
 
         if config.VERBOSE:
-            print(f"[Chromosome] {path}: {old_val} → {new_val}")
+            if old_val != new_val:
+                print(f"[Chromosome] {path}: {old_val} → {new_val}")
+            else:
+                print(f"[Chromosome] {path}: value unchanged ({old_val})")
 
-        # regenerate the garment & update affected pieces ----------------
+        # regenerate the garment and update affected pieces ----------------
         from assets.garment_programs.meta_garment import MetaGarment
         from nesting.panel_mapping import affected_panels, select_genes, filter_parameters
         from nesting.path_extractor import PatternPathExtractor
@@ -294,7 +308,7 @@ class Chromosome(Layout):
         panel_ids = {g.id for g in self.genes}
         affected = affected_panels([path])
         if not any(fnmatch(pid, pat) for pat in affected for pid in panel_ids):
-            # changed param does not influence this chromosome – that's fine
+            # changed param does not influence this chromosome
             return
 
         mg = MetaGarment("design_mut", self.body_params, self.design_params)
@@ -597,16 +611,3 @@ class Chromosome(Layout):
             return f"Chromosome(genes={genes_str}, design_params_hash={design_params_hash})"
         else:
             return f"Chromosome(genes={genes_str})"
-    
-def safe_randomize_param(design_sampler: DesignSampler, params: JsonDict,
-                         path_parts: Sequence[str]):
-    param_path = ".".join(path_parts)
-    node = nested_get(params, path_parts)
-    if param_path.startswith("meta") or "v" not in node:
-        return node.get("v"), node.get("v")
-    if not _numeric_range_ok(node):
-        return node.get("v"), node.get("v")
-
-    new_val = _random_value(node["v"], node.get("type", "float"), node["range"])
-    nested_set(params, path_parts + ["v"], new_val)
-    return node.get("v"), new_val

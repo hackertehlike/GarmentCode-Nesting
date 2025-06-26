@@ -177,6 +177,7 @@ class NestingGUI:
             self.utilization_label = ui.label("Utilization: n/a")
             self.rest_length_label = ui.label("Rest length: n/a")
             self.utilization_concave_label = ui.label("Concave hull utilization: n/a")
+            self.rest_height_label = ui.label("Rest height: n/a")
 
 
             ui.button("Check intersections & boundaries", on_click=self._check_intersections)
@@ -227,6 +228,7 @@ class NestingGUI:
 
         util = pe.usage_BB()
         rest_length = pe.rest_length()
+        rest_height = pe.rest_height()
         concave_hull_usage = pe.concave_hull_utilization()
         concave_hull = pe._last_hull
         self._draw_alpha_shape(concave_hull)
@@ -236,6 +238,7 @@ class NestingGUI:
         # update labels
         self.utilization_label.text = f"Utilization: {util:.2%}"
         self.rest_length_label.text = f"Rest length: {rest_length:.2f} cm"
+        self.rest_height_label.text = f"Rest height: {rest_height:.2f} cm"
         self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
 
         return util
@@ -1069,13 +1072,17 @@ class NestingGUI:
             print(f"Utilization: {utilization:.2%}")
             rest_length = decoder.rest_length()
             print(f"Rest length: {rest_length:.2f} cm")
-            
+
+            rest_height = decoder.rest_height()
+            print(f"Rest height: {rest_height:.2f} cm")
+
             # print(f"Concave hull utilization: {concave_hull_usage:.2%}")
 
             # print(f"Auto placement ({method}) usage:")
             
             self.utilization_label.text = f"Utilization: {utilization:.2%}"
             self.rest_length_label.text = f"Rest length: {rest_length:.2f} cm"
+            self.rest_height_label.text = f"Rest height: {rest_height:.2f} cm"
 
             print(f"Auto placement ({method}) usage: {utilization:.2%}")
             print(f"Rest length: {rest_length:.2f} cm")

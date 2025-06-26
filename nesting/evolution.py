@@ -12,7 +12,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-from .layout import Piece, Container
+from .layout import Piece, Container, LayoutView
+from .placement_engine import DECODER_REGISTRY
 from .chromosome import Chromosome
 import nesting.config as config
 
@@ -78,6 +79,11 @@ class Evolution:
         self.swarm_plot_path = plots_dir / f"fitness_swarm_{ts}.png"
         self.delta_best_plot_path = plots_dir / f"delta_best_{ts}.png"
         # Removed mut_plot_path as we no longer create the average gain per mutation plot
+
+        # Folder to store per-generation SVGs of the best layout
+        self.svg_dir = Path(log_dir) / "svgs"
+        if config.SAVE_GENERATION_SVGS:
+            self.svg_dir.mkdir(exist_ok=True)
 
         # Create a new property to store all mutation gains for swarm plotting
         self._mutation_swarm_data = pd.DataFrame(columns=["mutation_type", "fitness_gain", "generation"])
@@ -567,6 +573,10 @@ class Evolution:
 
         self._metrics_buffer.append(row)
         self._all_metrics.append(row)
+
+        # Save SVG of best layout for this generation
+        best_chrom = max(new_population, key=lambda c: c.fitness)
+        self._save_generation_svg(best_chrom, self.generation)
 
         if (len(self._metrics_buffer) >= config.GENERATION_PER_FLUSH
                 or self.generation == self.num_generations) and config.SAVE_LOGS:
@@ -1338,4 +1348,28 @@ class Evolution:
                 print(f"[Evolution] Recorded change to '{param_name}' affecting {len(affected_pieces)} pieces")
         elif config.VERBOSE:
             print(f"[Evolution] Skipped recording change to '{param_name}' (affects 0 pieces)")
+
+    def _save_generation_svg(self, chrom: Chromosome, generation: int) -> None:
+        """Render and save the best layout of the given generation as an SVG."""
+        if not (config.SAVE_LOGS and config.SAVE_GENERATION_SVGS):
+            return
+
+        import copy
+        import svgwrite
+
+        view = LayoutView([copy.deepcopy(p) for p in chrom.genes])
+        decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, self.container, step=config.GRAVITATE_STEP)
+        decoder.decode()
+
+        dwg = svgwrite.Drawing(
+            filename=str(self.svg_dir / f"gen_{generation:04d}.svg"),
+            size=(f"{self.container.width}cm", f"{self.container.height}cm"),
+            viewBox=f"0 0 {self.container.width} {self.container.height}"
+        )
+
+        for piece in decoder.placed:
+            pts = [(x + piece.translation[0], y + piece.translation[1]) for x, y in piece.get_outer_path()]
+            dwg.add(dwg.polygon(points=pts, fill="none", stroke="black", stroke_width=0.5))
+
+        dwg.save()
 

@@ -52,9 +52,10 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
 EXCLUDED_PARAM_PATHS = [
     "*component*",  # Exclude all component style mutations
     "*range*",      # Exclude range modifications
-    "*.b_*",        # Exclude boolean parameters (typically prefixed with b_)
-    "*bool*",       # Exclude parameters with bool in the name
-    "*flip*"        # Exclude flip parameters (which are typically boolean)
+    "*enable_asym*",
+    "*strapless*",
+    "*flip*",
+    "*n_panels*"
 ]
 
 # Parameter change margin for design parameter mutations (percentage)
@@ -93,6 +94,7 @@ SAVE_LOGS = True
 SAVE_LOGS_PATH = "nesting/run_logs/"
 LOG_TIME = True
 LOG_DESIGN_PARAM_PATHS = False
+SAVE_GENERATION_SVGS = True
 
 # ——— concave hull —————————————————————————————————————
 HULL_TRIM_RATIO = 10 # higher number -> more convex

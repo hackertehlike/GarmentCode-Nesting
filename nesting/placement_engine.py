@@ -185,6 +185,13 @@ class PlacementEngine:
             return self.container.width
         xs = [v[0] for v in flattened]
         return self.container.width - max(xs)
+    
+    def rest_height(self) -> float:
+        flattened = self._flatten_piece_list()
+        if not flattened:
+            return self.container.height
+        ys = [v[1] for v in flattened]
+        return min(ys)
 
     # ── UNIFIED α-SHAPE (CONCAVE HULL) HELPER ────────────────────────────────────
 

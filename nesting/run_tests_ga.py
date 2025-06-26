@@ -78,38 +78,28 @@ def flush_results(rows: list[dict], timestamp: str = None) -> None:
     fig.savefig(scatter_path, dpi=300)
     plt.close(fig)
 
-    # 2. Utilization by pattern
+    # 2. Maximum utilization by pattern
     if 'pattern' in df.columns:
         summary = df.groupby('pattern').agg(
-            avg_bb=('usage_bb', 'mean'),
-            avg_hull=('concave_hull', 'mean'),
             max_bb=('usage_bb', 'max'),
             max_hull=('concave_hull', 'max')
         ).reset_index()
         
-        fig2, axes2 = plt.subplots(2, 1, figsize=(10, 10))
-        
-        # Average utilization
-        axes2[0].bar(summary['pattern'], summary['avg_bb'], color='skyblue', alpha=0.7, label='Avg Bounding-box')
-        axes2[0].bar(summary['pattern'], summary['avg_hull'], color='orange', alpha=0.7, label='Avg Concave-hull')
-        axes2[0].set_title('Average Utilization by Pattern')
-        axes2[0].set_ylabel('Utilization')
-        axes2[0].legend()
-        axes2[0].tick_params(axis='x', rotation=45)
-        axes2[0].grid(True, axis='y', linestyle='--', alpha=0.6)
+        fig2, ax2 = plt.subplots(figsize=(10, 6))
         
         # Maximum utilization
-        axes2[1].bar(summary['pattern'], summary['max_bb'], color='blue', alpha=0.7, label='Max Bounding-box')
-        axes2[1].bar(summary['pattern'], summary['max_hull'], color='red', alpha=0.7, label='Max Concave-hull')
-        axes2[1].set_title('Maximum Utilization by Pattern')
-        axes2[1].set_ylabel('Utilization')
-        axes2[1].legend()
-        axes2[1].tick_params(axis='x', rotation=45)
-        axes2[1].grid(True, axis='y', linestyle='--', alpha=0.6)
+        ax2.bar(summary['pattern'], summary['max_bb'], color='blue', alpha=0.7, label='Max Bounding-box')
+        ax2.bar(summary['pattern'], summary['max_hull'], color='red', alpha=0.7, label='Max Concave-hull')
+        ax2.set_title('Maximum Utilization by Pattern')
+        ax2.set_ylabel('Utilization')
+        ax2.set_xlabel('Pattern')
+        ax2.legend()
+        ax2.tick_params(axis='x', rotation=45)
+        ax2.grid(True, axis='y', linestyle='--', alpha=0.6)
         
         fig2.tight_layout()
-        avg_path = plots_dir / f"ga_utilization_by_pattern_{timestamp}.png"
-        fig2.savefig(avg_path, dpi=300)
+        max_path = plots_dir / f"ga_max_utilization_by_pattern_{timestamp}.png"
+        fig2.savefig(max_path, dpi=300)
         plt.close(fig2)
     
     # 3. If we have generation data, plot fitness over generations
