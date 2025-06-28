@@ -202,7 +202,7 @@ def affected_panels(params: Sequence[str]) -> Set[str]:
 
 
 def select_genes(genes: Iterable[str], patterns: Iterable[str]) -> Set[str]:
-    """Return the subset of *genes* whose id matches any of the fnmatch patterns."""
+    """Return the subset of *genes* whose id matches any of the given *patterns*."""
     pats = list(patterns)
     return {g for g in genes if any(fnmatch(g, pat) for pat in pats)}
 

@@ -350,10 +350,11 @@ def load_design_params(json_path: Path) -> tuple:
         print(f"Using default body params: {body_yaml}")
     
     # Create the design sampler with the file path, not the dictionary
-    design_sampler = DesignSampler(str(design_yaml)) if design_yaml.exists() else None
+    # design_sampler = DesignSampler(str(design_yaml)) if design_yaml.exists() else None
     body_params = BodyParameters(body_yaml) if body_yaml.exists() else None
     
-    return design_params, body_params, design_sampler
+    # return design_params, body_params, design_sampler
+    return design_params, body_params
 
 def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern_name: str, json_path: Path) -> tuple[list[dict], list[dict]]:
     """Run GA on a pattern and collect per generation metrics.
@@ -369,12 +370,13 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
     results: list[dict] = []
     design_changes: list[dict] = []
 
-    design_params, body_params, design_sampler = load_design_params(json_path)
+    # design_params, body_params, design_sampler = load_design_params(json_path)
+    design_params, body_params = load_design_params(json_path)
 
     # Debug info
     print(f"Design params loaded: {bool(design_params)}")
     print(f"Body params loaded: {body_params is not None}")
-    print(f"Design sampler loaded: {design_sampler is not None}")
+    # print(f"Design sampler loaded: {design_sampler is not None}")
 
     
     evo = Evolution(
@@ -393,7 +395,7 @@ def run_ga_with_tracking(pieces: dict[str, Piece], container: Container, pattern
         crossover_method=config.SELECTED_CROSSOVER,
         design_params=design_params,
         body_params=body_params,
-        design_sampler=design_sampler
+        # design_sampler=design_sampler
     )
 
     print(f"Generating initial population for {pattern_name}")

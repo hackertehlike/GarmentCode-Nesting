@@ -50,7 +50,6 @@ class Evolution:
         max_generations: int = 200,
         design_params: dict = None,
         body_params: object = None,
-        design_sampler: object = None,
     ) -> None:
         self.generation = 0
         self.container = container
@@ -66,13 +65,15 @@ class Evolution:
         
         # append timestamp to log path
         log_dir = f"{log_dir}_{ts}"
-        Path(log_dir).mkdir(parents=True, exist_ok=True)        # ensure folder exists
+        if config.SAVE_LOGS:
+            Path(log_dir).mkdir(parents=True, exist_ok=True)        # ensure folder exists
         
         self.log_path = Path(log_dir) / f"evolution_log_{ts}.txt"
         self.csv_path = Path(log_dir) / f"evolution_metrics_{ts}.csv"
         
         plots_dir = Path(log_dir) / "plots"
-        plots_dir.mkdir(exist_ok=True)
+        if config.SAVE_LOGS:
+            plots_dir.mkdir(exist_ok=True)
 
         self.plot_path = plots_dir / f"fitness_curves_{ts}.png"
         self.gain_plot_path = plots_dir / f"mean_gains_{ts}.png"
@@ -82,7 +83,7 @@ class Evolution:
 
         # Folder to store per-generation SVGs of the best layout
         self.svg_dir = Path(log_dir) / "svgs"
-        if config.SAVE_GENERATION_SVGS:
+        if config.SAVE_GENERATION_SVGS and config.SAVE_LOGS:
             self.svg_dir.mkdir(exist_ok=True)
 
         # Create a new property to store all mutation gains for swarm plotting
@@ -112,7 +113,7 @@ class Evolution:
         # Design parameters
         self.design_params = design_params
         self.body_params = body_params
-        self.design_sampler = design_sampler
+        # self.design_sampler = design_sampler
 
         # ── early stopping ───────────────────────────────────────────────
         self.enable_dynamic_stopping = enable_dynamic_stopping
@@ -162,8 +163,8 @@ class Evolution:
         if self.body_params is None:
             self._log("WARNING: No body parameters provided to Evolution constructor")
             
-        if self.design_sampler is None:
-            self._log("WARNING: No design sampler provided to Evolution constructor")
+        # if self.design_sampler is None:
+        #     self._log("WARNING: No design sampler provided to Evolution constructor")
     # ------------------------------------------------------------------
     # Logging helper
     # ------------------------------------------------------------------
@@ -195,8 +196,7 @@ class Evolution:
             self.container,
             origin="random",
             design_params=design_params_copy, 
-            body_params=self.body_params,
-            design_sampler=self.design_sampler
+            body_params=self.body_params
         )
 
         # ramdomize rotations
@@ -326,56 +326,56 @@ class Evolution:
 
 
     
-    def _generate_offspring(self, old_pop: list[Chromosome]) -> Chromosome:
-        """
-        Create one child chromosome by crossover (and optional mutation) and
-        return it.  Duplicate-avoidance is honoured unless
-        self.allow_duplicate_genes is True.
-        """
-        start   = time.time()
-        #retries = 0
+    # def _generate_offspring(self, old_pop: list[Chromosome]) -> Chromosome:
+    #     """
+    #     Create one child chromosome by crossover (and optional mutation) and
+    #     return it.  Duplicate-avoidance is honoured unless
+    #     self.allow_duplicate_genes is True.
+    #     """
+    #     start   = time.time()
+    #     #retries = 0
 
-        p1, p2 = random.sample(old_pop, 2)
+    #     p1, p2 = random.sample(old_pop, 2)
         
-        # Ensure parents have their own deep copies of design_params
-        if p1.design_params is not None:
-            p1.design_params = copy.deepcopy(p1.design_params)
-        if p2.design_params is not None:
-            p2.design_params = copy.deepcopy(p2.design_params)
+    #     # Ensure parents have their own deep copies of design_params
+    #     if p1.design_params is not None:
+    #         p1.design_params = copy.deepcopy(p1.design_params)
+    #     if p2.design_params is not None:
+    #         p2.design_params = copy.deepcopy(p2.design_params)
 
-        # --- crossover ---
-        # child = p1.crossover_pmx(p2) if self.pmx else p1.crossover_ox1_k(p2)
+    #     # --- crossover ---
+    #     # child = p1.crossover_pmx(p2) if self.pmx else p1.crossover_ox1_k(p2)
 
-        if self.crossover_method == "pmx":
-            child = p1.crossover_pmx(p2)
-        elif self.crossover_method == "ox1":
-            child = p1.crossover_ox1(p2, config.OX_K)
-        else:
-            raise ValueError(f"Unknown crossover method: {self.crossover_method}")
+    #     if self.crossover_method == "pmx":
+    #         child = p1.crossover_pmx(p2)
+    #     elif self.crossover_method == "ox1":
+    #         child = p1.crossover_ox1(p2, config.OX_K)
+    #     else:
+    #         raise ValueError(f"Unknown crossover method: {self.crossover_method}")
 
-        # --- mutation (optional) ---
-        if random.random() < self.mutation_rate:
-            child.mutate()
+    #     # --- mutation (optional) ---
+    #     if random.random() < self.mutation_rate:
+    #         child.mutate()
 
-        # --- fitness evaluation ---
-        # use ProcessPoolExecutor to parallelize fitness evaluation
+    #     # --- fitness evaluation ---
+    #     # use ProcessPoolExecutor to parallelize fitness evaluation
         
-        child.calculate_fitness()
+    #     child.calculate_fitness()
         
-        # Debug - verify the child has unique design_params
-        if config.VERBOSE and p1.design_params is not None and child.design_params is not None:
-            p1_id = id(p1.design_params)
-            p2_id = id(p2.design_params) if p2.design_params is not None else None
-            child_id = id(child.design_params)
+    #     # Debug - verify the child has unique design_params
+    #     if config.VERBOSE and p1.design_params is not None and child.design_params is not None:
+    #         p1_id = id(p1.design_params)
+    #         p2_id = id(p2.design_params) if p2.design_params is not None else None
+    #         child_id = id(child.design_params)
             
-            if child_id == p1_id or child_id == p2_id:
-                print(f"WARNING: Child chromosome has the same design_params object as a parent!")
-                print(f"  Parent 1 design_params ID: {p1_id}")
-                print(f"  Parent 2 design_params ID: {p2_id}")
-                print(f"  Child design_params ID: {child_id}")
+    #         if child_id == p1_id or child_id == p2_id:
+    #             print(f"WARNING: Child chromosome has the same design_params object as a parent!")
+    #             print(f"  Parent 1 design_params ID: {p1_id}")
+    #             print(f"  Parent 2 design_params ID: {p2_id}")
+    #             print(f"  Child design_params ID: {child_id}")
                 
-        #self._log(f"Offspring generated in {time.time() - start:.2f} s")
-        return child
+    #     #self._log(f"Offspring generated in {time.time() - start:.2f} s")
+    #     return child
 
 
     
@@ -396,39 +396,51 @@ class Evolution:
         offspring, mutants, randoms = [], [], []
         off_gains, mut_gains = [], []
 
-        # ────────────────
+       # ────────────────
         # Phase A: Offspring
         # ────────────────
-        self._log("Phase A: submitting offspring tasks…")
-        offspring_jobs = {}
-        with ThreadPoolExecutor() as offspring_executor:
-            for _ in range(self.n_offspring):
-                p1, p2 = random.sample(old_elite, 2)
-                parent_f = max(p1.fitness, p2.fitness)
+        self._log("Phase A: creating offspring…")
 
-                def do_offspring(p1=p1, p2=p2, parent_f=parent_f):
-                    try:
-                        if self.crossover_method == 'pmx':
-                            child = p1.crossover_pmx(p2)
-                        else:
-                            child = p1.crossover_ox1(p2)
-                        if random.random() < self.mutation_rate:
-                            child.mutate()
-                        child.calculate_fitness()
-                        if config.VERBOSE:
-                            self._log(f"Offspring created with fitness: {child.fitness:.4f}")
-                        child.origin = "offspring"
-                        return child, parent_f, None, None
-                    except Exception as e:
-                        return None, parent_f, None, e
+        def do_offspring(p1, p2, parent_f):
+            try:
+                if self.crossover_method == 'pmx':
+                    child = p1.crossover_pmx(p2)
+                else:
+                    child = p1.crossover_ox1(p2)
+                if random.random() < self.mutation_rate:
+                    child.mutate()
+                child.calculate_fitness()
+                if config.VERBOSE:
+                    self._log(f"Offspring created with fitness: {child.fitness:.4f}")
+                child.origin = "offspring"
+                return child, parent_f, None, None
+            except Exception as e:
+                return None, parent_f, None, e
 
-                fut = offspring_executor.submit(do_offspring)
-                offspring_jobs[fut] = None  # marker for offspring phase
+        offspring, off_gains = [], []
 
-            self._log("Phase A: collecting offspring results…")
+        p1, p2 = random.sample(old_elite, 2)
+        parent_f = max(p1.fitness, p2.fitness)
+
+        if config.MULTITHREADING:
+            offspring_jobs = {}
+            with ThreadPoolExecutor() as ex:
+                for _ in range(self.n_offspring):
+                    fut = ex.submit(do_offspring, p1, p2, parent_f)
+                    offspring_jobs[fut] = None
             for fut in as_completed(offspring_jobs):
                 child, parent_f, _, err = fut.result()
-                if err is not None:
+                if err:                                         # ← keep old checks
+                    self._log(f"‼ offspring task failed: {err}")
+                    continue
+                gain = child.fitness - parent_f
+                offspring.append(child)
+                off_gains.append(gain)
+                new_population.append(child)
+        else:  # ───────────── single-threaded fallback ─────────────
+            for _ in range(self.n_offspring):
+                child, parent_f, _, err = do_offspring(p1, p2, parent_f)
+                if err:
                     self._log(f"‼ offspring task failed: {err}")
                     continue
                 gain = child.fitness - parent_f
@@ -439,20 +451,21 @@ class Evolution:
         # ────────────────
         # Phase B: Mutants
         # ────────────────
-        self._log("Phase B: submitting mutant tasks…")
-        mutant_jobs = {}
-        with ThreadPoolExecutor() as mutant_executor:
-            for _ in range(self.n_mutants):
-                parent = random.choice(old_elite)
-                parent_f = parent.fitness
+        self._log("Phase B: creating mutants…")
 
-                def do_mutant(parent=parent, parent_f=parent_f):
+        mutants, mut_gains = [], []
+
+        def do_mutant(parent):
                     try:
                         # Create a deep copy of the parent and ensure design_params is deeply copied
+                        parent_f = parent.fitness
                         child = copy.deepcopy(parent)
                         if child.design_params is not None:
                             child.design_params = copy.deepcopy(parent.design_params)
-                        child.mutate()
+                        # mutate the child until child.mutate() returns True
+                        mutated = child.mutate()
+                        while not mutated:
+                            mutated = child.mutate()
                         child.calculate_fitness()
                         if config.VERBOSE:
                             self._log(f"Mutant created with fitness: {child.fitness:.4f}")
@@ -460,37 +473,57 @@ class Evolution:
                         return child, parent_f, child.last_mutation, None
                     except Exception as e:
                         return None, parent_f, None, e
+                    
+        parent = random.choice(old_elite)
 
-                fut = mutant_executor.submit(do_mutant)
-                mutant_jobs[fut] = None  # marker for mutant phase
-
-            self._log("Phase B: collecting mutant results…")
+        if config.MULTITHREADING:
+            mutant_jobs = {}
+            with ThreadPoolExecutor() as ex:
+                for _ in range(self.n_mutants):
+                    fut = ex.submit(do_mutant, parent)
+                    mutant_jobs[fut] = None
             for fut in as_completed(mutant_jobs):
                 child, parent_f, op_used, err = fut.result()
-                if err is not None:
+                if err:
                     self._log(f"‼ mutant task failed: {err}")
                     continue
                 gain = child.fitness - parent_f
                 mutants.append(child)
                 mut_gains.append(gain)
-                if op_used is not None:
-                    # Add to the swarm plot data (no longer tracking per-mutation averages)
-                    new_row = pd.DataFrame({
-                        "mutation_type": [op_used],
-                        "fitness_gain": [gain],
-                        "generation": [self.generation]
-                    })
-                    self._mutation_swarm_data = pd.concat([self._mutation_swarm_data, new_row], ignore_index=True)
+                if op_used:
+                    self._mutation_swarm_data = pd.concat(
+                        [self._mutation_swarm_data,
+                        pd.DataFrame({"mutation_type":[op_used],
+                                    "fitness_gain":[gain],
+                                    "generation":[self.generation]})],
+                        ignore_index=True)
+                new_population.append(child)
+        else:  # ───────────── single-threaded fallback ─────────────
+            for _ in range(self.n_mutants):
+                child, parent_f, op_used, err = do_mutant(parent)
+                if err:
+                    self._log(f"‼ mutant task failed: {err}")
+                    continue
+                gain = child.fitness - parent_f
+                mutants.append(child)
+                mut_gains.append(gain)
+                if op_used:
+                    self._mutation_swarm_data = pd.concat(
+                        [self._mutation_swarm_data,
+                        pd.DataFrame({"mutation_type":[op_used],
+                                    "fitness_gain":[gain],
+                                    "generation":[self.generation]})],
+                        ignore_index=True)
                 new_population.append(child)
 
         # ───────────────────
         # Phase C: Randoms
         # ───────────────────
-        self._log("Phase C: submitting random-chromosome tasks…")
-        random_jobs = {}
-        with ThreadPoolExecutor() as random_executor:
-            for _ in range(self.n_randoms):
-                def do_random():
+        self._log("Phase C: creating random chromosomes…")
+
+        randoms = []
+
+        def do_random():
                     try:
                         child = self._generate_random_chromosome()
                         if config.VERBOSE:
@@ -500,13 +533,23 @@ class Evolution:
                     except Exception as e:
                         return None, 0.0, None, e
 
-                fut = random_executor.submit(do_random)
-                random_jobs[fut] = None  # marker for random phase
-
-            self._log("Phase C: collecting random-chromosome results…")
+        if config.MULTITHREADING:
+            random_jobs = {}
+            with ThreadPoolExecutor() as ex:
+                for _ in range(self.n_randoms):
+                    fut = ex.submit(do_random)                  # unchanged helper
+                    random_jobs[fut] = None
             for fut in as_completed(random_jobs):
                 child, _, _, err = fut.result()
-                if err is not None:
+                if err:
+                    self._log(f"‼ random task failed: {err}")
+                    continue
+                randoms.append(child)
+                new_population.append(child)
+        else:  # ───────────── single-threaded fallback ─────────────
+            for _ in range(self.n_randoms):
+                child, _, _, err = do_random()
+                if err:
                     self._log(f"‼ random task failed: {err}")
                     continue
                 randoms.append(child)

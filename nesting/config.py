@@ -4,7 +4,7 @@ import math
 from typing import Literal, Mapping
 
 # ——— general settings —————————————————————————————————————
-MULTITHREADING: bool = True
+MULTITHREADING: bool = False
 VERBOSE: bool = True
 DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_0O0DJJWFIT/rand_0O0DJJWFIT_specification.json"
 DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_0O0DJJWFIT/rand_0O0DJJWFIT_design_params.yaml"
@@ -20,6 +20,7 @@ SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"
+OX_CIRCULAR: bool = False  # whether to use circular walk in OX crossover
 OX_K = 1
 NUM_SPLITS = 1  # number of splits for the split mutation operator
 
@@ -53,14 +54,34 @@ POPULATION_WEIGHTS: Mapping[str, float] = {
 
 # Parameters that should be excluded from design parameter mutations
 EXCLUDED_PARAM_PATHS = [
-    "*component*",  # Exclude all component style mutations
-    "*range*",      # Exclude range modifications
-    "*enable_asym*",
-    "*strapless*",
-    "*flip*",
-    "*n_panels*",
-    "*standing_shoulder*",
+    # ─── high-level garment selectors ──────────────────────────────────────
+    "*meta*",                # meta.upper / meta.wb / meta.bottom
+    "*.base",                # levels-skirt.base, godet-skirt.base
+    "*.level",               # levels-skirt.level
+
+    # ─── categorical style picks (select / select_null) ───────────────────
+    "*_collar",              # collar.{f_,b_}collar  (+ left.* equivalents)
+    "*.component.style",     # collar.component.style
+    "*.cuff.type",           # sleeve / pants cuff style
+    "*.panel_curve",         # flare-skirt.skirt-many-panels.panel_curve
+    "*.num_inserts",         # godet-skirt.num_inserts
+    "*style_side_cut*",      # pencil-skirt.style_side_cut
+
+    # ─── boolean feature toggles / flags ───────────────────────────────────
+    "*strapless*",           # shirt & left.shirt strapless flags
+    "*sleeveless*",          # sleeve & left.sleeve
+    "*enable_asym*",         # left.enable_asym
+    "*flip*",                # collar & left.collar flip curve flags
+    "*standing_shoulder*",   # sleeve + left.sleeve standing shoulder flags
+    "*lapel_standing*",      # collar.component.lapel_standing
+    "*sleeve.armhole_shape*",# armhole shape selector
+    "*cut.add*",             # flare-skirt.cut.add boolean
+
+    # ─── misc. discrete counts / selectors that drive structure ───────────
+    "*.n_panels",            # number of panels (discrete structural change)
+    "*panel_curve*",         # shape of each panel (categorical)
 ]
+
 
 # Parameter change margin for design parameter mutations (percentage)
 # Can be a single number (symmetric margin) or a tuple/list of (min_change, max_change)
@@ -94,7 +115,7 @@ MAX_GENERATIONS: int    = 200
 GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 
 # log
-SAVE_LOGS = True
+SAVE_LOGS = False
 SAVE_LOGS_PATH = "nesting/run_logs/"
 LOG_TIME = True
 LOG_DESIGN_PARAM_PATHS = False
@@ -104,7 +125,7 @@ SAVE_GENERATION_SVGS = True
 HULL_TRIM_RATIO = 10 # higher number -> more convex
 INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
 BOUNDARY_SAMPLE_SPACING = 3 # how many cm between sampled boundary points, tradeoff between speed and accuracy of the hull
-SNAP = True
+SNAP = False
 SNAP_TOLERANCE = 0.1 # how close points must be to snap to the hull, in percentage of the container size
 
 
