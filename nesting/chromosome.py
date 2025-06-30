@@ -13,7 +13,7 @@ from typing import Callable, Iterable, Sequence, Any
 from .layout import Piece, Container, Layout, LayoutView
 from .placement_engine import DECODER_REGISTRY
 #from pygarment.garmentcode.params import DesignSampler
-from pygarment.garmentcode.utils import nested_get, nested_set
+from pygarment.garmentcode.utils import nested_get, nested_set, nested_del
 import nesting.config as config
 from nesting.panel_mapping import affected_panels
 
@@ -308,6 +308,11 @@ class Chromosome(Layout):
 
         if config.LOG_TIME:
             print(f"[Chromosome.mutate] {mutation} took {time.time() - start:.3f}s")
+        
+        # Debug: Check for fitness change
+        if self.old_fitness is not None and self.new_fitness is not None and self.old_fitness == self.new_fitness:
+            print(f"[DEBUG] Mutation '{self.last_mutation}' resulted in no fitness change.")
+
         return self
 
     # ── simple mutations ───────────────────────────────────────────────
@@ -476,6 +481,106 @@ class Chromosome(Layout):
         child_gene_ids: set[str] = set()
         blocked_root_ids: set[str] = set()
 
+        # ------------------------------------------------------------------
+        # Handle design parameter conflicts
+        # ------------------------------------------------------------------
+        from nesting.panel_mapping import affected_panels, select_genes
+
+        def _get_val(dp: dict | None, path: str):
+            if dp is None:
+                return None
+            try:
+                node = nested_get(dp, path.split("."))
+            except Exception:
+                return None
+            if isinstance(node, dict) and "v" in node:
+                return node.get("v")
+            return node
+
+        dp_conflicts: list[str] = []
+        if self.design_params is not None and other.design_params is not None:
+            paths1 = set(_flatten_param_paths(self.design_params))
+            paths2 = set(_flatten_param_paths(other.design_params))
+            all_paths = paths1 | paths2
+            for p in all_paths:
+                if _get_val(self.design_params, p) != _get_val(other.design_params, p):
+                    dp_conflicts.append(p)
+
+        # Build groups of root ids affected by differing params
+        root_ids_p1 = {g.root_id for g in self.genes}
+        root_ids_p2 = {g.root_id for g in other.genes}
+        all_root_ids = root_ids_p1 | root_ids_p2
+
+        groups: list[dict] = []  # each: {"roots": set, "params": set, "owner": None|1|2}
+
+        for path in dp_conflicts:
+            patterns = affected_panels([path])
+            affected_roots = select_genes(all_root_ids, patterns)
+            if not affected_roots:
+                continue
+            # merge with existing groups if overlapping
+            idxs = [i for i, g in enumerate(groups) if g["roots"] & affected_roots]
+            if not idxs:
+                groups.append({"roots": set(affected_roots), "params": {path}})
+            else:
+                first = idxs[0]
+                groups[first]["roots"].update(affected_roots)
+                groups[first]["params"].add(path)
+                for extra in sorted(idxs[1:], reverse=True):
+                    groups[first]["roots"].update(groups[extra]["roots"])
+                    groups[first]["params"].update(groups[extra]["params"])
+                    groups.pop(extra)
+
+        root_to_group: dict[str, int] = {}
+        for gi, g in enumerate(groups):
+            for r in g["roots"]:
+                root_to_group[r] = gi
+
+        for g in groups:
+            p1_roots = g["roots"] & root_ids_p1
+            p2_roots = g["roots"] & root_ids_p2
+            if p1_roots and not p2_roots:
+                g["owner"] = 1
+            elif p2_roots and not p1_roots:
+                g["owner"] = 2
+            else:
+                g["owner"] = None
+
+        processed_groups: set[int] = set()
+
+        child_design_params = copy.deepcopy(self.design_params) if self.design_params is not None else None
+
+        def assign_group(parent: "Chromosome", group_idx: int, owner: int):
+            """Assign an entire design group from *parent* to the child."""
+            g = groups[group_idx]
+            if g.get("owner") is not None and g["owner"] != owner:
+                return
+            g["owner"] = owner
+            for root_id in g["roots"]:
+                family = get_family_leaves(root_id, parent)
+                for member in family:
+                    member_idx = next(idx for idx, gg in enumerate(parent.genes) if gg.id == member.id)
+                    if member_idx >= len(child_genes):
+                        child_genes.append(None)
+                    if child_genes[member_idx] is None:
+                        child_genes[member_idx] = copy.deepcopy(member)
+                        child_gene_ids.add(member.id)
+                blocked_root_ids.add(root_id)
+
+            if owner == 2 and child_design_params is not None and other.design_params is not None:
+                for p in g["params"]:
+                    val = _get_val(other.design_params, p)
+                    if val is None:
+                        try:
+                            nested_del(child_design_params, p.split("."))
+                        except Exception:
+                            pass
+                    else:
+                        nested_set(child_design_params, p.split("."), copy.deepcopy(nested_get(other.design_params, p.split("."))))
+
+            processed_groups.add(group_idx)
+
+
         # Define the k segments from parent 1
         if 2 * k > n:
             k = n // 2
@@ -494,12 +599,28 @@ class Chromosome(Layout):
                 if g.root_id == root_id and g.id not in parent_ids
             ]
 
+        # Pre-assign any groups that must come from parent 1
+        for gi, g in enumerate(groups):
+            if g.get("owner") == 1:
+                assign_group(self, gi, 1)
+
+        # Mark any groups that must come from parent 2 so parent 1 doesn't use them
+        skip_p1_roots = {r for g in groups if g.get("owner") == 2 for r in g["roots"]}
+
         # Process parent 1 in a single pass
         for i in p1_indices:
             if child_genes[i] is not None:
                 continue  # Already filled by a family member from a previous iteration
 
             gene = self.genes[i]
+
+            if gene.root_id in skip_p1_roots:
+                continue
+
+            gi = root_to_group.get(gene.root_id)
+            if gi is not None and gi not in processed_groups:
+                assign_group(self, gi, 1)
+                continue
 
             # If gene is a descendant, take the whole family
             if gene.root_id != gene.id:
@@ -527,16 +648,29 @@ class Chromosome(Layout):
 
         # Process parent 2, filling in the gaps
         other_genes_iter = (g for g in other.genes)
+
+        # Pre-assign groups that must come from parent 2
+        for gi, g in enumerate(groups):
+            if g.get("owner") == 2 and gi not in processed_groups:
+                assign_group(other, gi, 2)
+
         for i in range(n):
             if child_genes[i] is None:
                 for gene_from_other in other_genes_iter:
                     # Determine if the gene from the other parent and its family are eligible
                     family = get_family_leaves(gene_from_other.root_id, other)
-                    
+
+                    gi = root_to_group.get(gene_from_other.root_id)
+                    if gi is not None and gi not in processed_groups:
+                        if groups[gi].get("owner") == 1:
+                            continue
+                        assign_group(other, gi, 2)
+                        break
+
                     # Check if the root is blocked or any family member is already in the child
                     if (gene_from_other.root_id not in blocked_root_ids and
                             not any(m.id in child_gene_ids for m in family)):
-                        
+
                         # Add the entire family to the child
                         for member in family:
                             # Find the next available slot
@@ -559,9 +693,22 @@ class Chromosome(Layout):
             pieces=final_genes,
             container=self.container,
             origin="crossover",
-            design_params=self.design_params,
+            design_params=child_design_params,
             body_params=self.body_params,
         )
+        
+        # Debug: Check if offspring has same fitness as a parent
+        child.calculate_fitness()
+        if child.fitness is not None:
+            if self.fitness is not None and child.fitness == self.fitness:
+                print(f"[DEBUG] Crossover offspring has same fitness as parent 1 ({self.fitness:.4f}).")
+                print(f"  Parent 1 signature: {self._signature()}")
+                print(f"  Child signature: {child._signature()}")
+            if other.fitness is not None and child.fitness == other.fitness:
+                print(f"[DEBUG] Crossover offspring has same fitness as parent 2 ({other.fitness:.4f}).")
+                print(f"  Parent 2 signature: {other._signature()}")
+                print(f"  Child signature: {child._signature()}")
+
         return child
 
 

@@ -6,9 +6,14 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = False
 VERBOSE: bool = True
-DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_00YONAPXZE/rand_00YONAPXZE_specification.json"
-DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_00YONAPXZE/rand_00YONAPXZE_design_params.yaml"
-DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_00YONAPXZE/rand_00YONAPXZE_body_measurements.yaml"
+# DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_00YONAPXZE/rand_00YONAPXZE_specification.json"
+# DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_00YONAPXZE/rand_00YONAPXZE_design_params.yaml"
+# DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_00YONAPXZE/rand_00YONAPXZE_body_measurements.yaml"
+
+DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_specification.json"
+DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_design_params.yaml"
+DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_body_measurements.yaml"
+
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
@@ -99,8 +104,8 @@ MUTATION_WEIGHTS = {
     "inversion": 0.1,
     "insertion": 0.1,
     "scramble":  0.1,
-    "split":     0.4,
-    "design_params": 0
+    "split":     0.2,
+    "design_params": 0.2
 }
 
 
@@ -115,7 +120,7 @@ MAX_GENERATIONS: int    = 200
 GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 
 # log
-SAVE_LOGS = False
+SAVE_LOGS = True
 SAVE_LOGS_PATH = "nesting/run_logs/"
 LOG_TIME = True
 LOG_DESIGN_PARAM_PATHS = False
