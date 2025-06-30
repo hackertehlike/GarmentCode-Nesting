@@ -362,44 +362,61 @@ class Chromosome(Layout):
                 print("[Chromosome] design‑param mutation skipped - missing design or body params")
             return
 
+        # Ensure fitness is calculated before attempting mutation
+        if self.fitness is None:
+            self.calculate_fitness()
+        original_fitness = self.fitness
 
-        path = random.choice(self._mutatable_params)
-        node = nested_get(self.design_params, path.split("."))
+        # Backup original state
+        original_design_params = copy.deepcopy(self.design_params)
+        original_genes = copy.deepcopy(self.genes)
 
-        # all_paths = _filter_excluded(_flatten_param_paths(self.design_params))
-        # path = _choose_param(self.design_params, all_paths)
+        # Get a shuffled list of parameters to try
+        mutatable_params = list(self._mutatable_params)
+        random.shuffle(mutatable_params)
 
-        if path is None:  # should not happen, but just in case
-            if config.VERBOSE:
-                print("[Chromosome] No numeric design‑params left to mutate -> skip")
-            return
+        for path in mutatable_params: # eh fuck it why not
+            # Restore state for the new attempt
+            self.design_params = copy.deepcopy(original_design_params)
+            self._genes = copy.deepcopy(original_genes)
 
-        node = nested_get(self.design_params, path.split("."))
-        p_type = node.get("type", "float")
-        old_val = node["v"]
-        new_val = _random_value(old_val, p_type, node["range"])
-        nested_set(self.design_params, path.split(".") + ["v"], new_val)
-        
-        # Only record the change if the value actually changed
-        if old_val != new_val:
-            # Store this specific parameter change for tracking
-            if not hasattr(self, 'param_changes_this_gen'):
-                self.param_changes_this_gen = []
-            
-            # Record that this specific parameter was modified in this generation
-            self.param_changes_this_gen.append({
-                'param_path': path,
-                'old_value': old_val,
-                'new_value': new_val
-            })
-            print(f"[Chromosome] {path}: {old_val} -> {new_val}")
+            node = nested_get(self.design_params, path.split("."))
+            p_type = node.get("type", "float")
+            old_val = node["v"]
+            new_val = _random_value(old_val, p_type, node["range"])
 
-        else:
-            # If the value did not change, we still log it for completeness
-            print(f"[Chromosome] {path}: value unchanged ({old_val})")
-            return False
+            if old_val == new_val:
+                continue # Value didn't change, try next parameter
 
-        # regenerate the garment and update affected pieces ----------------
+            nested_set(self.design_params, path.split(".") + ["v"], new_val)
+
+            # Regenerate garment and update pieces
+            if self._apply_design_param_change(path, old_val, new_val):
+                self.calculate_fitness() # Recalculate fitness with the new design
+                if self.fitness != original_fitness:
+                    print(f"[Chromosome] Successful mutation on {path}: {old_val} -> {new_val}")
+                    # Store this specific parameter change for tracking
+                    if not hasattr(self, 'param_changes_this_gen'):
+                        self.param_changes_this_gen = []
+                    self.param_changes_this_gen.append({
+                        'param_path': path,
+                        'old_value': old_val,
+                        'new_value': new_val
+                    })
+                    return True # Success
+
+        # If loop completes, no mutation led to a fitness change, restore state
+        # THIS SHOULD NEVER NEVER NEVER HAPPEN
+        # If it does something is very wrong with the logic
+        self.design_params = original_design_params
+        self._genes = original_genes
+        self.fitness = original_fitness
+        if config.VERBOSE:
+            print("[Chromosome] No design param mutation resulted in a fitness change.")
+        return False
+
+    def _apply_design_param_change(self, path: str, old_val: Any, new_val: Any) -> bool:
+        """Helper to regenerate garment pieces after a design param change and update genes."""
         from assets.garment_programs.meta_garment import MetaGarment
         from nesting.panel_mapping import affected_panels, select_genes
         from nesting.path_extractor import PatternPathExtractor
@@ -407,33 +424,24 @@ class Chromosome(Layout):
 
         panel_ids = {g.id for g in self.genes}
         affected = affected_panels([path])
-        # debug print
-        if config.VERBOSE:
-            print(f"[Chromosome] Affected panels for {path}: {affected}")
 
         if not any(fnmatch(pid, pat) for pat in affected for pid in panel_ids):
-            # changed param does not influence this chromosome
             if config.VERBOSE:
                 print(f"[Chromosome] No affected panels for {path} in this chromosome")
-                # throw error because this should not happen
-            raise ValueError(f"No affected panels for {path} in this chromosome, how did you pick this param?")
+            return False
 
-        # regenerate the garment with the new design parameters
         mg = MetaGarment("design_mut", self.body_params, self.design_params)
         pattern = mg.assembly()
         with tempfile.TemporaryDirectory() as td:
             spec_file = Path(td) / f"{pattern.name}_specification.json"
             pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
-                              with_text=False, view_ids=False)
+                                with_text=False, view_ids=False)
             extractor = PatternPathExtractor(spec_file)
             new_pieces = extractor.get_all_panel_pieces(
                 samples_per_edge=config.SAMPLES_PER_EDGE)
             for piece in new_pieces.values():
                 piece.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
 
-
-        # update the genes with the new pieces
-        # but only for those that are affected by the design parameter change
         changed_ids = select_genes(new_pieces.keys(), affected)
         split_cache: dict[str, tuple[Piece, Piece]] = {}
         for i, g in enumerate(self.genes):
@@ -446,7 +454,7 @@ class Chromosome(Layout):
                     base_piece = copy.deepcopy(new_pieces[g.root_id])
                     split_cache[g.root_id] = base_piece.split()
                 left, right = split_cache[g.root_id]
-                suffix = g.id[len(g.root_id) + 1:]  # e.g. 's1' or 's2'
+                suffix = g.id[len(g.root_id) + 1:]
                 replacement = copy.deepcopy(left if suffix == "s1" else right)
                 replacement.rotation, replacement.translation = g.rotation, g.translation
                 self.genes[i] = replacement
@@ -460,8 +468,7 @@ class Chromosome(Layout):
                     writer.writerow(["piece_id", "param_path", "old_v", "new_v"])
                 for pid in changed_ids:
                     writer.writerow([pid, path, old_val, new_val])
-
-        return True  # indicate that the design parameters were successfully mutated
+        return True
 
     def crossover_oxk(
         self,
