@@ -463,29 +463,92 @@ class Chromosome(Layout):
         other: "Chromosome",
         k: int = 1
     ) -> "Chromosome":
-       
-        # randomly sample 2*k points uniquely and sort them
-        sampled_points = random.sample(range(len(self.genes)), 2 * k)
-        sampled_points.sort()
+        """
+        Perform an order-based crossover (OX-k) with constraints using a single pass.
 
-        # copy all segments from self such that every pair of sampled points
-        # defines a segment into the child chromosome
-        # and mark split halves (where root_id != self.id)
-        # save all of the split halves, and if we find a sibling with the same PARENT
-        # while copying, remove it from the list of split halves so we don't try to
-        # copy it again later
+        This crossover handles gene dependencies related to panel splitting.
+        If a descendant of a split panel is selected from parent 1, all its
+        sibling leaf-descendants are also taken from parent 1, and the
+        corresponding original panel (root) is blocked from being taken from parent 2.
+        """
+        n = len(self.genes)
+        child_genes: list[Piece | None] = [None] * n
+        child_gene_ids: set[str] = set()
+        blocked_root_ids: set[str] = set()
 
+        # Define the k segments from parent 1
+        if 2 * k > n:
+            k = n // 2
+        
+        sampled_points = sorted(random.sample(range(n), 2 * k))
+        p1_indices = set()
+        for i in range(k):
+            start, end = sampled_points[2*i], sampled_points[2*i+1]
+            p1_indices.update(range(start, end + 1))
 
-        # walk through the second parent, filling empty spots
-        # skip parents/roots/half-siblings of marked splits
+        # Helper to find all leaf-node descendants of a root in a parent
+        def get_family_leaves(root_id: str, parent: "Chromosome") -> list[Piece]:
+            parent_ids = {p.parent_id for p in parent.genes if p.parent_id}
+            return [
+                g for g in parent.genes
+                if g.root_id == root_id and g.id not in parent_ids
+            ]
 
-        # walk through the first parent again, taking the missing siblings
-        # of pieces already copied from this parent at the start
-        # completing the saved split halves
+        # Process parent 1 in a single pass
+        for i in p1_indices:
+            if child_genes[i] is not None:
+                continue  # Already filled by a family member from a previous iteration
 
-        # remove empty spots if any
+            gene = self.genes[i]
 
-       return
+            # If gene is a descendant, take the whole family
+            if gene.root_id != gene.id:
+                blocked_root_ids.add(gene.root_id)
+                family = get_family_leaves(gene.root_id, self)
+
+                for member in family:
+                    member_idx = next(
+                        idx for idx, g in enumerate(self.genes) if g.id == member.id
+                    )
+                    if child_genes[member_idx] is None:
+                        child_genes[member_idx] = copy.deepcopy(member)
+                        child_gene_ids.add(member.id)
+
+            # If it's a simple leaf gene
+            else:
+                parent_ids = {p.parent_id for p in self.genes if p.parent_id}
+                if gene.id not in parent_ids: # It's a leaf
+                    if gene.id not in child_gene_ids and gene.root_id not in blocked_root_ids:
+                        child_genes[i] = copy.deepcopy(gene)
+                        child_gene_ids.add(gene.id)
+                        blocked_root_ids.add(gene.root_id)
+
+        # Process parent 2, filling in the gaps
+        other_genes_iter = (g for g in other.genes)
+        for i in range(n):
+            if child_genes[i] is None:
+                for gene_from_other in other_genes_iter:
+                    other_parent_ids = {p.parent_id for p in other.genes if p.parent_id}
+                    if (gene_from_other.id not in child_gene_ids and
+                        gene_from_other.root_id not in blocked_root_ids and
+                        gene_from_other.id not in other_parent_ids):
+                        
+                        child_genes[i] = copy.deepcopy(gene_from_other)
+                        child_gene_ids.add(gene_from_other.id)
+                        blocked_root_ids.add(gene_from_other.root_id)
+                        break
+
+        # Create the new chromosome
+        final_genes = [g for g in child_genes if g is not None]
+        
+        child = Chromosome(
+            pieces=final_genes,
+            container=self.container,
+            origin="crossover",
+            design_params=self.design_params,
+            body_params=self.body_params,
+        )
+        return child
 
 
     # def sync_order(self) -> None:
