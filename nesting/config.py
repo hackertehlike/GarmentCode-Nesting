@@ -6,19 +6,19 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = False
 VERBOSE: bool = True
-DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_0O0DJJWFIT/rand_0O0DJJWFIT_specification.json"
-DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_0O0DJJWFIT/rand_0O0DJJWFIT_design_params.yaml"
-DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_0O0DJJWFIT/rand_0O0DJJWFIT_body_measurements.yaml"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_00YONAPXZE/rand_00YONAPXZE_specification.json"
+DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_00YONAPXZE/rand_00YONAPXZE_design_params.yaml"
+DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_00YONAPXZE/rand_00YONAPXZE_body_measurements.yaml"
 
-DecoderName = Literal["BL", "Greedy", "NFP", "Random", "Jostle"]
-MetricName  = Literal["usage_bb", "concave_hull", "rest_length"]
+DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
+MetricName  = Literal["usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
 CrossoverName = Literal["pmx", "ox1"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 
 # ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
-SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"
+SELECTED_FITNESS_METRIC: MetricName  = "cc_with_rest_height"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"
 OX_CIRCULAR: bool = False  # whether to use circular walk in OX crossover
 OX_K = 1
@@ -40,7 +40,7 @@ NFP_GRAVITATE_ON: bool = False  # whether to gravitate:
 
 # ——— genetic algorithm —————————————————————————————————————
 POPULATION_SIZE       = 40
-NUM_GENERATIONS       = 15
+NUM_GENERATIONS       = 5
 MUTATION_RATE         = 0.5
 
 

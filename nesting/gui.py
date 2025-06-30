@@ -817,7 +817,7 @@ class NestingGUI:
 
 
     def _draw_alpha_shape(self, polygon: Polygon, stroke: str = "#ff0000"):
-        if polygon.is_empty:
+        if polygon is None or polygon.is_empty:
             return
 
         # 1) Delete previous hull if present
@@ -1040,7 +1040,6 @@ class NestingGUI:
                     crossover_method=config.SELECTED_CROSSOVER,
                     design_params=self.design_params if hasattr(self, 'design_params') else None,
                     body_params=self.body_params if hasattr(self, 'body_params') else None,
-                    design_sampler=self.design_sampler if hasattr(self, 'design_sampler') else None,
                 )
                 best_chromosome = evo.run()
                 if best_chromosome is None:

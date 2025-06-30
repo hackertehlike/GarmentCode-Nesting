@@ -406,7 +406,7 @@ class Evolution:
                 if self.crossover_method == 'pmx':
                     child = p1.crossover_pmx(p2)
                 else:
-                    child = p1.crossover_ox1(p2)
+                    child = p1.crossover_oxk(p2)
                 if random.random() < self.mutation_rate:
                     child.mutate()
                 child.calculate_fitness()

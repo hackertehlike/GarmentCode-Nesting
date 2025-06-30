@@ -192,9 +192,11 @@ def fitness_cc_height_combined(chromosome: Chromosome, decoder: str):
     It is useful for evaluating the overall vertical space utilization of the layout.
     """
     dec = _run_decoder(chromosome, decoder)
-    cc_height = dec.concave_hull_utilization()
+    cc = dec.concave_hull_utilization()
     rest_height = dec.rest_height()
-    return cc_height + config.REST_PENALTY * rest_height
+    if cc == 0:
+        return 0
+    return cc + config.REST_PENALTY * rest_height
 
 @register_metric("cc_with_rest_length")
 def fitness_cc_length_combined(chromosome: Chromosome, decoder: str):
@@ -205,9 +207,11 @@ def fitness_cc_length_combined(chromosome: Chromosome, decoder: str):
     It is useful for evaluating the overall horizontal space utilization of the layout.
     """
     dec = _run_decoder(chromosome, decoder)
-    cc_length = dec.concave_hull_utilization()
+    cc = dec.concave_hull_utilization()
     rest_length = dec.rest_length()
-    return cc_length + config.REST_PENALTY * rest_length
+    if cc == 0:
+        return 0
+    return cc + config.REST_PENALTY * rest_length
 
 @register_metric("bb_cc")
 def fitness_bb_cc(chromosome: Chromosome, decoder: str):
@@ -220,6 +224,9 @@ def fitness_bb_cc(chromosome: Chromosome, decoder: str):
     dec = _run_decoder(chromosome, decoder)
     bb_area = dec.usage_BB()
     cc_area = dec.concave_hull_utilization()
+
+    if bb_area == 0 or cc_area == 0:
+        return 0
     return config.BB_WEIGHT * bb_area + config.CC_WEIGHT * cc_area
 
 # ── Chromosome Definition ───────────────────────────────────────────────────────
@@ -451,159 +458,34 @@ class Chromosome(Layout):
 
         return True  # indicate that the design parameters were successfully mutated
 
-    def crossover_ox1(
+    def crossover_oxk(
         self,
         other: "Chromosome",
-        k: int = 1,
-        circular_walk: bool = config.OX_CIRCULAR
+        k: int = 1
     ) -> "Chromosome":
-        """
-        OX-k crossover on the gene order/rotations, PLUS a separate uniform
-        crossover on the design-parameters.  After the params are combined we
-        regenerate the garment so every piece geometry matches the new design.
-        """
+       
+        # randomly sample 2*k points uniquely and sort them
+        sampled_points = random.sample(range(len(self.genes)), 2 * k)
+        sampled_points.sort()
 
-        t0 = time.time()
-        if config.VERBOSE:
-            print(f"[XO]  ▶︎  Starting crossover_ox1  |  k={k}, circular={circular_walk}")
+        # copy all segments from self such that every pair of sampled points
+        # defines a segment into the child chromosome
+        # and mark split halves (where root_id != self.id)
+        # save all of the split halves, and if we find a sibling with the same PARENT
+        # while copying, remove it from the list of split halves so we don't try to
+        # copy it again later
 
-        # ──────────────────────────────────────────────────────────────────
-        # OX-k on gene order / rotations
-        # ──────────────────────────────────────────────────────────────────
-        size = len(self.genes)
-        if 2 * k > size:
-            raise ValueError("2·k cut points exceed chromosome length")
 
-        cut_pts = sorted(random.sample(range(size), 2 * k))
-        segs = [(a, b) for a, b in zip(cut_pts[::2], cut_pts[1::2])]
+        # walk through the second parent, filling empty spots
+        # skip parents/roots/half-siblings of marked splits
 
-        if config.VERBOSE:
-            print(f"[XO]  Cut points: {cut_pts}")
-            print(f"[XO]  Segments : {segs}")
+        # walk through the first parent again, taking the missing siblings
+        # of pieces already copied from this parent at the start
+        # completing the saved split halves
 
-        child_genes: list[Piece] = [None] * size
-        taken_ids: set[str] = set()
+        # remove empty spots if any
 
-        # Copy the chosen segments from parent-1
-        for a, b in segs:
-            for i in range(a, b + 1):
-                g = copy.deepcopy(self.genes[i])
-                child_genes[i] = g
-                taken_ids.add(g.id)
-        if config.VERBOSE:
-            print(f"[XO]  Copied {len(taken_ids)} genes from P1 segments")
-
-        # Fill the gaps with genes from parent-2
-        if circular_walk:
-            j = 0
-            for i in range(size):
-                if child_genes[i] is not None:
-                    continue
-                while other.genes[j].id in taken_ids:
-                    j = (j + 1) % len(other.genes)
-                child_genes[i] = copy.deepcopy(other.genes[j])
-                taken_ids.add(other.genes[j].id)
-            if config.VERBOSE:
-                print(f"[XO]  Filled remaining slots with circular walk from P2")
-        else:
-            other_idx = 0
-            for i in range(size):
-                if child_genes[i] is not None:
-                    continue
-                while other_idx < len(other.genes) and other.genes[other_idx].id in taken_ids:
-                    other_idx += 1
-                if other_idx >= len(other.genes):
-                    raise ValueError("Not enough unique genes in parent 2")
-                child_genes[i] = copy.deepcopy(other.genes[other_idx])
-                taken_ids.add(other.genes[other_idx].id)
-                other_idx += 1
-            if config.VERBOSE:
-                print(f"[XO]  Filled remaining slots with linear walk from P2")
-
-        #print the child genes
-        if config.VERBOSE:
-            print(f"[XO]  Child genes: {[g.id for g in child_genes]}")
-
-        # ──────────────────────────────────────────────────────────────────
-        # 2) Uniform crossover on the design-parameter tree
-        # ──────────────────────────────────────────────────────────────────
-        if self.design_params is None or other.design_params is None:
-            raise ValueError("Both parents must carry design_params for crossover")
-
-        _leaf_choices = 0
-
-        def _recurse(u, v):
-            nonlocal _leaf_choices
-            if not isinstance(u, dict):
-                _leaf_choices += 1
-                choice = copy.deepcopy(random.choice([u, v]))
-                return choice
-            out = {}
-            keys = u.keys() | v.keys()
-            for kx in keys:
-                out[kx] = _recurse(u[kx], v[kx])
-            return out
-
-        child_dp = _recurse(self.design_params, other.design_params)
-
-        if config.VERBOSE:
-            print(f"[XO]  Uniform-XO picked {_leaf_choices} leaves")
-
-        # ──────────────────────────────────────────────────────────────────
-        # 3) Regenerate geometry from the new parameters
-        # ──────────────────────────────────────────────────────────────────
-        from assets.garment_programs.meta_garment import MetaGarment
-        from nesting.path_extractor import PatternPathExtractor
-        import tempfile
-
-        mg = MetaGarment("child", self.body_params, child_dp)
-        pattern = mg.assembly()
-        with tempfile.TemporaryDirectory() as td:
-            spec = Path(td) / f"{pattern.name}_specification.json"
-            pattern.serialize(
-                Path(td),
-                to_subfolder=False,
-                with_3d=False,
-                with_text=False,
-                view_ids=False
-            )
-            extractor = PatternPathExtractor(spec)
-            fresh = extractor.get_all_panel_pieces(
-                samples_per_edge=config.SAMPLES_PER_EDGE
-            )
-            for p in fresh.values():
-                p.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
-
-        if config.VERBOSE:
-            print(f"[XO]  Regenerated {len(fresh)} fresh panel pieces")
-
-        # Replace each gene’s geometry but keep its pose
-        for i, g in enumerate(child_genes):
-            base = fresh[g.id]
-            base.rotation, base.translation = g.rotation, g.translation
-            child_genes[i] = base
-
-        # ──────────────────────────────────────────────────────────────────
-        # 4) Spawn the offspring
-        # ──────────────────────────────────────────────────────────────────
-        child = Chromosome(
-            child_genes,
-            self.container,
-            origin="crossover",
-            design_params=child_dp,
-            body_params=self.body_params
-        )
-        child.last_mutation = None
-        child.param_changes_this_gen = []
-
-        child.calculate_fitness()  # compute fitness of the child
-
-        if config.VERBOSE:
-            dt = time.time() - t0
-            print(f"[XO]  ▲  crossover_ox1 finished in {dt:.3f}s | child fitness = {child.fitness}")
-
-        return child
-
+       return
 
 
     # def sync_order(self) -> None:

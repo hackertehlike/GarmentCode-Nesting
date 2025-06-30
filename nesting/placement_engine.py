@@ -149,6 +149,18 @@ class PlacementEngine:
         ]
 
     def layout_is_valid(self) -> bool:
+        """
+        Check if all pieces have been placed and the layout is valid.
+        A valid layout means:
+        1. All pieces from the original layout have been placed
+        2. All placed pieces are within container bounds
+        3. No pieces overlap
+        """
+        # Check if all pieces from the original layout have been placed
+        if len(self.placed) != len(self.layout.order):
+            return False
+            
+        # Check if all pieces fit within container and don't overlap
         n = len(self.placed)
         for i in range(n):
             pi = self.placed[i]
@@ -167,6 +179,14 @@ class PlacementEngine:
         return True
 
     def usage_BB(self) -> float:
+        """
+        Calculate the utilization ratio based on the bounding box.
+        Returns 0.0 if not all pieces have been placed or if the layout is invalid.
+        """
+        # First check if the layout is valid (includes check that all pieces are placed)
+        if not self.layout_is_valid():
+            return 0.0
+            
         flattened = self._flatten_piece_list()
         if not flattened:
             return 0.0
@@ -177,7 +197,7 @@ class PlacementEngine:
         bbox_area = (max_x - min_x) * (max_y - min_y)
         total_area = sum(utils.polygon_area(p.get_outer_path()) for p in self.placed)
         ratio = total_area / bbox_area if bbox_area > 0 else 0.0
-        return ratio if self.layout_is_valid() else 0.0
+        return ratio
 
     def rest_length(self) -> float:
         flattened = self._flatten_piece_list()
@@ -393,6 +413,14 @@ class PlacementEngine:
         return
 
     def concave_hull_utilization(self) -> float:
+        """
+        Calculate the utilization ratio based on the concave hull.
+        Returns 0.0 if not all pieces have been placed or if the layout is invalid.
+        """
+        # First check if the layout is valid (includes check that all pieces are placed)
+        if not self.layout_is_valid():
+            return 0.0
+            
         if not self.placed:
             return 0.0
 
@@ -403,7 +431,7 @@ class PlacementEngine:
                                 boundary_spacing=config.BOUNDARY_SAMPLE_SPACING)
         hull_area = hull.area if not hull.is_empty else 0.0
         total_area = sum(utils.polygon_area(p.get_outer_path()) for p in self.placed)
-        return (total_area / hull_area) if (hull_area > 0 and self.layout_is_valid()) else 0.0
+        return (total_area / hull_area) if hull_area > 0 else 0.0
 
 @register_decoder("BL")
 class BottomLeftDecoder(PlacementEngine):
