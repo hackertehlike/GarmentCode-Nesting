@@ -507,6 +507,8 @@ class Chromosome(Layout):
                 family = get_family_leaves(gene.root_id, self)
 
                 for member in family:
+                    # Find the original index of the family member to place it correctly
+                    
                     member_idx = next(
                         idx for idx, g in enumerate(self.genes) if g.id == member.id
                     )
@@ -528,15 +530,27 @@ class Chromosome(Layout):
         for i in range(n):
             if child_genes[i] is None:
                 for gene_from_other in other_genes_iter:
-                    other_parent_ids = {p.parent_id for p in other.genes if p.parent_id}
-                    if (gene_from_other.id not in child_gene_ids and
-                        gene_from_other.root_id not in blocked_root_ids and
-                        gene_from_other.id not in other_parent_ids):
+                    # Determine if the gene from the other parent and its family are eligible
+                    family = get_family_leaves(gene_from_other.root_id, other)
+                    
+                    # Check if the root is blocked or any family member is already in the child
+                    if (gene_from_other.root_id not in blocked_root_ids and
+                            not any(m.id in child_gene_ids for m in family)):
                         
-                        child_genes[i] = copy.deepcopy(gene_from_other)
-                        child_gene_ids.add(gene_from_other.id)
+                        # Add the entire family to the child
+                        for member in family:
+                            # Find the next available slot
+                            try:
+                                insert_idx = child_genes.index(None)
+                                child_genes[insert_idx] = copy.deepcopy(member)
+                                child_gene_ids.add(member.id)
+                            except ValueError:
+                                # No more empty slots, append to the end
+                                child_genes.append(copy.deepcopy(member))
+                                child_gene_ids.add(member.id)
+
                         blocked_root_ids.add(gene_from_other.root_id)
-                        break
+                        break  # Move to the next empty slot in the child
 
         # Create the new chromosome
         final_genes = [g for g in child_genes if g is not None]

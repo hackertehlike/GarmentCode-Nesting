@@ -99,8 +99,8 @@ MUTATION_WEIGHTS = {
     "inversion": 0.1,
     "insertion": 0.1,
     "scramble":  0.1,
-    "split":     0.2,
-    "design_params": 0.2
+    "split":     0.4,
+    "design_params": 0
 }
 
 
