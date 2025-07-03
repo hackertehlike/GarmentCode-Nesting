@@ -4,6 +4,11 @@ from __future__ import annotations
 from fnmatch import fnmatch
 from typing import Iterable, Mapping, Sequence, Set, Dict, List, Optional, Tuple
 
+from pygarment.garmentcode.panel import Panel
+from nesting.layout import Piece
+
+import nesting.config as config
+
 # Mapping from parameter path (e.g. "waistband.width") to a set of
 # fnmatch-style patterns identifying panels affected by that parameter.
 # The patterns are intentionally coarse; they can be refined as needed.
@@ -289,3 +294,90 @@ def _apply_parameter_hierarchy(dp: Dict) -> None:
                 # If parent value matches the trigger value (or trigger is None), hide the child
                 if trigger_value is None or parent_value == trigger_value:
                     _set_nested(dp, child_path, None)
+
+# --- Panel Splitting Dispatcher ---
+
+# 1. Mapping from panel name prefixes to panel type identifiers
+PANEL_TYPE_MAPPING = {
+    'skirt_front': 'circle_skirt',
+    'skirt_back': 'circle_skirt',
+    'circle_skirt': 'circle_skirt',  # Direct match
+    'circle_panel': 'circle_skirt',  # For any generic circle panel
+    'halfcircle': 'circle_skirt',    # For half circle skirts
+    'test_panel': 'circle_skirt',    # For tests
+    # Add other panel types here in the future
+    # e.g., 'tshirt_front': 'tshirt',
+}
+
+def get_panel_type(panel_name):
+    """Determines the panel type from its name using the mapping."""
+    print(f"[DEBUG] get_panel_type called for panel '{panel_name}'")
+    for prefix, panel_type in PANEL_TYPE_MAPPING.items():
+        if panel_name.startswith(prefix):
+            print(f"[DEBUG] Matched prefix '{prefix}' -> type '{panel_type}'")
+            return panel_type
+    print(f"[DEBUG] No type mapping found for panel '{panel_name}'")
+    return None
+
+
+def dispatch_split(piece):
+    """Calls the correct split() method on a piece based on its type or panel.
+    
+    Args:
+        piece: The piece object to be split.
+        
+    Returns:
+        A tuple of (left_piece, right_piece) if split is successful, or None.
+    """
+    print(f"[DEBUG] dispatch_split called for piece '{piece.id}'")
+    
+    # First, check if the piece has an original_panel attribute
+    if hasattr(piece, 'original_panel') and piece.original_panel is not None:
+        panel = piece.original_panel
+        print(f"[DEBUG] Found original_panel: {panel.name}, type: {type(panel).__name__}")
+        
+        panel_type = get_panel_type(panel.name)
+        print(f"[DEBUG] Panel type identified as: '{panel_type}'")
+        
+        if panel_type == 'circle_skirt':
+            print(f"[DEBUG] Recognized as circle_skirt panel")
+            # Use the panel's split method
+            if hasattr(panel, 'split') and callable(panel.split):
+                print(f"[DEBUG] Using specialized panel.split() method")
+                # Split the panel
+                left_panel, right_panel = panel.split()
+                print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
+                
+                # Convert the resulting panels to pieces
+                left_piece = Piece(left_panel.points, id=left_panel.name, original_panel=left_panel)
+                right_piece = Piece(right_panel.points, id=right_panel.name, original_panel=right_panel)
+                print(f"[DEBUG] Created new pieces with original_panel references")
+                
+                # Copy necessary attributes from the original piece
+                for new_piece in [left_piece, right_piece]:
+                    new_piece.parent_id = piece.id
+                    new_piece.root_id = getattr(piece, "root_id", piece.id)
+                    new_piece.rotation = piece.rotation
+                    # Apply seam allowance
+                    new_piece.add_seam_allowance()
+                    new_piece.update_bbox()
+                print(f"[DEBUG] Added parent/root IDs and applied seam allowance")
+                
+                return left_piece, right_piece
+            else:
+                print(f"[DEBUG] Warning: Panel '{panel.name}' is of type 'circle_skirt' but has no split() method.")
+                return None
+        else:
+            print(f"[DEBUG] Not a circle_skirt panel, panel_type='{panel_type}'")
+    else:
+        print(f"[DEBUG] No original_panel attribute found on piece '{piece.id}'")
+    
+    # If we got here, either there's no original panel or it couldn't be split
+    # Fall back to the piece's own split method
+    if hasattr(piece, 'split') and callable(piece.split):
+        print(f"[DEBUG] Falling back to generic piece.split() method")
+        return piece.split()
+    
+    # If we got here, no splitting method was available
+    print(f"[DEBUG] No split method available for piece '{piece.id}'")
+    return None

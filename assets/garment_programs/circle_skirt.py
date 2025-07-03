@@ -25,18 +25,18 @@ class CircleArcPanel(pyg.Panel):
         # top
         self.edges.append(pyg.CircleEdgeFactory.from_points_radius(
             [-dist_w/2, 0], [dist_w/2, 0], 
-            radius=top_rad, large_arc=halfarc > np.pi / 2))
+            radius=top_rad, large_arc=halfarc > np.pi / 2, label='top'))
 
         self.edges.append(pyg.Edge(
-            self.edges[-1].end, [dist_out / 2, -vert_len]))
+            self.edges[-1].end, [dist_out / 2, -vert_len], label='right'))
         
         # Bottom
         self.edges.append(pyg.CircleEdgeFactory.from_points_radius(
             self.edges[-1].end, [- dist_out / 2, -vert_len], 
             radius=top_rad + length,
-            large_arc=halfarc > np.pi / 2, right=False))
+            large_arc=halfarc > np.pi / 2, right=False, label='bottom'))
 
-        self.edges.close_loop()
+        self.edges.close_loop(label='left')
 
         # Interfaces
         self.interfaces = {
@@ -76,6 +76,37 @@ class CircleArcPanel(pyg.Panel):
 
         return CircleArcPanel(name, rad, length, arc, **kwargs)
 
+    def split(self, proportion=0.5):
+        """Splits the panel into two new panels at a random point"""
+        bottom_edge = self.get_edge_by_label('bottom')
+        top_edge = self.get_edge_by_label('top')
+        left_edge = self.get_edge_by_label('left')
+        right_edge = self.get_edge_by_label('right')
+
+        # Get split points
+        split_point_bottom = bottom_edge.point_at(proportion)
+        split_point_top = top_edge.point_at(proportion)
+
+        # # Create new edge
+        # new_edge = pyg.Edge(split_point_bottom, split_point_top, label='split')
+
+        # Split edges
+        bottom1, bottom2 = bottom_edge.split_at_point(split_point_bottom)
+        top1, top2 = top_edge.split_at_point(split_point_top)
+
+        # Create new split edges for each panel
+        split_edge1 = pyg.Edge(split_point_top, split_point_bottom, label='split_left')
+        split_edge2 = pyg.Edge(split_point_bottom, split_point_top, label='split_right')
+
+        # Create new panels
+        panel1 = pyg.Panel(f'{self.name}_1')
+        panel1.edges = pyg.EdgeSequence([top1, split_edge1, bottom1, left_edge])
+
+        panel2 = pyg.Panel(f'{self.name}_2')
+        panel2.edges = pyg.EdgeSequence([top2, right_edge, bottom2, split_edge2])
+
+        return panel1, panel2
+
 class AsymHalfCirclePanel(pyg.Panel):
     """Panel for a asymmetrci circle skirt"""
 
@@ -95,20 +126,21 @@ class AsymHalfCirclePanel(pyg.Panel):
         # top
         self.edges.append(pyg.CircleEdgeFactory.from_points_radius(
             [-dist_w/2, 0], [dist_w/2, 0], 
-            radius=top_rad, large_arc=False))
+            radius=top_rad, large_arc=False, label='top'))
 
         self.edges.append(pyg.Edge(
-            self.edges[-1].end, [dist_out / 2, 0]))
+            self.edges[-1].end, [dist_out / 2, 0], label='right'))
         
         # Bottom
         self.edges.append(
             pyg.CircleEdgeFactory.from_three_points(
                 self.edges[-1].end, [- dist_out / 2, 0], 
-                point_on_arc=[0, -(top_rad + length_f)]
+                point_on_arc=[0, -(top_rad + length_f)],
+                label='bottom'
             )
         )
 
-        self.edges.close_loop()
+        self.edges.close_loop(label='left')
 
         # Interfaces
         self.interfaces = {

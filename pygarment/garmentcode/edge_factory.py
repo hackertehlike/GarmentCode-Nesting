@@ -42,7 +42,7 @@ class EdgeFactory:
 
 class CircleEdgeFactory:
     @staticmethod
-    def from_points_angle(start, end, arc_angle, right=True):
+    def from_points_angle(start, end, arc_angle, right=True, label=''):
         """Construct circle arc from two fixed points and an angle
 
             arc_angle:
@@ -62,10 +62,10 @@ class CircleEdgeFactory:
         control_y = radius + h if to_sum else radius - h  # relative control point
         control_y *= -1 if right else 1
 
-        return CircleEdge(start, end, cy=control_y)
+        return CircleEdge(start, end, cy=control_y, label=label)
 
     @staticmethod
-    def from_points_radius(start, end, radius, large_arc=False, right=True):
+    def from_points_radius(start, end, radius, large_arc=False, right=True, label=''):
         """Construct circle arc relative representation
             from two fixed points and an (absolute) radius
         """
@@ -88,10 +88,10 @@ class CircleEdgeFactory:
         # Flip sight according to "right" parameter
         control_y *= -1 if right else 1
 
-        return CircleEdge(start, end, cy=control_y)
+        return CircleEdge(start, end, cy=control_y, label=label)
 
     @staticmethod
-    def from_rad_length(rad, length, right=True, start=None):
+    def from_rad_length(rad, length, right=True, start=None, label=''):
         """NOTE: if start vertex is not provided, both vertices will be created
             to match desired radius and length
         """
@@ -111,7 +111,8 @@ class CircleEdgeFactory:
             [-w_half, 0], [w_half, 0],
             radius=rad,
             large_arc=large_arc,
-            right=right
+            right=right,
+            label=label
         )
 
         if start:
@@ -121,7 +122,7 @@ class CircleEdgeFactory:
         return edge
 
     @staticmethod
-    def from_three_points(start, end, point_on_arc, relative=False):
+    def from_three_points(start, end, point_on_arc, relative=False, label=''):
         """Create a circle arc from 3 points (start, end and any point on an arc)
 
             NOTE: Control point specified in the same coord system as start and end
@@ -150,7 +151,7 @@ class CircleEdgeFactory:
 
         return CircleEdgeFactory.from_points_radius(
             start, end, radius=rad,
-            large_arc=mid_dist > rad, right=angle > 0)
+            large_arc=mid_dist > rad, right=angle > 0, label=label)
 
 class CurveEdgeFactory:
     @staticmethod

@@ -406,3 +406,10 @@ class Panel(BaseComponent):
         verts_3d = np.asarray([self.point_to_3D(v) for v in verts_2d])
 
         return verts_3d.min(axis=0), verts_3d.max(axis=0)
+
+    def get_edge_by_label(self, label):
+        """Find an edge with a given label"""
+        for edge in self.edges:
+            if edge.label == label:
+                return edge
+        return None

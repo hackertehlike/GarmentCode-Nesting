@@ -80,12 +80,11 @@ class Edge:
     def __str__(self) -> str:
         return f'Straight:[{self.start[0]:.2f}, {self.start[1]:.2f}]->[{self.end[0]:.2f}, {self.end[1]:.2f}]'
 
-    def __repr__(self) -> str:
-        """ 'Official string representation' -- for nice printing of lists of edges
-        
-        https://stackoverflow.com/questions/3558474/how-to-apply-str-function-when-printing-a-list-of-objects-in-python
-        """
-        return self.__str__()
+    def point_at(self, proportion):
+        """Return a point at a given proportion (0=start, 1=end) along the edge"""
+        start = np.array(self.start)
+        end = np.array(self.end)
+        return (1 - proportion) * start + proportion * end
 
     def midpoint(self):
         """Center of the edge"""
@@ -257,6 +256,15 @@ class Edge:
 
         return [self.start, self.end], properties
 
+    def split_at_point(self, point):
+        """Splits the edge at a given point and returns two new edges"""
+        if not isinstance(point, list):
+            point = point.tolist()
+        edge1 = Edge(self.start, point, label=self.label)
+        edge2 = Edge(point, self.end, label=self.label)
+
+        return edge1, edge2
+
 
 class CircleEdge(Edge):
     """Curvy edge as circular arc"""
@@ -320,6 +328,13 @@ class CircleEdge(Edge):
         self.control_y *= -1
 
         return self
+
+    def point_at(self, proportion):
+        """Return a point at a given proportion (0=start, 1=end) along the arc"""
+        curve = self.as_curve()
+        t = proportion  # svgpathtools uses t in [0,1]
+        pt = curve.point(t)
+        return [pt.real, pt.imag]
 
     def _subdivide(self, fractions: list, by_length=False):
         """Add intermediate vertices to an edge, 
@@ -451,6 +466,25 @@ class CircleEdge(Edge):
                     "params": [rad, int(large_arc), int(right)]
                 }
         return ends, props
+
+    def split_at_point(self, point):
+        """Splits the edge at a given point and returns two new edges"""
+        from pygarment.garmentcode.edge_factory import CircleEdgeFactory
+
+        if not isinstance(point, list):
+            point = point.tolist()
+
+        curve = self.as_curve()
+        # Find the parameter t corresponding to the split point
+        # For now, assume split is at t=0.5 (proportionally)
+        t_split = 0.5
+        p1_on_curve = self.point_at(t_split / 2)
+        p2_on_curve = self.point_at(t_split + (1 - t_split) / 2)
+
+        edge1 = CircleEdgeFactory.from_three_points(self.start, point, p1_on_curve, label=self.label)
+        edge2 = CircleEdgeFactory.from_three_points(point, self.end, p2_on_curve, label=self.label)
+
+        return edge1, edge2
 
 
 class CurveEdge(Edge):
@@ -638,7 +672,27 @@ class CurveEdge(Edge):
                 }
         return ends, props
 
-    
+    def split_at_point(self, point):
+        """Splits the edge at a given point and returns two new edges"""
+        from pygarment.garmentcode.edge_factory import EdgeFactory
+
+        if not isinstance(point, list):
+            point = point.tolist()
+
+        # As the new edges will be created from 3 points, we need to find a point on the arc for each new edge
+        curve = self.as_curve()
+        t_split = curve.ilength(curve.length() * 0.5) # find the parameter of the split point
+
+        # Points on the curve for each new edge
+        p1_on_curve = c_to_list(curve.point(t_split / 2))
+        p2_on_curve = c_to_list(curve.point(t_split + (1 - t_split) / 2))
+
+        edge1 = EdgeFactory.from_three_points(self.start, point, p1_on_curve, label=self.label)
+        edge2 = EdgeFactory.from_three_points(point, self.end, p2_on_curve, label=self.label)
+
+        return edge1, edge2
+
+
 class EdgeSequence:
     """Represents a sequence of (possibly chained) edges (e.g. every next edge
         starts from the same vertex that the previous edge ends with and
@@ -837,11 +891,11 @@ class EdgeSequence:
 
         return self
 
-    def close_loop(self):
+    def close_loop(self, label=''):
         """if edge loop is not closed, add and edge to close it"""
         self.isChained()  # print warning if smth is wrong
         if not self.isLoop():
-            self.append(Edge(self[-1].end, self[0].start))
+            self.append(Edge(self[-1].end, self[0].start, label=label))
         return self
 
     def rotate(self, angle):
