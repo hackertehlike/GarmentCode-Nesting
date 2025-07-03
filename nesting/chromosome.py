@@ -318,13 +318,24 @@ class Chromosome(Layout):
     # ── simple mutations ───────────────────────────────────────────────
 
     def _mutate_split(self):
+        from nesting.panel_mapping import dispatch_split
+        
         max_splits = min(config.NUM_SPLITS, len(self.genes))
         for _ in range(random.randint(1, max_splits)):
             unsplit = [i for i, g in enumerate(self.genes) if g.parent_id is None]
             if not unsplit:
                 break
             idx = random.choices(unsplit, weights=[self.genes[i].bbox_area for i in unsplit])[0]
-            left, right = self.genes[idx].split()
+            
+            # Use dispatch_split with design and body params
+            piece = self.genes[idx]
+            split_result = dispatch_split(piece, self.design_params, self.body_params)
+            
+            if not split_result:
+                print(f"[Chromosome] Failed to split piece '{piece.id}', skipping")
+                continue
+                
+            left, right = split_result
             self.genes[idx:idx + 1] = [left, right]
             # randomly relocate one half
             child = random.choice([left, right])

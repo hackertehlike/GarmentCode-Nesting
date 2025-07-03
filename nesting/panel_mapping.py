@@ -320,59 +320,104 @@ def get_panel_type(panel_name):
     return None
 
 
-def dispatch_split(piece):
+def dispatch_split(piece, design_params=None, body_params=None):
     """Calls the correct split() method on a piece based on its type or panel.
     
     Args:
         piece: The piece object to be split.
+        design_params: Optional design parameters to regenerate the pattern.
+        body_params: Optional body parameters to regenerate the pattern.
         
     Returns:
         A tuple of (left_piece, right_piece) if split is successful, or None.
     """
+    import tempfile
+    from pathlib import Path
+    import copy
+    import nesting.config as config
+    
     print(f"[DEBUG] dispatch_split called for piece '{piece.id}'")
     
-    # First, check if the piece has an original_panel attribute
-    if hasattr(piece, 'original_panel') and piece.original_panel is not None:
-        panel = piece.original_panel
-        print(f"[DEBUG] Found original_panel: {panel.name}, type: {type(panel).__name__}")
+    # If we have design params and body params, regenerate the MetaGarment pattern
+    if design_params and body_params:
+        print(f"[DEBUG] Regenerating MetaGarment pattern for piece '{piece.id}'")
         
-        panel_type = get_panel_type(panel.name)
+        from assets.garment_programs.meta_garment import MetaGarment
+        from nesting.path_extractor import PatternPathExtractor
+        
+        # Determine panel type from piece ID
+        panel_type = get_panel_type(piece.id)
+        if not panel_type:
+            print(f"[DEBUG] Cannot determine panel type for piece '{piece.id}'")
+            return None
+            
         print(f"[DEBUG] Panel type identified as: '{panel_type}'")
         
-        if panel_type == 'circle_skirt':
-            print(f"[DEBUG] Recognized as circle_skirt panel")
-            # Use the panel's split method
-            if hasattr(panel, 'split') and callable(panel.split):
-                print(f"[DEBUG] Using specialized panel.split() method")
-                # Split the panel
-                left_panel, right_panel = panel.split()
-                print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
-                
-                # Convert the resulting panels to pieces
-                left_piece = Piece(left_panel.points, id=left_panel.name, original_panel=left_panel)
-                right_piece = Piece(right_panel.points, id=right_panel.name, original_panel=right_panel)
-                print(f"[DEBUG] Created new pieces with original_panel references")
-                
-                # Copy necessary attributes from the original piece
-                for new_piece in [left_piece, right_piece]:
-                    new_piece.parent_id = piece.id
-                    new_piece.root_id = getattr(piece, "root_id", piece.id)
-                    new_piece.rotation = piece.rotation
-                    # Apply seam allowance
-                    new_piece.add_seam_allowance()
-                    new_piece.update_bbox()
-                print(f"[DEBUG] Added parent/root IDs and applied seam allowance")
-                
-                return left_piece, right_piece
-            else:
-                print(f"[DEBUG] Warning: Panel '{panel.name}' is of type 'circle_skirt' but has no split() method.")
+        # For now, only handle circle_skirt panels
+        if panel_type != 'circle_skirt':
+            print(f"[DEBUG] Only circle_skirt panels are currently supported for regeneration")
+            return None
+        
+        # Regenerate the MetaGarment pattern
+        mg = MetaGarment("split_regenerate", body_params, design_params)
+        pattern = mg.assembly()
+        
+        # Find the panel in the regenerated pattern
+        # TODO: FIX, THIS IS NOT HOW IT WORKS
+        panel = None
+        for panel_name, panel_obj in pattern.panels.items():
+            if panel_name == piece.id:
+                panel = panel_obj
+                break
+        
+        if not panel:
+            print(f"[DEBUG] Could not find panel '{piece.id}' in regenerated pattern")
+            return None
+            
+        print(f"[DEBUG] Found panel '{panel.name}' in regenerated pattern")
+        
+        # Check if the panel has a split method
+        if not hasattr(panel, 'split') or not callable(panel.split):
+            print(f"[DEBUG] Panel '{panel.name}' does not have a split method")
+            return None
+            
+        # Split the panel
+        print(f"[DEBUG] Using specialized panel.split() method")
+        left_panel, right_panel = panel.split()
+        print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
+        
+        # Export to temporary directory and create pieces
+        with tempfile.TemporaryDirectory() as td:
+            spec_file = Path(td) / f"{pattern.name}_specification.json"
+            pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
+                                with_text=False, view_ids=False)
+            extractor = PatternPathExtractor(spec_file)
+            
+            # Get pieces for the split panels
+            all_pieces = extractor.get_all_panel_pieces(
+                samples_per_edge=config.SAMPLES_PER_EDGE,
+                original_panels={left_panel.name: left_panel, right_panel.name: right_panel}
+            )
+            
+            if left_panel.name not in all_pieces or right_panel.name not in all_pieces:
+                print(f"[DEBUG] Failed to extract split pieces from pattern")
                 return None
-        else:
-            print(f"[DEBUG] Not a circle_skirt panel, panel_type='{panel_type}'")
-    else:
-        print(f"[DEBUG] No original_panel attribute found on piece '{piece.id}'")
+                
+            left_piece = all_pieces[left_panel.name]
+            right_piece = all_pieces[right_panel.name]
+            
+            # Copy necessary attributes from the original piece
+            for new_piece in [left_piece, right_piece]:
+                new_piece.parent_id = piece.id
+                new_piece.root_id = getattr(piece, "root_id", piece.id)
+                new_piece.rotation = piece.rotation
+                # Apply seam allowance
+                new_piece.add_seam_allowance()
+                new_piece.update_bbox()
+            
+            print(f"[DEBUG] Created split pieces: '{left_piece.id}' and '{right_piece.id}'")
+            return left_piece, right_piece
     
-    # If we got here, either there's no original panel or it couldn't be split
     # Fall back to the piece's own split method
     if hasattr(piece, 'split') and callable(piece.split):
         print(f"[DEBUG] Falling back to generic piece.split() method")
