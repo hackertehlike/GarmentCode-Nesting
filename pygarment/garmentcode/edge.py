@@ -1,4 +1,5 @@
 from copy import deepcopy, copy
+from typing import Set
 
 import numpy as np
 from numpy.linalg import norm
@@ -41,6 +42,7 @@ class Edge:
 
         # Semantic label
         self.label = label
+        self.extra_labels: Set[str] = set()
 
         # ID w.r.t. other edges in a super-panel
         # Filled out at the panel assembly time
@@ -79,6 +81,10 @@ class Edge:
 
     def __str__(self) -> str:
         return f'Straight:[{self.start[0]:.2f}, {self.start[1]:.2f}]->[{self.end[0]:.2f}, {self.end[1]:.2f}]'
+
+    def add_label(self, label: str) -> None:
+        """Add an additional semantic label to the edge."""
+        self.extra_labels.add(label)
 
     def point_at(self, proportion):
         """Return a point at a given proportion (0=start, 1=end) along the edge"""
@@ -253,6 +259,8 @@ class Edge:
         properties = {"endpoints": [0, 1]}
         if self.label:
             properties['label'] = self.label
+        if self.extra_labels:
+            properties['extra_labels'] = sorted(self.extra_labels)
 
         return [self.start, self.end], properties
 
@@ -982,15 +990,18 @@ class EdgeSequence:
 
         return self
 
-    def propagate_label(self, label):
+    def propagate_label(self, label, append: bool = False):
         """Propagate label to sub-edges
-        NOTE: Recommended to perform after all edge modification 
+        NOTE: Recommended to perform after all edge modification
             operations (stitching, cutting, inserting) were completed
             Support for edge label propagation through those operations is not (yet) implemented
-        # TODO Edge labels on cuts/reassemble in the 
+        # TODO Edge labels on cuts/reassemble in the
         """
         for e in self.edges:
-            e.label = label
+            if append:
+                e.add_label(label)
+            else:
+                e.label = label
 
     # ANCHOR New sequences & versions
     def copy(self):

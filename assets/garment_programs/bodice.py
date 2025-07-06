@@ -303,8 +303,8 @@ class BodiceHalf(pyg.Component):
             )
 
         # Add edge labels
-        f_sleeve_int.edges.propagate_label(f'{self.name}_armhole')
-        b_sleeve_int.edges.propagate_label(f'{self.name}_armhole')
+        f_sleeve_int.edges.propagate_label(f'{self.name}_armhole', append=True)
+        b_sleeve_int.edges.propagate_label(f'{self.name}_armhole', append=True)
     
     def add_collars(self, name, body, design):
         # Front
@@ -348,8 +348,8 @@ class BodiceHalf(pyg.Component):
             )
         
         # Add edge labels
-        fc_interface.edges.propagate_label(f'{self.name}_collar')
-        bc_interface.edges.propagate_label(f'{self.name}_collar')
+        fc_interface.edges.propagate_label(f'{self.name}_collar', append=True)
+        bc_interface.edges.propagate_label(f'{self.name}_collar', append=True)
 
     def make_strapless(self, body, design):
 
@@ -379,8 +379,8 @@ class BodiceHalf(pyg.Component):
         # self.translate_by([0, out_depth - body['_armscye_depth'] * 0.75, 0])   # adjust for better localisation
 
         # Add a label
-        self.ftorso.interfaces['shoulder'].edges.propagate_label('strapless_top')
-        self.btorso.interfaces['shoulder'].edges.propagate_label('strapless_top')
+        self.ftorso.interfaces['shoulder'].edges.propagate_label('strapless_top', append=True)
+        self.btorso.interfaces['shoulder'].edges.propagate_label('strapless_top', append=True)
 
 
     def _adjust_top_level(self, panel, out_level, in_level, target_remove=None):
