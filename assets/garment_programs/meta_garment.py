@@ -72,7 +72,7 @@ class MetaGarment(pyg.Component):
                      self.subs[-1].interfaces['top']))
             
             # Add waist label
-            self.subs[-1].interfaces['top'].edges.propagate_label('lower_interface')
+            self.subs[-1].interfaces['top'].edges.propagate_label('lower_interface', append=True)
             # Set panel segmentation labels
             self.subs[-1].set_panel_label('body', overwrite=False)
 
@@ -92,7 +92,7 @@ class MetaGarment(pyg.Component):
             
             # Add waist label
             if not self.belt_name:
-                self.subs[-1].interfaces['top'].edges.propagate_label('lower_interface')
+                self.subs[-1].interfaces['top'].edges.propagate_label('lower_interface', append=True)
             # Set panel segmentation labels
             self.subs[-1].set_panel_label('leg', overwrite=False)
 
