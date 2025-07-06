@@ -341,50 +341,65 @@ def dispatch_split(piece, design_params=None, body_params=None):
     # If we have design params and body params, regenerate the MetaGarment pattern
     if design_params and body_params:
         print(f"[DEBUG] Regenerating MetaGarment pattern for piece '{piece.id}'")
-        
+
         from assets.garment_programs.meta_garment import MetaGarment
         from nesting.path_extractor import PatternPathExtractor
-        
+
         # Determine panel type from piece ID
         panel_type = get_panel_type(piece.id)
         if not panel_type:
             print(f"[DEBUG] Cannot determine panel type for piece '{piece.id}'")
             return None
-            
+
         print(f"[DEBUG] Panel type identified as: '{panel_type}'")
-        
+
         # For now, only handle circle_skirt panels
         if panel_type != 'circle_skirt':
             print(f"[DEBUG] Only circle_skirt panels are currently supported for regeneration")
             return None
-        
-        # Regenerate the MetaGarment pattern
+
+        # Regenerate the MetaGarment
         mg = MetaGarment("split_regenerate", body_params, design_params)
-        pattern = mg.assembly()
-        
-        # Find the panel in the regenerated pattern
-        # TODO: FIX, THIS IS NOT HOW IT WORKS
+
+        # ------------------------------------------------------------------
+        # Find the panel on the MetaGarment BEFORE assembly and split it
+        # ------------------------------------------------------------------
         panel = None
-        for panel_name, panel_obj in pattern.panels.items():
-            if panel_name == piece.id:
-                panel = panel_obj
+
+        is_front = "front" in piece.id.lower()
+        is_back = "back" in piece.id.lower()
+
+        skirt_component = None
+        for sub in mg.subs:
+            if hasattr(sub, 'front') and hasattr(sub, 'back'):
+                skirt_component = sub
                 break
-        
-        if not panel:
-            print(f"[DEBUG] Could not find panel '{piece.id}' in regenerated pattern")
+
+        if skirt_component is None:
+            print(f"[DEBUG] Could not find skirt component in the garment")
             return None
-            
-        print(f"[DEBUG] Found panel '{panel.name}' in regenerated pattern")
-        
-        # Check if the panel has a split method
+
+        if is_front and hasattr(skirt_component, 'front'):
+            panel = skirt_component.front
+        elif is_back and hasattr(skirt_component, 'back'):
+            panel = skirt_component.back
+
+        if panel is None:
+            print(f"[DEBUG] Could not find panel '{piece.id}' in regenerated garment")
+            return None
+
+        print(f"[DEBUG] Found panel '{panel.name}' in regenerated garment")
+
         if not hasattr(panel, 'split') or not callable(panel.split):
             print(f"[DEBUG] Panel '{panel.name}' does not have a split method")
             return None
-            
-        # Split the panel
+
         print(f"[DEBUG] Using specialized panel.split() method")
         left_panel, right_panel = panel.split()
         print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
+
+        # Assemble pattern AFTER the split
+        pattern = mg.assembly()
         
         # Export to temporary directory and create pieces
         with tempfile.TemporaryDirectory() as td:
