@@ -410,8 +410,7 @@ def dispatch_split(piece, design_params=None, body_params=None):
             
             # Get pieces for the split panels
             all_pieces = extractor.get_all_panel_pieces(
-                samples_per_edge=config.SAMPLES_PER_EDGE,
-                original_panels={left_panel.name: left_panel, right_panel.name: right_panel}
+                samples_per_edge=config.SAMPLES_PER_EDGE
             )
             
             if left_panel.name not in all_pieces or right_panel.name not in all_pieces:

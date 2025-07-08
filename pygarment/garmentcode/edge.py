@@ -482,7 +482,6 @@ class CircleEdge(Edge):
         if not isinstance(point, list):
             point = point.tolist()
 
-        curve = self.as_curve()
         # Find the parameter t corresponding to the split point
         # For now, assume split is at t=0.5 (proportionally)
         t_split = 0.5

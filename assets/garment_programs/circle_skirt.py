@@ -48,9 +48,9 @@ class CircleArcPanel(pyg.Panel):
         self.edges.append(left_edge)
 
         # Verify all edge labels are set correctly
-        print(f"[CircleArcPanel.__init__] Panel {name} created with edges:")
-        for i, edge in enumerate(self.edges):
-            print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
+        # print(f"[CircleArcPanel.__init__] Panel {name} created with edges:")
+        # for i, edge in enumerate(self.edges):
+        #     print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
 
         # Interfaces
         self.interfaces = {
@@ -75,7 +75,7 @@ class CircleArcPanel(pyg.Panel):
         expected_labels = ['top', 'right', 'bottom', 'left']
         missing_labels = []
         
-        print(f"[CircleArcPanel._verify_edge_labels] Verifying edge labels for panel '{self.name}'")
+        # print(f"[CircleArcPanel._verify_edge_labels] Verifying edge labels for panel '{self.name}'")
         
         # Check that each expected label exists on an edge
         for label in expected_labels:
@@ -105,8 +105,8 @@ class CircleArcPanel(pyg.Panel):
             if 'left' in missing_labels and len(self.edges) >= 4:
                 self.edges[3].label = 'left'
                 print(f"[CircleArcPanel._verify_edge_labels] Set label 'left' on edge 3")
-        else:
-            print(f"[CircleArcPanel._verify_edge_labels] All expected edge labels found")
+        # else:
+        #     print(f"[CircleArcPanel._verify_edge_labels] All expected edge labels found")
 
     def length(self, *args):
         return self.interfaces['right'].edges.length()
@@ -137,13 +137,13 @@ class CircleArcPanel(pyg.Panel):
     def split(self, proportion=0.5):
         """Splits the panel into two new panels at a specified proportion"""
         # Debug information about edges
-        print(f"[CircleArcPanel.split] Splitting panel '{self.name}' at proportion {proportion}"    )
+        print(f"[CircleArcPanel.split] Splitting panel '{self.name}' at proportion {proportion}")
         self._verify_edge_labels()  # Ensure edge labels are verified before splitting
 
-        print(f"[CircleArcPanel.split] Panel name: {self.name}")
-        print(f"[CircleArcPanel.split] Number of edges: {len(self.edges)}")
-        for i, edge in enumerate(self.edges):
-            print(f"[CircleArcPanel.split] Edge {i}: label={getattr(edge, 'label', 'None')}")
+        # print(f"[CircleArcPanel.split] Panel name: {self.name}")
+        # print(f"[CircleArcPanel.split] Number of edges: {len(self.edges)}")
+        # for i, edge in enumerate(self.edges):
+        #     print(f"[CircleArcPanel.split] Edge {i}: label={getattr(edge, 'label', 'None')}")
         
         # Get edges by label - this should now work reliably with our changes
         bottom_edge = self.get_edge_by_label('bottom')
@@ -163,7 +163,13 @@ class CircleArcPanel(pyg.Panel):
 
         # Get split points
         split_point_bottom = bottom_edge.point_at(proportion)
+
+        print(f"[CircleArcPanel.split] Split point on bottom edge: {split_point_bottom}")
+        
         split_point_top = top_edge.point_at(proportion)
+
+        print(f"[CircleArcPanel.split] Split points: "
+              f"bottom={split_point_bottom}, top={split_point_top}")
 
         # Split edges
         bottom1, bottom2 = bottom_edge.split_at_point(split_point_bottom)
@@ -173,6 +179,13 @@ class CircleArcPanel(pyg.Panel):
         split_edge1 = pyg.Edge(split_point_top, split_point_bottom, label='split_left')
         split_edge2 = pyg.Edge(split_point_bottom, split_point_top, label='split_right')
 
+
+        # Debug the split edges
+        print(f"[CircleArcPanel.split] Split edges created:")
+        print(f"  Split Edge 1: {split_edge1}")
+        print(f"  Split Edge 2: {split_edge2}")
+
+        
         # Create new panels
         panel1 = pyg.Panel(f'{self.name}_1')
         panel1.edges = pyg.EdgeSequence([top1, right_edge, bottom1, split_edge1])
@@ -183,6 +196,8 @@ class CircleArcPanel(pyg.Panel):
         panel1.edges[2].label = 'bottom'
         panel1.edges[3].label = 'left'  # The split edge becomes the left edge of panel1
 
+        print(f"[CircleArcPanel.split] Created panel1")
+
         panel2 = pyg.Panel(f'{self.name}_2')
         panel2.edges = pyg.EdgeSequence([top2, split_edge2, bottom2, left_edge])
         
@@ -192,23 +207,31 @@ class CircleArcPanel(pyg.Panel):
         panel2.edges[2].label = 'bottom'
         panel2.edges[3].label = 'left'
 
-        print(f"[CircleArcPanel.split] Created panel1 with edges:")
-        for i, edge in enumerate(panel1.edges):
-            print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
+        print(f"[CircleArcPanel.split] Created panel2")
+
+        # print(f"[CircleArcPanel.split] Created panel1 with edges:")
+        # for i, edge in enumerate(panel1.edges):
+        #     print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
             
-        print(f"[CircleArcPanel.split] Created panel2 with edges:")
-        for i, edge in enumerate(panel2.edges):
-            print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
+        # print(f"[CircleArcPanel.split] Created panel2 with edges:")
+        # for i, edge in enumerate(panel2.edges):
+        #     print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
             
         # Apply the verification method to the new panels
         # Add the _verify_edge_labels method to the new panels
-        panel1._verify_edge_labels = self._verify_edge_labels.__get__(panel1)
-        panel2._verify_edge_labels = self._verify_edge_labels.__get__(panel2)
+        #panel1._verify_edge_labels = self._verify_edge_labels.__get__(panel1)
+        #panel2._verify_edge_labels = self._verify_edge_labels.__get__(panel2)
         
-        # Verify edge labels in both new panels
-        panel1._verify_edge_labels()
-        panel2._verify_edge_labels()
+        #print(f"[CircleArcPanel.split] Verifying edge labels for new panels")
 
+        # Verify edge labels in both new panels
+        #panel1._verify_edge_labels()
+        #panel2._verify_edge_labels()
+
+
+        #print(f"[CircleArcPanel.split] Edge labels verified for new panels")
+        # Return the new panels
+        print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")
         return panel1, panel2
 
     def get_edge_by_label(self, label):
@@ -217,7 +240,7 @@ class CircleArcPanel(pyg.Panel):
         This implementation requires that all edges have proper labels.
         """
         # Debug the label lookup
-        print(f"[CircleArcPanel.get_edge_by_label] Looking for edge with label '{label}'")
+        # print(f"[CircleArcPanel.get_edge_by_label] Looking for edge with label '{label}'")
         
         # First check if the Panel class has this method
         if hasattr(super(), 'get_edge_by_label'):
@@ -228,7 +251,7 @@ class CircleArcPanel(pyg.Panel):
         # If not found or method doesn't exist, implement our own lookup
         for i, edge in enumerate(self.edges):
             if hasattr(edge, 'label') and edge.label == label:
-                print(f"[CircleArcPanel.get_edge_by_label] Found edge {i} with label '{label}'")
+                # print(f"[CircleArcPanel.get_edge_by_label] Found edge {i} with label '{label}'")
                 return edge
         
         # Debug what labels we do have
@@ -285,9 +308,9 @@ class AsymHalfCirclePanel(pyg.Panel):
         self.edges.append(left_edge)
 
         # Verify all edge labels are set correctly
-        print(f"[AsymHalfCirclePanel.__init__] Panel {name} created with edges:")
-        for i, edge in enumerate(self.edges):
-            print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
+        # print(f"[AsymHalfCirclePanel.__init__] Panel {name} created with edges:")
+        # for i, edge in enumerate(self.edges):
+        #     print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
 
         # Interfaces
         self.interfaces = {
@@ -312,7 +335,7 @@ class AsymHalfCirclePanel(pyg.Panel):
         expected_labels = ['top', 'right', 'bottom', 'left']
         missing_labels = []
         
-        print(f"[AsymHalfCirclePanel._verify_edge_labels] Verifying edge labels for panel '{self.name}'")
+        # print(f"[AsymHalfCirclePanel._verify_edge_labels] Verifying edge labels for panel '{self.name}'")
         
         # Check that each expected label exists on an edge
         for label in expected_labels:
@@ -348,8 +371,8 @@ class AsymHalfCirclePanel(pyg.Panel):
             if 'left' in missing_labels and len(self.edges) >= 4:
                 self.edges[3].label = 'left'
                 print(f"[AsymHalfCirclePanel._verify_edge_labels] Set label 'left' on edge 3")
-        else:
-            print(f"[AsymHalfCirclePanel._verify_edge_labels] All expected edge labels found")
+        # else:
+        #     print(f"[AsymHalfCirclePanel._verify_edge_labels] All expected edge labels found")
     
     def length(self, *args):
         return self.interfaces['right'].edges.length()
@@ -360,7 +383,7 @@ class AsymHalfCirclePanel(pyg.Panel):
         This implementation requires that all edges have proper labels.
         """
         # Debug the label lookup
-        print(f"[AsymHalfCirclePanel.get_edge_by_label] Looking for edge with label '{label}'")
+        # print(f"[AsymHalfCirclePanel.get_edge_by_label] Looking for edge with label '{label}'")
         
         # First check if the Panel class has this method
         if hasattr(super(), 'get_edge_by_label'):
@@ -371,7 +394,7 @@ class AsymHalfCirclePanel(pyg.Panel):
         # If not found or method doesn't exist, implement our own lookup
         for i, edge in enumerate(self.edges):
             if hasattr(edge, 'label') and edge.label == label:
-                print(f"[AsymHalfCirclePanel.get_edge_by_label] Found edge {i} with label '{label}'")
+                # print(f"[AsymHalfCirclePanel.get_edge_by_label] Found edge {i} with label '{label}'")
                 return edge
         
         # Debug what labels we do have
