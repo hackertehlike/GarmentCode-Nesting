@@ -1229,58 +1229,72 @@ class NestingGUI:
         ui.notify("All panel rotations reset", type="positive")
 
     def _split_panel(self):
-        """Split the currently selected panel into two using ``dispatch_split``."""
-
-        print("[GUI] Splitting panel via dispatch_split")
+        """Split the currently selected panel into two and redraw.
+        # """
         if not self.selected_panel:
             ui.notify("No panel selected to split", type="warning")
             return
-
+            
         pid = self.selected_panel
         piece = self.pieces.get(pid)
         if piece is None:
             ui.notify(f"Panel '{pid}' not found", type="negative")
             return
-
-        print(f"[GUI] Splitting panel '{pid}' via dispatch_split")
-
-        from nesting.panel_mapping import dispatch_split
-
-        split_result = dispatch_split(piece, self.design_params, self.body_params)
-
-        if not split_result:
-            ui.notify(f"Panel '{pid}' cannot be split", type="negative")
+            
+        print(f"[GUI] Splitting panel '{pid}'")
+        
+        # Check if we have design and body params needed for regeneration
+        if not self.design_params or not self.body_params:
+            print(f"[GUI] Missing design or body params")
+            ui.notify("Design or body parameters are missing", type="warning")
             return
 
-        left_piece, right_piece = split_result
+        # # Follow the chromosome's split mutation pattern
+        from nesting.panel_mapping import get_panel_type, dispatch_split
+        import tempfile
+        from pathlib import Path
+        
+        # Identify the panel type
+        panel_type = get_panel_type(pid)
+        if not panel_type:
+            ui.notify(f"Cannot determine panel type for '{pid}'", type="warning")
+            return
+            
+        #ui.notify(f"[GUI] Panel type identified as: '{panel_type}'")
+        
+        # Regenerate the garment pattern with MetaGarment
+        from assets.garment_programs.meta_garment import MetaGarment
 
-        for new_piece in (left_piece, right_piece):
-            new_piece.parent_id = pid
-            new_piece.root_id = getattr(piece, "root_id", pid)
-            new_piece.rotation = piece.rotation
-            new_piece.add_seam_allowance(self.seam_allowance_cm)
-            new_piece.update_bbox()
+        # Create a temporary directory for the regenerated pattern
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_path = Path(tmpdir) / "regenerated_pattern.json"
+            
+            # Regenerate MetaGarment with the design and body parameters
+            regenerated_pattern = MetaGarment(
+                design_params=self.design_params,
+                body_params=self.body_params,
+                output_path=tmp_path
+            )
+            
+            # find the panel in regenerated pattern
+            if not regenerated_pattern:
+                ui.notify("Failed to regenerate pattern", type="negative")
+                return
 
-        print(f"[GUI] Created split pieces: '{left_piece.id}' and '{right_piece.id}'")
+            # Find the panel in the regenerated pattern
+            new_panel = regenerated_pattern.get_panel(pid)
+            if not new_panel:
+                ui.notify(f"Panel '{pid}' not found in regenerated pattern", type="negative")
+                return
 
-        self.pieces.pop(pid, None)
+            # Load the regenerated pattern into the GUI
+            self._load_pattern_core(tmp_path)
+            
+            ui.notify(f"Panel '{pid}' split and regenerated successfully", type="positive")
 
-        left_id = f"{left_piece.id}_split1" if left_piece.id in self.pieces else left_piece.id
-        right_id = f"{right_piece.id}_split2" if right_piece.id in self.pieces else right_piece.id
+            # find the panel in the regenerated pattern
 
-        left_piece.id = left_id
-        right_piece.id = right_id
-
-        self.pieces[left_id] = left_piece
-        self.pieces[right_id] = right_piece
-
-        self.panel_path_refs.pop(pid, None)
-
-        self.layout = Layout(self.pieces)
-        self._rebuild_panel_outlines()
-        self._draw_outlines()
-        ui.notify(f"Panel split into '{left_id}' and '{right_id}'", type="positive")
-        self.selected_panel = ""
+        
 
     def _create_design_sampler(self, design_params):
         """
