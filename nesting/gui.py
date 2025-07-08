@@ -1229,217 +1229,58 @@ class NestingGUI:
         ui.notify("All panel rotations reset", type="positive")
 
     def _split_panel(self):
-        """Split the currently selected panel into two and redraw.
-        
-        Follows the same pattern as the chromosome's split mutation:
-        1. Identifies the panel type
-        2. Regenerates the garment pattern with MetaGarment
-        3. Finds the panel in the regenerated pattern
-        4. Calls the specialized split method on the panel
-        5. Creates pieces from the split panels
-        6. Updates the GUI
-        """
+        """Split the currently selected panel into two using ``dispatch_split``."""
+
+        print("[GUI] Splitting panel via dispatch_split")
         if not self.selected_panel:
             ui.notify("No panel selected to split", type="warning")
             return
-            
+
         pid = self.selected_panel
         piece = self.pieces.get(pid)
         if piece is None:
             ui.notify(f"Panel '{pid}' not found", type="negative")
             return
-            
-        print(f"[GUI] Splitting panel '{pid}'")
-        
-        # Check if we have design and body params needed for regeneration
-        if not self.design_params or not self.body_params:
-            # Fall back to direct split if we don't have parameters for regeneration
-            print(f"[GUI] Missing design or body params, using direct split")
-            from nesting.panel_mapping import dispatch_split
-            split_result = dispatch_split(piece, None, None)
-            
-            if not split_result:
-                ui.notify(f"Panel '{pid}' cannot be split", type="warning")
-                return
-                
-            left, right = split_result
-            
-            # Remove original piece
-            self.pieces.pop(pid, None)
-            
-            # Add the new pieces to the pieces dict
-            self.pieces[left.id] = left
-            self.pieces[right.id] = right
-            
-            # Update the panel path refs
-            self.panel_path_refs.pop(pid, None)  # remove old reference
-            
-            # rebuild layout, outlines, and clear selection
-            self.layout = Layout(self.pieces)
-            self._rebuild_panel_outlines()
-            self._draw_outlines()
-            ui.notify(f"Panel split into '{left.id}' and '{right.id}'", type="positive")
-            self.selected_panel = ""
+
+        print(f"[GUI] Splitting panel '{pid}' via dispatch_split")
+
+        from nesting.panel_mapping import dispatch_split
+
+        split_result = dispatch_split(piece, self.design_params, self.body_params)
+
+        if not split_result:
+            ui.notify(f"Panel '{pid}' cannot be split", type="negative")
             return
-            
-        # Follow the chromosome's split mutation pattern
-        from nesting.panel_mapping import get_panel_type, dispatch_split
-        import tempfile
-        from pathlib import Path
-        
-        # 1. Identify the panel type
-        panel_type = get_panel_type(pid)
-        if not panel_type:
-            ui.notify(f"Cannot determine panel type for '{pid}'", type="warning")
-            return
-            
-        print(f"[GUI] Panel type identified as: '{panel_type}'")
-        
-        # 2. Regenerate the garment pattern with MetaGarment
-        try:
-            from assets.garment_programs.meta_garment import MetaGarment
-            
-            # Create a temporary directory for regenerated pattern
-            with tempfile.TemporaryDirectory() as td:
-                temp_dir = Path(td)
-                
-                # Regenerate the pattern with MetaGarment
-                mg = MetaGarment("split_regenerate", self.body_params, self.design_params)
-                
-                # 3. Find the panel in the MetaGarment components directly
-                panel = None
-                panel_found = False
-                
-                # Based on panel ID, determine if it's front or back skirt panel
-                is_front = "front" in pid.lower()
-                is_back = "back" in pid.lower()
-                
-                # Find the skirt component in the subs of MetaGarment
-                skirt_component = None
-                for sub in mg.subs:
-                    # Check if this is a circle skirt component
-                    if hasattr(sub, 'front') and hasattr(sub, 'back'):
-                        skirt_component = sub
-                        break
-                
-                if skirt_component is None:
-                    ui.notify(f"Could not find skirt component in the garment", type="warning")
-                    return
-                
-                # Get the appropriate panel (front or back)
-                if is_front and hasattr(skirt_component, 'front'):
-                    panel = skirt_component.front
-                    panel_found = True
-                elif is_back and hasattr(skirt_component, 'back'):
-                    panel = skirt_component.back
-                    panel_found = True
-                
-                if not panel_found:
-                    ui.notify(f"Could not find panel '{pid}' in regenerated pattern", type="warning")
-                    return
-                    
-                print(f"[GUI] Found panel '{panel.name}' in regenerated pattern")
-                
-                # 4. Check if the panel has a split method and split it
-                if not hasattr(panel, 'split') or not callable(panel.split):
-                    ui.notify(f"Panel '{pid}' does not have a split method", type="warning")
-                    return
-                    
-                # Split the panel
-                left_panel, right_panel = panel.split()
-                print(f"[GUI] Panel split successful: {left_panel.name}, {right_panel.name}")
-                
-                # Now serialize the pattern with our split panels
-                pattern = mg.assembly()
-                
-                # 5. Export to temporary directory and create pieces
-                spec_file = temp_dir / f"{pattern.name}_specification.json"
-                pattern.serialize(temp_dir, to_subfolder=False, with_3d=False,
-                                with_text=False, view_ids=False)
-                
-                from nesting.path_extractor import PatternPathExtractor
-                extractor = PatternPathExtractor(spec_file)
-                
-                # Create a dictionary mapping between original and new panel names
-                panel_mapping = {}
-                if is_front:
-                    panel_mapping[skirt_component.front.name] = left_panel.name
-                    panel_mapping[f"{skirt_component.front.name}_1"] = left_panel.name
-                    panel_mapping[f"{skirt_component.front.name}_2"] = right_panel.name
-                elif is_back:
-                    panel_mapping[skirt_component.back.name] = left_panel.name
-                    panel_mapping[f"{skirt_component.back.name}_1"] = left_panel.name
-                    panel_mapping[f"{skirt_component.back.name}_2"] = right_panel.name
-                
-                # Get all panel pieces
-                all_pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE)
-                
-                # Identify the left and right pieces by name
-                left_piece = None
-                right_piece = None
-                
-                # Try to find the split pieces in the extracted pieces
-                for piece_id, piece in all_pieces.items():
-                    if left_panel.name in piece_id:
-                        left_piece = piece
-                    elif right_panel.name in piece_id:
-                        right_piece = piece
-                
-                # If we couldn't find the pieces by name, create them directly
-                if left_piece is None or right_piece is None:
-                    # Original piece wasn't found in the pattern, let's use the direct split method
-                    ui.notify("Using direct panel split method as fallback", type="info")
-                    
-                    from nesting.panel_mapping import dispatch_split
-                    split_result = dispatch_split(piece, self.design_params, self.body_params)
-                    
-                    if not split_result:
-                        ui.notify(f"Panel '{pid}' cannot be split directly", type="negative")
-                        return
-                        
-                    left_piece, right_piece = split_result
-                
-                # Copy necessary attributes from the original piece
-                for new_piece in [left_piece, right_piece]:
-                    new_piece.parent_id = pid
-                    new_piece.root_id = getattr(piece, "root_id", pid)
-                    new_piece.rotation = piece.rotation
-                    # Apply seam allowance
-                    new_piece.add_seam_allowance(self.seam_allowance_cm)
-                    new_piece.update_bbox()
-                
-                print(f"[GUI] Created split pieces: '{left_piece.id}' and '{right_piece.id}'")
-                
-                # 6. Update the GUI
-                # Remove the original piece
-                self.pieces.pop(pid, None)
-                
-                # Add the new pieces to the pieces dict with unique IDs
-                left_id = f"{left_piece.id}_split1" if left_piece.id in self.pieces else left_piece.id
-                right_id = f"{right_piece.id}_split2" if right_piece.id in self.pieces else right_piece.id
-                
-                # Update the IDs
-                left_piece.id = left_id
-                right_piece.id = right_id
-                
-                self.pieces[left_id] = left_piece
-                self.pieces[right_id] = right_piece
-                
-                # Update the panel path refs
-                self.panel_path_refs.pop(pid, None)  # remove old reference
-                
-                # Rebuild layout, outlines, and clear selection
-                self.layout = Layout(self.pieces)
-                self._rebuild_panel_outlines()
-                self._draw_outlines()
-                ui.notify(f"Panel split into '{left_id}' and '{right_id}'", type="positive")
-                self.selected_panel = ""
-                
-        except Exception as exc:
-            ui.notify(f"Split failed: {exc}", type="negative")
-            print(f"[GUI] Split failed: {exc}")
-            import traceback
-            traceback.print_exc()
+
+        left_piece, right_piece = split_result
+
+        for new_piece in (left_piece, right_piece):
+            new_piece.parent_id = pid
+            new_piece.root_id = getattr(piece, "root_id", pid)
+            new_piece.rotation = piece.rotation
+            new_piece.add_seam_allowance(self.seam_allowance_cm)
+            new_piece.update_bbox()
+
+        print(f"[GUI] Created split pieces: '{left_piece.id}' and '{right_piece.id}'")
+
+        self.pieces.pop(pid, None)
+
+        left_id = f"{left_piece.id}_split1" if left_piece.id in self.pieces else left_piece.id
+        right_id = f"{right_piece.id}_split2" if right_piece.id in self.pieces else right_piece.id
+
+        left_piece.id = left_id
+        right_piece.id = right_id
+
+        self.pieces[left_id] = left_piece
+        self.pieces[right_id] = right_piece
+
+        self.panel_path_refs.pop(pid, None)
+
+        self.layout = Layout(self.pieces)
+        self._rebuild_panel_outlines()
+        self._draw_outlines()
+        ui.notify(f"Panel split into '{left_id}' and '{right_id}'", type="positive")
+        self.selected_panel = ""
 
     def _create_design_sampler(self, design_params):
         """
