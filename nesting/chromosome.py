@@ -269,6 +269,15 @@ class Chromosome(Layout):
         self.old_fitness: float | None = None
         self.new_fitness: float | None = None
         self.mutation_improvement: float | None = None
+
+        # Keep a MetaGarment instance for incremental operations similar to the GUI
+        self.meta_garment = None
+        if self.design_params and self.body_params:
+            try:
+                from assets.garment_programs.meta_garment import MetaGarment
+                self.meta_garment = MetaGarment("chromosome_base", self.body_params, self.design_params)
+            except Exception as exc:
+                print(f"[Chromosome] Failed to create MetaGarment: {exc}")
         
 
     @property
@@ -318,29 +327,90 @@ class Chromosome(Layout):
     # ── simple mutations ───────────────────────────────────────────────
 
     def _mutate_split(self):
+        """Split a panel using the MetaGarment pipeline, preserving state."""
         from nesting.panel_mapping import dispatch_split
-        
+        from nesting.path_extractor import PatternPathExtractor
+        from assets.garment_programs.meta_garment import MetaGarment
+        import tempfile
+        from pathlib import Path
+
         max_splits = min(config.NUM_SPLITS, len(self.genes))
         for _ in range(random.randint(1, max_splits)):
             unsplit = [i for i, g in enumerate(self.genes) if g.parent_id is None]
             if not unsplit:
                 break
+
             idx = random.choices(unsplit, weights=[self.genes[i].bbox_area for i in unsplit])[0]
-            
-            # Use dispatch_split with design and body params
             piece = self.genes[idx]
-            split_result = dispatch_split(piece, self.design_params, self.body_params)
-            
-            if not split_result:
-                print(f"[Chromosome] Failed to split piece '{piece.id}', skipping")
+
+            # Ensure a MetaGarment instance
+            mg = self.meta_garment
+            if mg is None and self.design_params and self.body_params:
+                try:
+                    mg = MetaGarment("chromosome_split", self.body_params, self.design_params)
+                    self.meta_garment = mg
+                except Exception as exc:
+                    print(f"[Chromosome] Failed to create MetaGarment: {exc}")
+
+            if mg is None:
+                # Fallback to old dispatch_split behaviour
+                split_result = dispatch_split(piece, self.design_params, self.body_params)
+                if not split_result:
+                    print(f"[Chromosome] Failed to split piece '{piece.id}', skipping")
+                    continue
+                left, right = split_result
+                self.genes[idx:idx + 1] = [left, right]
+                child = random.choice([left, right])
+                self.genes.remove(child)
+                self.genes.insert(random.randrange(len(self.genes) + 1), child)
                 continue
-                
-            left, right = split_result
-            self.genes[idx:idx + 1] = [left, right]
-            # randomly relocate one half
-            child = random.choice([left, right])
+
+            # Use MetaGarment's split_panel pipeline
+            try:
+                new_panel_names = mg.split_panel(piece.id)
+            except Exception as exc:
+                print(f"[Chromosome] MetaGarment split failed for {piece.id}: {exc}")
+                continue
+
+            pattern = mg.assembly()
+            with tempfile.TemporaryDirectory() as td:
+                spec_file = Path(td) / f"{pattern.name}_specification.json"
+                pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
+                                  with_text=False, view_ids=False)
+                extractor = PatternPathExtractor(spec_file)
+                all_pieces = extractor.get_all_panel_pieces(
+                    samples_per_edge=config.SAMPLES_PER_EDGE
+                )
+
+            # Build new Piece objects for the split panels
+            if len(new_panel_names) != 2:
+                print(f"[Chromosome] Unexpected number of split panels for {piece.id}")
+                continue
+
+            left_piece = all_pieces.get(new_panel_names[0])
+            right_piece = all_pieces.get(new_panel_names[1])
+
+            if left_piece is None or right_piece is None:
+                print(f"[Chromosome] Split pieces not found in regenerated pattern")
+                continue
+
+            for p_new in (left_piece, right_piece):
+                p_new.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+                p_new.parent_id = piece.id
+                p_new.root_id = getattr(piece, "root_id", piece.id)
+                p_new.rotation = piece.rotation
+                p_new.translation = piece.translation
+                p_new.update_bbox()
+
+            self.genes[idx:idx + 1] = [left_piece, right_piece]
+
+            # Randomly relocate one half like before
+            child = random.choice([left_piece, right_piece])
             self.genes.remove(child)
             self.genes.insert(random.randrange(len(self.genes) + 1), child)
+
+        # Recompute mutatable params since gene ids changed
+        # self._mutatable_params = _collect_mutatable_params(self.design_params, self._genes)
 
     def _mutate_rotate(self):
         for _ in range(random.randint(1, len(self.genes))):
