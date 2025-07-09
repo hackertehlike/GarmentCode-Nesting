@@ -98,55 +98,18 @@ class MetaGarment(pyg.Component):
 
 
     def get_panel_by_name(self, panel_name):
-        """Retrieve a panel by its name
-        
-        This method searches for a panel with the given name in the following order:
-        1. Checks if any direct subcomponent is a Panel with the requested name
-        2. Checks if any subcomponent has an attribute with the requested name that is a Panel
-        3. Recursively searches in any subcomponent that is itself a Component
-        4. Looks in the assembled pattern's panels dictionary
-        
-        Args:
-            panel_name (str): The name of the panel to retrieve (e.g., 'skirt_front')
-            
-        Returns:
-            pyg.Panel or None: The panel with the given name if found, None otherwise
-            
-        Example:
-            ```python
-            # Get the front skirt panel
-            front_panel = garment.get_panel_by_name('skirt_front')
-            
-            # Get a specific panel
-            panel = garment.get_panel_by_name('skirt_back')
-            ```
+        """Retrieve a panel by its name.
+
+        The method first relies on :class:`Component`'s generic search and only
+        falls back to the assembled pattern representation if that fails.
         """
-        # First, try to find the panel directly in subcomponents
-        # This handles both panel objects stored directly as attributes and
-        # panels within subcomponents
-        for component in self._get_subcomponents():
-            # Check if the component is a Panel with the requested name
-            if hasattr(component, 'name') and component.name == panel_name:
-                return component
-            
-            # Check if the component has an attribute with the requested name
-            if hasattr(component, panel_name):
-                panel = getattr(component, panel_name)
-                if isinstance(panel, pyg.Panel):
-                    return panel
-            
-            # If the component is itself a Component, recursively search in it
-            if hasattr(component, 'get_panel_by_name'):
-                panel = component.get_panel_by_name(panel_name)
-                if panel:
-                    return panel
-        
-        # If not found through direct attributes, try through the assembled pattern
+
+        panel = super().get_panel_by_name(panel_name)
+        if panel is not None:
+            return panel
+
         pattern = self.assembly().pattern
-        if 'panels' in pattern and panel_name in pattern['panels']:
-            return pattern['panels'][panel_name]
-        
-        return None
+        return pattern.get('panels', {}).get(panel_name)
     
     def get_all_panel_names(self):
         """Get the names of all panels in this garment
