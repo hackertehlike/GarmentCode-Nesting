@@ -63,6 +63,7 @@ class NestingGUI:
         #self.yaml_loaded     = False
 
         self.design_params: Dict[str, any] = {}  # design specification from JSON
+        self.meta_garment = None  # keeps MetaGarment instance for incremental operations
 
         # Currently selected panel for style editing.
         self.selected_panel: str = ""
@@ -459,7 +460,7 @@ class NestingGUI:
     # ---------------------------------------------------------------------------- #
     
     
-    def _load_pattern_core(self, path: Path) -> None:
+    def _load_pattern_core(self, path: Path, update_params: bool = True) -> None:
         """
         Clear old state, load geometry + design parameters from *path*,
         and rebuild the sidebar.
@@ -520,95 +521,93 @@ class NestingGUI:
         #     print(f"Loaded piece: {piece_id} with translation {piece.translation} and rotation {piece.rotation}")
         self._rebuild_panel_outlines()
         self.pattern_loaded = True
-        
-        # Rebuild the sidebar to update the parameters based on the loaded panels
-        self._build_sidebar()
+
         self._draw_outlines()
 
-        # --- design parameters ----------------------------------------
-        yaml_path = path.parent / "design_params.yaml"
-        try:
-            import yaml
-            if yaml_path.exists() and not self.use_default_params:
-                # Use the design params from the provided pattern folder
-                with open(yaml_path, "r", encoding="utf-8") as f:
-                    self.design_params = yaml.safe_load(f).get("design", {})
-                print("Design parameters loaded from pattern folder:", self.design_params)
-            elif not self.use_default_params:
-                # Try to get design params from the pattern JSON
-                with path.open("r", encoding="utf-8") as f:
-                    spec = json.load(f)
-                    self.design_params = spec.get("design", {})
-                print("Design parameters loaded from pattern JSON:", self.design_params)
-            else:
-                # Use default design params
-                default_design_path = Path(config.DEFAULT_DESIGN_PARAM_PATH)
-                if default_design_path.exists():
-                    with open(default_design_path, "r", encoding="utf-8") as f:
+        if update_params:
+            # --- design parameters ----------------------------------------
+            yaml_path = path.parent / "design_params.yaml"
+            try:
+                import yaml
+                if yaml_path.exists() and not self.use_default_params:
+                    with open(yaml_path, "r", encoding="utf-8") as f:
                         self.design_params = yaml.safe_load(f).get("design", {})
-                    print("Default design parameters loaded:", self.design_params)
+                    print("Design parameters loaded from pattern folder:", self.design_params)
+                elif not self.use_default_params:
+                    with path.open("r", encoding="utf-8") as f:
+                        spec = json.load(f)
+                        self.design_params = spec.get("design", {})
+                    print("Design parameters loaded from pattern JSON:", self.design_params)
                 else:
-                    print(f"Default design params file not found: {default_design_path}")
-                    self.design_params = {}
-        except Exception as exc:
-            print(f"Failed to load design parameters: {exc}")
-            self.design_params = {}
+                    default_design_path = Path(config.DEFAULT_DESIGN_PARAM_PATH)
+                    if default_design_path.exists():
+                        with open(default_design_path, "r", encoding="utf-8") as f:
+                            self.design_params = yaml.safe_load(f).get("design", {})
+                        print("Default design parameters loaded:", self.design_params)
+                    else:
+                        print(f"Default design params file not found: {default_design_path}")
+                        self.design_params = {}
+            except Exception as exc:
+                print(f"Failed to load design parameters: {exc}")
+                self.design_params = {}
 
-        # --- body parameters -----------------------------------------
-        body_path = path.parent / "body_measurements.yaml"
-        default_body_path = Path(config.DEFAULT_BODY_PARAM_PATH)
-        try:
-            from assets.bodies.body_params import BodyParameters
-            if body_path.exists() and not self.use_default_params:
-                # Use the body params from the provided pattern folder
-                self.body_params = BodyParameters(body_path)
-                print("Body parameters loaded from pattern folder")
-            elif default_body_path.exists() and self.use_default_params:
-                # Use default body params
-                self.body_params = BodyParameters(default_body_path)
-                print("Default body parameters loaded")
-            else:
-                print(f"No body parameters found")
+        if update_params:
+            # --- body parameters -----------------------------------------
+            body_path = path.parent / "body_measurements.yaml"
+            default_body_path = Path(config.DEFAULT_BODY_PARAM_PATH)
+            try:
+                from assets.bodies.body_params import BodyParameters
+                if body_path.exists() and not self.use_default_params:
+                    self.body_params = BodyParameters(body_path)
+                    print("Body parameters loaded from pattern folder")
+                elif default_body_path.exists() and self.use_default_params:
+                    self.body_params = BodyParameters(default_body_path)
+                    print("Default body parameters loaded")
+                else:
+                    print(f"No body parameters found")
+                    self.body_params = None
+            except Exception as exc:
+                print(f"Failed to load body parameters: {exc}")
                 self.body_params = None
-        except Exception as exc:
-            print(f"Failed to load body parameters: {exc}")
-            self.body_params = None
 
-        # --- design sampler -----------------------------------------
-        try:
-            from pygarment.garmentcode.params import DesignSampler
-            import tempfile
-            
-            if self.design_params:
-                print("Creating design sampler from design parameters...")
-                # DesignSampler expects a file path, not a dictionary
-                # Create a temporary YAML file with the design parameters
-                with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.yaml') as tmp:
-                    import yaml
-                    # Format the content as required by DesignSampler.load
-                    yaml_content = {'design': self.design_params}
-                    yaml.dump(yaml_content, tmp, default_flow_style=False)
-                    tmp_path = tmp.name
-                    print(f"Created temporary YAML file: {tmp_path}")
-                
-                try:
-                    # Create a DesignSampler with the temporary file
-                    print(f"Creating DesignSampler with file: {tmp_path}")
-                    self.design_sampler = DesignSampler(tmp_path)
-                    print("DesignSampler created successfully!")
-                except Exception as e:
-                    print(f"Error creating DesignSampler: {e}")
+        if update_params:
+            # --- design sampler -----------------------------------------
+            try:
+                from pygarment.garmentcode.params import DesignSampler
+                import tempfile
+
+                if self.design_params:
+                    print("Creating design sampler from design parameters...")
+                    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.yaml') as tmp:
+                        import yaml
+                        yaml_content = {'design': self.design_params}
+                        yaml.dump(yaml_content, tmp, default_flow_style=False)
+                        tmp_path = tmp.name
+                        print(f"Created temporary YAML file: {tmp_path}")
+
+                    try:
+                        print(f"Creating DesignSampler with file: {tmp_path}")
+                        self.design_sampler = DesignSampler(tmp_path)
+                        print("DesignSampler created successfully!")
+                    except Exception as e:
+                        print(f"Error creating DesignSampler: {e}")
+                        self.design_sampler = None
+
+                    print(f"Design sampler state: {self.design_sampler is not None}")
+                else:
                     self.design_sampler = None
-                
-                # We'll keep the temporary file - don't delete it
-                # This ensures the DesignSampler can access it throughout its lifetime
-                print(f"Design sampler state: {self.design_sampler is not None}")
-            else:
+                    print("No design parameters available for sampler")
+            except Exception as exc:
+                print(f"Failed to create design sampler: {exc}")
                 self.design_sampler = None
-                print("No design parameters available for sampler")
-        except Exception as exc:
-            print(f"Failed to create design sampler: {exc}")
-            self.design_sampler = None
+
+            # Keep a MetaGarment instance for successive operations
+            try:
+                from assets.garment_programs.meta_garment import MetaGarment
+                if self.body_params and self.design_params:
+                    self.meta_garment = MetaGarment("GUI_base", self.body_params, self.design_params)
+            except Exception as e:
+                print(f"Failed to create MetaGarment: {e}")
 
         # --- sidebar ---------------------------------------------------
         self._build_sidebar()          # see next section
@@ -1262,19 +1261,17 @@ class NestingGUI:
             
         #ui.notify(f"[GUI] Panel type identified as: '{panel_type}'")
         
-        # Regenerate the garment pattern with MetaGarment
+        # Use or create a MetaGarment instance
         from assets.garment_programs.meta_garment import MetaGarment
+
+        if self.meta_garment is None:
+            mg = MetaGarment("GUI_base", self.body_params, self.design_params)
+        else:
+            mg = self.meta_garment
 
         # Create a temporary directory for the regenerated pattern
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_path = Path(tmpdir) / "regenerated_pattern.json"
-            
-            # Create a MetaGarment instance
-            mg = MetaGarment(
-                name=f"Regenerated_{pid}",
-                body=self.body_params,
-                design=self.design_params
-            )
             
             try:
                 # Split the panel using our new method
@@ -1328,8 +1325,10 @@ class NestingGUI:
                 # Temporarily set use_default_params to False to ensure our saved params are used
                 #self.use_default_params = False
                 
-                # Load the new pattern into the GUI
-                self._load_pattern_core(pattern_path)
+                # Load the new pattern into the GUI without resetting parameters
+                self._load_pattern_core(pattern_path, update_params=False)
+                # preserve updated MetaGarment instance
+                self.meta_garment = mg
                 
                 # If parameters weren't properly loaded, restore them manually
                 if not self.design_params and original_design_params:
