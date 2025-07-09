@@ -2,6 +2,7 @@ import numpy as np
 import pygarment as pyg
 
 from assets.garment_programs.base_classes import StackableSkirtComponent
+import copy
 
 
 class CircleArcPanel(pyg.Panel):
@@ -188,7 +189,9 @@ class CircleArcPanel(pyg.Panel):
         
         # Create new panels
         panel1 = pyg.Panel(f'{self.name}_1')
-        panel1.edges = pyg.EdgeSequence([top1, right_edge, bottom1, split_edge1])
+        # Create deep copies of the edges to avoid shared references
+        right_edge_copy = copy.deepcopy(right_edge)
+        panel1.edges = pyg.EdgeSequence([top1, right_edge_copy, bottom1, split_edge1])
         
         # Override the edge labels on panel1
         panel1.edges[0].label = 'top'
@@ -199,7 +202,9 @@ class CircleArcPanel(pyg.Panel):
         print(f"[CircleArcPanel.split] Created panel1")
 
         panel2 = pyg.Panel(f'{self.name}_2')
-        panel2.edges = pyg.EdgeSequence([top2, split_edge2, bottom2, left_edge])
+        # Create deep copies of the edges to avoid shared references
+        left_edge_copy = copy.deepcopy(left_edge)
+        panel2.edges = pyg.EdgeSequence([top2, split_edge2, bottom2, left_edge_copy])
         
         # Override the edge labels on panel2
         panel2.edges[0].label = 'top'

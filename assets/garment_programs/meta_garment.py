@@ -242,10 +242,10 @@ class MetaGarment(pyg.Component):
         if not parent_component:
             raise ValueError(f"Could not find parent component for panel {panel_name}")
             
-        # 5. Replace the original panel with the subpanels
+        # replace the original panel with the subpanels
         self._replace_panel_with_subpanels(parent_component, panel, [subpanel1, subpanel2])
         
-        # 6. Return the names of the new panels
+        # return the names of the new panels
         return [subpanel1.name, subpanel2.name]
         
     def _find_panel_parent(self, panel_name):
@@ -305,6 +305,8 @@ class MetaGarment(pyg.Component):
             parent_component: The component containing the original panel
             original_panel: The panel to replace
             subpanels: List of new panels to replace the original with
+
+        don't ask me how this works, thank you claude sonnet
         """
         replaced = False
         
