@@ -1269,28 +1269,48 @@ class NestingGUI:
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_path = Path(tmpdir) / "regenerated_pattern.json"
             
-            # Regenerate MetaGarment with the design and body parameters
-            regenerated_pattern = MetaGarment(
-                design_params=self.design_params,
-                body_params=self.body_params,
-                output_path=tmp_path
+            # Create a MetaGarment instance
+            mg = MetaGarment(
+                name=f"Regenerated_{pid}",
+                body=self.body_params,
+                design=self.design_params
             )
             
-            # find the panel in regenerated pattern
-            if not regenerated_pattern:
-                ui.notify("Failed to regenerate pattern", type="negative")
-                return
-
-            # Find the panel in the regenerated pattern
-            new_panel = regenerated_pattern.get_panel(pid)
-            if not new_panel:
-                ui.notify(f"Panel '{pid}' not found in regenerated pattern", type="negative")
-                return
-
-            # Load the regenerated pattern into the GUI
-            self._load_pattern_core(tmp_path)
-            
-            ui.notify(f"Panel '{pid}' split and regenerated successfully", type="positive")
+            try:
+                # Split the panel using our new method
+                proportion = 0.5  # Split in the middle by default
+                new_panel_names = mg.split_panel(pid, proportion)
+                
+                # Generate the pattern with the split panels
+                pattern = mg.assembly()
+                
+                # Save the pattern to a temporary file
+                pattern.serialize(Path(tmpdir), to_subfolder=False, with_3d=False, with_text=False,
+                               view_ids=False, empty_ok=True)
+                
+                # Get the correct file path - pattern.name_specification.json
+                pattern_path = Path(tmpdir) / f"{pattern.name}_specification.json"
+                print(f"Looking for pattern at: {pattern_path}")
+                
+                # Check if the file exists
+                if not pattern_path.exists():
+                    print(f"Pattern file not found at {pattern_path}")
+                    # List all files in the directory to help debug
+                    print(f"Files in directory: {list(Path(tmpdir).glob('*'))}")
+                    raise FileNotFoundError(f"Pattern file not found at {pattern_path}")
+                
+                # Load the new pattern into the GUI
+                self._load_pattern_core(pattern_path)
+                
+                # Select one of the new panels
+                if new_panel_names and len(new_panel_names) > 0:
+                    self._select_panel(new_panel_names[0])
+                
+                ui.notify(f"Panel '{pid}' split into {', '.join(new_panel_names)}", type="positive")
+                
+            except Exception as e:
+                print(f"Error splitting panel: {str(e)}")
+                ui.notify(f"Error splitting panel: {str(e)}", type="negative")
 
             # find the panel in the regenerated pattern
 
