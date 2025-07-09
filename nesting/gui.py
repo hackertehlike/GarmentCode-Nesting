@@ -1299,8 +1299,56 @@ class NestingGUI:
                     print(f"Files in directory: {list(Path(tmpdir).glob('*'))}")
                     raise FileNotFoundError(f"Pattern file not found at {pattern_path}")
                 
+                # Store current parameters and UI state
+                original_design_params = self.design_params
+                original_body_params = self.body_params
+                #original_use_default_params = self.use_default_params
+                
+                # Save design params to temporary file to ensure they're loaded properly
+                if original_design_params:
+                    import yaml
+                    with open(Path(tmpdir) / "design_params.yaml", "w", encoding="utf-8") as f:
+                        yaml.dump({"design": original_design_params}, f, default_flow_style=False)
+                
+                # Save body params to temporary file if they exist
+                if original_body_params:
+                    try:
+                        # If body_params has a save method, use it
+                        if hasattr(original_body_params, "save"):
+                            original_body_params.save(Path(tmpdir) / "body_measurements.yaml")
+                        # Otherwise, just copy the original file
+                        elif hasattr(self, "pattern_path") and self.pattern_path:
+                            body_path = self.pattern_path.parent / "body_measurements.yaml"
+                            if body_path.exists():
+                                import shutil
+                                shutil.copy(body_path, Path(tmpdir) / "body_measurements.yaml")
+                    except Exception as e:
+                        print(f"Warning: Unable to save body parameters to temp directory: {e}")
+                
+                # Temporarily set use_default_params to False to ensure our saved params are used
+                #self.use_default_params = False
+                
                 # Load the new pattern into the GUI
                 self._load_pattern_core(pattern_path)
+                
+                # If parameters weren't properly loaded, restore them manually
+                if not self.design_params and original_design_params:
+                    print("Restoring original design parameters manually")
+                    self.design_params = original_design_params
+                    
+                    # Recreate design sampler with restored parameters
+                    if self.design_params:
+                        self.design_sampler = self._create_design_sampler(self.design_params)
+                
+                if not self.body_params and original_body_params:
+                    print("Restoring original body parameters manually")
+                    self.body_params = original_body_params
+                
+                # Restore UI state
+                #self.use_default_params = original_use_default_params
+                
+                # Rebuild the sidebar to ensure UI reflects the restored parameters
+                self._build_sidebar()
                 
                 # Select one of the new panels
                 if new_panel_names and len(new_panel_names) > 0:
