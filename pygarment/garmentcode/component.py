@@ -3,6 +3,7 @@ from scipy.spatial.transform import Rotation as R
 
 from pygarment.garmentcode.base import BaseComponent
 from pygarment.pattern.wrappers import VisPattern
+from pygarment.garmentcode.panel import Panel
 
 
 class Component(BaseComponent):
@@ -144,4 +145,15 @@ class Component(BaseComponent):
         return list(set([att
                          for att in all_attrs
                          if isinstance(att, BaseComponent)] + self.subs))
+
+    def get_panel_by_name(self, panel_name):
+        """Recursively search subcomponents for a panel with the given name."""
+        for sub in self._get_subcomponents():
+            if isinstance(sub, Panel) and getattr(sub, 'name', None) == panel_name:
+                return sub
+            if hasattr(sub, 'get_panel_by_name'):
+                panel = sub.get_panel_by_name(panel_name)
+                if panel is not None:
+                    return panel
+        return None
 
