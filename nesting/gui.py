@@ -82,7 +82,7 @@ class NestingGUI:
         self._build_layout()
 
         if pattern_path is not None:
-            # user supplied a pattern → load it once
+            # user supplied a pattern -> load it once
             self._load_pattern_core(Path(pattern_path))
         else:
             # fall back to the previous hard-coded default
@@ -94,21 +94,25 @@ class NestingGUI:
     # ---------------------------------------------------------------------------- #
 
     def _build_layout(self) -> None:
-        # Layout with canvas/toolbar on the left and a style sidebar on the right.
+        # Three-column layout: parameters on left, canvas in center, toolbar on right
         with ui.row().classes("w-full h-screen"):
-            with ui.column().classes("flex-1"):
-                self._build_toolbar()
-                self._build_sidebar()    
+            # Left column for parameters
+            with ui.column().classes("w-1/5 h-full overflow-y-auto p-4 border-r"):
+                self._build_sidebar()
+            
+            # Center column for canvas
+            with ui.column().classes("flex-1 h-full"):
                 self._build_canvas()
+            
+            # Right column for toolbar/buttons
+            with ui.column().classes("w-1/5 h-full overflow-y-auto p-4 border-l"):
+                self._build_toolbar()
 
 
     
 
     def _build_sidebar(self) -> None:
         """Build the sidebar with style parameters."""
-
-        # print the design parameters to the console
-        # print("Design parameters:", self.design_params)
 
         def _iter_leaf_params(node: dict, prefix: str = ''):
             GATES = {'style', 'sleeveless', 'type'}
@@ -121,95 +125,112 @@ class NestingGUI:
                     yield from _iter_leaf_params(value, prefix + key + '.')
                     
         if not hasattr(self, "sidebar"):
-            self.sidebar = ui.column().classes("w-1/3 h-full overflow-y-auto p-4")
+            self.sidebar = ui.column().classes("w-full h-full overflow-y-auto")
 
         self.sidebar.clear()
 
         with self.sidebar:
             ui.label("Style Parameters").classes("text-xl font-bold mb-4")
             filtered = self._filtered_design_tree()  # filter out irrelevant blocks
+            
+            # Group parameters into collapsible sections
+            sections = {}
             for name, spec in _iter_leaf_params(filtered):
-                t, val = spec['type'], spec['v']
+                section_name = name.split('.')[0] if '.' in name else 'General'
+                if section_name not in sections:
+                    sections[section_name] = []
+                sections[section_name].append((name, spec))
+            
+            # Create each section
+            for section_name, params in sections.items():
+                with ui.expansion(section_name, value=True).classes("w-full mb-2"):
+                    for name, spec in params:
+                        display_name = name.split('.')[-1] if '.' in name else name
+                        t, val = spec['type'], spec['v']
 
-                if t in ('float', 'int'):
-                    ui.number(value=val, label=name,
-                            on_change=lambda e, n=name: self._on_param_change(n, e))
-                elif t == 'bool':
-                    ui.checkbox(value=val, text=name,
-                            on_change=lambda e, n=name: self._on_param_change(n, e))
-                elif t == 'enum':
-                    options = spec.get('options', [])
-                    ui.select(options, value=val, label=name,
-                            on_change=lambda e, n=name: self._on_param_change(n, e))
+                        if t in ('float', 'int'):
+                            ui.number(value=val, label=display_name,
+                                    on_change=lambda e, n=name: self._on_param_change(n, e))
+                        elif t == 'bool':
+                            ui.checkbox(value=val, text=display_name,
+                                    on_change=lambda e, n=name: self._on_param_change(n, e))
+                        elif t == 'enum':
+                            options = spec.get('options', [])
+                            ui.select(options, value=val, label=display_name,
+                                    on_change=lambda e, n=name: self._on_param_change(n, e))
 
 
     def _build_canvas(self) -> None:
-        with ui.element("div").classes("relative").style(
-            f"width:{self.container_width_px}px;height:{self.container_height}px"
-        ):
-            self.scene = (
-                ui.element("svg")
-                .props(
-                    f'width="{self.container_width_px}" '
-                    f'height="{self.container_height}" '
-                    f'viewBox="0 0 {self.container_width_px} {self.container_height}"'
+        with ui.element("div").classes("w-full h-full flex items-center justify-center"):
+            with ui.element("div").classes("relative").style(
+                f"width:{self.container_width_px}px;height:{self.container_height}px"
+            ):
+                self.scene = (
+                    ui.element("svg")
+                    .props(
+                        f'width="{self.container_width_px}" '
+                        f'height="{self.container_height}" '
+                        f'viewBox="0 0 {self.container_width_px} {self.container_height}"'
+                    )
+                    .style("position:absolute;top:0;left:0")
                 )
-                .style("position:absolute;top:0;left:0")
-            )
-            self.scene.on("pointermove", self._global_drag_move)
-            self.scene.on("pointerup",   self._global_drag_end)
+                self.scene.on("pointermove", self._global_drag_move)
+                self.scene.on("pointerup",   self._global_drag_end)
 
     def _build_toolbar(self):
-        with ui.row().classes("w-full items-center justify-center gap-4"):
-            self.width_input  = ui.number(
-                "Width (cm)",  value=self.container_width_cm,
-                on_change=self._update_dimensions,
-            )
-            self.height_input = ui.number(
-                "Height (cm)", value=self.container_height_cm,
-                on_change=self._update_dimensions,
-            )
-            self.sa_input = ui.number(
-                "Seam allowance (cm)", value=self.seam_allowance_cm,
-                on_change=self._update_seam_allowance,
-            )
-
-            # Label to display utilization
-            self.utilization_label = ui.label("Utilization: n/a")
-            self.rest_length_label = ui.label("Rest length: n/a")
-            self.utilization_concave_label = ui.label("Concave hull utilization: n/a")
-            self.rest_height_label = ui.label("Rest height: n/a")
-
-
-            ui.button("Check intersections & boundaries", on_click=self._check_intersections)
+        # Title for the toolbar
+        ui.label("Tools").classes("text-xl font-bold mb-4")
+        
+        # Container dimensions section
+        with ui.card().classes("w-full mb-4 p-2"):
+            ui.label("Container Size").classes("font-bold mb-2")
+            with ui.column().classes("gap-2"):
+                self.width_input = ui.number("Width (cm)", value=self.container_width_cm, on_change=self._update_dimensions).classes("w-full")
+                self.height_input = ui.number("Height (cm)", value=self.container_height_cm, on_change=self._update_dimensions).classes("w-full")
+                self.sa_input = ui.number("Seam Allowance (cm)", value=self.seam_allowance_cm, on_change=self._update_seam_allowance).classes("w-full")
+        
+        # File operations
+        with ui.card().classes("w-full mb-4 p-2"):
+            ui.label("File Operations").classes("font-bold mb-2")
+            ui.upload(label="Load Pattern", on_upload=self._load_pattern, auto_upload=True).classes("w-full")
+        
+        # Placement Methods
+        with ui.card().classes("w-full mb-4 p-2"):
+            ui.label("Placement Methods").classes("font-bold mb-2")
+            with ui.column().classes("gap-1 w-full"):
+                ui.button("Bottom-Left", on_click=self._auto_place).classes("w-full")
+                ui.button("Greedy", on_click=lambda _: self._auto_place("Greedy")).classes("w-full")
+                ui.button("NFP", on_click=lambda _: self._auto_place("NFP")).classes("w-full")
+                ui.button("Random BL", on_click=lambda _: self._auto_place("RandomBL")).classes("w-full")
+                ui.button("Random NFP", on_click=lambda _: self._auto_place("RandomNFP")).classes("w-full")
+                ui.button("Genetic Algorithm", on_click=lambda _: self._auto_place("Genetic Algorithm")).classes("w-full")
+        
+        # Piece Operations
+        with ui.card().classes("w-full mb-4 p-2"):
+            ui.label("Piece Operations").classes("font-bold mb-2")
+            with ui.column().classes("gap-1 w-full"):
+                ui.button("Select (S)", on_click=self._enable_selection_mode).classes("w-full")
+                ui.button("Reset Selection", on_click=lambda _: self._select_panel("")).classes("w-full")
+                ui.button("Rotate (R)", on_click=lambda _: self._rotate_panel()).classes("w-full")
+                ui.button("Reset Rotation", on_click=lambda _: self._reset_rotations()).classes("w-full")
+                ui.button("Split", on_click=lambda _: self._split_panel()).classes("w-full")
+        
+        # Analysis Operations
+        with ui.card().classes("w-full mb-4 p-2"):
+            ui.label("Analysis").classes("font-bold mb-2")
+            with ui.column().classes("gap-1 w-full"):
+                ui.button("Check Intersections", on_click=self._check_intersections).classes("w-full")
+                ui.button("Calculate Usage", on_click=self._calculate_usage).classes("w-full")
+                ui.button("Run Heuristics", on_click=self._run_heuristics).classes("w-full")
             
-            ui.upload(label="Load JSON pattern", on_upload=self._load_pattern,
-                      auto_upload=True)
-            
-
-            # ui.upload(label="Load YAML parameters",
-            #         on_upload=self._load_yaml,
-            #         auto_upload=True,
-            #         multiple=False)
-
-            
-            ui.button("Auto place (Bottom-Left)", on_click=self._auto_place)
-            ui.button("Auto place (Greedy)", on_click=lambda _: self._auto_place("Greedy"))
-            ui.button("Auto place (NFP)", on_click=lambda _: self._auto_place("NFP"))
-            ui.button("Auto place (Random BL)", on_click=lambda _: self._auto_place("RandomBL"))
-            ui.button("Auto place (Random NFP)", on_click=lambda _: self._auto_place("RandomNFP"))
-            ui.button("Genetic Algorithm", on_click=lambda _: self._auto_place("Genetic Algorithm"))
-           # ui.button("Jostle", on_click=lambda _: self._auto_place("Jostle"))
-            # Button to enable selection mode.
-            ui.button("Select Panel (S)", on_click=self._enable_selection_mode)
-            ui.button("Reset Selection", on_click=lambda _: self._select_panel(""))
-            ui.button("Rotate Panel (R)", on_click=lambda _: self._rotate_panel())
-            ui.button("Reset rotations", on_click=lambda _: self._reset_rotations())
-            ui.button("Split Panel", on_click=lambda _: self._split_panel())
-            
-            ui.button("Calculate Usage for Current Layout", on_click=self._calculate_usage)
-            ui.button("Run heuristics", on_click=self._run_heuristics)
-
+            # Metrics display
+            with ui.card().classes("w-full mt-2 p-2 bg-gray-100"):
+                with ui.column().classes("gap-1"):
+                    self.utilization_label = ui.label("Utilization: n/a")
+                    self.rest_length_label = ui.label("Rest length: n/a")
+                    self.utilization_concave_label = ui.label("Hull utilization: n/a")
+                    self.rest_height_label = ui.label("Rest height: n/a")
+        
         self._kb = ui.keyboard(on_key=self._handle_key, active=True)
 
     def _calculate_usage(self):
@@ -764,15 +785,14 @@ class NestingGUI:
 
         self.offset_px = (0, 0)
 
-        # Border
+        # Draw canvas boundaries with more visible lines
         for x1, y1, x2, y2 in [
             (0, 0, self.container_width_px, 0),
             (self.container_width_px, 0, self.container_width_px, self.container_height),
             (self.container_width_px, self.container_height, 0, self.container_height),
             (0, self.container_height, 0, 0),
         ]:
-            self._svg_line(x1, y1, x2, y2, stroke="#8a8a8a")
-
+            self._svg_line(x1, y1, x2, y2, stroke="#4a90e2")
         
         self.panel_path_refs.clear()                            
         fills = itertools.cycle(["#c3e6cb", "#bee5eb", "#ffeeba", "#f5c6cb"])
