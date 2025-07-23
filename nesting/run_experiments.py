@@ -59,7 +59,7 @@ def param_sweep(pieces, container, *, log_interval: int = 20, plot_progress: boo
     master_rows_run:  list[dict] = []     # 1 row / run (final generation)
 
     combinations = list(product(population_sizes, elite_sizes,
-                                mutation_rates, crossover_methods, num_generations_ls))
+                                mutation_rates, num_generations_ls))
 
     print(f"Total combinations to run: {len(combinations)}")
 
