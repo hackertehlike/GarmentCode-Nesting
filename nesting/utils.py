@@ -98,16 +98,50 @@ def no_fit_polygon(stationary, moving):
     """
     No-Fit Polygon of *moving* about *stationary*.
     Coordinates returned as floats in the original units.
+    Uses the top-leftmost vertex of the moving polygon as reference point.
+    (In this coordinate system, top means minimum y since y grows downward)
     """
     
+    # Find the top-leftmost vertex to use as reference
+    topleft_idx = find_topleft_vertex(moving)
+    ref_x, ref_y = moving[topleft_idx]
+    
+    # Translate moving polygon so that reference vertex is at origin
+    moving_centered = [(x - ref_x, y - ref_y) for x, y in moving]
+    
     A = to_clipper(stationary)
-    B = [(-x, -y) for x, y in moving]          # reflect the moving part
+    B = [(-x, -y) for x, y in moving_centered]  # reflect the centered moving part
     B = to_clipper(B)
     nfp = pyclipper.MinkowskiSum(B, A, True)
 
     # 4. Back to floating-point
     # return [entry for p in nfp for entry in from_clipper(p)] #[from_clipper(p) for p in nfp] 
     return flatten(nfp)
+
+def find_topleft_vertex(polygon):
+    """
+    Find the index of the top-leftmost vertex in a polygon.
+    Since y-axis grows downward, the top vertex has the minimum y coordinate.
+    """
+    if not polygon:
+        return 0
+    
+    min_y = float('inf')
+    min_x = float('inf')
+    min_idx = 0
+    
+    for i, (x, y) in enumerate(polygon):
+        # First prioritize topmost (minimum y in this coordinate system)
+        if y < min_y:
+            min_y = y
+            min_x = x
+            min_idx = i
+        # If y-coordinates are equal, choose the leftmost
+        elif y == min_y and x < min_x:
+            min_x = x
+            min_idx = i
+    
+    return min_idx
 
 # def flatten_piece_list(pieces: List[Piece]) -> List[Tuple[float, float]]:
 #     return [(x + piece.translation[0], y + piece.translation[1]) for piece in pieces for x, y in piece.get_outer_path()]
