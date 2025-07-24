@@ -1,5 +1,4 @@
 from copy import deepcopy, copy
-from typing import Set
 
 import numpy as np
 from numpy.linalg import norm
@@ -41,9 +40,8 @@ class Edge:
         self.end = end
 
         # Semantic label
-        self.label = label
-        self.semantic_labels = Set()
-
+        self._label = label
+        self.semantic_labels = set()  
         # ID w.r.t. other edges in a super-panel
         # Filled out at the panel assembly time
         self.geometric_id = 0
@@ -92,14 +90,14 @@ class Edge:
     @property
     def label(self):
         """Semantic label of the edge"""
-        return self.label
+        return self._label
     
     @label.setter
     def label(self, value):
         """Set the label of the edge"""
         if not isinstance(value, str):
             raise TypeError('Edge label should be a string')
-        self.label = value
+        self._label = value
 
     def add_semantic_label(self, label: str) -> None:
         """Add an additional semantic label to the edge."""

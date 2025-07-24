@@ -7,7 +7,7 @@ class TestEdgeLabels(unittest.TestCase):
         panel = CircleArcPanel.from_w_length_suns('test_panel', length=50, top_width=30, sun_fraction=0.5)
         top_seq = panel.interfaces['top'].edges
         original_label = top_seq[0].label
-        top_seq.propagate_label('lower_interface', append=True)
+        top_seq.propagate_label('lower_interface')
         self.assertEqual(top_seq[0].label, original_label)
         self.assertIn('lower_interface', top_seq[0].extra_labels)
         # ensure split still works
