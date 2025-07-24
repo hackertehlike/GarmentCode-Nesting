@@ -133,10 +133,20 @@ class NestingGUI:
         with self.sidebar:
             ui.label("Style Parameters").classes("text-xl font-bold mb-4")
             filtered = self._filtered_design_tree()  # filter out irrelevant blocks
-            
+
+            # Display read-only meta parameters
+            meta_params = filtered.get("meta", {})
+            if meta_params:
+                with ui.expansion("Meta", value=True).classes("w-full mb-2"):
+                    for m_name, m_spec in meta_params.items():
+                        ui.label(f"{m_name.replace('_', ' ').capitalize()}: {m_spec.get('v')}")
+
+            # Remove meta block for editable parameters
+            filtered_numeric = {k: v for k, v in filtered.items() if k != "meta"}
+
             # Group parameters into collapsible sections
             sections = {}
-            for name, spec in _iter_leaf_params(filtered):
+            for name, spec in _iter_leaf_params(filtered_numeric):
                 section_name = name.split('.')[0] if '.' in name else 'General'
                 if section_name not in sections:
                     sections[section_name] = []
