@@ -150,16 +150,23 @@ def _collect_mutatable_params(
         if _numeric_range_ok(nested_get(design_params, p.split(".")))
         and not any(fnmatch(p, pat) for pat in patterns)
     ]
-
+    print(f"[DEBUG] After numeric & exclusion filtering: {len(numeric_ok)} paths")
+    
     # touches at least one panel in this chromo
     panel_ids = {g.id for g in genes}
-    mutatable = [
-        p for p in numeric_ok
-        if any(pid in affected_panels([p]) for pid in panel_ids)
-    ]
-
-    # if config.VERBOSE:
-    #     print(f"[Chromosome] Mutatable design params: {mutatable}")
+    print(f"[DEBUG] Panel IDs in chromosome: {panel_ids}")
+    
+    mutatable = []
+    for p in numeric_ok:
+        panel_patterns = affected_panels([p], design_params)
+        matching_panels = [pid for pid in panel_ids if any(fnmatch(pid, pat) for pat in panel_patterns)]
+        if matching_panels:
+            mutatable.append(p)
+            print(f"[DEBUG] Parameter {p} affects panels: {matching_panels}")
+    
+    print(f"[DEBUG] Final mutatable parameters: {len(mutatable)}")
+    if config.VERBOSE or True:  # Always print for debugging
+        print(f"[Chromosome] Mutatable design params: {mutatable}")
 
     return mutatable
 
@@ -504,7 +511,7 @@ class Chromosome(Layout):
         import tempfile
 
         panel_ids = {g.id for g in self.genes}
-        affected = affected_panels([path])
+        affected = affected_panels([path], self.design_params)
 
         if not any(fnmatch(pid, pat) for pat in affected for pid in panel_ids):
             if config.VERBOSE:
@@ -602,7 +609,7 @@ class Chromosome(Layout):
         groups: list[dict] = []  # each: {"roots": set, "params": set, "owner": None|1|2}
 
         for path in dp_conflicts:
-            patterns = affected_panels([path])
+            patterns = affected_panels([path], self.design_params)
             affected_roots = select_genes(all_root_ids, patterns)
             if not affected_roots:
                 continue

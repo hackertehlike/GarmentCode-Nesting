@@ -410,7 +410,6 @@ class Panel(BaseComponent):
     def get_edge_by_label(self, label):
         """Find an edge with a given label"""
         for edge in self.edges:
-            print(f"  Edge: {edge}")
             if edge.label == label or label in getattr(edge, 'semantic_labels', []):
                 return edge
         return None

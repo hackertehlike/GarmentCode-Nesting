@@ -234,27 +234,78 @@ PARAMETER_HIERARCHY: Dict[str, List[Tuple[str, Optional[bool]]]] = {
 }
 
 
-def affected_panels(params: Sequence[str]) -> Set[str]:
-    """Return the set of panel patterns affected by the given param paths."""
+def affected_panels(params: Sequence[str], design_params: Optional[Dict] = None) -> Set[str]:
+    """
+    Return the set of panel patterns affected by the given param paths.
+    
+    Args:
+        params: Parameter paths to check
+        design_params: Optional design parameters to check active skirt type
+    """
     patterns: Set[str] = set()
+    
+    # Check if we have meta parameters to filter by garment type
+    active_bottom_type = None
+    allowed_prefixes = []
+    
+    if design_params and 'meta' in design_params and 'bottom' in design_params['meta']:
+        meta_bottom = design_params['meta']['bottom']
+        if isinstance(meta_bottom, dict) and 'v' in meta_bottom:
+            active_bottom_type = meta_bottom['v']
+            
+            # Mapping from meta bottom types to corresponding parameter sections
+            bottom_type_mapping = {
+                'SkirtCircle': ['skirt'],
+                'AsymmSkirtCircle': ['flare-skirt'],
+                'GodetSkirt': ['godet-skirt'],
+                'PencilSkirt': ['pencil-skirt'],
+                'Skirt2': ['skirt'],
+                'SkirtManyPanels': ['skirt-many-panels'],
+                'SkirtLevels': ['levels-skirt'],
+                'Pants': ['pants'],
+            }
+            
+            if active_bottom_type in bottom_type_mapping:
+                allowed_prefixes = bottom_type_mapping[active_bottom_type]
+                # print(f" Active bottom type: {active_bottom_type}, allowed prefixes: {allowed_prefixes}")
+    
     for p in params:
+        # Check if this is a skirt-related parameter
+        param_prefix = p.split('.')[0]
+        is_skirt_param = param_prefix.endswith('-skirt') or param_prefix == 'skirt'
+        
+        # Filter out irrelevant skirt parameters if we know the active type
+        if is_skirt_param and active_bottom_type and allowed_prefixes:
+            if not any(param_prefix == prefix for prefix in allowed_prefixes):
+                # print(f" Parameter '{p}' ignored - wrong skirt type (expected {allowed_prefixes})")
+                continue
+        
         pats = PARAM_TO_PATTERNS.get(p)
         if pats:
             patterns.update(pats)
+            # print(f"Parameter '{p}' affects panel patterns: {pats}")
+        # else:
+        #     print(f"Parameter '{p}' has no registered panel patterns")
+            
+
     return patterns
 
 
 def select_genes(genes: Iterable[str], patterns: Iterable[str]) -> Set[str]:
     """Return the subset of *genes* whose id matches any of the given *patterns*."""
     pats = list(patterns)
-    return {g for g in genes if any(fnmatch(g, pat) for pat in pats)}
+    # print(f"Selecting genes from {list(genes)} with patterns {pats}")
+    selected = {g for g in genes if any(fnmatch(g, pat) for pat in pats)}
+    # print(f"Selected genes: {selected}")
+    return selected
 
 
 def filter_parameters(design_params: Dict, panel_ids: Optional[Set[str]] = None) -> Dict:
     """
     Filter design parameters based on:
     1. The panel IDs present in the design (if provided)
-    2. Hierarchical parameter relationships
+    2. Meta parameters (to determine active skirt/bottom type)
+    3. Hierarchical parameter relationships
     
     Args:
         design_params: The full design parameter dictionary
@@ -267,15 +318,55 @@ def filter_parameters(design_params: Dict, panel_ids: Optional[Set[str]] = None)
     import copy
     dp = copy.deepcopy(design_params)
     
+    # Get active bottom garment type from meta parameters
+    active_bottom_type = None
+    if 'meta' in dp and 'bottom' in dp['meta'] and 'v' in dp['meta']['bottom']:
+        active_bottom_type = dp['meta']['bottom']['v']
+        print(f"[DEBUG] Active bottom type from meta: {active_bottom_type}")
+    
+    # Mapping from meta bottom types to corresponding parameter sections
+    bottom_type_mapping = {
+        'SkirtCircle': ['skirt'],
+        'AsymmSkirtCircle': ['flare-skirt'],
+        'GodetSkirt': ['godet-skirt'],
+        'PencilSkirt': ['pencil-skirt'],
+        'Skirt2': ['skirt'],
+        'SkirtManyPanels': ['skirt-many-panels'],
+        'SkirtLevels': ['levels-skirt'],
+        'Pants': ['pants'],
+    }
+    
+    # Get allowed skirt parameter prefixes based on active bottom type
+    allowed_prefixes = []
+    if active_bottom_type and active_bottom_type in bottom_type_mapping:
+        allowed_prefixes = bottom_type_mapping[active_bottom_type]
+        # print(f"Allowed parameter prefixes from meta: {allowed_prefixes}")
+
     # If panel IDs are provided, filter by relevant parameters for those panels
     # Collect all parameters that would affect any of our loaded panels
     top_level_params = set()
+    skirt_params_to_remove = set()
+    
     for param_path, panel_patterns in PARAM_TO_PATTERNS.items():
+        # First part of the parameter path (e.g., 'skirt', 'flare-skirt', etc.)
+        param_prefix = param_path.split('.')[0]
+        
+        # Check if this is a skirt-related parameter
+        is_skirt_param = param_prefix.endswith('-skirt') or param_prefix == 'skirt'
+        
+        # If it's a skirt parameter and we have active_bottom_type, check if it's allowed
+        if is_skirt_param and active_bottom_type:
+            if not any(param_prefix == prefix for prefix in allowed_prefixes):
+                skirt_params_to_remove.add(param_path)
+                # print(f" Removing irrelevant skirt parameter: {param_path}")
+                continue
+        
         # Check if any of our panels match the patterns for this parameter
-        matching_panels = select_genes(panel_ids, panel_patterns)
-        if matching_panels:
-            # This parameter affects at least one of our loaded panels
-            top_level_params.add(param_path.split('.')[0])  # Add the top-level component
+        if panel_ids:
+            matching_panels = select_genes(panel_ids, panel_patterns)
+            if matching_panels:
+                # This parameter affects at least one of our loaded panels
+                top_level_params.add(param_prefix)  # Add the top-level component
     
     # Always include meta
     top_level_params.add('meta')
