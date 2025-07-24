@@ -29,23 +29,27 @@ class CircleArcPanel(pyg.Panel):
         # top edge - index 0
         top_edge = pyg.CircleEdgeFactory.from_points_radius(
             [-dist_w/2, 0], [dist_w/2, 0], 
-            radius=top_rad, large_arc=halfarc > np.pi / 2, label='top')
+            radius=top_rad, large_arc=halfarc > np.pi / 2)
+        top_edge.semantic_labels.add('top')  # Add semantic label
         self.edges.append(top_edge)
 
         # right edge - index 1
         right_edge = pyg.Edge(
-            self.edges[-1].end, [dist_out / 2, -vert_len], label='right')
+            self.edges[-1].end, [dist_out / 2, -vert_len])
+        right_edge.semantic_labels.add('right')  # Add semantic label
         self.edges.append(right_edge)
         
         # Bottom edge - index 2
         bottom_edge = pyg.CircleEdgeFactory.from_points_radius(
             self.edges[-1].end, [- dist_out / 2, -vert_len], 
             radius=top_rad + length,
-            large_arc=halfarc > np.pi / 2, right=False, label='bottom')
+            large_arc=halfarc > np.pi / 2, right=False)
+        bottom_edge.semantic_labels.add('bottom')
         self.edges.append(bottom_edge)
 
         # left edge - index 3 - closes the loop
-        left_edge = pyg.Edge(self.edges[-1].end, self.edges[0].start, label='left')
+        left_edge = pyg.Edge(self.edges[-1].end, self.edges[0].start)
+        left_edge.semantic_labels.add('left')  # Add semantic label
         self.edges.append(left_edge)
 
         # Verify all edge labels are set correctly
@@ -292,24 +296,27 @@ class AsymHalfCirclePanel(pyg.Panel):
         # top edge - index 0
         top_edge = pyg.CircleEdgeFactory.from_points_radius(
             [-dist_w/2, 0], [dist_w/2, 0], 
-            radius=top_rad, large_arc=False, label='top')
+            radius=top_rad, large_arc=False)
+        top_edge.semantic_labels.add('top')  # Add semantic label
         self.edges.append(top_edge)
 
         # right edge - index 1
         right_edge = pyg.Edge(
-            self.edges[-1].end, [dist_out / 2, 0], label='right')
+            self.edges[-1].end, [dist_out / 2, 0])
+        right_edge.semantic_labels.add('right')  # Add semantic label
         self.edges.append(right_edge)
         
         # Bottom edge - index 2
         bottom_edge = pyg.CircleEdgeFactory.from_three_points(
             self.edges[-1].end, [- dist_out / 2, 0], 
-            point_on_arc=[0, -(top_rad + length_f)],
-            label='bottom'
+            point_on_arc=[0, -(top_rad + length_f)]
         )
+        bottom_edge.semantic_labels.add('bottom')
         self.edges.append(bottom_edge)
 
         # left edge - index 3 - closes the loop
-        left_edge = pyg.Edge(self.edges[-1].end, self.edges[0].start, label='left')
+        left_edge = pyg.Edge(self.edges[-1].end, self.edges[0].start)
+        left_edge.semantic_labels.add('left')  # Add semantic label
         self.edges.append(left_edge)
 
         # Verify all edge labels are set correctly
