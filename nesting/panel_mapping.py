@@ -11,7 +11,7 @@ import nesting.config as config
 
 # Mapping from parameter path (e.g. "waistband.width") to a set of
 # fnmatch-style patterns identifying panels affected by that parameter.
-# The patterns are intentionally coarse; they can be refined as needed.
+
 PARAM_TO_PATTERNS: Mapping[str, Set[str]] = {
     # Waistband
     "waistband.width": {"wb_front", "wb_back"},
@@ -193,6 +193,44 @@ PARAMETER_HIERARCHY: Dict[str, List[Tuple[str, Optional[bool]]]] = {
         ("pants.cuff.skirt_flare", None),
         ("pants.cuff.skirt_ruffle", None),
     ],
+
+    # If left.enable_asym is False, hide other left parameters
+    "left.enable_asym": [
+    ("left.shirt.strapless", False),
+    ("left.shirt.width", False),
+    ("left.shirt.flare", False),
+
+    ("left.collar.f_collar", False),
+    ("left.collar.b_collar", False),
+    ("left.collar.width", False),
+    ("left.collar.fc_angle", False),
+    ("left.collar.bc_angle", False),
+    ("left.collar.f_bezier_x", False),
+    ("left.collar.f_bezier_y", False),
+    ("left.collar.b_bezier_x", False),
+    ("left.collar.b_bezier_y", False),
+    ("left.collar.f_flip_curve", False),
+    ("left.collar.b_flip_curve", False),
+
+    ("left.sleeve.sleeveless", False),
+    ("left.sleeve.armhole_shape", False),
+    ("left.sleeve.length", False),
+    ("left.sleeve.connecting_width", False),
+    ("left.sleeve.end_width", False),
+    ("left.sleeve.sleeve_angle", False),
+    ("left.sleeve.opening_dir_mix", False),
+    ("left.sleeve.standing_shoulder", False),
+    ("left.sleeve.standing_shoulder_len", False),
+    ("left.sleeve.connect_ruffle", False),
+    ("left.sleeve.smoothing_coeff", False),
+
+    ("left.sleeve.cuff.type", False),
+    ("left.sleeve.cuff.top_ruffle", False),
+    ("left.sleeve.cuff.cuff_len", False),
+    ("left.sleeve.cuff.skirt_fraction", False),
+    ("left.sleeve.cuff.skirt_flare", False),
+    ("left.sleeve.cuff.skirt_ruffle", False),
+    ],
 }
 
 
@@ -241,7 +279,7 @@ def filter_parameters(design_params: Dict, panel_ids: Optional[Set[str]] = None)
     
     # Always include meta
     top_level_params.add('meta')
-    
+
     # Filter the design parameters to only include relevant sections
     dp = {k: v for k, v in dp.items() if k in top_level_params}
     

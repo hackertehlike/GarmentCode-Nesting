@@ -32,7 +32,7 @@ NUM_SPLITS = 1  # number of splits for the split mutation operator
 
 # ——— decoder settings —————————————————————————————————————
 # BL
-GRAVITATE_ONCE: bool = True  # whether to gravitate the pattern once or continuously
+GRAVITATE_ONCE: bool = False  # whether to gravitate the pattern once or continuously
 GRAVITATE_STEP = 2
 # Greedy
 SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
