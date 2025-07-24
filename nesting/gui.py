@@ -115,11 +115,12 @@ class NestingGUI:
         """Build the sidebar with style parameters."""
 
         def _iter_leaf_params(node: dict, prefix: str = ''):
-            GATES = {'style', 'sleeveless', 'type'}
-
+            """Yield only numeric leaf parameters for display."""
             for key, value in node.items():
                 if isinstance(value, dict) and {'v', 'type'} <= value.keys():
-                    if value['v'] is not None or key in GATES:
+                    if value['type'] not in ('float', 'int'):
+                        continue
+                    if value['v'] is not None:
                         yield prefix + key, value
                 elif isinstance(value, dict):
                     yield from _iter_leaf_params(value, prefix + key + '.')
@@ -146,18 +147,12 @@ class NestingGUI:
                 with ui.expansion(section_name, value=True).classes("w-full mb-2"):
                     for name, spec in params:
                         display_name = name.split('.')[-1] if '.' in name else name
-                        t, val = spec['type'], spec['v']
-
-                        if t in ('float', 'int'):
-                            ui.number(value=val, label=display_name,
-                                    on_change=lambda e, n=name: self._on_param_change(n, e))
-                        elif t == 'bool':
-                            ui.checkbox(value=val, text=display_name,
-                                    on_change=lambda e, n=name: self._on_param_change(n, e))
-                        elif t == 'enum':
-                            options = spec.get('options', [])
-                            ui.select(options, value=val, label=display_name,
-                                    on_change=lambda e, n=name: self._on_param_change(n, e))
+                        val = spec['v']
+                        ui.number(
+                            value=val,
+                            label=display_name,
+                            on_change=lambda e, n=name: self._on_param_change(n, e),
+                        )
 
 
     def _build_canvas(self) -> None:
