@@ -114,16 +114,15 @@ class NestingGUI:
     def _build_sidebar(self) -> None:
         """Build the sidebar with style parameters."""
 
-        def _iter_leaf_params(node: dict, prefix: str = ''):
-            """Yield only numeric leaf parameters for display."""
+        def _iter_all_params(node: dict, prefix: str = ''):
+            """Yield all leaf parameters for display, with their types."""
             for key, value in node.items():
-                if isinstance(value, dict) and {'v', 'type'} <= value.keys():
-                    if value['type'] not in ('float', 'int'):
-                        continue
+                if isinstance(value, dict) and 'v' in value:
+                    param_type = value.get('type', 'unknown')
                     if value['v'] is not None:
-                        yield prefix + key, value
+                        yield prefix + key, value, param_type
                 elif isinstance(value, dict):
-                    yield from _iter_leaf_params(value, prefix + key + '.')
+                    yield from _iter_all_params(value, prefix + key + '.')
                     
         if not hasattr(self, "sidebar"):
             self.sidebar = ui.column().classes("w-full h-full overflow-y-auto")
@@ -146,23 +145,34 @@ class NestingGUI:
 
             # Group parameters into collapsible sections
             sections = {}
-            for name, spec in _iter_leaf_params(filtered_numeric):
+            for name, spec, param_type in _iter_all_params(filtered_numeric):
                 section_name = name.split('.')[0] if '.' in name else 'General'
                 if section_name not in sections:
                     sections[section_name] = []
-                sections[section_name].append((name, spec))
+                sections[section_name].append((name, spec, param_type))
             
             # Create each section
             for section_name, params in sections.items():
                 with ui.expansion(section_name, value=True).classes("w-full mb-2"):
-                    for name, spec in params:
+                    for name, spec, param_type in params:
                         display_name = name.split('.')[-1] if '.' in name else name
                         val = spec['v']
-                        ui.number(
-                            value=val,
-                            label=display_name,
-                            on_change=lambda e, n=name: self._on_param_change(n, e),
-                        )
+                        
+                        # Different UI elements based on parameter type
+                        if param_type in ('float', 'int'):
+                            # Editable numeric parameters
+                            ui.number(
+                                value=val,
+                                label=display_name,
+                                on_change=lambda e, n=name: self._on_param_change(n, e),
+                            )
+                        elif param_type == 'bool':
+                            # Read-only boolean parameters with appropriate style
+                            bool_val = "Yes" if val else "No"
+                            ui.label(f"{display_name}: {bool_val}").classes("text-sm px-2 py-1 bg-gray-100 rounded")
+                        else:
+                            # Read-only categorical/string parameters with appropriate style
+                            ui.label(f"{display_name}: {val}").classes("text-sm px-2 py-1 bg-gray-100 rounded")
 
 
     def _build_canvas(self) -> None:
@@ -299,7 +309,34 @@ class NestingGUI:
                 filtered_dp['waistband'] = dp_all.get('waistband', {})
             if upper is not None:
                 filtered_dp['shirt'] = dp_all.get('shirt', {})
-                filtered_dp['collar'] = dp_all.get('collar', {})
+                
+                # Add collar with proper bezier parameter filtering
+                collar = dp_all.get('collar', {})
+                filtered_collar = copy.deepcopy(collar)
+                
+                # Filter bezier parameters based on collar type
+                f_collar_type = collar.get('f_collar', {}).get('v')
+                b_collar_type = collar.get('b_collar', {}).get('v')
+                
+                # Remove front bezier parameters if front collar type is not Bezier2NeckHalf
+                if f_collar_type and f_collar_type != 'Bezier2NeckHalf':
+                    if 'f_bezier_x' in filtered_collar:
+                        del filtered_collar['f_bezier_x']
+                    if 'f_bezier_y' in filtered_collar:
+                        del filtered_collar['f_bezier_y']
+                    if 'f_flip_curve' in filtered_collar:
+                        del filtered_collar['f_flip_curve']
+                
+                # Remove back bezier parameters if back collar type is not Bezier2NeckHalf
+                if b_collar_type and b_collar_type != 'Bezier2NeckHalf':
+                    if 'b_bezier_x' in filtered_collar:
+                        del filtered_collar['b_bezier_x']
+                    if 'b_bezier_y' in filtered_collar:
+                        del filtered_collar['b_bezier_y']
+                    if 'b_flip_curve' in filtered_collar:
+                        del filtered_collar['b_flip_curve']
+                
+                filtered_dp['collar'] = filtered_collar
                 filtered_dp['sleeve'] = dp_all.get('sleeve', {})
                 filtered_dp['left'] = dp_all.get('left', {})
                 
@@ -331,6 +368,31 @@ class NestingGUI:
             # Use the new panel_mapping filter_parameters function
             from nesting.panel_mapping import filter_parameters
             filtered_dp = filter_parameters(dp_all, panel_ids)
+            
+            # Additional manual filtering for bezier parameters in the GUI
+            # This ensures the UI doesn't show irrelevant bezier parameters
+            if 'collar' in filtered_dp:
+                collar = filtered_dp['collar']
+                f_collar_type = collar.get('f_collar', {}).get('v')
+                b_collar_type = collar.get('b_collar', {}).get('v')
+                
+                # Filter front bezier parameters
+                if f_collar_type and f_collar_type != 'Bezier2NeckHalf':
+                    if 'f_bezier_x' in collar:
+                        del collar['f_bezier_x']
+                    if 'f_bezier_y' in collar:
+                        del collar['f_bezier_y']
+                    if 'f_flip_curve' in collar:
+                        del collar['f_flip_curve']
+                
+                # Filter back bezier parameters
+                if b_collar_type and b_collar_type != 'Bezier2NeckHalf':
+                    if 'b_bezier_x' in collar:
+                        del collar['b_bezier_x']
+                    if 'b_bezier_y' in collar:
+                        del collar['b_bezier_y']
+                    if 'b_flip_curve' in collar:
+                        del collar['b_flip_curve']
             
         return filtered_dp
 
