@@ -246,38 +246,66 @@ def affected_panels(params: Sequence[str], design_params: Optional[Dict] = None)
     
     # Check if we have meta parameters to filter by garment type
     active_bottom_type = None
-    allowed_prefixes = []
+    allowed_bottom_prefixes = []
     
-    if design_params and 'meta' in design_params and 'bottom' in design_params['meta']:
-        meta_bottom = design_params['meta']['bottom']
-        if isinstance(meta_bottom, dict) and 'v' in meta_bottom:
-            active_bottom_type = meta_bottom['v']
-            
-            # Mapping from meta bottom types to corresponding parameter sections
-            bottom_type_mapping = {
-                'SkirtCircle': ['skirt'],
-                'AsymmSkirtCircle': ['flare-skirt'],
-                'GodetSkirt': ['godet-skirt'],
-                'PencilSkirt': ['pencil-skirt'],
-                'Skirt2': ['skirt'],
-                'SkirtManyPanels': ['skirt-many-panels'],
-                'SkirtLevels': ['levels-skirt'],
-                'Pants': ['pants'],
-            }
-            
-            if active_bottom_type in bottom_type_mapping:
-                allowed_prefixes = bottom_type_mapping[active_bottom_type]
-                # print(f" Active bottom type: {active_bottom_type}, allowed prefixes: {allowed_prefixes}")
+    # Check for active collar types
+    f_collar_type = None
+    b_collar_type = None
+    
+    if design_params:
+        # Get active bottom type
+        if 'meta' in design_params and 'bottom' in design_params['meta']:
+            meta_bottom = design_params['meta']['bottom']
+            if isinstance(meta_bottom, dict) and 'v' in meta_bottom:
+                active_bottom_type = meta_bottom['v']
+                
+                # Mapping from meta bottom types to corresponding parameter sections
+                bottom_type_mapping = {
+                    'SkirtCircle': ['skirt'],
+                    'AsymmSkirtCircle': ['flare-skirt'],
+                    'GodetSkirt': ['godet-skirt'],
+                    'PencilSkirt': ['pencil-skirt'],
+                    'Skirt2': ['skirt'],
+                    'SkirtManyPanels': ['skirt-many-panels'],
+                    'SkirtLevels': ['levels-skirt'],
+                    'Pants': ['pants'],
+                }
+                
+                if active_bottom_type in bottom_type_mapping:
+                    allowed_bottom_prefixes = bottom_type_mapping[active_bottom_type]
+                    # print(f" Active bottom type: {active_bottom_type}, allowed prefixes: {allowed_bottom_prefixes}")
+        
+        # Get collar types
+        if 'collar' in design_params:
+            if 'f_collar' in design_params['collar'] and 'v' in design_params['collar']['f_collar']:
+                f_collar_type = design_params['collar']['f_collar']['v']
+                
+            if 'b_collar' in design_params['collar'] and 'v' in design_params['collar']['b_collar']:
+                b_collar_type = design_params['collar']['b_collar']['v']
     
     for p in params:
         # Check if this is a skirt-related parameter
         param_prefix = p.split('.')[0]
-        is_skirt_param = param_prefix.endswith('-skirt') or param_prefix == 'skirt'
+        parts = p.split('.')
         
-        # Filter out irrelevant skirt parameters if we know the active type
-        if is_skirt_param and active_bottom_type and allowed_prefixes:
-            if not any(param_prefix == prefix for prefix in allowed_prefixes):
-                # print(f" Parameter '{p}' ignored - wrong skirt type (expected {allowed_prefixes})")
+        # Filter skirt parameters
+        is_skirt_param = param_prefix.endswith('-skirt') or param_prefix == 'skirt'
+        if is_skirt_param and active_bottom_type and allowed_bottom_prefixes:
+            if not any(param_prefix == prefix for prefix in allowed_bottom_prefixes):
+                # print(f" Parameter '{p}' ignored - wrong skirt type (expected {allowed_bottom_prefixes})")
+                continue
+        
+        # Filter bezier collar parameters
+        is_bezier_param = False
+        if len(parts) > 1 and parts[0] == 'collar':
+            # Front collar bezier parameters
+            if parts[1] in ['f_bezier_x', 'f_bezier_y', 'f_flip_curve'] and f_collar_type != 'Bezier2NeckHalf':
+                # print(f" Parameter '{p}' ignored - not applicable for front collar type {f_collar_type}")
+                continue
+                
+            # Back collar bezier parameters
+            if parts[1] in ['b_bezier_x', 'b_bezier_y', 'b_flip_curve'] and b_collar_type != 'Bezier2NeckHalf':
+                # print(f" Parameter '{p}' ignored - not applicable for back collar type {b_collar_type}")
                 continue
         
         pats = PARAM_TO_PATTERNS.get(p)
@@ -287,7 +315,6 @@ def affected_panels(params: Sequence[str], design_params: Optional[Dict] = None)
         # else:
         #     print(f"Parameter '{p}' has no registered panel patterns")
             
-
     return patterns
 
 
@@ -322,7 +349,20 @@ def filter_parameters(design_params: Dict, panel_ids: Optional[Set[str]] = None)
     active_bottom_type = None
     if 'meta' in dp and 'bottom' in dp['meta'] and 'v' in dp['meta']['bottom']:
         active_bottom_type = dp['meta']['bottom']['v']
-        print(f"[DEBUG] Active bottom type from meta: {active_bottom_type}")
+        # print(f"[DEBUG] Active bottom type from meta: {active_bottom_type}")
+    
+    # Get active collar types
+    f_collar_type = None
+    b_collar_type = None
+    
+    if 'collar' in dp:
+        if 'f_collar' in dp['collar'] and 'v' in dp['collar']['f_collar']:
+            f_collar_type = dp['collar']['f_collar']['v']
+            # print(f"[DEBUG] Front collar type: {f_collar_type}")
+            
+        if 'b_collar' in dp['collar'] and 'v' in dp['collar']['b_collar']:
+            b_collar_type = dp['collar']['b_collar']['v']
+            # print(f"[DEBUG] Back collar type: {b_collar_type}")
     
     # Mapping from meta bottom types to corresponding parameter sections
     bottom_type_mapping = {
@@ -350,6 +390,7 @@ def filter_parameters(design_params: Dict, panel_ids: Optional[Set[str]] = None)
     for param_path, panel_patterns in PARAM_TO_PATTERNS.items():
         # First part of the parameter path (e.g., 'skirt', 'flare-skirt', etc.)
         param_prefix = param_path.split('.')[0]
+        parts = param_path.split('.')
         
         # Check if this is a skirt-related parameter
         is_skirt_param = param_prefix.endswith('-skirt') or param_prefix == 'skirt'
@@ -359,6 +400,18 @@ def filter_parameters(design_params: Dict, panel_ids: Optional[Set[str]] = None)
             if not any(param_prefix == prefix for prefix in allowed_prefixes):
                 skirt_params_to_remove.add(param_path)
                 # print(f" Removing irrelevant skirt parameter: {param_path}")
+                continue
+        
+        # Filter bezier collar parameters
+        if len(parts) > 1 and parts[0] == 'collar':
+            # Front collar bezier parameters
+            if parts[1] in ['f_bezier_x', 'f_bezier_y', 'f_flip_curve'] and f_collar_type and f_collar_type != 'Bezier2NeckHalf':
+                # print(f" Removing irrelevant front collar parameter: {param_path} for collar type {f_collar_type}")
+                continue
+                
+            # Back collar bezier parameters
+            if parts[1] in ['b_bezier_x', 'b_bezier_y', 'b_flip_curve'] and b_collar_type and b_collar_type != 'Bezier2NeckHalf':
+                # print(f" Removing irrelevant back collar parameter: {param_path} for collar type {b_collar_type}")
                 continue
         
         # Check if any of our panels match the patterns for this parameter
@@ -440,12 +493,12 @@ PANEL_TYPE_MAPPING = {
 
 def get_panel_type(panel_name):
     """Determines the panel type from its name using the mapping."""
-    print(f"[DEBUG] get_panel_type called for panel '{panel_name}'")
+    #print(f"[DEBUG] get_panel_type called for panel '{panel_name}'")
     for prefix, panel_type in PANEL_TYPE_MAPPING.items():
         if panel_name.startswith(prefix):
-            print(f"[DEBUG] Matched prefix '{prefix}' -> type '{panel_type}'")
+            #print(f"[DEBUG] Matched prefix '{prefix}' -> type '{panel_type}'")
             return panel_type
-    print(f"[DEBUG] No type mapping found for panel '{panel_name}'")
+    #print(f"[DEBUG] No type mapping found for panel '{panel_name}'")
     return None
 
 
@@ -465,11 +518,11 @@ def dispatch_split(piece, design_params=None, body_params=None):
     import copy
     import nesting.config as config
     
-    print(f"[DEBUG] dispatch_split called for piece '{piece.id}'")
+    #print(f"[DEBUG] dispatch_split called for piece '{piece.id}'")
     
     # If we have design params and body params, regenerate the MetaGarment pattern
     if design_params and body_params:
-        print(f"[DEBUG] Regenerating MetaGarment pattern for piece '{piece.id}'")
+        #print(f"[DEBUG] Regenerating MetaGarment pattern for piece '{piece.id}'")
 
         from assets.garment_programs.meta_garment import MetaGarment
         from nesting.path_extractor import PatternPathExtractor
@@ -477,14 +530,14 @@ def dispatch_split(piece, design_params=None, body_params=None):
         # Determine panel type from piece ID
         panel_type = get_panel_type(piece.id)
         if not panel_type:
-            print(f"[DEBUG] Cannot determine panel type for piece '{piece.id}'")
+            #print(f"[DEBUG] Cannot determine panel type for piece '{piece.id}'")
             return None
 
-        print(f"[DEBUG] Panel type identified as: '{panel_type}'")
+        #print(f"[DEBUG] Panel type identified as: '{panel_type}'")
 
         # For now, only handle circle_skirt panels
         if panel_type != 'circle_skirt':
-            print(f"[DEBUG] Only circle_skirt panels are currently supported for regeneration")
+            #print(f"[DEBUG] Only circle_skirt panels are currently supported for regeneration")
             return None
 
         # Regenerate the MetaGarment
@@ -505,7 +558,7 @@ def dispatch_split(piece, design_params=None, body_params=None):
                 break
 
         if skirt_component is None:
-            print(f"[DEBUG] Could not find skirt component in the garment")
+            #print(f"[DEBUG] Could not find skirt component in the garment")
             return None
 
         if is_front and hasattr(skirt_component, 'front'):
@@ -514,18 +567,18 @@ def dispatch_split(piece, design_params=None, body_params=None):
             panel = skirt_component.back
 
         if panel is None:
-            print(f"[DEBUG] Could not find panel '{piece.id}' in regenerated garment")
+            #print(f"[DEBUG] Could not find panel '{piece.id}' in regenerated garment")
             return None
 
-        print(f"[DEBUG] Found panel '{panel.name}' in regenerated garment")
+        #print(f"[DEBUG] Found panel '{panel.name}' in regenerated garment")
 
         if not hasattr(panel, 'split') or not callable(panel.split):
-            print(f"[DEBUG] Panel '{panel.name}' does not have a split method")
+            #print(f"[DEBUG] Panel '{panel.name}' does not have a split method")
             return None
 
-        print(f"[DEBUG] Using specialized panel.split() method")
+        #print(f"[DEBUG] Using specialized panel.split() method")
         left_panel, right_panel = panel.split()
-        print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
+        #print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
 
         # Assemble pattern AFTER the split
         pattern = mg.assembly()
@@ -543,7 +596,7 @@ def dispatch_split(piece, design_params=None, body_params=None):
             )
             
             if left_panel.name not in all_pieces or right_panel.name not in all_pieces:
-                print(f"[DEBUG] Failed to extract split pieces from pattern")
+                #print(f"[DEBUG] Failed to extract split pieces from pattern")
                 return None
                 
             left_piece = all_pieces[left_panel.name]
@@ -558,14 +611,14 @@ def dispatch_split(piece, design_params=None, body_params=None):
                 new_piece.add_seam_allowance()
                 new_piece.update_bbox()
             
-            print(f"[DEBUG] Created split pieces: '{left_piece.id}' and '{right_piece.id}'")
+            #print(f"[DEBUG] Created split pieces: '{left_piece.id}' and '{right_piece.id}'")
             return left_piece, right_piece
     
     # Fall back to the piece's own split method
     if hasattr(piece, 'split') and callable(piece.split):
-        print(f"[DEBUG] Falling back to generic piece.split() method")
+        #print(f"[DEBUG] Falling back to generic piece.split() method")
         return piece.split()
     
     # If we got here, no splitting method was available
-    print(f"[DEBUG] No split method available for piece '{piece.id}'")
+    #print(f"[DEBUG] No split method available for piece '{piece.id}'")
     return None

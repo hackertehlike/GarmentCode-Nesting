@@ -44,7 +44,7 @@ CC_WEIGHT = 0.5  # weight for concave hull utilization in combined fitness metri
 NFP_GRAVITATE_ON: bool = False  # whether to gravitate:
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 40
+POPULATION_SIZE       = 20
 NUM_GENERATIONS       = 5
 MUTATION_RATE         = 0.5
 
