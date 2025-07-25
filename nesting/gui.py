@@ -503,8 +503,19 @@ class NestingGUI:
             # now working with a dynamically generated pattern
             self.use_default_params = False
             
-            # Reload pieces from the regenerated pattern
-            self._load_pattern_core(self.pattern_path)
+            # Store current parameters before loading the new pattern
+            original_design_params = self.design_params
+            original_body_params = self.body_params
+            
+            # Reload pieces from the regenerated pattern without updating parameters
+            self._load_pattern_core(self.pattern_path, update_params=False)
+            
+            # Ensure parameters are preserved
+            self.design_params = original_design_params
+            self.body_params = original_body_params
+            
+            # Rebuild the sidebar to ensure UI reflects the current parameters
+            self._build_sidebar()
             
             # Notify success
             ui.notify("Pattern updated successfully", type="positive")
@@ -701,8 +712,7 @@ class NestingGUI:
         self._build_sidebar()          # see next section
         
         # Restore use_default_params state unless explicitly set in the method call
-        if hasattr(self, 'current_use_default_params'):
-            self.use_default_params = current_use_default_params
+        self.use_default_params = current_use_default_params
 
 
     def _load_pattern(self, e: events.UploadEventArguments):
