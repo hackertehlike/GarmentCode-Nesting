@@ -620,20 +620,20 @@ class NestingGUI:
                 if yaml_path.exists() and not self.use_default_params:
                     with open(yaml_path, "r", encoding="utf-8") as f:
                         self.design_params = yaml.safe_load(f).get("design", {})
-                    print("Design parameters loaded from pattern folder:", self.design_params)
+                    #print("Design parameters loaded from pattern folder:", self.design_params)
                 elif not self.use_default_params:
                     with path.open("r", encoding="utf-8") as f:
                         spec = json.load(f)
                         self.design_params = spec.get("design", {})
-                    print("Design parameters loaded from pattern JSON:", self.design_params)
+                    #print("Design parameters loaded from pattern JSON:", self.design_params)
                 else:
                     default_design_path = Path(config.DEFAULT_DESIGN_PARAM_PATH)
                     if default_design_path.exists():
                         with open(default_design_path, "r", encoding="utf-8") as f:
                             self.design_params = yaml.safe_load(f).get("design", {})
-                        print("Default design parameters loaded:", self.design_params)
+                        #print("Default design parameters loaded:", self.design_params)
                     else:
-                        print(f"Default design params file not found: {default_design_path}")
+                        #print(f"Default design params file not found: {default_design_path}")
                         self.design_params = {}
             except Exception as exc:
                 print(f"Failed to load design parameters: {exc}")
@@ -1360,91 +1360,91 @@ class NestingGUI:
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_path = Path(tmpdir) / "regenerated_pattern.json"
             
-            try:
-                # Split the panel using our new method
-                proportion = 0.5  # Split in the middle by default
-                new_panel_names = mg.split_panel(pid, proportion)
+        
+            # Split the panel using our new method
+            proportion = 0.5  # Split in the middle by default
+            new_panel_names = mg.split_panel(pid, proportion)
+            
+            # Generate the pattern with the split panels
+            pattern = mg.assembly()
+            
+            # Save the pattern to a temporary file
+            pattern.serialize(Path(tmpdir), to_subfolder=False, with_3d=False, with_text=False,
+                            view_ids=False, empty_ok=True)
+            
+            # Get the correct file path - pattern.name_specification.json
+            pattern_path = Path(tmpdir) / f"{pattern.name}_specification.json"
+            print(f"Looking for pattern at: {pattern_path}")
+            
+            # Check if the file exists
+            if not pattern_path.exists():
+                print(f"Pattern file not found at {pattern_path}")
+                # List all files in the directory to help debug
+                print(f"Files in directory: {list(Path(tmpdir).glob('*'))}")
+                raise FileNotFoundError(f"Pattern file not found at {pattern_path}")
+            
+            # Store current parameters and UI state
+            original_design_params = self.design_params
+            original_body_params = self.body_params
+            #original_use_default_params = self.use_default_params
+            
+            # Save design params to temporary file to ensure they're loaded properly
+            if original_design_params:
+                import yaml
+                with open(Path(tmpdir) / "design_params.yaml", "w", encoding="utf-8") as f:
+                    yaml.dump({"design": original_design_params}, f, default_flow_style=False)
+            
+            # Save body params to temporary file if they exist
+            if original_body_params:
+                try:
+                    # If body_params has a save method, use it
+                    if hasattr(original_body_params, "save"):
+                        original_body_params.save(Path(tmpdir) / "body_measurements.yaml")
+                    # Otherwise, just copy the original file
+                    elif hasattr(self, "pattern_path") and self.pattern_path:
+                        body_path = self.pattern_path.parent / "body_measurements.yaml"
+                        if body_path.exists():
+                            import shutil
+                            shutil.copy(body_path, Path(tmpdir) / "body_measurements.yaml")
+                except Exception as e:
+                    print(f"Warning: Unable to save body parameters to temp directory: {e}")
+            
+            # Temporarily set use_default_params to False to ensure our saved params are used
+            #self.use_default_params = False
+            
+            # Load the new pattern into the GUI without resetting parameters
+            self._load_pattern_core(pattern_path, update_params=False)
+            # preserve updated MetaGarment instance
+            self.meta_garment = mg
+            
+            # If parameters weren't properly loaded, restore them manually
+            if not self.design_params and original_design_params:
+                print("Restoring original design parameters manually")
+                self.design_params = original_design_params
                 
-                # Generate the pattern with the split panels
-                pattern = mg.assembly()
+                # Recreate design sampler with restored parameters
+                if self.design_params:
+                    self.design_sampler = self._create_design_sampler(self.design_params)
+            
+            if not self.body_params and original_body_params:
+                print("Restoring original body parameters manually")
+                self.body_params = original_body_params
+            
+            # Restore UI state
+            #self.use_default_params = original_use_default_params
+            
+            # Rebuild the sidebar to ensure UI reflects the restored parameters
+            self._build_sidebar()
+            
+            # Select one of the new panels
+            if new_panel_names and len(new_panel_names) > 0:
+                self._select_panel(new_panel_names[0])
+            
+            ui.notify(f"Panel '{pid}' split into {', '.join(new_panel_names)}", type="positive")
                 
-                # Save the pattern to a temporary file
-                pattern.serialize(Path(tmpdir), to_subfolder=False, with_3d=False, with_text=False,
-                               view_ids=False, empty_ok=True)
-                
-                # Get the correct file path - pattern.name_specification.json
-                pattern_path = Path(tmpdir) / f"{pattern.name}_specification.json"
-                print(f"Looking for pattern at: {pattern_path}")
-                
-                # Check if the file exists
-                if not pattern_path.exists():
-                    print(f"Pattern file not found at {pattern_path}")
-                    # List all files in the directory to help debug
-                    print(f"Files in directory: {list(Path(tmpdir).glob('*'))}")
-                    raise FileNotFoundError(f"Pattern file not found at {pattern_path}")
-                
-                # Store current parameters and UI state
-                original_design_params = self.design_params
-                original_body_params = self.body_params
-                #original_use_default_params = self.use_default_params
-                
-                # Save design params to temporary file to ensure they're loaded properly
-                if original_design_params:
-                    import yaml
-                    with open(Path(tmpdir) / "design_params.yaml", "w", encoding="utf-8") as f:
-                        yaml.dump({"design": original_design_params}, f, default_flow_style=False)
-                
-                # Save body params to temporary file if they exist
-                if original_body_params:
-                    try:
-                        # If body_params has a save method, use it
-                        if hasattr(original_body_params, "save"):
-                            original_body_params.save(Path(tmpdir) / "body_measurements.yaml")
-                        # Otherwise, just copy the original file
-                        elif hasattr(self, "pattern_path") and self.pattern_path:
-                            body_path = self.pattern_path.parent / "body_measurements.yaml"
-                            if body_path.exists():
-                                import shutil
-                                shutil.copy(body_path, Path(tmpdir) / "body_measurements.yaml")
-                    except Exception as e:
-                        print(f"Warning: Unable to save body parameters to temp directory: {e}")
-                
-                # Temporarily set use_default_params to False to ensure our saved params are used
-                #self.use_default_params = False
-                
-                # Load the new pattern into the GUI without resetting parameters
-                self._load_pattern_core(pattern_path, update_params=False)
-                # preserve updated MetaGarment instance
-                self.meta_garment = mg
-                
-                # If parameters weren't properly loaded, restore them manually
-                if not self.design_params and original_design_params:
-                    print("Restoring original design parameters manually")
-                    self.design_params = original_design_params
-                    
-                    # Recreate design sampler with restored parameters
-                    if self.design_params:
-                        self.design_sampler = self._create_design_sampler(self.design_params)
-                
-                if not self.body_params and original_body_params:
-                    print("Restoring original body parameters manually")
-                    self.body_params = original_body_params
-                
-                # Restore UI state
-                #self.use_default_params = original_use_default_params
-                
-                # Rebuild the sidebar to ensure UI reflects the restored parameters
-                self._build_sidebar()
-                
-                # Select one of the new panels
-                if new_panel_names and len(new_panel_names) > 0:
-                    self._select_panel(new_panel_names[0])
-                
-                ui.notify(f"Panel '{pid}' split into {', '.join(new_panel_names)}", type="positive")
-                
-            except Exception as e:
-                print(f"Error splitting panel: {str(e)}")
-                ui.notify(f"Error splitting panel: {str(e)}", type="negative")
+            # except Exception as e:
+            #     print(f"Error splitting panel: {str(e)}")
+            #     ui.notify(f"Error splitting panel: {str(e)}", type="negative")
 
             # find the panel in the regenerated pattern
 

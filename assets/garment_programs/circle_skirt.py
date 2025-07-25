@@ -284,45 +284,44 @@ class CircleArcPanel(pyg.Panel):
         #print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")
         return panel1, panel2
 
-    def get_edge_by_label(self, label):
-        """
-        Get an edge by its label without any fallback to indices.
-        This implementation checks both the label attribute and semantic_labels.
-        """
-        # Debug the label lookup
-        #print(f"[CircleArcPanel.get_edge_by_label] Looking for edge with label '{label}'")
+    # def get_edge_by_label(self, label):
+    #     """
+    #     Get an edge by its label without any fallback to indices.
+    #     This implementation checks both the label attribute and semantic_labels.
+    #     """
+    #     # Debug the label lookup
+    #     #print(f"[CircleArcPanel.get_edge_by_label] Looking for edge with label '{label}'")
         
-        # First check if the Panel class has this method
-        if hasattr(super(), 'get_edge_by_label'):
-            edge = super().get_edge_by_label(label)
-            if edge is not None:
-                return edge
+    #     if hasattr(super(), 'get_edge_by_label'):
+    #         edge = super().get_edge_by_label(label)
+    #         if edge is not None:
+    #             return edge
         
-        # If not found or method doesn't exist, implement our own lookup
-        for i, edge in enumerate(self.edges):
-            # Check for direct label attribute
-            if hasattr(edge, 'label') and edge.label == label:
-                #print(f"[CircleArcPanel.get_edge_by_label] Found edge {i} with label attribute '{label}'")
-                return edge
+    #     # If not found or method doesn't exist, implement our own lookup
+    #     for _, edge in enumerate(self.edges):
+    #         # Check for direct label attribute
+    #         if hasattr(edge, 'label') and edge.label == label:
+    #             #print(f"[CircleArcPanel.get_edge_by_label] Found edge {i} with label attribute '{label}'")
+    #             return edge
             
-            # Check semantic_labels
-            if hasattr(edge, 'semantic_labels') and label in edge.semantic_labels:
-                #print(f"[CircleArcPanel.get_edge_by_label] Found edge {i} with semantic label '{label}'")
-                return edge
+    #         # Check semantic_labels
+    #         if hasattr(edge, 'semantic_labels') and label in edge.semantic_labels:
+    #             #print(f"[CircleArcPanel.get_edge_by_label] Found edge {i} with semantic label '{label}'")
+    #             return edge
         
-        # Debug what labels we do have
-        #print(f"[CircleArcPanel.get_edge_by_label] Warning: Edge with label '{label}' not found")
-        #for i, edge in enumerate(self.edges):
-            #if hasattr(edge, 'label'):
-                #print(f"[CircleArcPanel.get_edge_by_label] Edge {i} has label '{edge.label}'")
-            #else:
-                #print(f"[CircleArcPanel.get_edge_by_label] Edge {i} has no label attribute")
+    #     # Debug what labels we do have
+    #     #print(f"[CircleArcPanel.get_edge_by_label] Warning: Edge with label '{label}' not found")
+    #     #for i, edge in enumerate(self.edges):
+    #         #if hasattr(edge, 'label'):
+    #             #print(f"[CircleArcPanel.get_edge_by_label] Edge {i} has label '{edge.label}'")
+    #         #else:
+    #             #print(f"[CircleArcPanel.get_edge_by_label] Edge {i} has no label attribute")
                 
-            #if hasattr(edge, 'semantic_labels'):
-                #print(f"[CircleArcPanel.get_edge_by_label] Edge {i} has semantic_labels: {edge.semantic_labels}")
+    #         #if hasattr(edge, 'semantic_labels'):
+    #             #print(f"[CircleArcPanel.get_edge_by_label] Edge {i} has semantic_labels: {edge.semantic_labels}")
         
-        # No fallback - strict behavior as requested
-        return None
+    #     # No fallback - strict behavior as requested
+    #     return None
 
 class AsymHalfCirclePanel(pyg.Panel):
     """Panel for a asymmetrci circle skirt"""

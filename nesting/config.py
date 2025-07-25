@@ -23,7 +23,7 @@ SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 # ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
-SELECTED_FITNESS_METRIC: MetricName  = "cc_with_rest_height"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
+SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"
 OX_CIRCULAR: bool = False  # whether to use circular walk in OX crossover
 OX_K = 1
@@ -41,7 +41,7 @@ BB_WEIGHT = 0.5  # weight for bounding box utilization in combined fitness metri
 CC_WEIGHT = 0.5  # weight for concave hull utilization in combined fitness metric
 
 # NFP
-NFP_GRAVITATE_ON: bool = False  # whether to gravitate:
+NFP_GRAVITATE_ON: bool = True  # whether to gravitate:
 
 # ——— genetic algorithm —————————————————————————————————————
 POPULATION_SIZE       = 20
@@ -100,11 +100,11 @@ PARAM_CHANGE_MARGIN = 0.2
 # mutation weights
 MUTATION_WEIGHTS = {
     "rotate":    0.2,
-    "swap":      0.1,
-    "inversion": 0.1,
+    "swap":      0.2,
+    "inversion": 0.2,
     "insertion": 0.1,
     "scramble":  0.1,
-    "split":     0.2,
+    "split":     0,
     "design_params": 0.2
 }
 

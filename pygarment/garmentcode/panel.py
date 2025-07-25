@@ -287,6 +287,9 @@ class Panel(BaseComponent):
             vertices, edge = self.edges[i].assembly()
 
             # add new vertices
+            print(f'Adding vertices {vertices} to panel {self.name}')
+            print(f'Panel Vertices {panel.vertices}')
+
             if panel.vertices[-1] == vertices[0]:   # We care if both point to the same vertex location, not necessarily the same vertex object
                 vert_shift = len(panel.vertices) - 1  # first edge vertex = last vertex already in the loop
                 panel.vertices += vertices[1:] 

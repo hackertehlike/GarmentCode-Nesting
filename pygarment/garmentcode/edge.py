@@ -103,12 +103,12 @@ class Edge:
         """Add an additional semantic label to the edge."""
         self.semantic_labels.add(label)
 
-    def point_at(self, proportion):
-        """Return a point at a given proportion (0=start, 1=end) along the edge"""
-        start = np.array(self.start)
-        end = np.array(self.end)
-        return (1 - proportion) * start + proportion * end
-
+    def point_at(self, proportion: float):
+        return [
+            (1 - proportion) * s + proportion * e
+            for s, e in zip(self.start, self.end)
+        ]
+    
     def midpoint(self):
         """Center of the edge"""
         return (np.array(self.start) + np.array(self.end)) / 2
