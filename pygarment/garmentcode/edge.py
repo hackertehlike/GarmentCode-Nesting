@@ -103,12 +103,13 @@ class Edge:
         """Add an additional semantic label to the edge."""
         self.semantic_labels.add(label)
 
-    def point_at(self, proportion: float):
-        return [
-            (1 - proportion) * s + proportion * e
-            for s, e in zip(self.start, self.end)
-        ]
-    
+    def point_at(self, proportion):
+        """Return a point at a given proportion (0=start, 1=end) along the edge"""
+        start = np.array(self.start)
+        end = np.array(self.end)
+        point = (1 - proportion) * start + proportion * end
+        return point.tolist()  # Convert numpy array to regular list
+
     def midpoint(self):
         """Center of the edge"""
         return (np.array(self.start) + np.array(self.end)) / 2
@@ -499,16 +500,27 @@ class CircleEdge(Edge):
         if not isinstance(point, list):
             point = point.tolist()
 
+        # Get the original arc parameters
+        # radius, large_arc, sweep = self.as_radius_flag()
+        
         # Find the parameter t corresponding to the split point
-        # For now, assume split is at t=0.5 (proportionally)
-        t_split = 0.5
-        p1_on_curve = self.point_at(t_split / 2)
-        p2_on_curve = self.point_at(t_split + (1 - t_split) / 2)
-
+        curve = self.as_curve()
+        t_split = curve.ilength(norm(np.array(point) - np.array(self.start)) / self.length(), s_tol=ILENGTH_S_TOL)
+        
+        # Create control points for the two new arcs with the same radius and curvature direction
+        # Pick points at 1/3 of the way along each new arc
+        p1_on_curve = self.point_at(t_split / 3)  # Point on first arc
+        p2_on_curve = self.point_at(t_split + (1 - t_split) / 3)  # Point on second arc
+        
+        # Create two new edges using the factory
         edge1 = CircleEdgeFactory.from_three_points(self.start, point, p1_on_curve, label=self.label)
         edge2 = CircleEdgeFactory.from_three_points(point, self.end, p2_on_curve, label=self.label)
-
+    
+        
+        [edge.add_semantic_label(label) for edge in (edge1, edge2) for label in self.semantic_labels]
+        
         return edge1, edge2
+    
 
 
 class CurveEdge(Edge):

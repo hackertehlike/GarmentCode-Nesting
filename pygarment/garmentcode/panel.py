@@ -413,6 +413,30 @@ class Panel(BaseComponent):
     def get_edge_by_label(self, label):
         """Find an edge with a given label"""
         for edge in self.edges:
-            if edge.label == label or label in getattr(edge, 'semantic_labels', []):
+            if edge.label == label or label in edge.semantic_labels:
                 return edge
         return None
+    
+    def get_leftmost_vertex(self):
+        """Find the leftmost vertex in the panel.
+        
+        Returns:
+            The vertex (coordinate list) that has the smallest x-coordinate.
+            If multiple vertices have the same x-coordinate, returns the topmost one
+            (the one with the smallest y-coordinate).
+        """
+        vertices = self.edges.verts()
+        
+        if not vertices:
+            return None
+        
+        # Find the vertex with the smallest x-coordinate
+        # If there are ties, break them by choosing the one with smallest y (topmost)
+        leftmost = min(vertices, key=lambda v: (v[0], v[1]))
+        
+        return leftmost
+    
+    def split(self, proportion=0.5):
+        """ Split the panel into two panels along the center line wrt the bounding box."""
+
+        

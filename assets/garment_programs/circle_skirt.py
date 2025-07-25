@@ -30,13 +30,17 @@ class CircleArcPanel(pyg.Panel):
         top_edge = pyg.CircleEdgeFactory.from_points_radius(
             [-dist_w/2, 0], [dist_w/2, 0], 
             radius=top_rad, large_arc=halfarc > np.pi / 2)
-        top_edge.semantic_labels.add('top')  # Add semantic label
+        top_edge.add_semantic_label('top')  # Add semantic label
         self.edges.append(top_edge)
+        
+        # Now we can check if the edge is accessible via get_edge_by_label
+        #top_check = self.get_edge_by_label('top')
+        #print(f"[CircleArcPanel.__init__] Top edge check: {top_check is not None}")
 
         # right edge - index 1
         right_edge = pyg.Edge(
             self.edges[-1].end, [dist_out / 2, -vert_len])
-        right_edge.semantic_labels.add('right')  # Add semantic label
+        right_edge.add_semantic_label('right')  # Add semantic label
         self.edges.append(right_edge)
         
         # Bottom edge - index 2
@@ -44,12 +48,12 @@ class CircleArcPanel(pyg.Panel):
             self.edges[-1].end, [- dist_out / 2, -vert_len], 
             radius=top_rad + length,
             large_arc=halfarc > np.pi / 2, right=False)
-        bottom_edge.semantic_labels.add('bottom')
+        bottom_edge.add_semantic_label('bottom')
         self.edges.append(bottom_edge)
 
         # left edge - index 3 - closes the loop
         left_edge = pyg.Edge(self.edges[-1].end, self.edges[0].start)
-        left_edge.semantic_labels.add('left')  # Add semantic label
+        left_edge.add_semantic_label('left')  # Add semantic label
         self.edges.append(left_edge)
 
         # Verify all edge labels are set correctly
@@ -79,55 +83,21 @@ class CircleArcPanel(pyg.Panel):
         """
         expected_labels = ['top', 'right', 'bottom', 'left']
         missing_labels = []
-        
-        #print(f"[CircleArcPanel._verify_edge_labels] Verifying edge labels for panel '{self.name}'")
-        
+
+        # print(f"[CircleArcPanel._verify_edge_labels] Verifying edge labels for panel '{self.name}'")
+
         # Check that each expected label exists on an edge
         for label in expected_labels:
             edge = self.get_edge_by_label(label)
             if edge is None:
                 missing_labels.append(label)
-                #print(f"[CircleArcPanel._verify_edge_labels] ERROR: Edge with label '{label}' not found")
+                print(f"[CircleArcPanel._verify_edge_labels] ERROR: Edge with label '{label}' not found")
         
-        # If we're missing labels, #print debugging info and fix them
-        if missing_labels:
-            #print(f"[CircleArcPanel._verify_edge_labels] Missing labels: {missing_labels}")
-            #print(f"[CircleArcPanel._verify_edge_labels] Attempting to fix missing labels...")
-            
-            # Ensure the expected labels are set based on index
-            if 'top' in missing_labels and len(self.edges) >= 1:
-                if hasattr(self.edges[0], 'semantic_labels'):
-                    self.edges[0].semantic_labels.add('top')
-                    #print(f"[CircleArcPanel._verify_edge_labels] Added 'top' to semantic_labels on edge 0")
-                else:
-                    self.edges[0].label = 'top'
-                    #print(f"[CircleArcPanel._verify_edge_labels] Set label 'top' on edge 0")
-            
-            if 'right' in missing_labels and len(self.edges) >= 2:
-                if hasattr(self.edges[1], 'semantic_labels'):
-                    self.edges[1].semantic_labels.add('right')
-                    #print(f"[CircleArcPanel._verify_edge_labels] Added 'right' to semantic_labels on edge 1")
-                else:
-                    self.edges[1].label = 'right'
-                    #print(f"[CircleArcPanel._verify_edge_labels] Set label 'right' on edge 1")
-            
-            if 'bottom' in missing_labels and len(self.edges) >= 3:
-                if hasattr(self.edges[2], 'semantic_labels'):
-                    self.edges[2].semantic_labels.add('bottom')
-                    #print(f"[CircleArcPanel._verify_edge_labels] Added 'bottom' to semantic_labels on edge 2")
-                else:
-                    self.edges[2].label = 'bottom'
-                    #print(f"[CircleArcPanel._verify_edge_labels] Set label 'bottom' on edge 2")
-            
-            if 'left' in missing_labels and len(self.edges) >= 4:
-                if hasattr(self.edges[3], 'semantic_labels'):
-                    self.edges[3].semantic_labels.add('left')
-                    #print(f"[CircleArcPanel._verify_edge_labels] Added 'left' to semantic_labels on edge 3")
-                else:
-                    self.edges[3].label = 'left'
-                    #print(f"[CircleArcPanel._verify_edge_labels] Set label 'left' on edge 3")
-        #else:
-            #print(f"[CircleArcPanel._verify_edge_labels] All expected edge labels found")
+        # else:
+        #    print(f"[CircleArcPanel._verify_edge_labels] All expected edge labels found")
+        
+        return missing_labels
+        
 
     def length(self, *args):
         return self.interfaces['right'].edges.length()
@@ -157,20 +127,34 @@ class CircleArcPanel(pyg.Panel):
 
     def split(self, proportion=0.5):
         """Splits the panel into two new panels at a specified proportion"""
-        # Debug information about edges
-        #print(f"[CircleArcPanel.split] Splitting panel '{self.name}' at proportion {proportion}")
+        
+        print(f"[CircleArcPanel.split] Starting split for panel {self.name}")
+        print(f"[CircleArcPanel.split] Panel has {len(self.edges)} edges")
+        
+        # Debug: examine the interfaces to see if they're modifying the edges
+        print(f"[CircleArcPanel.split] Checking interfaces:")
+        for name, interface in self.interfaces.items():
+            print(f"  Interface '{name}' contains {len(interface.edges)} edges")
+            for i, edge in enumerate(interface.edges):
+                print(f"    Edge {i}: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
+                # Check if this edge is in the main edge sequence
+                for j, main_edge in enumerate(self.edges):
+                    if edge is main_edge:
+                        print(f"    This is the same object as edge {j} in the main edge sequence")
+
         self._verify_edge_labels()  # Ensure edge labels are verified before splitting
 
-        # #print(f"[CircleArcPanel.split] Panel name: {self.name}")
-        # #print(f"[CircleArcPanel.split] Number of edges: {len(self.edges)}")
-        # for i, edge in enumerate(self.edges):
-        #     #print(f"[CircleArcPanel.split] Edge {i}: label={getattr(edge, 'label', 'None')}")
-        
         # Get edges by label - this should now work reliably with our changes
         bottom_edge = self.get_edge_by_label('bottom')
         top_edge = self.get_edge_by_label('top')
         left_edge = self.get_edge_by_label('left')
         right_edge = self.get_edge_by_label('right')
+
+        # debug all of the edge labels
+        #print(f"[CircleArcPanel.split] Edge labels before split:")
+        for edge in self.edges:
+            print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
+
         
         # Validate all edges are found
         if bottom_edge is None:
@@ -183,11 +167,13 @@ class CircleArcPanel(pyg.Panel):
             raise ValueError(f"Panel {self.name} does not have a right edge to split.")
 
         # Get split points
-        split_point_bottom = bottom_edge.point_at(proportion)
+        #split_point_bottom = bottom_edge.point_at(proportion)
+        split_point_bottom = bottom_edge.midpoint().tolist()
 
         #print(f"[CircleArcPanel.split] Split point on bottom edge: {split_point_bottom}")
         
-        split_point_top = top_edge.point_at(proportion)
+        #split_point_top = top_edge.point_at(proportion)
+        split_point_top = top_edge.midpoint().tolist()
 
         #print(f"[CircleArcPanel.split] Split points: "f"bottom={split_point_bottom}, top={split_point_top}")
 
@@ -195,68 +181,69 @@ class CircleArcPanel(pyg.Panel):
         bottom1, bottom2 = bottom_edge.split_at_point(split_point_bottom)
         top1, top2 = top_edge.split_at_point(split_point_top)
 
-        # Create new split edges for each panel
-        split_edge1 = pyg.Edge(split_point_top, split_point_bottom, label='split_left')
-        if hasattr(split_edge1, 'semantic_labels'):
-            split_edge1.semantic_labels.add('left')
+        # Create new split edges for each panel with copied vertices to avoid shared references
+        # Make copies of the vertices to ensure they're not shared between panels
+        split_point_top_copy1 = split_point_top.copy()
+        split_point_bottom_copy1 = split_point_bottom.copy()
+        split_point_top_copy2 = split_point_top.copy()
+        split_point_bottom_copy2 = split_point_bottom.copy()
+        
+        # Create edges with the copied vertices
+        split_edge1 = pyg.Edge(split_point_top_copy1, split_point_bottom_copy1)
+        split_edge1.add_semantic_label('left')
             
-        split_edge2 = pyg.Edge(split_point_bottom, split_point_top, label='split_right')
-        if hasattr(split_edge2, 'semantic_labels'):
-            split_edge2.semantic_labels.add('right')
+        split_edge2 = pyg.Edge(split_point_bottom_copy2, split_point_top_copy2)
+        split_edge2.add_semantic_label('right')
 
         # Debug the split edges
         #print(f"[CircleArcPanel.split] Split edges created:")
         #print(f"  Split Edge 1: {split_edge1}")
         #print(f"  Split Edge 2: {split_edge2}")
 
+
+        def make_left_to_right(edge):
+            """Ensure the edge is oriented from left to right."""
+            if edge.start[0] > edge.end[0]:
+                edge.reverse()
+            return edge
+        
+        def make_top_to_bottom(edge):
+            """Ensure the edge is oriented from top to bottom."""
+            if edge.start[1] < edge.end[1]:
+                edge.reverse()
+            return edge
         
         # Create new panels
-        panel1 = pyg.Panel(f'{self.name}_1')
-        # Create deep copies of the edges to avoid shared references
-        right_edge_copy = copy.deepcopy(right_edge)
-        panel1.edges = pyg.EdgeSequence([top1, right_edge_copy, bottom1, split_edge1])
+        panel1 = pyg.Panel(f'{self.name}_split_left')
         
-        # Override the edge labels on panel1
-        panel1.edges[0].label = 'top'
-        if hasattr(panel1.edges[0], 'semantic_labels'):
-            panel1.edges[0].semantic_labels.add('top')
-            
-        panel1.edges[1].label = 'right'
-        if hasattr(panel1.edges[1], 'semantic_labels'):
-            panel1.edges[1].semantic_labels.add('right')
-            
-        panel1.edges[2].label = 'bottom'
-        if hasattr(panel1.edges[2], 'semantic_labels'):
-            panel1.edges[2].semantic_labels.add('bottom')
-            
-        panel1.edges[3].label = 'left'  # The split edge becomes the left edge of panel1
-        if hasattr(panel1.edges[3], 'semantic_labels'):
-            panel1.edges[3].semantic_labels.add('left')
+        # Ensure consistent edge orientations for the left panel:
+        # - top edge: left to right
+        # - split edge: top to bottom 
+        # - bottom edge: right to left (reverse of left to right)
+        # - left edge: bottom to top (reverse of top to bottom)
+        panel1.edges = pyg.EdgeSequence([
+            make_left_to_right(top1),
+            make_top_to_bottom(split_edge1),
+            make_left_to_right(bottom1).reverse(),
+            make_top_to_bottom(copy.deepcopy(left_edge)).reverse()
+        ])
 
         #print(f"[CircleArcPanel.split] Created panel1")
 
-        panel2 = pyg.Panel(f'{self.name}_2')
-        # Create deep copies of the edges to avoid shared references
-        left_edge_copy = copy.deepcopy(left_edge)
-        panel2.edges = pyg.EdgeSequence([top2, split_edge2, bottom2, left_edge_copy])
+        panel2 = pyg.Panel(f'{self.name}_split_right')
         
-        # Override the edge labels on panel2
-        panel2.edges[0].label = 'top'
-        if hasattr(panel2.edges[0], 'semantic_labels'):
-            panel2.edges[0].semantic_labels.add('top')
-            
-        panel2.edges[1].label = 'right'  # The split edge becomes the right edge of panel2
-        if hasattr(panel2.edges[1], 'semantic_labels'):
-            panel2.edges[1].semantic_labels.add('right')
-            
-        panel2.edges[2].label = 'bottom'
-        if hasattr(panel2.edges[2], 'semantic_labels'):
-            panel2.edges[2].semantic_labels.add('bottom')
-            
-        panel2.edges[3].label = 'left'
-        if hasattr(panel2.edges[3], 'semantic_labels'):
-            panel2.edges[3].semantic_labels.add('left')
-
+        # Ensure consistent edge orientations for the right panel:
+        # - top edge (top2): left to right
+        # - right edge: top to bottom
+        # - bottom edge (bottom2): right to left (reverse of left to right)
+        # - split edge: bottom to top (reverse of top to bottom)
+        panel2.edges = pyg.EdgeSequence([
+            make_left_to_right(top2),
+            make_top_to_bottom(split_edge2),
+            make_left_to_right(bottom2).reverse(),
+            make_top_to_bottom(copy.deepcopy(right_edge)).reverse()
+        ])
+        
         #print(f"[CircleArcPanel.split] Created panel2")
 
         # #print(f"[CircleArcPanel.split] Created panel1 with edges:")
@@ -272,16 +259,18 @@ class CircleArcPanel(pyg.Panel):
         #panel1._verify_edge_labels = self._verify_edge_labels.__get__(panel1)
         #panel2._verify_edge_labels = self._verify_edge_labels.__get__(panel2)
         
-        ##print(f"[CircleArcPanel.split] Verifying edge labels for new panels")
+        print(f"[CircleArcPanel.split] Verifying edge labels for new panels")
 
         # Verify edge labels in both new panels
-        #panel1._verify_edge_labels()
-        #panel2._verify_edge_labels()
+        panel1._verify_edge_labels()
+        panel2._verify_edge_labels()
 
 
-        ##print(f"[CircleArcPanel.split] Edge labels verified for new panels")
+        #print(f"[CircleArcPanel.split] Edge labels verified for new panels")
+        
         # Return the new panels
-        #print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")
+        print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")
+        
         return panel1, panel2
 
     # def get_edge_by_label(self, label):
@@ -346,13 +335,13 @@ class AsymHalfCirclePanel(pyg.Panel):
         top_edge = pyg.CircleEdgeFactory.from_points_radius(
             [-dist_w/2, 0], [dist_w/2, 0], 
             radius=top_rad, large_arc=False)
-        top_edge.semantic_labels.add('top')  # Add semantic label
+        top_edge.add_semantic_label('top')  # Add semantic label
         self.edges.append(top_edge)
 
         # right edge - index 1
         right_edge = pyg.Edge(
             self.edges[-1].end, [dist_out / 2, 0])
-        right_edge.semantic_labels.add('right')  # Add semantic label
+        right_edge.add_semantic_label('right')
         self.edges.append(right_edge)
         
         # Bottom edge - index 2
@@ -387,7 +376,7 @@ class AsymHalfCirclePanel(pyg.Panel):
         
         # Double-check edge labels after initialization is complete
         self._verify_edge_labels()
-        
+
     def _verify_edge_labels(self):
         """
         Verify that all edges have the expected labels after initialization.
@@ -395,98 +384,23 @@ class AsymHalfCirclePanel(pyg.Panel):
         """
         expected_labels = ['top', 'right', 'bottom', 'left']
         missing_labels = []
-        
-        #print(f"[AsymHalfCirclePanel._verify_edge_labels] Verifying edge labels for panel '{self.name}'")
-        
+
+        # print(f"[AsymHalfCirclePanel._verify_edge_labels] Verifying edge labels for panel '{self.name}'")
+
         # Check that each expected label exists on an edge
         for label in expected_labels:
             edge = self.get_edge_by_label(label)
             if edge is None:
                 missing_labels.append(label)
-                #print(f"[AsymHalfCirclePanel._verify_edge_labels] ERROR: Edge with label '{label}' not found")
+                print(f"[AsymHalfCirclePanel._verify_edge_labels] ERROR: Edge with label '{label}' not found")
         
-        # If we're missing labels, #print debugging info and fix them
-        if missing_labels:
-            #print(f"[AsymHalfCirclePanel._verify_edge_labels] Missing labels: {missing_labels}")
-            #print(f"[AsymHalfCirclePanel._verify_edge_labels] Attempting to fix missing labels...")
-            
-            # Ensure the expected labels are set based on index
-            if 'top' in missing_labels and len(self.edges) >= 1:
-                if hasattr(self.edges[0], 'semantic_labels'):
-                    self.edges[0].semantic_labels.add('top')
-                    #print(f"[AsymHalfCirclePanel._verify_edge_labels] Added 'top' to semantic_labels on edge 0")
-                else:
-                    self.edges[0].label = 'top'
-                    #print(f"[AsymHalfCirclePanel._verify_edge_labels] Set label 'top' on edge 0")
-            
-            if 'right' in missing_labels and len(self.edges) >= 2:
-                if hasattr(self.edges[1], 'semantic_labels'):
-                    self.edges[1].semantic_labels.add('right')
-                    #print(f"[AsymHalfCirclePanel._verify_edge_labels] Added 'right' to semantic_labels on edge 1")
-                else:
-                    self.edges[1].label = 'right'
-                    #print(f"[AsymHalfCirclePanel._verify_edge_labels] Set label 'right' on edge 1")
-            
-            if 'bottom' in missing_labels and len(self.edges) >= 3:
-                if hasattr(self.edges[2], 'semantic_labels'):
-                    self.edges[2].semantic_labels.add('bottom')
-                    #print(f"[AsymHalfCirclePanel._verify_edge_labels] Added 'bottom' to semantic_labels on edge 2")
-                else:
-                    self.edges[2].label = 'bottom'
-                    #print(f"[AsymHalfCirclePanel._verify_edge_labels] Set label 'bottom' on edge 2")
-            
-            if 'left' in missing_labels and len(self.edges) >= 4:
-                if hasattr(self.edges[3], 'semantic_labels'):
-                    self.edges[3].semantic_labels.add('left')
-                    #print(f"[AsymHalfCirclePanel._verify_edge_labels] Added 'left' to semantic_labels on edge 3")
-                else:
-                    self.edges[3].label = 'left'
-                    #print(f"[AsymHalfCirclePanel._verify_edge_labels] Set label 'left' on edge 3")
         # else:
-            #print(f"[AsymHalfCirclePanel._verify_edge_labels] All expected edge labels found")
-    
+        #    print(f"[AsymHalfCirclePanel._verify_edge_labels] All expected edge labels found")
+        
+        return missing_labels
+
     def length(self, *args):
         return self.interfaces['right'].edges.length()
-        
-    def get_edge_by_label(self, label):
-        """
-        Get an edge by its label without any fallback to indices.
-        This implementation checks both the label attribute and semantic_labels.
-        """
-        # Debug the label lookup
-        #print(f"[AsymHalfCirclePanel.get_edge_by_label] Looking for edge with label '{label}'")
-        
-        # First check if the Panel class has this method
-        if hasattr(super(), 'get_edge_by_label'):
-            edge = super().get_edge_by_label(label)
-            if edge is not None:
-                return edge
-        
-        # If not found or method doesn't exist, implement our own lookup
-        for i, edge in enumerate(self.edges):
-            # Check for direct label attribute
-            if hasattr(edge, 'label') and edge.label == label:
-                #print(f"[AsymHalfCirclePanel.get_edge_by_label] Found edge {i} with label attribute '{label}'")
-                return edge
-            
-            # Check semantic_labels
-            if hasattr(edge, 'semantic_labels') and label in edge.semantic_labels:
-                #print(f"[AsymHalfCirclePanel.get_edge_by_label] Found edge {i} with semantic label '{label}'")
-                return edge
-        
-        # Debug what labels we do have
-        #print(f"[AsymHalfCirclePanel.get_edge_by_label] Warning: Edge with label '{label}' not found")
-        # for i, edge in enumerate(self.edges):
-        #     if hasattr(edge, 'label'):
-        #         #print(f"[AsymHalfCirclePanel.get_edge_by_label] Edge {i} has label '{edge.label}'")
-        #     else:
-        #         #print(f"[AsymHalfCirclePanel.get_edge_by_label] Edge {i} has no label attribute")
-                
-        #     if hasattr(edge, 'semantic_labels'):
-        #         #print(f"[AsymHalfCirclePanel.get_edge_by_label] Edge {i} has semantic_labels: {edge.semantic_labels}")
-        
-        # No fallback - strict behavior as requested
-        return None
 
 class SkirtCircle(StackableSkirtComponent):
     """Simple circle skirt"""
