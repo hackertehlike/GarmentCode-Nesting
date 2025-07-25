@@ -287,8 +287,8 @@ class Panel(BaseComponent):
             vertices, edge = self.edges[i].assembly()
 
             # add new vertices
-            print(f'Adding vertices {vertices} to panel {self.name}')
-            print(f'Panel Vertices {panel.vertices}')
+            #print(f'Adding vertices {vertices} to panel {self.name}')
+            #print(f'Panel Vertices {panel.vertices}')
 
             if panel.vertices[-1] == vertices[0]:   # We care if both point to the same vertex location, not necessarily the same vertex object
                 vert_shift = len(panel.vertices) - 1  # first edge vertex = last vertex already in the loop
@@ -412,8 +412,10 @@ class Panel(BaseComponent):
 
     def get_edge_by_label(self, label):
         """Find an edge with a given label"""
+
         for edge in self.edges:
             if edge.label == label or label in edge.semantic_labels:
+                # print(f'[panel.get_edge_by_label()] Found edge {edge.label} with label {label} in panel {self.name}')
                 return edge
         return None
     

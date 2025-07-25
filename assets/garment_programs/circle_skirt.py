@@ -75,7 +75,8 @@ class CircleArcPanel(pyg.Panel):
         
         # Double-check edge labels after initialization is complete
         self._verify_edge_labels()
-        
+        print([edge.semantic_labels for edge in self.edges], name)
+
     def _verify_edge_labels(self):
         """
         Verify that all edges have the expected labels after initialization.
@@ -91,10 +92,12 @@ class CircleArcPanel(pyg.Panel):
             edge = self.get_edge_by_label(label)
             if edge is None:
                 missing_labels.append(label)
-                print(f"[CircleArcPanel._verify_edge_labels] ERROR: Edge with label '{label}' not found")
-        
-        # else:
-        #    print(f"[CircleArcPanel._verify_edge_labels] All expected edge labels found")
+                # print(f"[CircleArcPanel._verify_edge_labels] ERROR: Edge with label '{label}' not found")
+
+        if missing_labels:
+            print(f"[CircleArcPanel._verify_edge_labels] Missing edge labels: {missing_labels}")
+        else:
+           print(f"[CircleArcPanel._verify_edge_labels] All expected edge labels found")
         
         return missing_labels
         
@@ -127,21 +130,14 @@ class CircleArcPanel(pyg.Panel):
 
     def split(self, proportion=0.5):
         """Splits the panel into two new panels at a specified proportion"""
-        
+        print([edge.semantic_labels for edge in self.edges], self.name)
         print(f"[CircleArcPanel.split] Starting split for panel {self.name}")
         print(f"[CircleArcPanel.split] Panel has {len(self.edges)} edges")
         
         # Debug: examine the interfaces to see if they're modifying the edges
-        print(f"[CircleArcPanel.split] Checking interfaces:")
-        for name, interface in self.interfaces.items():
-            print(f"  Interface '{name}' contains {len(interface.edges)} edges")
-            for i, edge in enumerate(interface.edges):
-                print(f"    Edge {i}: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
-                # Check if this edge is in the main edge sequence
-                for j, main_edge in enumerate(self.edges):
-                    if edge is main_edge:
-                        print(f"    This is the same object as edge {j} in the main edge sequence")
-
+        print(f"[CircleArcPanel.split] Checking edges:")
+        for edge in self.edges:
+            print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
         self._verify_edge_labels()  # Ensure edge labels are verified before splitting
 
         # Get edges by label - this should now work reliably with our changes
@@ -222,9 +218,9 @@ class CircleArcPanel(pyg.Panel):
         # - bottom edge: right to left (reverse of left to right)
         # - left edge: bottom to top (reverse of top to bottom)
         panel1.edges = pyg.EdgeSequence([
-            make_left_to_right(top1),
+            make_left_to_right(copy.deepcopy(top1)),
             make_top_to_bottom(split_edge1),
-            make_left_to_right(bottom1).reverse(),
+            make_left_to_right(copy.deepcopy(bottom1)).reverse(),
             make_top_to_bottom(copy.deepcopy(left_edge)).reverse()
         ])
 
@@ -238,9 +234,9 @@ class CircleArcPanel(pyg.Panel):
         # - bottom edge (bottom2): right to left (reverse of left to right)
         # - split edge: bottom to top (reverse of top to bottom)
         panel2.edges = pyg.EdgeSequence([
-            make_left_to_right(top2),
+            make_left_to_right(copy.deepcopy(top2)),
             make_top_to_bottom(split_edge2),
-            make_left_to_right(bottom2).reverse(),
+            make_left_to_right(copy.deepcopy(bottom2)).reverse(),
             make_top_to_bottom(copy.deepcopy(right_edge)).reverse()
         ])
         
@@ -262,8 +258,8 @@ class CircleArcPanel(pyg.Panel):
         print(f"[CircleArcPanel.split] Verifying edge labels for new panels")
 
         # Verify edge labels in both new panels
-        panel1._verify_edge_labels()
-        panel2._verify_edge_labels()
+        #panel1._verify_edge_labels()
+        #panel2._verify_edge_labels()
 
 
         #print(f"[CircleArcPanel.split] Edge labels verified for new panels")

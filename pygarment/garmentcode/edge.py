@@ -286,8 +286,8 @@ class Edge:
         """Splits the edge at a given point and returns two new edges"""
         if not isinstance(point, list):
             point = point.tolist()
-        edge1 = Edge(self.start, point, label=self.label)
-        edge2 = Edge(point, self.end, label=self.label)
+        edge1 = Edge(self.start.deepcopy(), point, label=self.label)
+        edge2 = Edge(point, self.end.deepcopy(), label=self.label)
 
         return edge1, edge2
 

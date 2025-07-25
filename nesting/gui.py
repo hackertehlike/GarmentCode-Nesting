@@ -1336,7 +1336,7 @@ class NestingGUI:
             return
 
         # # Follow the chromosome's split mutation pattern
-        from nesting.panel_mapping import get_panel_type, dispatch_split
+        from nesting.panel_mapping import get_panel_type
         import tempfile
         from pathlib import Path
         

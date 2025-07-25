@@ -226,6 +226,13 @@ class MetaGarment(pyg.Component):
         """
         # find the panel
         panel = self.get_panel_by_name(panel_name)
+
+        # debug the semantic labels
+        #if hasattr(panel, 'edges'):
+        #    print(f"[MetaGarment.split_panel] Starting split for panel {panel.name}")
+        #    print([edge.semantic_labels for edge in panel.edges])
+
+        print(f"Attempting to split panel {panel_name} with proportion {proportion}")
         if not panel:
             raise ValueError(f"Panel {panel_name} not found")
             
