@@ -441,4 +441,6 @@ class Panel(BaseComponent):
     def split(self, proportion=0.5):
         """ Split the panel into two panels along the center line wrt the bounding box."""
 
-        
+        return NotImplementedError(
+            f"{self.__class__.__name__}::{self.name}::ERROR::Split operation is not implemented for this panel type."
+        )

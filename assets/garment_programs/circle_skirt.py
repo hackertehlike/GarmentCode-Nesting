@@ -130,17 +130,24 @@ class CircleArcPanel(pyg.Panel):
 
     def split(self, proportion=0.5):
         """Splits the panel into two new panels at a specified proportion"""
-        print([edge.semantic_labels for edge in self.edges], self.name)
-        print(f"[CircleArcPanel.split] Starting split for panel {self.name}")
-        print(f"[CircleArcPanel.split] Panel has {len(self.edges)} edges")
+        # print([edge.semantic_labels for edge in self.edges], self.name)
+        # print(f"[CircleArcPanel.split] Starting split for panel {self.name}")
+        # print(f"[CircleArcPanel.split] Panel has {len(self.edges)} edges")
         
-        # Debug: examine the interfaces to see if they're modifying the edges
-        print(f"[CircleArcPanel.split] Checking edges:")
-        for edge in self.edges:
-            print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
+        # # Debug: examine the interfaces to see if they're modifying the edges
+        # print(f"[CircleArcPanel.split] Checking edges:")
+        # for edge in self.edges:
+        #     print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
         self._verify_edge_labels()  # Ensure edge labels are verified before splitting
 
-        # Get edges by label - this should now work reliably with our changes
+        # Check if the panel EdgeSequence is clockwise or counter-clockwise
+        clockwise = self.edges.is_clockwise()
+
+        if not clockwise:
+            print(f"[CircleArcPanel.split] Warning: Panel {self.name} is not clockwise, reversing edges.")
+            self.edges.reverse()
+
+        # Get edges by label
         bottom_edge = self.get_edge_by_label('bottom')
         top_edge = self.get_edge_by_label('top')
         left_edge = self.get_edge_by_label('left')
@@ -163,13 +170,13 @@ class CircleArcPanel(pyg.Panel):
             raise ValueError(f"Panel {self.name} does not have a right edge to split.")
 
         # Get split points
-        #split_point_bottom = bottom_edge.point_at(proportion)
-        split_point_bottom = bottom_edge.midpoint().tolist()
+        split_point_bottom = bottom_edge.point_at(1-proportion)
+        #split_point_bottom = bottom_edge.midpoint().tolist()
 
         #print(f"[CircleArcPanel.split] Split point on bottom edge: {split_point_bottom}")
         
-        #split_point_top = top_edge.point_at(proportion)
-        split_point_top = top_edge.midpoint().tolist()
+        split_point_top = top_edge.point_at(proportion)
+        #split_point_top = top_edge.midpoint().tolist()
 
         #print(f"[CircleArcPanel.split] Split points: "f"bottom={split_point_bottom}, top={split_point_top}")
 
@@ -197,17 +204,17 @@ class CircleArcPanel(pyg.Panel):
         #print(f"  Split Edge 2: {split_edge2}")
 
 
-        def make_left_to_right(edge):
-            """Ensure the edge is oriented from left to right."""
-            if edge.start[0] > edge.end[0]:
-                edge.reverse()
-            return edge
+        # def make_left_to_right(edge):
+        #     """Ensure the edge is oriented from left to right."""
+        #     if edge.start[0] > edge.end[0]:
+        #         edge.reverse()
+        #     return edge
         
-        def make_top_to_bottom(edge):
-            """Ensure the edge is oriented from top to bottom."""
-            if edge.start[1] < edge.end[1]:
-                edge.reverse()
-            return edge
+        # def make_top_to_bottom(edge):
+        #     """Ensure the edge is oriented from top to bottom."""
+        #     if edge.start[1] < edge.end[1]:
+        #         edge.reverse()
+        #     return edge
         
         # Create new panels
         panel1 = pyg.Panel(f'{self.name}_split_left')
@@ -218,10 +225,10 @@ class CircleArcPanel(pyg.Panel):
         # - bottom edge: right to left (reverse of left to right)
         # - left edge: bottom to top (reverse of top to bottom)
         panel1.edges = pyg.EdgeSequence([
-            make_left_to_right(copy.deepcopy(top1)),
-            make_top_to_bottom(split_edge1),
-            make_left_to_right(copy.deepcopy(bottom1)).reverse(),
-            make_top_to_bottom(copy.deepcopy(left_edge)).reverse()
+            copy.deepcopy(top1),
+            split_edge1,
+            copy.deepcopy(bottom2),
+            copy.deepcopy(left_edge)
         ])
 
         #print(f"[CircleArcPanel.split] Created panel1")
@@ -234,10 +241,10 @@ class CircleArcPanel(pyg.Panel):
         # - bottom edge (bottom2): right to left (reverse of left to right)
         # - split edge: bottom to top (reverse of top to bottom)
         panel2.edges = pyg.EdgeSequence([
-            make_left_to_right(copy.deepcopy(top2)),
-            make_top_to_bottom(split_edge2),
-            make_left_to_right(copy.deepcopy(bottom2)).reverse(),
-            make_top_to_bottom(copy.deepcopy(right_edge)).reverse()
+            copy.deepcopy(top2),
+            copy.deepcopy(right_edge),
+            copy.deepcopy(bottom1),
+            split_edge2
         ])
         
         #print(f"[CircleArcPanel.split] Created panel2")

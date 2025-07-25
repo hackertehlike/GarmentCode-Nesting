@@ -1362,7 +1362,7 @@ class NestingGUI:
             
         
             # Split the panel using our new method
-            proportion = 0.5  # Split in the middle by default
+            proportion = 0.6  # Split in the middle by default
             new_panel_names = mg.split_panel(pid, proportion)
             
             # Generate the pattern with the split panels

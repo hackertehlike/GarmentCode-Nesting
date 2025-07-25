@@ -501,7 +501,7 @@ class CircleEdge(Edge):
             point = point.tolist()
 
         # Get the original arc parameters
-        # radius, large_arc, sweep = self.as_radius_flag()
+        radius, large_arc, right = self.as_radius_flag()
         
         # Find the parameter t corresponding to the split point
         curve = self.as_curve()
@@ -513,9 +513,13 @@ class CircleEdge(Edge):
         p2_on_curve = self.point_at(t_split + (1 - t_split) / 3)  # Point on second arc
         
         # Create two new edges using the factory
-        edge1 = CircleEdgeFactory.from_three_points(self.start, point, p1_on_curve, label=self.label)
-        edge2 = CircleEdgeFactory.from_three_points(point, self.end, p2_on_curve, label=self.label)
-    
+        edge1 = CircleEdgeFactory.from_points_radius(
+            self.start, point, radius=radius, 
+            large_arc=large_arc, right=right, label=self.label)
+        edge2 = CircleEdgeFactory.from_points_radius(
+            point, self.end, radius=radius, 
+            large_arc=large_arc, right=right, label=self.label)
+
         
         [edge.add_semantic_label(label) for edge in (edge1, edge2) for label in self.semantic_labels]
         
@@ -1071,3 +1075,16 @@ class EdgeSequence:
             # not connected to anything or connected properly -- leave as is
         
         return chained
+
+    def is_clockwise(self):
+        """Check if the edge sequence is oriented clockwise"""
+        # Using the shoelace formula
+        verts = self.verts()
+        n = len(verts)
+        area = 0.0
+        for i in range(n):
+            j = (i + 1) % n
+            area += verts[i][0] * verts[j][1]
+            area -= verts[j][0] * verts[i][1]
+        
+        return area < 0
