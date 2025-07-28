@@ -6,13 +6,13 @@ from typing import Literal, Mapping
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = False
 VERBOSE: bool = True
-DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_specification.json"
-DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_design_params.yaml"
-DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_body_measurements.yaml"
+# DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_specification.json"
+# DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_design_params.yaml"
+# DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_body_measurements.yaml"
 
-# DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_specification.json"
-# DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_design_params.yaml"
-# DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_body_measurements.yaml"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_specification.json"
+DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_design_params.yaml"
+DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_body_measurements.yaml"
 
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
@@ -99,13 +99,13 @@ PARAM_CHANGE_MARGIN = 0.2
 
 # mutation weights
 MUTATION_WEIGHTS = {
-    "rotate":    0.2,
-    "swap":      0.2,
-    "inversion": 0.2,
-    "insertion": 0.1,
-    "scramble":  0.1,
-    "split":     0,
-    "design_params": 0.2
+    "rotate":    0.1,
+    "swap":      0,
+    "inversion": 0.1,
+    "insertion": 0,
+    "scramble":  0,
+    "split":     0.4,
+    "design_params": 0.4
 }
 
 

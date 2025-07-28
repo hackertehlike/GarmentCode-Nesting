@@ -504,6 +504,7 @@ class Chromosome(Layout):
         return False
 
     def _apply_design_param_change(self, path: str, old_val: Any, new_val: Any) -> bool:
+        # TODO: fix split handling. it must happen before reassembly
         """Helper to regenerate garment pieces after a design param change and update genes."""
         from assets.garment_programs.meta_garment import MetaGarment
         from nesting.panel_mapping import affected_panels, select_genes
@@ -519,6 +520,9 @@ class Chromosome(Layout):
             return False
 
         mg = MetaGarment("design_mut", self.body_params, self.design_params)
+
+        # todo: restore splits
+
         pattern = mg.assembly()
         with tempfile.TemporaryDirectory() as td:
             spec_file = Path(td) / f"{pattern.name}_specification.json"
@@ -543,7 +547,7 @@ class Chromosome(Layout):
                     split_cache[g.root_id] = base_piece.split()
                 left, right = split_cache[g.root_id]
                 suffix = g.id[len(g.root_id) + 1:]
-                replacement = copy.deepcopy(left if suffix == "s1" else right)
+                replacement = copy.deepcopy(left if suffix == "split_left" else right)
                 replacement.rotation, replacement.translation = g.rotation, g.translation
                 self.genes[i] = replacement
 

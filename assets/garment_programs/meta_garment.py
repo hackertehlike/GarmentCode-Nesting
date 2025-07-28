@@ -211,17 +211,6 @@ class MetaGarment(pyg.Component):
         and then replaces the original panel with the two new subpanels in the component structure.
         This ensures that the assembly() method will use the new subpanels instead of the original.
         
-        Args:
-            panel_name (str): The name of the panel to split
-            proportion (float, optional): Where to split the panel (0.0 to 1.0). Defaults to 0.5.
-            
-        Returns:
-            list: The names of the new panels created from the split
-            
-        Example:
-            ```python
-            # Split the front skirt panel in half
-            garment.split_panel('skirt_front', 0.5)
             ```
         """
         # find the panel
@@ -332,25 +321,26 @@ class MetaGarment(pyg.Component):
                             parent_component.subs.append(subpanel)
                 replaced = True
                 
-        # Case 2: Panel is stored as an attribute with a different name
-        if not replaced:
-            for attr_name in dir(parent_component):
-                if attr_name.startswith('_') or attr_name in ('name', 'interfaces'):
-                    continue
+        # # Case 2: Panel is stored as an attribute with a different name
+        # would this even happen
+        # if not replaced:
+        #     for attr_name in dir(parent_component):
+        #         if attr_name.startswith('_') or attr_name in ('name', 'interfaces'):
+        #             continue
                     
-                attr = getattr(parent_component, attr_name)
-                if attr is original_panel:
-                    # Found it - replace with the first subpanel
-                    setattr(parent_component, attr_name, subpanels[0])
-                    # And add any additional subpanels to subs
-                    for i, subpanel in enumerate(subpanels):
-                        if i > 0:  # Skip the first one which we already set as an attribute
-                            if not hasattr(parent_component, 'subs'):
-                                parent_component.subs = []
-                            if subpanel not in parent_component.subs:
-                                parent_component.subs.append(subpanel)
-                    replaced = True
-                    break
+        #         attr = getattr(parent_component, attr_name)
+        #         if attr is original_panel:
+        #             # Found it - replace with the first subpanel
+        #             setattr(parent_component, attr_name, subpanels[0])
+        #             # And add any additional subpanels to subs
+        #             for i, subpanel in enumerate(subpanels):
+        #                 if i > 0:  # Skip the first one which we already set as an attribute
+        #                     if not hasattr(parent_component, 'subs'):
+        #                         parent_component.subs = []
+        #                     if subpanel not in parent_component.subs:
+        #                         parent_component.subs.append(subpanel)
+        #             replaced = True
+        #             break
                     
         # Case 3: Panel is in the subs list
         if not replaced and hasattr(parent_component, 'subs'):

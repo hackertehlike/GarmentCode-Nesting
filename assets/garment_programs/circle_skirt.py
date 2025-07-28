@@ -75,7 +75,7 @@ class CircleArcPanel(pyg.Panel):
         
         # Double-check edge labels after initialization is complete
         self._verify_edge_labels()
-        print([edge.semantic_labels for edge in self.edges], name)
+        # print([edge.semantic_labels for edge in self.edges], name)
 
     def _verify_edge_labels(self):
         """
@@ -94,10 +94,10 @@ class CircleArcPanel(pyg.Panel):
                 missing_labels.append(label)
                 # print(f"[CircleArcPanel._verify_edge_labels] ERROR: Edge with label '{label}' not found")
 
-        if missing_labels:
-            print(f"[CircleArcPanel._verify_edge_labels] Missing edge labels: {missing_labels}")
-        else:
-           print(f"[CircleArcPanel._verify_edge_labels] All expected edge labels found")
+        # if missing_labels:
+        #     print(f"[CircleArcPanel._verify_edge_labels] Missing edge labels: {missing_labels}")
+        # else:
+        #    print(f"[CircleArcPanel._verify_edge_labels] All expected edge labels found")
         
         return missing_labels
         
@@ -144,7 +144,7 @@ class CircleArcPanel(pyg.Panel):
         clockwise = self.edges.is_clockwise()
 
         if not clockwise:
-            print(f"[CircleArcPanel.split] Warning: Panel {self.name} is not clockwise, reversing edges.")
+        #    print(f"[CircleArcPanel.split] Warning: Panel {self.name} is not clockwise, reversing edges.")
             self.edges.reverse()
 
         # Get edges by label
@@ -155,8 +155,8 @@ class CircleArcPanel(pyg.Panel):
 
         # debug all of the edge labels
         #print(f"[CircleArcPanel.split] Edge labels before split:")
-        for edge in self.edges:
-            print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
+        #for edge in self.edges:
+        #    print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
 
         
         # Validate all edges are found
@@ -262,7 +262,7 @@ class CircleArcPanel(pyg.Panel):
         #panel1._verify_edge_labels = self._verify_edge_labels.__get__(panel1)
         #panel2._verify_edge_labels = self._verify_edge_labels.__get__(panel2)
         
-        print(f"[CircleArcPanel.split] Verifying edge labels for new panels")
+        # print(f"[CircleArcPanel.split] Verifying edge labels for new panels")
 
         # Verify edge labels in both new panels
         #panel1._verify_edge_labels()
@@ -494,13 +494,6 @@ class SkirtCircle(StackableSkirtComponent):
 class AsymmSkirtCircle(SkirtCircle):
     """Front/back asymmetric skirt"""
     def __init__(self, body, design, tag='', length=None, rise=None, slit=True, **kwargs):
-        # We updated the base class to raise NotImplementedError for asymm=True
-        # So let's implement it properly here
         
         # First, use super() without asymm=True to get base initialization
         super().__init__(body, design, tag, length, rise, slit, asymm=False)
-        
-        # Then customize the implementation as needed for asymmetric skirt
-        #print("[AsymmSkirtCircle.__init__] Warning: This implementation is a placeholder.")
-        #print("[AsymmSkirtCircle.__init__] Using symmetric skirt implementation instead.")
-        # Your implementation for asymmetric skirts would go here
