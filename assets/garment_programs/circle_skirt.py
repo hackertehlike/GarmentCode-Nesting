@@ -16,6 +16,8 @@ class CircleArcPanel(pyg.Panel):
             ) -> None:
         super().__init__(name)
 
+        split_history = {}
+
         halfarc = angle / 2
 
         dist_w = 2 * top_rad * np.sin(halfarc)
@@ -153,10 +155,10 @@ class CircleArcPanel(pyg.Panel):
         left_edge = self.get_edge_by_label('left')
         right_edge = self.get_edge_by_label('right')
 
-        # debug all of the edge labels
-        #print(f"[CircleArcPanel.split] Edge labels before split:")
-        #for edge in self.edges:
-        #    print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
+        #debug all of the edge labels
+        print(f"[CircleArcPanel.split] Edge labels before split:")
+        for edge in self.edges:
+           print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
 
         
         # Validate all edges are found
@@ -270,6 +272,13 @@ class CircleArcPanel(pyg.Panel):
 
 
         #print(f"[CircleArcPanel.split] Edge labels verified for new panels")
+
+        # add split history
+        self.split_history.append({
+            #'panel_name': self.name,
+            'proportion': proportion,
+            'new_panels': [panel1, panel2]
+        })
         
         # Return the new panels
         print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")
