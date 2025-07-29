@@ -336,7 +336,7 @@ class Chromosome(Layout):
 
     def _mutate_split(self):
         """Split a panel using the MetaGarment pipeline, preserving state."""
-        from nesting.panel_mapping import dispatch_split
+        #from nesting.panel_mapping import dispatch_split
         from nesting.path_extractor import PatternPathExtractor
         from assets.garment_programs.meta_garment import MetaGarment
         import tempfile

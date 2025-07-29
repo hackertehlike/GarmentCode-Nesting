@@ -479,146 +479,146 @@ def _apply_parameter_hierarchy(dp: Dict) -> None:
 
 # --- Panel Splitting Dispatcher ---
 
-# 1. Mapping from panel name prefixes to panel type identifiers
-PANEL_TYPE_MAPPING = {
-    'skirt_front': 'circle_skirt',
-    'skirt_back': 'circle_skirt',
-    'circle_skirt': 'circle_skirt',  # Direct match
-    'circle_panel': 'circle_skirt',  # For any generic circle panel
-    'halfcircle': 'circle_skirt',    # For half circle skirts
-    'test_panel': 'circle_skirt',    # For tests
-    # Add other panel types here in the future
-    # e.g., 'tshirt_front': 'tshirt',
-}
+# # 1. Mapping from panel name prefixes to panel type identifiers
+# PANEL_TYPE_MAPPING = {
+#     'skirt_front': 'circle_skirt',
+#     'skirt_back': 'circle_skirt',
+#     'circle_skirt': 'circle_skirt',  # Direct match
+#     'circle_panel': 'circle_skirt',  # For any generic circle panel
+#     'halfcircle': 'circle_skirt',    # For half circle skirts
+#     'test_panel': 'circle_skirt',    # For tests
+#     # Add other panel types here in the future
+#     # e.g., 'tshirt_front': 'tshirt',
+# }
 
-def get_panel_type(panel_name):
-    """Determines the panel type from its name using the mapping."""
-    #print(f"[DEBUG] get_panel_type called for panel '{panel_name}'")
-    for prefix, panel_type in PANEL_TYPE_MAPPING.items():
-        if panel_name.startswith(prefix):
-            #print(f"[DEBUG] Matched prefix '{prefix}' -> type '{panel_type}'")
-            return panel_type
-    #print(f"[DEBUG] No type mapping found for panel '{panel_name}'")
-    return None
+# def get_panel_type(panel_name):
+#     """Determines the panel type from its name using the mapping."""
+#     #print(f"[DEBUG] get_panel_type called for panel '{panel_name}'")
+#     for prefix, panel_type in PANEL_TYPE_MAPPING.items():
+#         if panel_name.startswith(prefix):
+#             #print(f"[DEBUG] Matched prefix '{prefix}' -> type '{panel_type}'")
+#             return panel_type
+#     #print(f"[DEBUG] No type mapping found for panel '{panel_name}'")
+#     return None
 
 
-def dispatch_split(piece, design_params=None, body_params=None):
-    """Calls the correct split() method on a piece based on its type or panel.
+# def dispatch_split(piece, design_params=None, body_params=None):
+#     """Calls the correct split() method on a piece based on its type or panel.
     
-    Args:
-        piece: The piece object to be split.
-        design_params: Optional design parameters to regenerate the pattern.
-        body_params: Optional body parameters to regenerate the pattern.
+#     Args:
+#         piece: The piece object to be split.
+#         design_params: Optional design parameters to regenerate the pattern.
+#         body_params: Optional body parameters to regenerate the pattern.
         
-    Returns:
-        A tuple of (left_piece, right_piece) if split is successful, or None.
-    """
-    import tempfile
-    from pathlib import Path
-    import copy
-    import nesting.config as config
+#     Returns:
+#         A tuple of (left_piece, right_piece) if split is successful, or None.
+#     """
+#     import tempfile
+#     from pathlib import Path
+#     import copy
+#     import nesting.config as config
     
-    #print(f"[DEBUG] dispatch_split called for piece '{piece.id}'")
+#     #print(f"[DEBUG] dispatch_split called for piece '{piece.id}'")
     
-    # If we have design params and body params, regenerate the MetaGarment pattern
-    if design_params and body_params:
-        #print(f"[DEBUG] Regenerating MetaGarment pattern for piece '{piece.id}'")
+#     # If we have design params and body params, regenerate the MetaGarment pattern
+#     if design_params and body_params:
+#         #print(f"[DEBUG] Regenerating MetaGarment pattern for piece '{piece.id}'")
 
-        from assets.garment_programs.meta_garment import MetaGarment
-        from nesting.path_extractor import PatternPathExtractor
+#         from assets.garment_programs.meta_garment import MetaGarment
+#         from nesting.path_extractor import PatternPathExtractor
 
-        # Determine panel type from piece ID
-        panel_type = get_panel_type(piece.id)
-        if not panel_type:
-            #print(f"[DEBUG] Cannot determine panel type for piece '{piece.id}'")
-            return None
+#         # Determine panel type from piece ID
+#         panel_type = get_panel_type(piece.id)
+#         if not panel_type:
+#             #print(f"[DEBUG] Cannot determine panel type for piece '{piece.id}'")
+#             return None
 
-        #print(f"[DEBUG] Panel type identified as: '{panel_type}'")
+#         #print(f"[DEBUG] Panel type identified as: '{panel_type}'")
 
-        # For now, only handle circle_skirt panels
-        #if panel_type != 'circle_skirt':
-            #print(f"[DEBUG] Only circle_skirt panels are currently supported for regeneration")
-        #    return None
+#         # For now, only handle circle_skirt panels
+#         #if panel_type != 'circle_skirt':
+#             #print(f"[DEBUG] Only circle_skirt panels are currently supported for regeneration")
+#         #    return None
 
-        # Regenerate the MetaGarment
-        mg = MetaGarment("split_regenerate", body_params, design_params)
+#         # Regenerate the MetaGarment
+#         mg = MetaGarment("split_regenerate", body_params, design_params)
 
-        # ------------------------------------------------------------------
-        # Find the panel on the MetaGarment BEFORE assembly and split it
-        # ------------------------------------------------------------------
-        panel = None
+#         # ------------------------------------------------------------------
+#         # Find the panel on the MetaGarment BEFORE assembly and split it
+#         # ------------------------------------------------------------------
+#         panel = None
 
-        is_front = "front" in piece.id.lower()
-        is_back = "back" in piece.id.lower()
+#         is_front = "front" in piece.id.lower()
+#         is_back = "back" in piece.id.lower()
 
-        skirt_component = None
-        for sub in mg.subs:
-            if hasattr(sub, 'front') and hasattr(sub, 'back'):
-                skirt_component = sub
-                break
+#         skirt_component = None
+#         for sub in mg.subs:
+#             if hasattr(sub, 'front') and hasattr(sub, 'back'):
+#                 skirt_component = sub
+#                 break
 
-        if skirt_component is None:
-            #print(f"[DEBUG] Could not find skirt component in the garment")
-            return None
+#         if skirt_component is None:
+#             #print(f"[DEBUG] Could not find skirt component in the garment")
+#             return None
 
-        if is_front and hasattr(skirt_component, 'front'):
-            panel = skirt_component.front
-        elif is_back and hasattr(skirt_component, 'back'):
-            panel = skirt_component.back
+#         if is_front and hasattr(skirt_component, 'front'):
+#             panel = skirt_component.front
+#         elif is_back and hasattr(skirt_component, 'back'):
+#             panel = skirt_component.back
 
-        if panel is None:
-            print(f"[DEBUG] Could not find panel '{piece.id}' in regenerated garment")
-            return None
+#         if panel is None:
+#             print(f"[DEBUG] Could not find panel '{piece.id}' in regenerated garment")
+#             return None
 
-        #print(f"[DEBUG] Found panel '{panel.name}' in regenerated garment")
+#         #print(f"[DEBUG] Found panel '{panel.name}' in regenerated garment")
 
-        if not hasattr(panel, 'split') or not callable(panel.split):
-            print(f"[DEBUG] Panel '{panel.name}' does not have a split method")
-            return None
+#         if not hasattr(panel, 'split') or not callable(panel.split):
+#             print(f"[DEBUG] Panel '{panel.name}' does not have a split method")
+#             return None
 
-        print(f"[DEBUG] Using specialized panel.split() method")
-        left_panel, right_panel = panel.split()
-        print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
+#         print(f"[DEBUG] Using specialized panel.split() method")
+#         left_panel, right_panel = panel.split()
+#         print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
 
-        # Assemble pattern AFTER the split
-        pattern = mg.assembly()
+#         # Assemble pattern AFTER the split
+#         pattern = mg.assembly()
         
-        # Export to temporary directory and create pieces
-        with tempfile.TemporaryDirectory() as td:
-            spec_file = Path(td) / f"{pattern.name}_specification.json"
-            pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
-                                with_text=False, view_ids=False)
-            extractor = PatternPathExtractor(spec_file)
+#         # Export to temporary directory and create pieces
+#         with tempfile.TemporaryDirectory() as td:
+#             spec_file = Path(td) / f"{pattern.name}_specification.json"
+#             pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
+#                                 with_text=False, view_ids=False)
+#             extractor = PatternPathExtractor(spec_file)
             
-            # Get pieces for the split panels
-            all_pieces = extractor.get_all_panel_pieces(
-                samples_per_edge=config.SAMPLES_PER_EDGE
-            )
+#             # Get pieces for the split panels
+#             all_pieces = extractor.get_all_panel_pieces(
+#                 samples_per_edge=config.SAMPLES_PER_EDGE
+#             )
             
-            if left_panel.name not in all_pieces or right_panel.name not in all_pieces:
-                #print(f"[DEBUG] Failed to extract split pieces from pattern")
-                return None
+#             if left_panel.name not in all_pieces or right_panel.name not in all_pieces:
+#                 #print(f"[DEBUG] Failed to extract split pieces from pattern")
+#                 return None
                 
-            left_piece = all_pieces[left_panel.name]
-            right_piece = all_pieces[right_panel.name]
+#             left_piece = all_pieces[left_panel.name]
+#             right_piece = all_pieces[right_panel.name]
             
-            # Copy necessary attributes from the original piece
-            for new_piece in [left_piece, right_piece]:
-                new_piece.parent_id = piece.id
-                new_piece.root_id = getattr(piece, "root_id", piece.id)
-                new_piece.rotation = piece.rotation
-                # Apply seam allowance
-                new_piece.add_seam_allowance()
-                new_piece.update_bbox()
+#             # Copy necessary attributes from the original piece
+#             for new_piece in [left_piece, right_piece]:
+#                 new_piece.parent_id = piece.id
+#                 new_piece.root_id = getattr(piece, "root_id", piece.id)
+#                 new_piece.rotation = piece.rotation
+#                 # Apply seam allowance
+#                 new_piece.add_seam_allowance()
+#                 new_piece.update_bbox()
             
-            #print(f"[DEBUG] Created split pieces: '{left_piece.id}' and '{right_piece.id}'")
-            return left_piece, right_piece
+#             #print(f"[DEBUG] Created split pieces: '{left_piece.id}' and '{right_piece.id}'")
+#             return left_piece, right_piece
     
-    # Fall back to the piece's own split method
-    if hasattr(piece, 'split') and callable(piece.split):
-        #print(f"[DEBUG] Falling back to generic piece.split() method")
-        return piece.split()
+#     # Fall back to the piece's own split method
+#     if hasattr(piece, 'split') and callable(piece.split):
+#         #print(f"[DEBUG] Falling back to generic piece.split() method")
+#         return piece.split()
     
-    # If we got here, no splitting method was available
-    #print(f"[DEBUG] No split method available for piece '{piece.id}'")
-    return None
+#     # If we got here, no splitting method was available
+#     #print(f"[DEBUG] No split method available for piece '{piece.id}'")
+#     return None

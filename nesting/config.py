@@ -21,7 +21,7 @@ CrossoverName = Literal["pmx", "ox1"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 
 # ——— algorithm settings —————————————————————————————————————
-SELECTED_DECODER       : DecoderName = "BL"
+SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"
@@ -130,7 +130,7 @@ SAVE_GENERATION_SVGS = True
 HULL_TRIM_RATIO = 10 # higher number -> more convex
 INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
 BOUNDARY_SAMPLE_SPACING = 3 # how many cm between sampled boundary points, tradeoff between speed and accuracy of the hull
-SNAP = False
+SNAP = True
 SNAP_TOLERANCE = 0.1 # how close points must be to snap to the hull, in percentage of the container size
 
 
