@@ -21,7 +21,7 @@ CrossoverName = Literal["pmx", "ox1"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 
 # ——— algorithm settings —————————————————————————————————————
-SELECTED_DECODER       : DecoderName = "NFP"
+SELECTED_DECODER       : DecoderName = "BL"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"

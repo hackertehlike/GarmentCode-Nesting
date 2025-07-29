@@ -276,6 +276,7 @@ class Chromosome(Layout):
         self.old_fitness: float | None = None
         self.new_fitness: float | None = None
         self.mutation_improvement: float | None = None
+        self.split_history: list[tuple[str, float]] = []
 
         # Keep a MetaGarment instance for incremental operations similar to the GUI
         self.meta_garment = None
@@ -343,41 +344,45 @@ class Chromosome(Layout):
 
         max_splits = min(config.NUM_SPLITS, len(self.genes))
         for _ in range(random.randint(1, max_splits)):
-            unsplit = [i for i, g in enumerate(self.genes) if g.parent_id is None]
-            if not unsplit:
-                break
+            #unsplit = [i for i, g in enumerate(self.genes) if g.parent_id is None]
+            #if not unsplit:
+            #    break
 
-            idx = random.choices(unsplit, weights=[self.genes[i].bbox_area for i in unsplit])[0]
+            #idx = random.choices(unsplit, weights=[self.genes[i].bbox_area for i in unsplit])[0]
+            #idx = random.choices(range(len(self.genes)), weights=[g.bbox_area for g in self.genes])[0]
+            idx = random.randrange(len(self.genes))
             piece = self.genes[idx]
 
-            # Ensure a MetaGarment instance
-            mg = self.meta_garment
-            if mg is None and self.design_params and self.body_params:
-                try:
-                    mg = MetaGarment("chromosome_split", self.body_params, self.design_params)
-                    self.meta_garment = mg
-                except Exception as exc:
-                    print(f"[Chromosome] Failed to create MetaGarment: {exc}")
 
-            if mg is None:
-                # Fallback to old dispatch_split behaviour
-                split_result = dispatch_split(piece, self.design_params, self.body_params)
-                if not split_result:
-                    print(f"[Chromosome] Failed to split piece '{piece.id}', skipping")
-                    continue
-                left, right = split_result
-                self.genes[idx:idx + 1] = [left, right]
-                child = random.choice([left, right])
-                self.genes.remove(child)
-                self.genes.insert(random.randrange(len(self.genes) + 1), child)
-                continue
+            # Ensure a MetaGarment instance is fresh for the split operation
+        
+            # mg = MetaGarment("chromosome_split", self.body_params, self.design_params)
+            # Re-apply existing splits to bring the new instance to the current state
+            #for panel_name, proportion in self.split_history:
+            #    mg.split_panel(panel_name, proportion)
+            # self.meta_garment = mg
+        
+            if not self.meta_garment:
+                left, right = piece.split()
+                # remove the original piece
+                self.genes.remove(piece)
+                # insert the first piece at the original index
+                self.genes.insert(idx, left)
+                # insert the second piece at a random position
+                self.genes.insert(random.randrange(len(self.genes) + 1), right)
+                return True  # Indicate successful mutation
+                
 
             # Use MetaGarment's split_panel pipeline
-            try:
-                new_panel_names = mg.split_panel(piece.id)
-            except Exception as exc:
-                print(f"[Chromosome] MetaGarment split failed for {piece.id}: {exc}")
-                continue
+            mg = self.meta_garment
+            proportion = random.uniform(0.3, 0.7)
+            new_panel_names = mg.split_panel(piece.id, proportion=proportion)
+            if new_panel_names is None:
+                print(f"[Chromosome] MetaGarment split failed for {piece.id}: no new panels returned")
+                return False
+            self.split_history.append((piece.id, proportion))
+            print(f"[Chromosome] Split {piece.id} into {new_panel_names} with proportion {proportion}")
+           
 
             pattern = mg.assembly()
             with tempfile.TemporaryDirectory() as td:
@@ -415,6 +420,8 @@ class Chromosome(Layout):
             child = random.choice([left_piece, right_piece])
             self.genes.remove(child)
             self.genes.insert(random.randrange(len(self.genes) + 1), child)
+
+            return True  # Indicate successful mutation
 
         # Recompute mutatable params since gene ids changed
         # self._mutatable_params = _collect_mutatable_params(self.design_params, self._genes)
@@ -521,7 +528,10 @@ class Chromosome(Layout):
 
         mg = MetaGarment("design_mut", self.body_params, self.design_params)
 
-        # todo: restore splits
+        # Restore splits from history
+        for panel_name, proportion in self.split_history:
+            print(f"[Chromosome] Reapplying split for {panel_name} with proportion {proportion}")
+            mg.split_panel(panel_name, proportion)
 
         pattern = mg.assembly()
         with tempfile.TemporaryDirectory() as td:

@@ -239,11 +239,14 @@ class MetaGarment(pyg.Component):
             raise ValueError(f"Could not find parent component for panel {panel_name}")
             
         # replace the original panel with the  subpanels
-        self._replace_panel_with_subpanels(parent_component, panel, [subpanel1, subpanel2])
+        replaced = self._replace_panel_with_subpanels(parent_component, panel, [subpanel1, subpanel2])
         
-        # return the names of the new panels
-        return [subpanel1.name, subpanel2.name]
-    
+        if replaced:
+            # return the names of the new panels
+            return [subpanel1.name, subpanel2.name]
+        
+        return None
+        
     def _get_all_subcomponents_recursive(self):
         """Traverse the component tree and yield all subcomponents."""
         components_to_visit = list(self._get_subcomponents())
@@ -292,8 +295,6 @@ class MetaGarment(pyg.Component):
             parent_component: The component containing the original panel
             original_panel: The panel to replace
             subpanels: List of new panels to replace the original with
-
-        don't ask me how this works, thank you claude sonnet
         """
         replaced = False
         
@@ -343,17 +344,14 @@ class MetaGarment(pyg.Component):
             except ValueError:
                 pass # original_panel not in subs list
                 
-        if not replaced:
-            # Fallback: if we couldn't find where the panel is stored, 
-            # just add all subpanels to the subs list.
-            print(f"Warning: Could not determine how panel {original_panel.name} is stored in its parent. "
-                  f"Adding subpanels to the parent's subs list.")
-            if not hasattr(parent_component, 'subs'):
-                parent_component.subs = []
-            for subpanel in subpanels:
-                if subpanel not in parent_component.subs:
-                    parent_component.subs.append(subpanel)
-        
-        # print(f"[DEBUG] Panel replacement complete. Replaced: {replaced}")
-        # if hasattr(parent_component, 'subs'):
-        #     print(f"[DEBUG] Parent component now has {len(parent_component.subs)} subs")
+        return replaced
+            
+        #     # Fallback: if we couldn't find where the panel is stored, 
+        #     # just add all subpanels to the subs list.
+        #     print(f"Warning: Could not determine how panel {original_panel.name} is stored in its parent. "
+        #           f"Adding subpanels to the parent's subs list.")
+        #     if not hasattr(parent_component, 'subs'):
+        #         parent_component.subs = []
+        #     for subpanel in subpanels:
+        #         if subpanel not in parent_component.subs:
+        #             parent_component.subs.append(subpanel)

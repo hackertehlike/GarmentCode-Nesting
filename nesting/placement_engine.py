@@ -435,9 +435,9 @@ class PlacementEngine:
 
 @register_decoder("BL")
 class BottomLeftDecoder(PlacementEngine):
-    def __init__(self, layout: Layout, container: Container, *, step=None, **kwargs):
+    def __init__(self, layout: Layout, container: Container, *, step: Optional[float] = None, **kwargs):
         super().__init__(layout, container)
-        self.step = step
+        self.step = step if step is not None else config.GRAVITATE_STEP
 
     
     def decode(self) -> list[Tuple[str, float, float, float]]:
