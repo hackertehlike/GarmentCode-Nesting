@@ -243,6 +243,23 @@ class MetaGarment(pyg.Component):
         
         # return the names of the new panels
         return [subpanel1.name, subpanel2.name]
+    
+    def _get_all_subcomponents_recursive(self):
+        """Traverse the component tree and yield all subcomponents."""
+        components_to_visit = list(self._get_subcomponents())
+        visited = set()
+
+        while components_to_visit:
+            component = components_to_visit.pop(0)
+            if component in visited:
+                continue
+            
+            visited.add(component)
+            yield component
+
+            if hasattr(component, '_get_subcomponents'):
+                # Add children to the list to be visited
+                components_to_visit.extend(component._get_subcomponents())
         
     def _find_panel_parent(self, panel_name):
         """Find the component that directly contains the panel with the given name.
@@ -260,37 +277,11 @@ class MetaGarment(pyg.Component):
                 return self
                 
         # Then check all subcomponents
-        for component in self._get_subcomponents():
+        for component in self._get_all_subcomponents_recursive():
             # Check if the component is itself the panel we're looking for
-            if isinstance(component, pyg.Panel) and component.name == panel_name:
-                return self
-                
-            # Check if this component has the panel as a direct attribute
-            if hasattr(component, panel_name):
-                attr = getattr(component, panel_name)
-                if isinstance(attr, pyg.Panel) and attr.name == panel_name:
-                    return component
-                    
-            # For components that store panels as attributes with names different from the panel's name
-            for attr_name in dir(component):
-                if attr_name.startswith('_') or attr_name in ('name', 'interfaces'):
-                    continue
-                    
-                attr = getattr(component, attr_name)
-                if isinstance(attr, pyg.Panel) and hasattr(attr, 'name') and attr.name == panel_name:
-                    return component
-                    
-            # If the component is itself a Component, recursively search in it
-            if hasattr(component, '_find_panel_parent'):
-                parent = component._find_panel_parent(panel_name)
-                if parent:
-                    return parent
-                    
-            # If component has get_panel_by_name, check if it contains the panel
-            if hasattr(component, 'get_panel_by_name'):
-                if component.get_panel_by_name(panel_name):
-                    # This component contains the panel somehow
-                    return component
+            print(f"Checking component {component.name} for panel {panel_name}")
+            if hasattr(component, 'name') and component.name in panel_name:
+                return component
                     
         return None
         

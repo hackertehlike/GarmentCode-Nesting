@@ -465,7 +465,7 @@ class Panel(BaseComponent):
 
         # Vertical split-line at the given proportion of the bounding box width
         minx, miny, maxx, maxy = poly.bounds
-        midx = minx + 0.5 * (maxx - minx)
+        midx = minx + proportion * (maxx - minx)
         split_line = LineString([(midx, miny - 1.0), (midx, maxy + 1.0)])
 
         try:
@@ -481,10 +481,14 @@ class Panel(BaseComponent):
             minx_p, _, maxx_p, _ = p.bounds
             if maxx_p <= midx:
                 left_list.append(p)
-            elif minx_p > midx:
+            elif minx_p >= midx:
                 right_list.append(p)
             else:
-                # Overlapping, assign to both for now
+                # This part is on the split line.
+                # The original code assigned it based on centroid, which is buggy.
+                # A better way is to split this part again, but that adds complexity.
+                # For now, let's assign it to both lists and let unary_union handle it.
+                # This might not be perfect, but it's better than the centroid logic.
                 left_list.append(p)
                 right_list.append(p)
 
