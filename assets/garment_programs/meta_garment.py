@@ -238,7 +238,7 @@ class MetaGarment(pyg.Component):
         if not parent_component:
             raise ValueError(f"Could not find parent component for panel {panel_name}")
             
-        # replace the original panel with the subpanels
+        # replace the original panel with the  subpanels
         self._replace_panel_with_subpanels(parent_component, panel, [subpanel1, subpanel2])
         
         # return the names of the new panels
@@ -294,74 +294,74 @@ class MetaGarment(pyg.Component):
                     
         return None
         
-    # def _replace_panel_with_subpanels(self, parent_component, original_panel, subpanels):
-    #     """Replace a panel with its subpanels in the parent component.
+    def _replace_panel_with_subpanels(self, parent_component, original_panel, subpanels):
+        """Replace a panel with its subpanels in the parent component.
         
-    #     Args:
-    #         parent_component: The component containing the original panel
-    #         original_panel: The panel to replace
-    #         subpanels: List of new panels to replace the original with
+        Args:
+            parent_component: The component containing the original panel
+            original_panel: The panel to replace
+            subpanels: List of new panels to replace the original with
 
-    #     don't ask me how this works, thank you claude sonnet
-    #     """
-    #     replaced = False
+        don't ask me how this works, thank you claude sonnet
+        """
+        replaced = False
         
-    #     # Case 1: Panel is stored as an attribute with name matching the panel's name
-    #     if hasattr(parent_component, original_panel.name):
-    #         attr = getattr(parent_component, original_panel.name)
-    #         if attr is original_panel:
-    #             # Store the first subpanel under the same attribute
-    #             setattr(parent_component, original_panel.name, subpanels[0])
-    #             # And add any additional subpanels to subs
-    #             for i, subpanel in enumerate(subpanels):
-    #                 if i > 0:  # Skip the first one which we already set as an attribute
-    #                     if not hasattr(parent_component, 'subs'):
-    #                         parent_component.subs = []
-    #                     if subpanel not in parent_component.subs:
-    #                         parent_component.subs.append(subpanel)
-    #             replaced = True
+        # Case 1: Panel is stored as an attribute with a name matching the panel's name
+        if hasattr(parent_component, original_panel.name):
+            attr = getattr(parent_component, original_panel.name)
+            if attr is original_panel:
+                # Store the first subpanel under the same attribute
+                setattr(parent_component, original_panel.name, subpanels[0])
+                # And add any additional subpanels to subs
+                if hasattr(parent_component, 'subs'):
+                    for i, subpanel in enumerate(subpanels):
+                        if i > 0:
+                            if subpanel not in parent_component.subs:
+                                parent_component.subs.append(subpanel)
+                replaced = True
                 
-    #     # # Case 2: Panel is stored as an attribute with a different name
-    #     # would this even happen
-    #     # if not replaced:
-    #     #     for attr_name in dir(parent_component):
-    #     #         if attr_name.startswith('_') or attr_name in ('name', 'interfaces'):
-    #     #             continue
+        # Case 2: Panel is stored as an attribute with a different name
+        if not replaced:
+            for attr_name in dir(parent_component):
+                if attr_name.startswith('_') or attr_name in ('name', 'interfaces'):
+                    continue
                     
-    #     #         attr = getattr(parent_component, attr_name)
-    #     #         if attr is original_panel:
-    #     #             # Found it - replace with the first subpanel
-    #     #             setattr(parent_component, attr_name, subpanels[0])
-    #     #             # And add any additional subpanels to subs
-    #     #             for i, subpanel in enumerate(subpanels):
-    #     #                 if i > 0:  # Skip the first one which we already set as an attribute
-    #     #                     if not hasattr(parent_component, 'subs'):
-    #     #                         parent_component.subs = []
-    #     #                     if subpanel not in parent_component.subs:
-    #     #                         parent_component.subs.append(subpanel)
-    #     #             replaced = True
-    #     #             break
+                attr = getattr(parent_component, attr_name)
+                if attr is original_panel:
+                    # Found it - replace with the first subpanel
+                    setattr(parent_component, attr_name, subpanels[0])
+                    # And add any additional subpanels to subs
+                    if hasattr(parent_component, 'subs'):
+                        for i, subpanel in enumerate(subpanels):
+                            if i > 0:
+                                if subpanel not in parent_component.subs:
+                                    parent_component.subs.append(subpanel)
+                    replaced = True
+                    break
                     
-    #     # Case 3: Panel is in the subs list
-    #     if not replaced and hasattr(parent_component, 'subs'):
-    #         if original_panel in parent_component.subs:
-    #             idx = parent_component.subs.index(original_panel)
-    #             # Replace the original panel with the first subpanel
-    #             parent_component.subs[idx] = subpanels[0]
-    #             # Add any additional subpanels
-    #             for i, subpanel in enumerate(subpanels):
-    #                 if i > 0:  # Skip the first one which we already replaced
-    #                     if subpanel not in parent_component.subs:
-    #                         parent_component.subs.append(subpanel)
-    #             replaced = True
+        # Case 3: Panel is in the subs list
+        if hasattr(parent_component, 'subs'):
+            try:
+                idx = parent_component.subs.index(original_panel)
+                # Replace the original panel with the subpanels
+                parent_component.subs.pop(idx)
+                for subpanel in reversed(subpanels): # insert in order
+                    parent_component.subs.insert(idx, subpanel)
+                replaced = True
+            except ValueError:
+                pass # original_panel not in subs list
                 
-    #     if not replaced:
-    #         # If we couldn't find where the panel is stored, just add all subpanels to the subs list
-    #         # and hope for the best
-    #         print(f"Warning: Could not find how panel {original_panel.name} is stored in its parent. "
-    #               f"Adding subpanels to the parent's subs list.")
-    #         if not hasattr(parent_component, 'subs'):
-    #             parent_component.subs = []
-    #         for subpanel in subpanels:
-    #             if subpanel not in parent_component.subs:
-    #                 parent_component.subs.append(subpanel)
+        if not replaced:
+            # Fallback: if we couldn't find where the panel is stored, 
+            # just add all subpanels to the subs list.
+            print(f"Warning: Could not determine how panel {original_panel.name} is stored in its parent. "
+                  f"Adding subpanels to the parent's subs list.")
+            if not hasattr(parent_component, 'subs'):
+                parent_component.subs = []
+            for subpanel in subpanels:
+                if subpanel not in parent_component.subs:
+                    parent_component.subs.append(subpanel)
+        
+        # print(f"[DEBUG] Panel replacement complete. Replaced: {replaced}")
+        # if hasattr(parent_component, 'subs'):
+        #     print(f"[DEBUG] Parent component now has {len(parent_component.subs)} subs")

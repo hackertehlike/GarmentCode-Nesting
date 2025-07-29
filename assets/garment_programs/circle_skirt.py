@@ -274,11 +274,11 @@ class CircleArcPanel(pyg.Panel):
         #print(f"[CircleArcPanel.split] Edge labels verified for new panels")
 
         # add split history
-        self.split_history.append({
-            #'panel_name': self.name,
-            'proportion': proportion,
-            'new_panels': [panel1, panel2]
-        })
+        # self.split_history.append({
+        #     #'panel_name': self.name,
+        #     'proportion': proportion,
+        #     'new_panels': [panel1, panel2]
+        # })
         
         # Return the new panels
         print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")

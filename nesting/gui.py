@@ -1351,10 +1351,10 @@ class NestingGUI:
         from pathlib import Path
         
         # Identify the panel type
-        panel_type = get_panel_type(pid)
-        if not panel_type:
-            ui.notify(f"Cannot determine panel type for '{pid}'", type="warning")
-            return
+        #panel_type = get_panel_type(pid)
+        #if not panel_type:
+        #    ui.notify(f"Cannot determine panel type for '{pid}'", type="warning")
+        #    return
             
         #ui.notify(f"[GUI] Panel type identified as: '{panel_type}'")
         

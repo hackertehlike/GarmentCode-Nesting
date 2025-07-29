@@ -536,9 +536,9 @@ def dispatch_split(piece, design_params=None, body_params=None):
         #print(f"[DEBUG] Panel type identified as: '{panel_type}'")
 
         # For now, only handle circle_skirt panels
-        if panel_type != 'circle_skirt':
+        #if panel_type != 'circle_skirt':
             #print(f"[DEBUG] Only circle_skirt panels are currently supported for regeneration")
-            return None
+        #    return None
 
         # Regenerate the MetaGarment
         mg = MetaGarment("split_regenerate", body_params, design_params)
@@ -567,18 +567,18 @@ def dispatch_split(piece, design_params=None, body_params=None):
             panel = skirt_component.back
 
         if panel is None:
-            #print(f"[DEBUG] Could not find panel '{piece.id}' in regenerated garment")
+            print(f"[DEBUG] Could not find panel '{piece.id}' in regenerated garment")
             return None
 
         #print(f"[DEBUG] Found panel '{panel.name}' in regenerated garment")
 
         if not hasattr(panel, 'split') or not callable(panel.split):
-            #print(f"[DEBUG] Panel '{panel.name}' does not have a split method")
+            print(f"[DEBUG] Panel '{panel.name}' does not have a split method")
             return None
 
-        #print(f"[DEBUG] Using specialized panel.split() method")
+        print(f"[DEBUG] Using specialized panel.split() method")
         left_panel, right_panel = panel.split()
-        #print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
+        print(f"[DEBUG] Panel split successful: {left_panel.name}, {right_panel.name}")
 
         # Assemble pattern AFTER the split
         pattern = mg.assembly()

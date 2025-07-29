@@ -10,6 +10,12 @@ from pygarment.garmentcode.utils import close_enough, vector_align_3D
 from pygarment.garmentcode.operators import cut_into_edge
 from pygarment.garmentcode.interface import Interface
 
+from pygarment.garmentcode.edge_factory import EdgeSeqFactory
+from shapely.geometry import Polygon, LineString
+from shapely.ops import split as shapely_split
+from shapely import MultiPolygon, unary_union
+from shapely.errors import GEOSException as TopologyException
+
 
 class Panel(BaseComponent):
     """ A Base class for defining a Garment component corresponding to a single
@@ -439,8 +445,68 @@ class Panel(BaseComponent):
         return leftmost
     
     def split(self, proportion=0.5):
-        """ Split the panel into two panels along the center line wrt the bounding box."""
+        """Split this panel vertically at ``proportion`` of its bounding box width.
 
-        return NotImplementedError(
-            f"{self.__class__.__name__}::{self.name}::ERROR::Split operation is not implemented for this panel type."
-        )
+        The implementation mirrors :meth:`nesting.layout.Piece.split` by
+        converting the current :class:`EdgeSequence` into a Shapely polygon,
+        performing the split using ``shapely.ops.split`` and constructing new
+        :class:`Panel` objects from the resulting geometries.  All curvature
+        information is lost as the polygon is approximated by straight edges.
+        """
+
+        # Convert current edges into a Shapely polygon using a linear
+        # approximation so that curved edges are handled as straight segments.
+        lin_edges = EdgeSequence([e.linearize() for e in self.edges])
+        verts = lin_edges.verts()
+        poly = Polygon(verts)
+
+        if not poly.is_valid:
+            raise ValueError(f"{self.name} produces an invalid polygon for split")
+
+        # Vertical split-line at the given proportion of the bounding box width
+        minx, miny, maxx, maxy = poly.bounds
+        midx = minx + proportion * (maxx - minx)
+        split_line = LineString([(midx, miny - 1.0), (midx, maxy + 1.0)])
+
+        try:
+            result = shapely_split(poly, split_line)
+        except TopologyException as exc:  # pragma: no cover - geometry errors
+            raise RuntimeError(f"Failed to split panel {self.name}: {exc}")
+
+        parts = [g for g in result.geoms if isinstance(g, Polygon)]
+
+        # Group fragments into left and right halves by centroid position
+        left_list = [g for g in parts if g.centroid.x <= midx]
+        right_list = [g for g in parts if g.centroid.x > midx]
+        if not left_list:
+            left_list = parts[:1]
+        if not right_list:
+            right_list = parts[-1:]
+
+        def _combine(frags):
+            combined = unary_union(frags)
+            if isinstance(combined, Polygon):
+                return combined
+            if isinstance(combined, MultiPolygon):
+                return max(combined.geoms, key=lambda p: p.area)
+            raise ValueError("Unexpected geometry type after union")
+
+        poly_left = _combine(left_list)
+        poly_right = _combine(right_list)
+
+        def _poly_to_panel(poly, suffix):
+            ox_min, oy_min, _, _ = poly.bounds
+            coords_local = [
+                [x - ox_min, y - oy_min] for x, y in list(poly.exterior.coords)[:-1]
+            ]
+            p = Panel(f"{self.name}_split_{suffix}")
+            p.label = ""
+            p.rotation = self.rotation
+            p.translation = self.translation + self.rotation.apply([ox_min, oy_min, 0])
+            p.edges = EdgeSeqFactory.from_verts(*coords_local, loop=True)
+            return p
+
+        panel_left = _poly_to_panel(poly_left, 'left')
+        panel_right = _poly_to_panel(poly_right, 'right')
+
+        return panel_left, panel_right
