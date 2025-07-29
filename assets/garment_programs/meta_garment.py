@@ -281,10 +281,20 @@ class MetaGarment(pyg.Component):
                 
         # Then check all subcomponents
         for component in self._get_all_subcomponents_recursive():
-            # Check if the component is itself the panel we're looking for
-            print(f"Checking component {component.name} for panel {panel_name}")
-            if hasattr(component, 'name') and component.name in panel_name:
-                return component
+            # Check attributes of the component
+            for attr_name in dir(component):
+                if attr_name.startswith('_'):
+                    continue
+                
+                attr = getattr(component, attr_name)
+                if isinstance(attr, pyg.Panel) and hasattr(attr, 'name') and attr.name == panel_name:
+                    return component
+
+            # Check subs list of the component
+            if hasattr(component, 'subs'):
+                for sub in component.subs:
+                    if isinstance(sub, pyg.Panel) and hasattr(sub, 'name') and sub.name == panel_name:
+                        return component
                     
         return None
         
@@ -332,17 +342,17 @@ class MetaGarment(pyg.Component):
                     break
                     
         # Case 3: Panel is in the subs list
-        if hasattr(parent_component, 'subs'):
+        if not replaced and hasattr(parent_component, 'subs'):
             try:
                 idx = parent_component.subs.index(original_panel)
                 # Replace the original panel with the subpanels
                 parent_component.subs.pop(idx)
-                if not replaced:
-                    for subpanel in reversed(subpanels): # insert in order
-                        parent_component.subs.insert(idx, subpanel)
+                for subpanel in reversed(subpanels): # insert in order
+                    parent_component.subs.insert(idx, subpanel)
                 replaced = True
             except ValueError:
-                pass # original_panel not in subs list
+                # The panel was not in the subs list, which is fine if it was handled above.
+                pass
                 
         return replaced
             
