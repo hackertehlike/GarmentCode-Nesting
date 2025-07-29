@@ -1343,6 +1343,21 @@ class NestingGUI:
         if not self.design_params or not self.body_params:
             print(f"[GUI] Missing design or body params")
             ui.notify("Design or body parameters are missing", type="warning")
+
+            # use the Piece.split() method to split the panel
+            try:
+                left, right = piece.split()
+                self.pieces[left.id] = left
+                self.pieces[right.id] = right
+                #self._draw_panel(left.id)
+                #self._draw_panel(right.id)
+                self.selected_panel = None # Clear selection after split
+                ui.notify(f"Panel '{pid}' split into '{left.id}' and '{right.id}'", type="positive")
+            except Exception as e:
+                print(f"Error splitting panel: {e}")
+                ui.notify(f"Error splitting panel: {e}", type="negative")
+            self._rebuild_panel_outlines()  # Rebuild outlines after split
+            self._draw_outlines()            # Redraw the outlines
             return
 
         # # Follow the chromosome's split mutation pattern

@@ -465,7 +465,7 @@ class Panel(BaseComponent):
 
         # Vertical split-line at the given proportion of the bounding box width
         minx, miny, maxx, maxy = poly.bounds
-        midx = minx + proportion * (maxx - minx)
+        midx = minx + 0.5 * (maxx - minx)
         split_line = LineString([(midx, miny - 1.0), (midx, maxy + 1.0)])
 
         try:
@@ -475,13 +475,23 @@ class Panel(BaseComponent):
 
         parts = [g for g in result.geoms if isinstance(g, Polygon)]
 
-        # Group fragments into left and right halves by centroid position
-        left_list = [g for g in parts if g.centroid.x <= midx]
-        right_list = [g for g in parts if g.centroid.x > midx]
+        # Group fragments into left and right halves by bounding box position
+        left_list, right_list = [], []
+        for p in parts:
+            minx_p, _, maxx_p, _ = p.bounds
+            if maxx_p <= midx:
+                left_list.append(p)
+            elif minx_p > midx:
+                right_list.append(p)
+            else:
+                # Overlapping, assign to both for now
+                left_list.append(p)
+                right_list.append(p)
+
         if not left_list:
-            left_list = parts[:1]
+            left_list = parts
         if not right_list:
-            right_list = parts[-1:]
+            right_list = parts
 
         def _combine(frags):
             combined = unary_union(frags)

@@ -345,8 +345,9 @@ class MetaGarment(pyg.Component):
                 idx = parent_component.subs.index(original_panel)
                 # Replace the original panel with the subpanels
                 parent_component.subs.pop(idx)
-                for subpanel in reversed(subpanels): # insert in order
-                    parent_component.subs.insert(idx, subpanel)
+                if not replaced:
+                    for subpanel in reversed(subpanels): # insert in order
+                        parent_component.subs.insert(idx, subpanel)
                 replaced = True
             except ValueError:
                 pass # original_panel not in subs list
