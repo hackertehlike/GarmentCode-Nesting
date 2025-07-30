@@ -9,7 +9,7 @@ from assets.garment_programs import sleeves
 from assets.garment_programs import collars
 from assets.garment_programs import tee
 from scipy.spatial.transform import Rotation as R
-from split_utils import *
+from assets.garment_programs import split_utils
 class BodiceFrontHalf(BaseBodicePanel):
     def __init__(self, name, body, design) -> None:
         super().__init__(name, body, design)
@@ -315,7 +315,12 @@ class BodiceHalf(pyg.Component):
         # Add edge labels
         f_sleeve_int.edges.propagate_label(f'{self.name}_armhole')
         b_sleeve_int.edges.propagate_label(f'{self.name}_armhole')
-    
+
+        for e in f_sleeve_int.edges:
+            e.add_semantic_label("armhole")
+        for e in b_sleeve_int.edges:
+            e.add_semantic_label("armhole")
+
     def add_collars(self, name, body, design):
         # Front
         collar_type = getattr(
@@ -360,6 +365,10 @@ class BodiceHalf(pyg.Component):
         # Add edge labels
         fc_interface.edges.propagate_label(f'{self.name}_collar')
         bc_interface.edges.propagate_label(f'{self.name}_collar')
+        for e in fc_interface.edges:
+            e.add_semantic_label("collar")
+        for e in bc_interface.edges:
+            e.add_semantic_label("collar")
 
     def make_strapless(self, body, design):
 

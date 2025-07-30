@@ -114,3 +114,31 @@ class TorsoBackHalfPanel(BaseBodicePanel):
 
     def get_width(self, level):
         return super().get_width(level) + self.width - self.body['shoulder_w'] / 2
+
+    # def split(self, proportion=0.5):
+    #     """Split the back panel into two parts"""
+    #     from assets.garment_programs import split_utils
+        
+    #     # Back panel
+    #     # Back panel
+    #     #bottom_edges = split_utils.collect_edges_by_label(self, ['bottom'], prefixes=['dart_'])
+
+    #     # Split the top and bottom edges
+    #     # top_edges = split_utils.split_edges(top_edges, proportion)
+    #     # bottom_edges = split_utils.split_edges(bottom_edges, proportion)
+    #     top_edges = split_utils.collect_edges_by_label(self, ['shoulder', 'collar', 'armhole'])
+    #     # Create new panels for the split sections
+    #     split_pt = split_utils.split_point(
+    #         top_edges=top_edges,
+    #         dart_tips=None,
+    #         proportion=proportion
+    #     )
+        
+    #     # find which edge split_pt is on
+    #     for edge in top_edges:    git checkout main
+    #         if split_pt in edge:
+    #             split_edge = edge
+    #             break
+
+
+    #     print(f"Split point: {split_pt} on edge {split_edge}")
