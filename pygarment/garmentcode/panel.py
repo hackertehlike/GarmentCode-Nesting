@@ -404,7 +404,15 @@ class Panel(BaseComponent):
         verts_2d = np.asarray(lin_edges.verts())
 
         return verts_2d.min(axis=0), verts_2d.max(axis=0)
-
+        
+    def get_bounds(self):
+        """Get the bounding box of the panel.
+        
+        Returns:
+            Tuple[float, float, float, float]: (x_min, y_min, x_max, y_max)
+        """
+        min_point, max_point = self.bbox()
+        return min_point[0], min_point[1], max_point[0], max_point[1]
 
     def bbox3D(self):
         """Evaluate 3D bounding box of the current panel"""

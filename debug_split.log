@@ -1,0 +1,175 @@
+
+
+--- NEW SPLIT OPERATION ---
+DEBUG: PantPanel.split called with proportion=0.65
+DEBUG: Panel name: pant_b_l
+
+--- COMPREHENSIVE EDGE INSPECTION ---
+Edge 0: [35.0, -16.0] -> [1.9249999999999972, -16.0], Labels: set()
+Edge 1: [1.9249999999999972, -16.0] -> [-0.07500000000000284, 0.4799999999999969], Labels: {'left'}
+Edge 2: [-0.07500000000000284, 0.4799999999999969] -> [7.600000000000001, 20.9225], Labels: {'crotch_bottom'}
+Edge 3: [7.600000000000001, 20.9225] -> [7.600000000000001, 35.14], Labels: {'crotch_top'}
+Edge 4: [7.600000000000001, 35.14] -> [14.424999933039334, 35.14], Labels: set()
+Edge 5: [14.424999933039334, 35.14] -> [15.830059465619785, 14.507787134921642], Labels: {'dart_2'}
+  Dart label breakdown: ['dart', '2']
+Edge 6: [15.830059465619785, 14.507787134921642] -> [17.235118998200235, 35.14], Labels: {'dart_2'}
+  Dart label breakdown: ['dart', '2']
+Edge 7: [17.235118998200235, 35.14] -> [21.785119078068735, 35.14], Labels: set()
+Edge 8: [21.785119078068735, 35.14] -> [23.190178610649188, 16.581111247978644], Labels: {'dart_1'}
+  Dart label breakdown: ['dart', '1']
+Edge 9: [23.190178610649188, 16.581111247978644] -> [24.595238143229636, 35.14], Labels: {'dart_1'}
+  Dart label breakdown: ['dart', '1']
+Edge 10: [24.595238143229636, 35.14] -> [32.7702381303218, 35.14], Labels: set()
+Edge 11: [32.7702381303218, 35.14] -> [35.0, 9.289999999999996], Labels: {'right_top'}
+Edge 12: [35.0, 9.289999999999996] -> [35.0, -16.0], Labels: {'right_bottom'}
+--- END EDGE INSPECTION ---
+
+
+--- INTERFACE INSPECTION ---
+Interface 'outside' contains 2 edges:
+  Edge 0: [35.0, 9.289999999999996] -> [35.0, -16.0], Labels: {'right_bottom'}
+  Edge 1: [32.7702381303218, 35.14] -> [35.0, 9.289999999999996], Labels: {'right_top'}
+Interface 'crotch' contains 2 edges:
+  Edge 0: [7.600000000000001, 20.9225] -> [7.600000000000001, 35.14], Labels: {'crotch_top'}
+  Edge 1: [-0.07500000000000284, 0.4799999999999969] -> [7.600000000000001, 20.9225], Labels: {'crotch_bottom'}
+Interface 'inside' contains 1 edges:
+  Edge 0: [1.9249999999999972, -16.0] -> [-0.07500000000000284, 0.4799999999999969], Labels: {'left'}
+Interface 'bottom' contains 1 edges:
+  Edge 0: [35.0, -16.0] -> [1.9249999999999972, -16.0], Labels: set()
+Interface 'top' contains 3 edges:
+  Edge 0: [24.595238143229636, 35.14] -> [32.7702381303218, 35.14], Labels: set()
+  Edge 1: [17.235118998200235, 35.14] -> [21.785119078068735, 35.14], Labels: set()
+  Edge 2: [7.600000000000001, 35.14] -> [14.424999933039334, 35.14], Labels: set()
+--- END INTERFACE INSPECTION ---
+
+DEBUG: Found top edge with labels: {'dart_2'}
+DEBUG: Found top edge with labels: {'dart_2'}
+DEBUG: Found top edge with labels: {'dart_1'}
+DEBUG: Found top edge with labels: {'dart_1'}
+
+--- DETAILED DART EDGE DETECTION ---
+Edge [35.0, -16.0] -> [1.9249999999999972, -16.0]:
+  Labels: set()
+  has_dart_1: False, has_dart_2: False
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [1.9249999999999972, -16.0] -> [-0.07500000000000284, 0.4799999999999969]:
+  Labels: {'left'}
+  has_dart_1: False, has_dart_2: False
+  has_left: True, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [-0.07500000000000284, 0.4799999999999969] -> [7.600000000000001, 20.9225]:
+  Labels: {'crotch_bottom'}
+  has_dart_1: False, has_dart_2: False
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [7.600000000000001, 20.9225] -> [7.600000000000001, 35.14]:
+  Labels: {'crotch_top'}
+  has_dart_1: False, has_dart_2: False
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [7.600000000000001, 35.14] -> [14.424999933039334, 35.14]:
+  Labels: set()
+  has_dart_1: False, has_dart_2: False
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [14.424999933039334, 35.14] -> [15.830059465619785, 14.507787134921642]:
+  Labels: {'dart_2'}
+  has_dart_1: False, has_dart_2: True
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [15.830059465619785, 14.507787134921642] -> [17.235118998200235, 35.14]:
+  Labels: {'dart_2'}
+  has_dart_1: False, has_dart_2: True
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [17.235118998200235, 35.14] -> [21.785119078068735, 35.14]:
+  Labels: set()
+  has_dart_1: False, has_dart_2: False
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [21.785119078068735, 35.14] -> [23.190178610649188, 16.581111247978644]:
+  Labels: {'dart_1'}
+  has_dart_1: True, has_dart_2: False
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [23.190178610649188, 16.581111247978644] -> [24.595238143229636, 35.14]:
+  Labels: {'dart_1'}
+  has_dart_1: True, has_dart_2: False
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [24.595238143229636, 35.14] -> [32.7702381303218, 35.14]:
+  Labels: set()
+  has_dart_1: False, has_dart_2: False
+  has_left: False, has_right: False
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [32.7702381303218, 35.14] -> [35.0, 9.289999999999996]:
+  Labels: {'right_top'}
+  has_dart_1: False, has_dart_2: False
+  has_left: False, has_right: True
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Edge [35.0, 9.289999999999996] -> [35.0, -16.0]:
+  Labels: {'right_bottom'}
+  has_dart_1: False, has_dart_2: False
+  has_left: False, has_right: True
+  Specific: dart_1_left: False, dart_1_right: False
+  Specific: dart_2_left: False, dart_2_right: False
+  Not a dart left/right edge
+Found 0 left dart edges and 0 right dart edges
+--- END DETAILED DART EDGE DETECTION ---
+
+
+--- FINDING DART TIPS DIRECTLY FROM GEOMETRY ---
+Found dart numbers: {'1', '2'}
+Found 2 edges for dart_1
+Processing dart #1 with 2 edges
+Checking edges 0 and 1 for common points
+Found common point between edges at: [23.190178610649188, 16.581111247978644]
+Found 2 edges for dart_2
+Processing dart #2 with 2 edges
+Checking edges 0 and 1 for common points
+Found common point between edges at: [15.830059465619785, 14.507787134921642]
+Found 2 dart tips
+Dart tip #1: [23.190178610649188, 16.581111247978644]
+Dart tip #2: [15.830059465619785, 14.507787134921642]
+--- END FINDING DART TIPS ---
+DEBUG: Edge 0 length: 20.68, labels: {'dart_2'}
+DEBUG: Edge 1 length: 20.68, labels: {'dart_2'}
+DEBUG: Edge 2 length: 18.61, labels: {'dart_1'}
+DEBUG: Edge 3 length: 18.61, labels: {'dart_1'}
+DEBUG: Total top length: 78.58
+DEBUG: Target length along top edges: 51.08
+DEBUG: Checking edge 0, current_length=0.00, target=51.08, edge_length=20.68
+DEBUG: Checking edge 1, current_length=20.68, target=51.08, edge_length=20.68
+DEBUG: Checking edge 2, current_length=41.36, target=51.08, edge_length=18.61
+DEBUG: Found target point on edge 2, local_proportion=0.52
+DEBUG: This is a dart edge with labels: {'dart_1'}
+DEBUG: Found dart number: 1
+DEBUG: Looking for dart tip for dart_1
+DEBUG: Using dart tip for dart_1 (index 0): [23.190178610649188, 16.581111247978644]
+DEBUG: Panel bounds: x_min=-0.08, x_max=35.00, width=35.08
+DEBUG: Split point: [23.190178610649188, 16.581111247978644], equivalent_proportion=0.66

@@ -374,12 +374,17 @@ class Chromosome(Layout):
             # self.meta_garment = mg
 
             piece_mirror = None
+            mirror_idx = None
             if 'left' in piece.id and piece.parent_id is None:
                 mirror_id = piece.id.replace("left", "right")
                 piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
+                if piece_mirror:
+                    mirror_idx = self.genes.index(piece_mirror)
             elif 'right' in piece.id and piece.parent_id is None:
                 mirror_id = piece.id.replace("right", "left")
                 piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
+                if piece_mirror:
+                    mirror_idx = self.genes.index(piece_mirror)
 
 
             if not self.meta_garment:
@@ -414,6 +419,7 @@ class Chromosome(Layout):
             self.split_history.append((piece.id, proportion))
             print(f"[Chromosome] Split {piece.id} into {new_panel_names} with proportion {proportion}")
            
+            new_panel_names_mirror = None
             if piece_mirror and config.SYMMETRIC_SPLITS:
                 # If there's a mirror piece, also split it
                 mirror_proportion = 1 - proportion
@@ -456,12 +462,33 @@ class Chromosome(Layout):
                 p_new.translation = piece.translation
                 p_new.update_bbox()
 
+            mirror_left = mirror_right = None
+            if piece_mirror and config.SYMMETRIC_SPLITS and new_panel_names_mirror:
+                mirror_left = all_pieces.get(new_panel_names_mirror[0])
+                mirror_right = all_pieces.get(new_panel_names_mirror[1])
+                if mirror_left is None or mirror_right is None:
+                    print(f"[Chromosome] Mirror split pieces not found in regenerated pattern")
+                else:
+                    for p_new in (mirror_left, mirror_right):
+                        p_new.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+                        p_new.parent_id = piece_mirror.id
+                        p_new.root_id = getattr(piece_mirror, "root_id", piece_mirror.id)
+                        p_new.rotation = piece_mirror.rotation
+                        p_new.translation = piece_mirror.translation
+                        p_new.update_bbox()
+
             self.genes[idx:idx + 1] = [left_piece, right_piece]
 
             # Randomly relocate one half like before
             child = random.choice([left_piece, right_piece])
             self.genes.remove(child)
             self.genes.insert(random.randrange(len(self.genes) + 1), child)
+
+            if mirror_left is not None and mirror_right is not None and mirror_idx is not None:
+                self.genes[mirror_idx:mirror_idx + 1] = [mirror_left, mirror_right]
+                mchild = random.choice([mirror_left, mirror_right])
+                self.genes.remove(mchild)
+                self.genes.insert(random.randrange(len(self.genes) + 1), mchild)
 
             return True  # Indicate successful mutation
 

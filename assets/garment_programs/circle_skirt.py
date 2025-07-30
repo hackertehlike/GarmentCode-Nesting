@@ -16,7 +16,7 @@ class CircleArcPanel(pyg.Panel):
             ) -> None:
         super().__init__(name)
 
-        split_history = {}
+        #split_history = {}
 
         halfarc = angle / 2
 
@@ -130,6 +130,50 @@ class CircleArcPanel(pyg.Panel):
 
         return CircleArcPanel(name, rad, length, arc, **kwargs)
 
+    def get_all_edges_by_label(self, label):
+        """Find all edges with a given label"""
+        edges = []
+        for edge in self.edges:
+            if edge.label == label or label in edge.semantic_labels:
+                edges.append(edge)
+        return edges
+    
+    def get_appropriate_edge(self, edges, proportion):
+        """
+        Select the appropriate edge from multiple edges with the same label.
+        This works by treating the edges as if they were one long edge and finding
+        the edge that contains the point at the given proportion of the total length.
+        
+        Args:
+            edges: List of edges with the same label
+            proportion: Proportion along the combined edge length (0-1)
+            
+        Returns:
+            (edge, local_proportion): The selected edge and the proportion within that edge
+        """
+        if not edges:
+            return None, None
+        
+        if len(edges) == 1:
+            return edges[0], proportion
+        
+        # Calculate total length of all edges
+        total_length = sum(edge.length() for edge in edges)
+        target_length = total_length * proportion
+        
+        # Find which edge contains the target point
+        current_length = 0
+        for edge in edges:
+            edge_length = edge.length()
+            if current_length + edge_length >= target_length:
+                # This edge contains our target point
+                local_proportion = (target_length - current_length) / edge_length
+                return edge, local_proportion
+            current_length += edge_length
+            
+        # If we get here, return the last edge
+        return edges[-1], 1.0
+    
     def split(self, proportion=0.5):
         """Splits the panel into two new panels at a specified proportion"""
         # print([edge.semantic_labels for edge in self.edges], self.name)
@@ -149,11 +193,15 @@ class CircleArcPanel(pyg.Panel):
         #    print(f"[CircleArcPanel.split] Warning: Panel {self.name} is not clockwise, reversing edges.")
             self.edges.reverse()
 
-        # Get edges by label
-        bottom_edge = self.get_edge_by_label('bottom')
-        top_edge = self.get_edge_by_label('top')
+        # Get all edges by label
+        bottom_edges = self.get_all_edges_by_label('bottom')
+        top_edges = self.get_all_edges_by_label('top')
         left_edge = self.get_edge_by_label('left')
         right_edge = self.get_edge_by_label('right')
+        
+        # Get the appropriate edges and proportions for top and bottom
+        bottom_edge, bottom_prop = self.get_appropriate_edge(bottom_edges, 1-proportion)
+        top_edge, top_prop = self.get_appropriate_edge(top_edges, proportion)
 
         #debug all of the edge labels
         print(f"[CircleArcPanel.split] Edge labels before split:")
@@ -171,14 +219,9 @@ class CircleArcPanel(pyg.Panel):
         if right_edge is None:
             raise ValueError(f"Panel {self.name} does not have a right edge to split.")
 
-        # Get split points
-        split_point_bottom = bottom_edge.point_at(1-proportion)
-        #split_point_bottom = bottom_edge.midpoint().tolist()
-
-        #print(f"[CircleArcPanel.split] Split point on bottom edge: {split_point_bottom}")
-        
-        split_point_top = top_edge.point_at(proportion)
-        #split_point_top = top_edge.midpoint().tolist()
+        # Get split points using the local proportion for each edge
+        split_point_bottom = bottom_edge.point_at(bottom_prop)
+        split_point_top = top_edge.point_at(top_prop)
 
         #print(f"[CircleArcPanel.split] Split points: "f"bottom={split_point_bottom}, top={split_point_top}")
 
@@ -284,46 +327,6 @@ class CircleArcPanel(pyg.Panel):
         print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")
         
         return panel1, panel2
-
-    # def get_edge_by_label(self, label):
-    #     """
-    #     Get an edge by its label without any fallback to indices.
-    #     This implementation checks both the label attribute and semantic_labels.
-    #     """
-    #     # Debug the label lookup
-    #     #print(f"[CircleArcPanel.get_edge_by_label] Looking for edge with label '{label}'")
-        
-    #     if hasattr(super(), 'get_edge_by_label'):
-    #         edge = super().get_edge_by_label(label)
-    #         if edge is not None:
-    #             return edge
-        
-    #     # If not found or method doesn't exist, implement our own lookup
-    #     for _, edge in enumerate(self.edges):
-    #         # Check for direct label attribute
-    #         if hasattr(edge, 'label') and edge.label == label:
-    #             #print(f"[CircleArcPanel.get_edge_by_label] Found edge {i} with label attribute '{label}'")
-    #             return edge
-            
-    #         # Check semantic_labels
-    #         if hasattr(edge, 'semantic_labels') and label in edge.semantic_labels:
-    #             #print(f"[CircleArcPanel.get_edge_by_label] Found edge {i} with semantic label '{label}'")
-    #             return edge
-        
-    #     # Debug what labels we do have
-    #     #print(f"[CircleArcPanel.get_edge_by_label] Warning: Edge with label '{label}' not found")
-    #     #for i, edge in enumerate(self.edges):
-    #         #if hasattr(edge, 'label'):
-    #             #print(f"[CircleArcPanel.get_edge_by_label] Edge {i} has label '{edge.label}'")
-    #         #else:
-    #             #print(f"[CircleArcPanel.get_edge_by_label] Edge {i} has no label attribute")
-                
-    #         #if hasattr(edge, 'semantic_labels'):
-    #             #print(f"[CircleArcPanel.get_edge_by_label] Edge {i} has semantic_labels: {edge.semantic_labels}")
-        
-    #     # No fallback - strict behavior as requested
-    #     return None
-
 class AsymHalfCirclePanel(pyg.Panel):
     """Panel for a asymmetrci circle skirt"""
 
@@ -361,12 +364,12 @@ class AsymHalfCirclePanel(pyg.Panel):
             self.edges[-1].end, [- dist_out / 2, 0], 
             point_on_arc=[0, -(top_rad + length_f)]
         )
-        bottom_edge.semantic_labels.add('bottom')
+        bottom_edge.add_semantic_label('bottom')
         self.edges.append(bottom_edge)
 
         # left edge - index 3 - closes the loop
         left_edge = pyg.Edge(self.edges[-1].end, self.edges[0].start)
-        left_edge.semantic_labels.add('left')  # Add semantic label
+        left_edge.add_semantic_label('left')  # Add semantic label
         self.edges.append(left_edge)
 
         # Verify all edge labels are set correctly
@@ -410,6 +413,50 @@ class AsymHalfCirclePanel(pyg.Panel):
         #    print(f"[AsymHalfCirclePanel._verify_edge_labels] All expected edge labels found")
         
         return missing_labels
+        
+    def get_all_edges_by_label(self, label):
+        """Find all edges with a given label"""
+        edges = []
+        for edge in self.edges:
+            if edge.label == label or label in edge.semantic_labels:
+                edges.append(edge)
+        return edges
+    
+    def get_appropriate_edge(self, edges, proportion):
+        """
+        Select the appropriate edge from multiple edges with the same label.
+        This works by treating the edges as if they were one long edge and finding
+        the edge that contains the point at the given proportion of the total length.
+        
+        Args:
+            edges: List of edges with the same label
+            proportion: Proportion along the combined edge length (0-1)
+            
+        Returns:
+            (edge, local_proportion): The selected edge and the proportion within that edge
+        """
+        if not edges:
+            return None, None
+        
+        if len(edges) == 1:
+            return edges[0], proportion
+        
+        # Calculate total length of all edges
+        total_length = sum(edge.length() for edge in edges)
+        target_length = total_length * proportion
+        
+        # Find which edge contains the target point
+        current_length = 0
+        for edge in edges:
+            edge_length = edge.length()
+            if current_length + edge_length >= target_length:
+                # This edge contains our target point
+                local_proportion = (target_length - current_length) / edge_length
+                return edge, local_proportion
+            current_length += edge_length
+            
+        # If we get here, return the last edge
+        return edges[-1], 1.0
 
     def length(self, *args):
         return self.interfaces['right'].edges.length()
@@ -444,20 +491,26 @@ class SkirtCircle(StackableSkirtComponent):
                 length, waist / 2, suns / 2,
                 match_top_int_proportion=self.body['waist_back_width'],
                 ).translate_by([0, body['_waist_level'], -15])
+            self.back.edges[0].add_semantic_label('top')
+            print(f"Back top edge labels immediately after adding: {self.back.edges[0].semantic_labels}")
+
         else:  # Asymmetric skirt - this code wasn't used in your code
             raise NotImplementedError("Asymmetric skirt mode is not currently supported.")
 
         # Add a cut
         if design['cut']['add']['v'] and slit:
+            print(f"Back top edge labels before cut: {self.back.edges[0].semantic_labels}")
             self.add_cut(
                 self.front if design['cut']['place']['v'] > 0 else self.back, 
                 design, length)
+            print(f"Back top edge labels after cut: {self.back.edges[0].semantic_labels}")
 
         # Stitches
         self.stitching_rules = pyg.Stitches(
             (self.front.interfaces['right'], self.back.interfaces['right']),
             (self.front.interfaces['left'], self.back.interfaces['left'])
         )
+        print(f"Back top edge labels after stitches: {self.back.edges[0].semantic_labels}")
 
         # Interfaces
         self.interfaces = {
@@ -466,6 +519,7 @@ class SkirtCircle(StackableSkirtComponent):
             'bottom_b': self.back.interfaces['bottom'],
             'bottom': pyg.Interface.from_multiple(self.front.interfaces['bottom'], self.back.interfaces['bottom'])
         }
+        print(f"Back top edge labels after interfaces: {self.back.edges[0].semantic_labels}")
         
     def add_cut(self, panel, design, sk_length):
         """Add a cut to the skirt"""
@@ -490,6 +544,9 @@ class SkirtCircle(StackableSkirtComponent):
             offset=offset, 
             right=right
         )
+
+        #new_edges.add_semantic_label('top')
+        #interf_edges.add_semantic_label('top')
 
         panel.edges.substitute(target_edge, new_edges)
         panel.interfaces['bottom'].substitute(
