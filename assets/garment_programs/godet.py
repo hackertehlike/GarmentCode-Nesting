@@ -22,6 +22,11 @@ class Insert(pyg.Panel):
         self.top_center_pivot()
         self.center_x()
 
+    def split(self, proportion=0.5):
+        # Always split at the midpoint of the base (proportion=0.5) to align with the tip of the insert
+        super().split(0.2)
+
+
 
 class GodetSkirt(BaseBottoms):
 
@@ -114,6 +119,7 @@ class GodetSkirt(BaseBottoms):
                 (self.subs[-1-i if right else -(num_inserts-i)].interfaces[0], 
                 cut_interface))
 
+    
     def get_rise(self):
         return self.base.get_rise()
     

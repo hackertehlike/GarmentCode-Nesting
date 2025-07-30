@@ -1,4 +1,7 @@
+
+from typing import Optional
 from copy import deepcopy
+import itertools
 import numpy as np
 
 import pygarment as pyg
@@ -207,182 +210,105 @@ class PantPanel(pyg.Panel):
                     elif j == end_idx - 1:
                         top_edges[j].add_semantic_label(f'dart_{dart_num}_right')
 
+        for e in int_edges:
+            e.add_semantic_label('top')
+
+
         return top_edges, int_edges
 
     def split(self, proportion=0.5):
-        # check if back or front
-        if self.name.startswith('pant_b_'):
-            import numpy as np
-            
-            # Find all top edges (interface edges) and dart tips
-            dart_tips = []
-            all_top_edges = []
-            
-            # Find all top edges including both interface edges and dart edges
-            for edge in self.edges:
-                # Check if this is a top edge (either interface or dart)
-                if 'top' in edge.semantic_labels or any('dart' in label for label in edge.semantic_labels):
-                    all_top_edges.append(edge)
-            
-            # Get all unique dart numbers from edge labels
-            dart_numbers = set()
-            for edge in all_top_edges:
-                for label in edge.semantic_labels:
-                    if label.startswith('dart_'):
-                        parts = label.split('_')
-                        if len(parts) >= 2 and parts[1].isdigit():
-                            dart_numbers.add(parts[1])
-            
-            # Group edges by dart number and find dart tips
-            for dart_num in dart_numbers:
-                # Find all edges for this dart
-                dart_edges = [edge for edge in all_top_edges if any(label.startswith(f'dart_{dart_num}') for label in edge.semantic_labels)]
-                
-                if len(dart_edges) >= 2:  # Need at least 2 edges to form a dart
-                    # Find the common point (where the edges meet)
-                    # Typically, this is where the edges connect at the dart tip
-                    found_tip = False
-                    for i, edge1 in enumerate(dart_edges):
-                        for j, edge2 in enumerate(dart_edges):
-                            if i >= j:  # Only check unique pairs (and avoid comparing an edge with itself)
-                                continue
-                            
-                            # Check if any endpoints match
-                            if np.allclose(edge1.start, edge2.start, atol=1e-6):
-                                dart_tips.append(edge1.start)
-                                found_tip = True
-                                break
-                            elif np.allclose(edge1.start, edge2.end, atol=1e-6):
-                                dart_tips.append(edge1.start)
-                                found_tip = True
-                                break
-                            elif np.allclose(edge1.end, edge2.start, atol=1e-6):
-                                dart_tips.append(edge1.end)
-                                found_tip = True
-                                break
-                            elif np.allclose(edge1.end, edge2.end, atol=1e-6):
-                                dart_tips.append(edge1.end)
-                                found_tip = True
-                                break
-                        
-                        # If we found a dart tip, break out of the outer loop too
-                        if found_tip:
-                            break
-                    
-                    # If we couldn't find a common point, use the point with minimum Y as the dart tip
-                    if not found_tip:
-                        # Collect all points from this dart's edges
-                        all_points = []
-                        for edge in dart_edges:
-                            all_points.append(edge.start)
-                            all_points.append(edge.end)
-                        
-                        # Find the point with the minimum Y coordinate (lowest point)
-                        min_y_point = min(all_points, key=lambda p: p[1])
-                        dart_tips.append(min_y_point)
-            
-            # Determine split point based on proportion
-            split_point = None
-            
-            # Find the total length of all top edges (including interface and dart edges)
-            total_top_length = 0
-            edge_lengths = []
-            
-            if all_top_edges:
-                for edge in all_top_edges:
-                    length = edge.length()
-                    edge_lengths.append(length)
-                    total_top_length += length
-                
-                # Check if the proportion corresponds to a point on any top edge
-                if total_top_length > 0:
-                    # Scale proportion to the total length of all top edges
-                    target_length = proportion * total_top_length
-                    
-                    # Find which edge contains the point at this proportion
-                    current_length = 0
-                    for i, edge in enumerate(all_top_edges):
-                        if current_length <= target_length < current_length + edge_lengths[i]:
-                            # This edge contains our proportion point
-                            # Calculate local proportion on this edge
-                            local_proportion = (target_length - current_length) / edge_lengths[i]
-                            
-                            # If this is a dart edge (not an interface edge), use the nearest dart tip
-                            if any('dart_' in label for label in edge.semantic_labels):
-                                # Find which dart this edge belongs to
-                                dart_num = None
-                                for label in edge.semantic_labels:
-                                    if label.startswith('dart_'):
-                                        # Extract the dart number directly
-                                        parts = label.split('_')
-                                        if len(parts) >= 2 and parts[1].isdigit():
-                                            dart_num = parts[1]
-                                            break
-                                
-                                if dart_num:
-                                    # Match the dart tip to the dart number
-                                    # Since we're finding dart tips in order of dart numbers, we can use the index
-                                    dart_index = None
-                                    for i, num in enumerate(sorted(dart_numbers)):
-                                        if num == dart_num:
-                                            dart_index = i
-                                            break
-                                    
-                                    if dart_index is not None and dart_index < len(dart_tips):
-                                        # Use the dart tip that corresponds to this dart number
-                                        split_point = dart_tips[dart_index]
-                                    elif len(dart_tips) > 0:
-                                        # Fall back to using any available dart tip
-                                        split_point = dart_tips[0]
-                                    else:
-                                        # Use the point on this edge if no dart tips available
-                                        split_point = edge.point_at(local_proportion)
-                                else:
-                                    # If we couldn't determine the dart number, use the point on the edge
-                                    split_point = edge.point_at(local_proportion)
-                            else:
-                                # This is a regular edge, use the point on this edge
-                                point = edge.point_at(local_proportion)
-                                
-                                # Check if this point is close to any dart tip
-                                # Define "close" as within 2% of the total edge length
-                                proximity_threshold = total_top_length * 0.02
-                                
-                                closest_dart_tip = None
-                                min_distance = float('inf')
-                                
-                                for dart_tip in dart_tips:
-                                    # Calculate Euclidean distance to dart tip
-                                    distance = np.sqrt((point[0] - dart_tip[0])**2 + (point[1] - dart_tip[1])**2)
-                                    if distance < min_distance:
-                                        min_distance = distance
-                                        closest_dart_tip = dart_tip
-                                
-                                # If the point is close to a dart tip, use the dart tip instead
-                                if closest_dart_tip is not None and min_distance < proximity_threshold:
-                                    split_point = closest_dart_tip
-                                else:
-                                    split_point = point
-                            break
-                        current_length += edge_lengths[i]
-            
-            # If no split point could be determined, fall back to default split
-            if split_point is None:
-                return super().split(proportion)
-            
-            # Get panel bounds to calculate equivalent proportion for bounding box
-            x_min, y_min, x_max, y_max = self.get_bounds()
-            panel_width = x_max - x_min
-            
-            # Calculate the equivalent proportion for the bounding box
-            # This is the x-coordinate of the split point relative to the panel width
-            equivalent_proportion = (split_point[0] - x_min) / panel_width
-            
-            # Call the superclass split method with the equivalent proportion
-            return super().split(equivalent_proportion)
-        else:
-            # For front panels, just use the default split
+        """Split the panel while accounting for back darts."""
+
+        if not self.name.startswith("pant_b_"):
             return super().split(proportion)
+
+        def _collect_top_edges():
+            return [
+                e
+                for e in self.edges
+                if "top" in e.semantic_labels
+                or any("dart" in lbl for lbl in e.semantic_labels)
+            ]
+
+        def _dart_number(label: str) -> Optional[str]:
+            parts = label.split("_")
+            return parts[1] if len(parts) >= 2 and parts[1].isdigit() else None
+
+        def _find_dart_tips(edges):
+            tips = {}
+            for num in sorted(edges):
+                dart_edges = [e for e in top_edges if any(lbl.startswith(f"dart_{num}") for lbl in e.semantic_labels)]
+                pt = None
+                for e1, e2 in itertools.combinations(dart_edges, 2):
+                    for a in (e1.start, e1.end):
+                        for b in (e2.start, e2.end):
+                            if np.allclose(a, b, atol=1e-6):
+                                pt = a
+                                break
+                        if pt is not None:
+                            break
+                    if pt is not None:
+                        break
+                if pt is None:
+                    points = [p for de in dart_edges for p in (de.start, de.end)]
+                    if points:
+                        pt = min(points, key=lambda p: p[1])
+                if pt is not None:
+                    tips[num] = pt
+            return tips
+
+        def _split_point(prop):
+            lengths = [e.length() for e in top_edges]
+            total = sum(lengths)
+            if not total:
+                return None
+
+            target = prop * total
+            cur = 0
+            for e, l in zip(top_edges, lengths):
+                if cur <= target < cur + l:
+                    local_prop = (target - cur) / l
+                    if any("dart_" in lbl for lbl in e.semantic_labels):
+                        dnum = next((
+                            _dart_number(lbl)
+                            for lbl in e.semantic_labels
+                            if lbl.startswith("dart_")
+                        ), None)
+                        if dnum and dnum in dart_tips:
+                            return dart_tips[dnum]
+                        return next(iter(dart_tips.values()), e.point_at(local_prop))
+                    point = e.point_at(local_prop)
+                    prox = total * 0.02
+                    if dart_tips:
+                        nearest, dist = min(
+                            (
+                                (dt, np.linalg.norm(np.array(point) - np.array(dt)))
+                                for dt in dart_tips.values()
+                            ),
+                            key=lambda t: t[1],
+                        )
+                        if dist < prox:
+                            return nearest
+                    return point
+                cur += l
+            return None
+
+        top_edges = _collect_top_edges()
+        dart_nums = {
+            _dart_number(lbl)
+            for e in top_edges
+            for lbl in e.semantic_labels
+            if lbl.startswith("dart_") and _dart_number(lbl) is not None
+        }
+        dart_tips = _find_dart_tips(dart_nums)
+        split_pt = _split_point(proportion)
+
+        if split_pt is None:
+            return super().split(proportion)
+
+        x_min, _, x_max, _ = self.get_bounds()
+        prop_equiv = (split_pt[0] - x_min) / (x_max - x_min)
+        return super().split(prop_equiv)
 
 class PantsHalf(BaseBottoms):
     def __init__(self, tag, body, design, rise=None) -> None:

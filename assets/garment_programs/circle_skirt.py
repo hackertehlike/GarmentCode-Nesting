@@ -492,25 +492,24 @@ class SkirtCircle(StackableSkirtComponent):
                 match_top_int_proportion=self.body['waist_back_width'],
                 ).translate_by([0, body['_waist_level'], -15])
             self.back.edges[0].add_semantic_label('top')
-            print(f"Back top edge labels immediately after adding: {self.back.edges[0].semantic_labels}")
+            #print(f"Back top edge labels immediately after adding: {self.back.edges[0].semantic_labels}")
 
         else:  # Asymmetric skirt - this code wasn't used in your code
             raise NotImplementedError("Asymmetric skirt mode is not currently supported.")
 
         # Add a cut
         if design['cut']['add']['v'] and slit:
-            print(f"Back top edge labels before cut: {self.back.edges[0].semantic_labels}")
+            #print(f"Back top edge labels before cut: {self.back.edges[0].semantic_labels}")
             self.add_cut(
                 self.front if design['cut']['place']['v'] > 0 else self.back, 
                 design, length)
-            print(f"Back top edge labels after cut: {self.back.edges[0].semantic_labels}")
+            #print(f"Back top edge labels after cut: {self.back.edges[0].semantic_labels}")
 
         # Stitches
         self.stitching_rules = pyg.Stitches(
             (self.front.interfaces['right'], self.back.interfaces['right']),
             (self.front.interfaces['left'], self.back.interfaces['left'])
         )
-        print(f"Back top edge labels after stitches: {self.back.edges[0].semantic_labels}")
 
         # Interfaces
         self.interfaces = {
@@ -519,7 +518,6 @@ class SkirtCircle(StackableSkirtComponent):
             'bottom_b': self.back.interfaces['bottom'],
             'bottom': pyg.Interface.from_multiple(self.front.interfaces['bottom'], self.back.interfaces['bottom'])
         }
-        print(f"Back top edge labels after interfaces: {self.back.edges[0].semantic_labels}")
         
     def add_cut(self, panel, design, sk_length):
         """Add a cut to the skirt"""
@@ -548,10 +546,19 @@ class SkirtCircle(StackableSkirtComponent):
         #new_edges.add_semantic_label('top')
         #interf_edges.add_semantic_label('top')
 
+
+        for edge in new_edges:
+            edge.add_semantic_label('top')
+        for edge in interf_edges:
+            edge.add_semantic_label('top')
+        
+
         panel.edges.substitute(target_edge, new_edges)
         panel.interfaces['bottom'].substitute(
             target_edge, interf_edges,
             [panel for _ in range(len(interf_edges))])
+        
+
         
     def length(self, *args):
         return self.front.length()
