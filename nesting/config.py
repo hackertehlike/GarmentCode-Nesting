@@ -21,7 +21,7 @@ CrossoverName = Literal["pmx", "ox1"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 
 # ——— algorithm settings —————————————————————————————————————
-SELECTED_DECODER       : DecoderName = "NFP"
+SELECTED_DECODER       : DecoderName = "BL"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"
@@ -95,6 +95,8 @@ EXCLUDED_PARAM_PATHS = [
 # Note: For parameters that can be both positive and negative (like opening_dir_mix),
 # special handling is applied to prevent excessive changes when values are close to zero
 PARAM_CHANGE_MARGIN = 0.2
+
+SYMMETRIC_SPLITS: bool = True  # whether to split the pattern symmetrically (e.g., left and right halves of a skirt)
 
 
 # mutation weights

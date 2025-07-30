@@ -353,6 +353,17 @@ class Chromosome(Layout):
             idx = random.randrange(len(self.genes))
             piece = self.genes[idx]
 
+            # retry until we find a piece that can be split
+            # retries = 0
+            # while 'split' in piece.id and retries < 10:
+            #     print(f"[Chromosome] Skipping split for {piece.id} - already split")
+            #     idx = random.randrange(len(self.genes))
+            #     piece = self.genes[idx]
+            #     retries += 1
+
+            # if 'split' in piece.id:
+            #     print(f"Max retries reached for split mutation on {piece.id}, skipping")
+            #     continue
 
             # Ensure a MetaGarment instance is fresh for the split operation
         
@@ -361,7 +372,16 @@ class Chromosome(Layout):
             #for panel_name, proportion in self.split_history:
             #    mg.split_panel(panel_name, proportion)
             # self.meta_garment = mg
-        
+
+            piece_mirror = None
+            if 'left' in piece.id and piece.parent_id is None:
+                mirror_id = piece.id.replace("left", "right")
+                piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
+            elif 'right' in piece.id and piece.parent_id is None:
+                mirror_id = piece.id.replace("right", "left")
+                piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
+
+
             if not self.meta_garment:
                 left, right = piece.split()
                 # remove the original piece
@@ -370,6 +390,17 @@ class Chromosome(Layout):
                 self.genes.insert(idx, left)
                 # insert the second piece at a random position
                 self.genes.insert(random.randrange(len(self.genes) + 1), right)
+
+                if piece_mirror and config.SYMMETRIC_SPLITS:
+                    # If there's a mirror piece, also split it
+                    mirror_idx = self.genes.index(piece_mirror)
+                    left_mirror, right_mirror = piece_mirror.split()
+                    # Remove the original mirror piece
+                    self.genes.remove(piece_mirror)
+                    # Insert the split pieces at random positions
+                    self.genes.insert(mirror_idx, left_mirror)
+                    self.genes.insert(random.randrange(len(self.genes) + 1), right_mirror)
+
                 return True  # Indicate successful mutation
                 
 
@@ -383,6 +414,17 @@ class Chromosome(Layout):
             self.split_history.append((piece.id, proportion))
             print(f"[Chromosome] Split {piece.id} into {new_panel_names} with proportion {proportion}")
            
+            if piece_mirror and config.SYMMETRIC_SPLITS:
+                # If there's a mirror piece, also split it
+                mirror_proportion = 1 - proportion
+                new_panel_names_mirror = mg.split_panel(
+                    piece_mirror.id, proportion=mirror_proportion
+                )
+                if new_panel_names_mirror is None:
+                    print(f"[Chromosome] MetaGarment split failed for mirror {piece_mirror.id}")
+                    return False
+                self.split_history.append((piece_mirror.id, mirror_proportion))
+                print(f"[Chromosome] Split {piece_mirror.id} into {new_panel_names_mirror} with proportion {mirror_proportion}")
 
             pattern = mg.assembly()
             with tempfile.TemporaryDirectory() as td:
