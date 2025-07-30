@@ -23,9 +23,8 @@ class Insert(pyg.Panel):
         self.center_x()
 
     def split(self, proportion=0.5):
-        # Always split at the midpoint of the base (proportion=0.5) to align with the tip of the insert
-        super().split(0.2)
-
+        # always split down the middle
+        return super().split(proportion=0.5)
 
 
 class GodetSkirt(BaseBottoms):

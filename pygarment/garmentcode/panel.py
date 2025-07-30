@@ -268,6 +268,14 @@ class Panel(BaseComponent):
             int_edge_seq.substitute(edge, int_new)
             int_new = int_edge_seq
 
+        # add semantic labels to the new edges
+        for e in dart_edges:
+            e.semantic_labels.append(f"dart_{dart_shape.name}")
+            if right:
+                e.semantic_labels.append("dart_right")
+            else:
+                e.semantic_labels.append("dart_left")
+
         return edges_new, int_new
 
     # ANCHOR - Build the panel -- get serializable representation

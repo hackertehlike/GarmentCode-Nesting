@@ -222,86 +222,18 @@ class PantPanel(pyg.Panel):
         if not self.name.startswith("pant_b_"):
             return super().split(proportion)
 
-        def _collect_top_edges():
-            return [
-                e
-                for e in self.edges
-                if "top" in e.semantic_labels
-                or any("dart" in lbl for lbl in e.semantic_labels)
-            ]
 
-        def _dart_number(label: str) -> Optional[str]:
-            parts = label.split("_")
-            return parts[1] if len(parts) >= 2 and parts[1].isdigit() else None
+        from assets.garment_programs import split_utils
 
-        def _find_dart_tips(edges):
-            tips = {}
-            for num in sorted(edges):
-                dart_edges = [e for e in top_edges if any(lbl.startswith(f"dart_{num}") for lbl in e.semantic_labels)]
-                pt = None
-                for e1, e2 in itertools.combinations(dart_edges, 2):
-                    for a in (e1.start, e1.end):
-                        for b in (e2.start, e2.end):
-                            if np.allclose(a, b, atol=1e-6):
-                                pt = a
-                                break
-                        if pt is not None:
-                            break
-                    if pt is not None:
-                        break
-                if pt is None:
-                    points = [p for de in dart_edges for p in (de.start, de.end)]
-                    if points:
-                        pt = min(points, key=lambda p: p[1])
-                if pt is not None:
-                    tips[num] = pt
-            return tips
-
-        def _split_point(prop):
-            lengths = [e.length() for e in top_edges]
-            total = sum(lengths)
-            if not total:
-                return None
-
-            target = prop * total
-            cur = 0
-            for e, l in zip(top_edges, lengths):
-                if cur <= target < cur + l:
-                    local_prop = (target - cur) / l
-                    if any("dart_" in lbl for lbl in e.semantic_labels):
-                        dnum = next((
-                            _dart_number(lbl)
-                            for lbl in e.semantic_labels
-                            if lbl.startswith("dart_")
-                        ), None)
-                        if dnum and dnum in dart_tips:
-                            return dart_tips[dnum]
-                        return next(iter(dart_tips.values()), e.point_at(local_prop))
-                    point = e.point_at(local_prop)
-                    prox = total * 0.02
-                    if dart_tips:
-                        nearest, dist = min(
-                            (
-                                (dt, np.linalg.norm(np.array(point) - np.array(dt)))
-                                for dt in dart_tips.values()
-                            ),
-                            key=lambda t: t[1],
-                        )
-                        if dist < prox:
-                            return nearest
-                    return point
-                cur += l
-            return None
-
-        top_edges = _collect_top_edges()
+        top_edges = split_utils.collect_edges_by_label(self, labels=["top"], prefixes=["dart_"])
         dart_nums = {
-            _dart_number(lbl)
+            split_utils.dart_number(lbl)
             for e in top_edges
             for lbl in e.semantic_labels
-            if lbl.startswith("dart_") and _dart_number(lbl) is not None
+            if lbl.startswith("dart_") and split_utils.dart_number(lbl) is not None
         }
-        dart_tips = _find_dart_tips(dart_nums)
-        split_pt = _split_point(proportion)
+        dart_tips = split_utils.find_dart_tips(top_edges, dart_nums)
+        split_pt = split_utils.split_point(top_edges, dart_tips, proportion, split_utils.dart_number)
 
         if split_pt is None:
             return super().split(proportion)
