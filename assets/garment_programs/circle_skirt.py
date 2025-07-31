@@ -3,6 +3,7 @@ import pygarment as pyg
 
 from assets.garment_programs.base_classes import StackableSkirtComponent
 import copy
+from assets.garment_programs import split_utils
 
 
 class CircleArcPanel(pyg.Panel):
@@ -91,8 +92,8 @@ class CircleArcPanel(pyg.Panel):
 
         # Check that each expected label exists on an edge
         for label in expected_labels:
-            edge = self.get_edge_by_label(label)
-            if edge is None:
+            edge = split_utils.collect_edges_by_label(self, labels=[label])
+            if not edge:
                 missing_labels.append(label)
                 # print(f"[CircleArcPanel._verify_edge_labels] ERROR: Edge with label '{label}' not found")
 
@@ -130,61 +131,21 @@ class CircleArcPanel(pyg.Panel):
 
         return CircleArcPanel(name, rad, length, arc, **kwargs)
 
-    def get_all_edges_by_label(self, label):
-        """Find all edges with a given label"""
-        edges = []
-        for edge in self.edges:
-            if edge.label == label or label in edge.semantic_labels:
-                edges.append(edge)
-        return edges
-    
-    def get_appropriate_edge(self, edges, proportion):
-        """
-        Select the appropriate edge from multiple edges with the same label.
-        This works by treating the edges as if they were one long edge and finding
-        the edge that contains the point at the given proportion of the total length.
-        
-        Args:
-            edges: List of edges with the same label
-            proportion: Proportion along the combined edge length (0-1)
-            
-        Returns:
-            (edge, local_proportion): The selected edge and the proportion within that edge
-        """
-        if not edges:
-            return None, None
-        
-        if len(edges) == 1:
-            return edges[0], proportion
-        
-        # Calculate total length of all edges
-        total_length = sum(edge.length() for edge in edges)
-        target_length = total_length * proportion
-        
-        # Find which edge contains the target point
-        current_length = 0
-        for edge in edges:
-            edge_length = edge.length()
-            if current_length + edge_length >= target_length:
-                # This edge contains our target point
-                local_proportion = (target_length - current_length) / edge_length
-                return edge, local_proportion
-            current_length += edge_length
-            
-        # If we get here, return the last edge
-        return edges[-1], 1.0
+    # def get_all_edges_by_label(self, label):
+    #     """Find all edges with a given label"""
+    #     edges = []
+    #     for edge in self.edges:
+    #         if edge.label == label or label in edge.semantic_labels:
+    #             edges.append(edge)
+    #     return edges
+
     
     def split(self, proportion=0.5):
+
+        from assets.garment_programs import split_utils
         """Splits the panel into two new panels at a specified proportion"""
-        # print([edge.semantic_labels for edge in self.edges], self.name)
-        # print(f"[CircleArcPanel.split] Starting split for panel {self.name}")
-        # print(f"[CircleArcPanel.split] Panel has {len(self.edges)} edges")
         
-        # # Debug: examine the interfaces to see if they're modifying the edges
-        # print(f"[CircleArcPanel.split] Checking edges:")
-        # for edge in self.edges:
-        #     print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
-        self._verify_edge_labels()  # Ensure edge labels are verified before splitting
+        #self._verify_edge_labels()  # Ensure edge labels are verified before splitting
 
         # Check if the panel EdgeSequence is clockwise or counter-clockwise
         clockwise = self.edges.is_clockwise()
@@ -194,48 +155,51 @@ class CircleArcPanel(pyg.Panel):
             self.edges.reverse()
 
         # Get all edges by label
-        bottom_edges = self.get_all_edges_by_label('bottom')
-        top_edges = self.get_all_edges_by_label('top')
-        left_edge = self.get_edge_by_label('left')
-        right_edge = self.get_edge_by_label('right')
-        
+        bottom_edge = split_utils.collect_edges_by_label(self, labels=['bottom'])
+        top_edges = split_utils.collect_edges_by_label(self, labels=['top'])
+        left_edge = split_utils.collect_edges_by_label(self, labels=['left'])
+        right_edge = split_utils.collect_edges_by_label(self, labels=['right'])
+
         # Get the appropriate edges and proportions for top and bottom
-        bottom_edge, bottom_prop = self.get_appropriate_edge(bottom_edges, 1-proportion)
-        top_edge, top_prop = self.get_appropriate_edge(top_edges, proportion)
+        # bottom_edge, bottom_prop = self.get_appropriate_edge(bottom_edge, 1-proportion)
+        # top_edge, top_prop = self.get_appropriate_edge(top_edges, proportion)
 
-        #debug all of the edge labels
-        print(f"[CircleArcPanel.split] Edge labels before split:")
-        for edge in self.edges:
-           print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
+        split_pt_top, split_edge_top = split_utils.split_point(top_edges, proportion)
+        split_pt_bottom, split_edge_bottom = split_utils.split_point(bottom_edge, 1-proportion)
+
+        # #debug all of the edge labels
+        # print(f"[CircleArcPanel.split] Edge labels before split:")
+        # for edge in self.edges:
+        #    print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
 
         
-        # Validate all edges are found
-        if bottom_edge is None:
-            raise ValueError(f"Panel {self.name} does not have a bottom edge to split.")
-        if top_edge is None:
-            raise ValueError(f"Panel {self.name} does not have a top edge to split.")
-        if left_edge is None:
-            raise ValueError(f"Panel {self.name} does not have a left edge to split.")
-        if right_edge is None:
-            raise ValueError(f"Panel {self.name} does not have a right edge to split.")
+        # # Validate all edges are found
+        # if bottom_edge is None:
+        #     raise ValueError(f"Panel {self.name} does not have a bottom edge to split.")
+        # if top_edge is None:
+        #     raise ValueError(f"Panel {self.name} does not have a top edge to split.")
+        # if left_edge is None:
+        #     raise ValueError(f"Panel {self.name} does not have a left edge to split.")
+        # if right_edge is None:
+        #     raise ValueError(f"Panel {self.name} does not have a right edge to split.")
 
         # Get split points using the local proportion for each edge
-        split_point_bottom = bottom_edge.point_at(bottom_prop)
-        split_point_top = top_edge.point_at(top_prop)
+        # split_point_bottom = bottom_edge.point_at(bottom_prop)
+        # split_point_top = top_edge.point_at(top_prop)
 
         #print(f"[CircleArcPanel.split] Split points: "f"bottom={split_point_bottom}, top={split_point_top}")
 
         # Split edges
-        bottom1, bottom2 = bottom_edge.split_at_point(split_point_bottom)
-        top1, top2 = top_edge.split_at_point(split_point_top)
+        bottom1, bottom2 = split_edge_bottom.split_at_point(split_pt_bottom)
+        top1, top2 = split_edge_top.split_at_point(split_pt_top)
 
         # Create new split edges for each panel with copied vertices to avoid shared references
         # Make copies of the vertices to ensure they're not shared between panels
-        split_point_top_copy1 = split_point_top.copy()
-        split_point_bottom_copy1 = split_point_bottom.copy()
-        split_point_top_copy2 = split_point_top.copy()
-        split_point_bottom_copy2 = split_point_bottom.copy()
-        
+        split_point_top_copy1 = split_pt_top.copy()
+        split_point_bottom_copy1 = split_pt_bottom.copy()
+        split_point_top_copy2 = split_pt_top.copy()
+        split_point_bottom_copy2 = split_pt_bottom.copy()
+
         # Create edges with the copied vertices
         split_edge1 = pyg.Edge(split_point_top_copy1, split_point_bottom_copy1)
         split_edge1.add_semantic_label('left')
@@ -243,23 +207,6 @@ class CircleArcPanel(pyg.Panel):
         split_edge2 = pyg.Edge(split_point_bottom_copy2, split_point_top_copy2)
         split_edge2.add_semantic_label('right')
 
-        # Debug the split edges
-        #print(f"[CircleArcPanel.split] Split edges created:")
-        #print(f"  Split Edge 1: {split_edge1}")
-        #print(f"  Split Edge 2: {split_edge2}")
-
-
-        # def make_left_to_right(edge):
-        #     """Ensure the edge is oriented from left to right."""
-        #     if edge.start[0] > edge.end[0]:
-        #         edge.reverse()
-        #     return edge
-        
-        # def make_top_to_bottom(edge):
-        #     """Ensure the edge is oriented from top to bottom."""
-        #     if edge.start[1] < edge.end[1]:
-        #         edge.reverse()
-        #     return edge
         
         # Create new panels
         panel1 = pyg.Panel(f'{self.name}_split_left')
@@ -291,37 +238,6 @@ class CircleArcPanel(pyg.Panel):
             copy.deepcopy(bottom1),
             split_edge2
         ])
-        
-        #print(f"[CircleArcPanel.split] Created panel2")
-
-        # #print(f"[CircleArcPanel.split] Created panel1 with edges:")
-        # for i, edge in enumerate(panel1.edges):
-        #     #print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
-            
-        # #print(f"[CircleArcPanel.split] Created panel2 with edges:")
-        # for i, edge in enumerate(panel2.edges):
-        #     #print(f"  Edge {i}: label={getattr(edge, 'label', 'None')}")
-            
-        # Apply the verification method to the new panels
-        # Add the _verify_edge_labels method to the new panels
-        #panel1._verify_edge_labels = self._verify_edge_labels.__get__(panel1)
-        #panel2._verify_edge_labels = self._verify_edge_labels.__get__(panel2)
-        
-        # print(f"[CircleArcPanel.split] Verifying edge labels for new panels")
-
-        # Verify edge labels in both new panels
-        #panel1._verify_edge_labels()
-        #panel2._verify_edge_labels()
-
-
-        #print(f"[CircleArcPanel.split] Edge labels verified for new panels")
-
-        # add split history
-        # self.split_history.append({
-        #     #'panel_name': self.name,
-        #     'proportion': proportion,
-        #     'new_panels': [panel1, panel2]
-        # })
         
         # Return the new panels
         print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")
@@ -404,8 +320,8 @@ class AsymHalfCirclePanel(pyg.Panel):
 
         # Check that each expected label exists on an edge
         for label in expected_labels:
-            edge = self.get_edge_by_label(label)
-            if edge is None:
+            edge = split_utils.collect_edges_by_label(label)
+            if not edge:
                 missing_labels.append(label)
                 print(f"[AsymHalfCirclePanel._verify_edge_labels] ERROR: Edge with label '{label}' not found")
         

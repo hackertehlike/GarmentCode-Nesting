@@ -74,7 +74,7 @@ def find_dart_tips(top_edges, dart_nums):
     return tips
 
 
-def split_point(top_edges, dart_tips, proportion, dart_number_fn):
+def split_point(top_edges, proportion, dart_tips = None):
     """
     Find the split point along a set of edges, accounting for darts if present.
     This function calculates the split point based on the total length of the edges and the specified proportion.
@@ -91,7 +91,7 @@ def split_point(top_edges, dart_tips, proportion, dart_number_fn):
     lengths = [e.length() for e in top_edges]
     total = sum(lengths)
     if not total:
-        return None
+        return None, None
 
     target = proportion * total
     cur = 0
@@ -100,25 +100,25 @@ def split_point(top_edges, dart_tips, proportion, dart_number_fn):
             local_prop = (target - cur) / l
             if any("dart_" in lbl for lbl in e.semantic_labels):
                 dnum = next((
-                    dart_number_fn(lbl)
+                    dart_number(lbl)
                     for lbl in e.semantic_labels
                     if lbl.startswith("dart_")
                 ), None)
                 if dnum and dnum in dart_tips:
-                    return dart_tips[dnum]
-                return next(iter(dart_tips.values()), e.point_at(local_prop))
+                    return dart_tips[dnum], e
+                return next(iter(dart_tips.values()), e.point_at(local_prop)), e
             point = e.point_at(local_prop)
-            prox = total * 0.02
-            if dart_tips:
-                nearest, dist = min(
-                    (
-                        (dt, np.linalg.norm(np.array(point) - np.array(dt)))
-                        for dt in dart_tips.values()
-                    ),
-                    key=lambda t: t[1],
-                )
-                if dist < prox:
-                    return nearest
-            return point
+            # prox = total * 0.02
+            # if dart_tips:
+            #     nearest, dist = min(
+            #         (
+            #             (dt, np.linalg.norm(np.array(point) - np.array(dt)))
+            #             for dt in dart_tips.values()
+            #         ),
+            #         key=lambda t: t[1],
+            #     )
+            #     if dist < prox:
+            #         return nearest
+            return point, e
         cur += l
-    return None
+    return None, None

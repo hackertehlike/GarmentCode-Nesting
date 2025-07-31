@@ -120,6 +120,10 @@ class StitchingRule:
                 # Split the base edge accordingly
                 subdiv = base_edge.subdivide_len([split_frac, 1 - split_frac])
 
+                for e in subdiv:
+                    for lbl in base_edge.semantic_labels:
+                        e.add_semantic_label(lbl)  # Copy semantic labels
+
                 inter.panel[in_id].edges.substitute(base_edge, subdiv)  # Update the panel
                                                                         # Always follows the edge order in the panel
                 # Swap subdiv order for interface to s.w. the interface sequence remains oriented

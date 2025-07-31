@@ -233,7 +233,7 @@ class PantPanel(pyg.Panel):
             if lbl.startswith("dart_") and split_utils.dart_number(lbl) is not None
         }
         dart_tips = split_utils.find_dart_tips(top_edges, dart_nums)
-        split_pt = split_utils.split_point(top_edges, dart_tips, proportion, split_utils.dart_number)
+        split_pt, split_edge = split_utils.split_point(top_edges, proportion, dart_tips)
 
         if split_pt is None:
             return super().split(proportion)

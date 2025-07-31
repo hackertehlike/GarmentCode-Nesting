@@ -270,11 +270,11 @@ class Panel(BaseComponent):
 
         # add semantic labels to the new edges
         for e in dart_edges:
-            e.semantic_labels.append(f"dart_{dart_shape.name}")
+            e.add_semantic_label("dart")
             if right:
-                e.semantic_labels.append("dart_right")
+                e.add_semantic_label("dart_right")
             else:
-                e.semantic_labels.append("dart_left")
+                e.add_semantic_label("dart_left")
 
         return edges_new, int_new
 
@@ -432,14 +432,14 @@ class Panel(BaseComponent):
 
         return verts_3d.min(axis=0), verts_3d.max(axis=0)
 
-    def get_edge_by_label(self, label):
-        """Find an edge with a given label"""
+    # def get_edge_by_label(self, label):
+    #     """Find an edge with a given label"""
 
-        for edge in self.edges:
-            if edge.label == label or label in edge.semantic_labels:
-                # print(f'[panel.get_edge_by_label()] Found edge {edge.label} with label {label} in panel {self.name}')
-                return edge
-        return None
+    #     for edge in self.edges:
+    #         if edge.label == label or label in edge.semantic_labels:
+    #             # print(f'[panel.get_edge_by_label()] Found edge {edge.label} with label {label} in panel {self.name}')
+    #             return edge
+    #     return None
     
     def get_leftmost_vertex(self):
         """Find the leftmost vertex in the panel.
