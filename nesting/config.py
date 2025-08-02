@@ -10,18 +10,19 @@ VERBOSE: bool = True
 # DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_design_params.yaml"
 # DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_body_measurements.yaml"
 
-DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_specification.json"
-DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_design_params.yaml"
-DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_023FMIGQK0/rand_023FMIGQK0_body_measurements.yaml"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_0A36YXPNV0/rand_0A36YXPNV0_specification.json"
+DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_0A36YXPNV0/rand_0A36YXPNV0_design_params.yaml"
+DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_0A36YXPNV0/rand_0A36YXPNV0_body_measurements.yaml"
 
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
-CrossoverName = Literal["pmx", "ox1"]
+#CrossoverName = Literal["pmx", "ox1"]
+CrossoverName = Literal["oxk"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 
 # ——— algorithm settings —————————————————————————————————————
-SELECTED_DECODER       : DecoderName = "BL"
+SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"
@@ -41,12 +42,12 @@ BB_WEIGHT = 0.5  # weight for bounding box utilization in combined fitness metri
 CC_WEIGHT = 0.5  # weight for concave hull utilization in combined fitness metric
 
 # NFP
-NFP_GRAVITATE_ON: bool = True  # whether to gravitate:
+NFP_GRAVITATE_ON: bool = True  # whether to gravitate after NFP placement
 
 # ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 20
-NUM_GENERATIONS       = 5
-MUTATION_RATE         = 0.5
+POPULATION_SIZE       = 100
+NUM_GENERATIONS       = 20
+MUTATION_RATE         = 0.2
 
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
@@ -102,12 +103,12 @@ SYMMETRIC_SPLITS: bool = True  # whether to split the pattern symmetrically (e.g
 # mutation weights
 MUTATION_WEIGHTS = {
     "rotate":    0.1,
-    "swap":      0,
+    "swap":      0.1,
     "inversion": 0.1,
-    "insertion": 0,
-    "scramble":  0,
-    "split":     0.4,
-    "design_params": 0.4
+    "insertion": 0.1,
+    "scramble":  0.1,
+    "split":     0.25,
+    "design_params": 0.25
 }
 
 
@@ -129,10 +130,10 @@ LOG_DESIGN_PARAM_PATHS = False
 SAVE_GENERATION_SVGS = True
 
 # ——— concave hull —————————————————————————————————————
-HULL_TRIM_RATIO = 10 # higher number -> more convex
+HULL_TRIM_RATIO = 20 # higher number -> more convex
 INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
 BOUNDARY_SAMPLE_SPACING = 3 # how many cm between sampled boundary points, tradeoff between speed and accuracy of the hull
-SNAP = True
+SNAP = False
 SNAP_TOLERANCE = 0.1 # how close points must be to snap to the hull, in percentage of the container size
 
 
@@ -145,10 +146,10 @@ ALLOWED_ROTATIONS = [0, 90, 180, 270]  # allowed rotations in degrees, if ENABLE
 # GUI STUFF
 NUM_COPIES = 0
 
-CONTAINER_WIDTH_CM  = 140
-CONTAINER_HEIGHT_CM = 400
+CONTAINER_WIDTH_CM  = 300
+CONTAINER_HEIGHT_CM = 140
 
-SEAM_ALLOWANCE_CM = 0
+SEAM_ALLOWANCE_CM = 1
 
 def __dict__() -> dict:
     """

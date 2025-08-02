@@ -561,7 +561,7 @@ class Evolution:
             f"{len(mutants)} mutants, {len(randoms)} randoms."
         )
 
-        # 5) Compute per‐operator statistics
+        # Compute per‐operator statistics
         avg_off  = sum(c.fitness for c in offspring) / len(offspring) if offspring else 0.0
         avg_mut  = sum(c.fitness for c in mutants)   / len(mutants)   if mutants else 0.0
         avg_rand = sum(c.fitness for c in randoms)   / len(randoms)   if randoms else 0.0

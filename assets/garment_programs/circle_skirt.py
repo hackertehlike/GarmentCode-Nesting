@@ -190,6 +190,10 @@ class CircleArcPanel(pyg.Panel):
         #print(f"[CircleArcPanel.split] Split points: "f"bottom={split_point_bottom}, top={split_point_top}")
 
         # Split edges
+
+        #print the split_edge_top and bottom_edge
+        print(f"[CircleArcPanel.split] Split edge top: {split_edge_top}, Split edge bottom: {split_edge_bottom}")
+        # Using split_edge_bottom instead of bottom_edge since collect_edges_by_label returns a list
         bottom1, bottom2 = split_edge_bottom.split_at_point(split_pt_bottom)
         top1, top2 = split_edge_top.split_at_point(split_pt_top)
 
@@ -200,13 +204,13 @@ class CircleArcPanel(pyg.Panel):
         split_point_top_copy2 = split_pt_top.copy()
         split_point_bottom_copy2 = split_pt_bottom.copy()
 
-        # Create edges with the copied vertices
+        # Create edges with the copied vertices - these will be the connecting edges between top and bottom
         split_edge1 = pyg.Edge(split_point_top_copy1, split_point_bottom_copy1)
         split_edge1.add_semantic_label('left')
             
         split_edge2 = pyg.Edge(split_point_bottom_copy2, split_point_top_copy2)
         split_edge2.add_semantic_label('right')
-
+    
         
         # Create new panels
         panel1 = pyg.Panel(f'{self.name}_split_left')

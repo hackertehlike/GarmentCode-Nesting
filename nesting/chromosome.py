@@ -332,6 +332,13 @@ class Chromosome(Layout):
 
         return self
 
+    def _warn_if_panel_lost(self, before_roots: set[str], mutation: str) -> None:
+        """Emit a warning if any panels disappeared after a mutation."""
+        after_roots = {g.root_id for g in self.genes}
+        missing = before_roots - after_roots
+        if missing:
+            print(f"[Chromosome] WARNING: mutation '{mutation}' lost panels: {sorted(missing)}")
+
     # ── simple mutations ───────────────────────────────────────────────
 
     def _mutate_split(self):
@@ -341,6 +348,8 @@ class Chromosome(Layout):
         from assets.garment_programs.meta_garment import MetaGarment
         import tempfile
         from pathlib import Path
+
+        before = {g.root_id for g in self.genes}
 
         max_splits = min(config.NUM_SPLITS, len(self.genes))
         for _ in range(random.randint(1, max_splits)):
@@ -353,17 +362,17 @@ class Chromosome(Layout):
             idx = random.randrange(len(self.genes))
             piece = self.genes[idx]
 
-            # retry until we find a piece that can be split
-            # retries = 0
-            # while 'split' in piece.id and retries < 10:
-            #     print(f"[Chromosome] Skipping split for {piece.id} - already split")
-            #     idx = random.randrange(len(self.genes))
-            #     piece = self.genes[idx]
-            #     retries += 1
+            #retry until we find a piece that can be split
+            retries = 0
+            while 'split' in piece.id and retries < 10:
+                print(f"[Chromosome] Skipping split for {piece.id} - already split")
+                idx = random.randrange(len(self.genes))
+                piece = self.genes[idx]
+                retries += 1
 
-            # if 'split' in piece.id:
-            #     print(f"Max retries reached for split mutation on {piece.id}, skipping")
-            #     continue
+            if 'split' in piece.id:
+                print(f"Max retries reached for split mutation on {piece.id}, skipping")
+                continue
 
             # Ensure a MetaGarment instance is fresh for the split operation
         
@@ -406,6 +415,7 @@ class Chromosome(Layout):
                     self.genes.insert(mirror_idx, left_mirror)
                     self.genes.insert(random.randrange(len(self.genes) + 1), right_mirror)
 
+                self._warn_if_panel_lost(before, "split")
                 return True  # Indicate successful mutation
                 
 
@@ -415,6 +425,7 @@ class Chromosome(Layout):
             new_panel_names = mg.split_panel(piece.id, proportion=proportion)
             if new_panel_names is None:
                 print(f"[Chromosome] MetaGarment split failed for {piece.id}: no new panels returned")
+                self._warn_if_panel_lost(before, "split")
                 return False
             self.split_history.append((piece.id, proportion))
             print(f"[Chromosome] Split {piece.id} into {new_panel_names} with proportion {proportion}")
@@ -428,6 +439,7 @@ class Chromosome(Layout):
                 )
                 if new_panel_names_mirror is None:
                     print(f"[Chromosome] MetaGarment split failed for mirror {piece_mirror.id}")
+                    self._warn_if_panel_lost(before, "split")
                     return False
                 self.split_history.append((piece_mirror.id, mirror_proportion))
                 print(f"[Chromosome] Split {piece_mirror.id} into {new_panel_names_mirror} with proportion {mirror_proportion}")
@@ -484,39 +496,57 @@ class Chromosome(Layout):
             self.genes.remove(child)
             self.genes.insert(random.randrange(len(self.genes) + 1), child)
 
-            if mirror_left is not None and mirror_right is not None and mirror_idx is not None:
+            if mirror_left is not None and mirror_right is not None and piece_mirror in self.genes:
+                mirror_idx = self.genes.index(piece_mirror)
                 self.genes[mirror_idx:mirror_idx + 1] = [mirror_left, mirror_right]
                 mchild = random.choice([mirror_left, mirror_right])
                 self.genes.remove(mchild)
                 self.genes.insert(random.randrange(len(self.genes) + 1), mchild)
 
+            self._warn_if_panel_lost(before, "split")
             return True  # Indicate successful mutation
 
         # Recompute mutatable params since gene ids changed
         # self._mutatable_params = _collect_mutatable_params(self.design_params, self._genes)
 
+        self._warn_if_panel_lost(before, "split")
+
     def _mutate_rotate(self):
+        before = {g.root_id for g in self.genes}
         for _ in range(random.randint(1, len(self.genes))):
             idx = random.randrange(len(self.genes))
             self.genes[idx].rotate(random.choice(config.ALLOWED_ROTATIONS))
+        self._warn_if_panel_lost(before, "rotate")
 
     def _mutate_swap(self):
+        before = {g.root_id for g in self.genes}
         i, j = random.sample(range(len(self.genes)), 2)
         self.genes[i], self.genes[j] = self.genes[j], self.genes[i]
+        self._warn_if_panel_lost(before, "swap")
 
     def _mutate_inversion(self):
+        before = {g.root_id for g in self.genes}
         i, j = sorted(random.sample(range(len(self.genes)), 2))
         self.genes[i:j + 1] = reversed(self.genes[i:j + 1])
+        self._warn_if_panel_lost(before, "inversion")
 
     def _mutate_insertion(self):
+        if len(self.genes) < 2:
+            return
+        before = {g.root_id for g in self.genes}
         i = random.randrange(len(self.genes))
-        self.genes.insert(random.randrange(len(self.genes)), self.genes.pop(i))
+        insert_at = random.randrange(len(self.genes) + 1)
+        gene = self.genes.pop(i)
+        self.genes.insert(insert_at, gene)
+        self._warn_if_panel_lost(before, "insertion")
 
     def _mutate_scramble(self):
+        before = {g.root_id for g in self.genes}
         i, j = sorted(random.sample(range(len(self.genes)), 2))
         subset = self.genes[i:j + 1]
         random.shuffle(subset)
         self.genes[i:j + 1] = subset
+        self._warn_if_panel_lost(before, "scramble")
 
     # ── design‑parameter mutation ──────────────────────────
 
@@ -525,6 +555,8 @@ class Chromosome(Layout):
             if config.VERBOSE:
                 print("[Chromosome] design‑param mutation skipped - missing design or body params")
             return
+
+        before = {g.root_id for g in self.genes}
 
         # Ensure fitness is calculated before attempting mutation
         if self.fitness is None:
@@ -567,6 +599,7 @@ class Chromosome(Layout):
                         'old_value': old_val,
                         'new_value': new_val
                     })
+                    self._warn_if_panel_lost(before, "design_params")
                     return True # Success
 
         # If loop completes, no mutation led to a fitness change, restore state
@@ -577,6 +610,7 @@ class Chromosome(Layout):
         self.fitness = original_fitness
         if config.VERBOSE:
             print("[Chromosome] No design param mutation resulted in a fitness change.")
+        self._warn_if_panel_lost(before, "design_params")
         return False
 
     def _apply_design_param_change(self, path: str, old_val: Any, new_val: Any) -> bool:
