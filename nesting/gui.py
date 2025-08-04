@@ -4,7 +4,8 @@ import tempfile
 import json
 import copy
 # import yaml
-from typing import Dict, List, Tuple, Set, Optional
+# from typing import Dict, List, Tuple, Set, Optional
+from typing import Dict, Tuple, Optional, List
 from pathlib import Path
 from datetime import datetime
 
@@ -13,16 +14,16 @@ from nicegui.events import KeyEventArguments
 from nesting import utils
 from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap, etc.
 import matplotlib.pyplot as plt
-import io
-import base64
+# import io
+# import base64
 
-from pygarment.garmentcode.params import DesignSampler
+# from pygarment.garmentcode.params import DesignSampler
 from .path_extractor import *
 from .layout import *
 from .placement_engine import *
 import nesting.config as config
-from nesting.panel_mapping import affected_panels, select_genes
-from shapely.errors import GEOSException as TopologyException
+# from nesting.panel_mapping import affected_panels, select_genes
+# from shapely.errors import GEOSException as TopologyException
 
 # viewer size in CSS‑pixels
 MAX_CANVAS_PX_WIDTH  = 800   
@@ -1133,7 +1134,7 @@ class NestingGUI:
                     extend_window=config.EXTEND_WINDOW,
                     extend_threshold=config.EXTEND_THRESHOLD,
                     max_generations=config.MAX_GENERATIONS,
-                    crossover_method=config.SELECTED_CROSSOVER,
+                    # crossover_method=config.SELECTED_CROSSOVER,
                     design_params=self.design_params if hasattr(self, 'design_params') else None,
                     body_params=self.body_params if hasattr(self, 'body_params') else None,
                 )
@@ -1150,10 +1151,10 @@ class NestingGUI:
                 view    = LayoutView(best_chromosome.genes)
                 decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
   
-            elif method == "Jostle":
-                # Use the default decoder instead of JostleDecoder
-                view    = LayoutView(layout)
-                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
+            # elif method == "Jostle":
+            #     # Use the default decoder instead of JostleDecoder
+            #     view    = LayoutView(layout)
+            #     decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
 
             else:
                 raise ValueError(f"Unknown placement method: {method}")
@@ -1209,8 +1210,8 @@ class NestingGUI:
 
         from pathlib import Path
         import copy
-        import io
-        import matplotlib.pyplot as plt
+        # import io
+        # import matplotlib.pyplot as plt
 
         # Load original pieces
         extractor = PatternPathExtractor(Path(config.DEFAULT_PATTERN_PATH))

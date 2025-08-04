@@ -37,7 +37,7 @@ class Evolution:
         population_size: int = 10,
         #elite_population_size: int = 5,
         mutation_rate: float = 0.2,
-        crossover_method: str = "pmx",
+        # crossover_method: str = "oxk",
         #pmx: bool = True,`
         # allow_duplicate_genes: bool = False,
         # max_duplicate_retries: int = 50,
@@ -105,7 +105,7 @@ class Evolution:
         self.population_size = population_size
         #self.elite_population_size = elite_population_size
         self.mutation_rate = mutation_rate
-        self.crossover_method = crossover_method
+        # self.crossover_method = crossover_method
         #self.pmx = pmx
         # self.allow_duplicate_genes = allow_duplicate_genes
         # self.max_duplicate_retries = max_duplicate_retries
@@ -403,10 +403,11 @@ class Evolution:
 
         def do_offspring(p1, p2, parent_f):
             try:
-                if self.crossover_method == 'pmx':
-                    child = p1.crossover_pmx(p2)
-                else:
-                    child = p1.crossover_oxk(p2)
+                # if self.crossover_method == 'pmx':
+                #     child = p1.crossover_pmx(p2)
+                # else:
+                    # child = p1.crossover_oxk(p2)
+                child = p1.crossover_ox1_k(p2, config.OX_K)
                 if random.random() < self.mutation_rate:
                     child.mutate()
                 child.calculate_fitness()

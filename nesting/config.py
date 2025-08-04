@@ -130,7 +130,7 @@ LOG_DESIGN_PARAM_PATHS = False
 SAVE_GENERATION_SVGS = True
 
 # ——— concave hull —————————————————————————————————————
-HULL_TRIM_RATIO = 20 # higher number -> more convex
+HULL_TRIM_RATIO = 10 # higher number -> more convex
 INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
 BOUNDARY_SAMPLE_SPACING = 3 # how many cm between sampled boundary points, tradeoff between speed and accuracy of the hull
 SNAP = False
