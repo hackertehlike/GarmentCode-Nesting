@@ -40,6 +40,20 @@ def dart_number(label: str) -> Optional[str]:
     return parts[1] if len(parts) >= 2 and parts[1].isdigit() else None
 
 
+def cut_number(label: str) -> Optional[str]:
+    """
+    Extract the cut number from a label string of the form 'cut_X'.
+
+    Args:
+        label: The label string (e.g., 'cut_1', 'cut_2_left').
+
+    Returns:
+        The cut number as a string if present, otherwise None.
+    """
+    parts = label.split("_")
+    return parts[1] if len(parts) >= 2 and parts[1].isdigit() else None
+
+
 def find_dart_tips(top_edges, dart_nums):
     """
     Find the tip points for each dart number among the given edges.
@@ -74,16 +88,52 @@ def find_dart_tips(top_edges, dart_nums):
     return tips
 
 
-def split_point(top_edges, proportion, dart_tips = None):
+def find_cut_tips(bottom_edges, cut_nums):
+    """
+    Find the tip points for each cut number among the given edges.
+    Cuts are similar to darts but typically found on bottom edges.
+
+    Args:
+        bottom_edges: List of edges to search for cut tips.
+        cut_nums: Iterable of cut numbers to look for.
+
+    Returns:
+        Dictionary mapping cut number to its tip point (coordinate tuple).
+    """
+    tips = {}
+    for num in sorted(cut_nums):
+        cut_edges = [e for e in bottom_edges if any(lbl.startswith(f"cut_{num}") for lbl in e.semantic_labels)]
+        pt = None
+        for e1, e2 in itertools.combinations(cut_edges, 2):
+            for a in (e1.start, e1.end):
+                for b in (e2.start, e2.end):
+                    if np.allclose(a, b, atol=1e-6):
+                        pt = a
+                        break
+                if pt is not None:
+                    break
+            if pt is not None:
+                break
+        if pt is None:
+            points = [p for ce in cut_edges for p in (ce.start, ce.end)]
+            if points:
+                pt = max(points, key=lambda p: p[1])  # Cut tips are typically at the highest point (closest to waist)
+        if pt is not None:
+            tips[num] = pt
+    return tips
+
+
+def split_point(top_edges, proportion, dart_tips = None, bottom_edges=None, cut_tips=None):
     """
     Find the split point along a set of edges, accounting for darts if present.
     This function calculates the split point based on the total length of the edges and the specified proportion.
 
     Args:
         top_edges: List of edges to split along.
-        dart_tips: Dictionary of dart number to tip point.
         proportion: Proportion (0-1) along the total edge length to split.
-        dart_number_fn: Function to extract dart number from a label.
+        dart_tips: Dictionary of dart number to tip point.
+        bottom_edges: List of bottom edges to check for cuts (optional).
+        cut_tips: Dictionary of cut number to tip point (optional).
 
     Returns:
         The coordinate tuple of the split point, or None if not found.
@@ -104,21 +154,18 @@ def split_point(top_edges, proportion, dart_tips = None):
                     for lbl in e.semantic_labels
                     if lbl.startswith("dart_")
                 ), None)
-                if dnum and dnum in dart_tips:
+                if dnum and dart_tips and dnum in dart_tips:
                     return dart_tips[dnum], e
-                return next(iter(dart_tips.values()), e.point_at(local_prop)), e
+                return next(iter(dart_tips.values()), e.point_at(local_prop)) if dart_tips else e.point_at(local_prop), e
             point = e.point_at(local_prop)
-            # prox = total * 0.02
-            # if dart_tips:
-            #     nearest, dist = min(
-            #         (
-            #             (dt, np.linalg.norm(np.array(point) - np.array(dt)))
-            #             for dt in dart_tips.values()
-            #         ),
-            #         key=lambda t: t[1],
-            #     )
-            #     if dist < prox:
-            #         return nearest
+            
+            # Check if we should snap to a cut tip instead
+            if cut_tips and bottom_edges:
+                prox = total * 0.05  # 5% proximity threshold
+                for cut_pt in cut_tips.values():
+                    if abs(point[0] - cut_pt[0]) < prox:  # Check x-coordinate proximity
+                        return cut_pt, e
+                        
             return point, e
         cur += l
     return None, None

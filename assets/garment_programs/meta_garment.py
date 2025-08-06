@@ -98,6 +98,7 @@ class MetaGarment(pyg.Component):
 
 
     def get_panel_by_name(self, panel_name):
+        # TODO: fix... its not working
         """Retrieve a panel by its name
         
         This method searches for a panel with the given name in the following order:
@@ -121,6 +122,9 @@ class MetaGarment(pyg.Component):
             panel = garment.get_panel_by_name('skirt_back')
             ```
         """
+
+        #print the hierarchy of the garment
+        print(f"[MetaGarment.get_panel_by_name] Searching for panel {panel_name} in {self.name}")
         # First, try to find the panel directly in subcomponents
         # This handles both panel objects stored directly as attributes and
         # panels within subcomponents
@@ -142,9 +146,9 @@ class MetaGarment(pyg.Component):
                     return panel
         
         # If not found through direct attributes, try through the assembled pattern
-        # pattern = self.assembly().pattern
-        # if 'panels' in pattern and panel_name in pattern['panels']:
-        #     return pattern['panels'][panel_name]
+        pattern = self.assembly().pattern
+        if 'panels' in pattern and panel_name in pattern['panels']:
+            return pattern['panels'][panel_name]
         
         return None
     

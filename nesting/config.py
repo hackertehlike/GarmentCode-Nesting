@@ -10,13 +10,13 @@ VERBOSE: bool = True
 # DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_design_params.yaml"
 # DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_body_measurements.yaml"
 
-DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_0A36YXPNV0/rand_0A36YXPNV0_specification.json"
-DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_0A36YXPNV0/rand_0A36YXPNV0_design_params.yaml"
-DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_0A36YXPNV0/rand_0A36YXPNV0_body_measurements.yaml"
+DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_specification.json"
+DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_design_params.yaml"
+DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_body_measurements.yaml"
 
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
-MetricName  = Literal["usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
+MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
 #CrossoverName = Literal["pmx", "ox1"]
 CrossoverName = Literal["oxk"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
@@ -48,6 +48,7 @@ NFP_GRAVITATE_ON: bool = True  # whether to gravitate after NFP placement
 POPULATION_SIZE       = 100
 NUM_GENERATIONS       = 20
 MUTATION_RATE         = 0.2
+FORCE_MUTATION_ON_CROSSOVER: bool = True  # force mutation if offspring has same fitness as a parent
 
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
@@ -146,7 +147,7 @@ ALLOWED_ROTATIONS = [0, 90, 180, 270]  # allowed rotations in degrees, if ENABLE
 # GUI STUFF
 NUM_COPIES = 0
 
-CONTAINER_WIDTH_CM  = 300
+CONTAINER_WIDTH_CM  = 1000
 CONTAINER_HEIGHT_CM = 140
 
 SEAM_ALLOWANCE_CM = 1

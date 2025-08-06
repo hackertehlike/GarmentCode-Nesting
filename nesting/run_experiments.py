@@ -25,6 +25,7 @@ from nesting.path_extractor import PatternPathExtractor
 from .evolution import Evolution
 from .layout import Container, Piece, Layout
 from assets.bodies.body_params import BodyParameters
+from nesting.metastatistics import MetaStatistics
 
 # -----------------------------------------------------------------------------
 # Helper functions
@@ -85,7 +86,15 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
             #             copy_piece = copy.deepcopy(piece)
             #             copy_piece.id = f"{piece.id}_copy{i+1}"
             #             pieces[copy_piece.id] = copy_piece
+
+            
             #     print(f"Created {config.NUM_COPIES+1} copies, {len(pieces)} pieces in total")
+
+
+            # Apply seam allowance and reset translations just like GUI
+            for piece in pieces.values():
+                piece.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+                piece.translation = (0, 0)
         except Exception as e:
             print(f"Error loading pattern {pattern_name}: {e}")
             traceback.print_exc()
@@ -94,34 +103,16 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
         # Load design parameters
         design_params = None
         try:
-            # Check for YAML file with design parameters
-            yaml_path = pattern_path.parent / "design_params.yaml"
-            if yaml_path.exists():
-                with open(yaml_path, "r", encoding="utf-8") as f:
-                    yaml_data = yaml.safe_load(f)
-                    if "design" in yaml_data:
-                        design_params = yaml_data["design"]
-                        print(f"Loaded design parameters from {yaml_path}")
-                    else:
-                        print(f"Warning: No 'design' key in {yaml_path}")
-            else:
-                # Check for design params in the pattern file itself
-                with pattern_path.open("r", encoding="utf-8") as f:
-                    pattern_data = json.load(f)
-                    if "design" in pattern_data:
-                        design_params = pattern_data["design"]
-                        print("Design parameters loaded from pattern JSON")
-                    else:
-                        # Use default design params if available
-                        default_params_path = Path(config.DEFAULT_DESIGN_PARAM_PATH)
-                        if default_params_path.exists():
-                            with open(default_params_path, "r", encoding="utf-8") as f:
-                                yaml_data = yaml.safe_load(f)
-                                if "design" in yaml_data:
-                                    design_params = yaml_data["design"]
-                                    print(f"Using default design parameters")
-                                else:
-                                    print(f"Warning: No 'design' key in default params")
+            yaml_path = pattern_path.parent / f"{pattern_name}_design_params.yaml"
+            if not yaml_path.exists():
+                raise FileNotFoundError(f"Design parameters file not found: {yaml_path}")
+            with open(yaml_path, "r", encoding="utf-8") as f:
+                yaml_data = yaml.safe_load(f)
+            if "design" not in yaml_data:
+                raise KeyError(f"No 'design' key in {yaml_path}")
+            design_params = yaml_data["design"]
+            print(f"Loaded design parameters from {yaml_path}")
+            
         except Exception as e:
             print(f"Error loading design parameters: {e}")
             traceback.print_exc()
@@ -129,17 +120,11 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
         # Load body parameters (like GUI does)
         body_params = None
         try:
-            # Check for body parameters
-            body_path = pattern_path.parent / "body_measurements.yaml"
-            if body_path.exists():
-                body_params = BodyParameters(body_path)
-                print("Body parameters loaded from pattern folder")
-            else:
-                # Use default body params if available
-                default_body_path = Path(config.DEFAULT_BODY_PARAM_PATH)
-                if default_body_path.exists():
-                    body_params = BodyParameters(default_body_path)
-                    print("Default body parameters loaded")
+            body_path = pattern_path.parent / f"{pattern_name}_body_measurements.yaml"
+            if not body_path.exists():
+                raise FileNotFoundError(f"Body parameters file not found: {body_path}")
+            body_params = BodyParameters(body_path)
+            print(f"Body parameters loaded from {body_path}")
         except Exception as e:
             print(f"Error loading body parameters: {e}")
             traceback.print_exc()
@@ -166,6 +151,7 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
                 max_generations=config.MAX_GENERATIONS,
                 design_params=design_params,
                 body_params=body_params,
+                pattern_name=pattern_name,
             )
             
             print("Running evolution...")
@@ -193,13 +179,25 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
             gen_csv_path = os.path.join(pattern_output_dir, "generations.csv")
             with open(gen_csv_path, "w") as f:
                 f.write("Generation,BestFitness,AvgChildFitness,DeltaBest\n")
+                # Handle the arrays more carefully to avoid index errors
                 for g in range(1, evo.generation + 1):
-                    f.write(f"{g},{evo.best_fitness_history[g]},{evo.avg_child_fitnesses[g-1]},{evo.delta_best[g]}\n")
+                    best_fitness = evo.best_fitness_history[g] if g < len(evo.best_fitness_history) else "NA"
+                    avg_fitness = evo.avg_child_fitnesses[g-1] if g-1 < len(evo.avg_child_fitnesses) else "NA"
+                    delta = evo.delta_best[g] if g < len(evo.delta_best) else "NA"
+                    f.write(f"{g},{best_fitness},{avg_fitness},{delta}\n")
             
             # Save log
             log_path = os.path.join(pattern_output_dir, "evolution_log.txt")
             with open(log_path, "w") as f:
                 f.write("\n".join(evo.log_lines))
+                
+            # Update master statistics after each pattern
+            try:
+                print(f"Updating master statistics for {pattern_name}...")
+                MetaStatistics.save_run_statistics(evo, elapsed_time)
+            except Exception as e:
+                print(f"Failed to update master statistics: {e}")
+                traceback.print_exc()
             
             # Save fitness plot
             fig, ax = plt.subplots(figsize=(10, 6))
@@ -249,17 +247,76 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
     # This content is now handled within run_ga_on_patterns
         
 # -----------------------------------------------------------------------------
+# Helper functions for running on multiple patterns
+# -----------------------------------------------------------------------------
+def run_ga_on_directory(directory_path, pattern_filter="*/*_specification.json", limit=None):
+    """
+    Run the genetic algorithm on all pattern files in a directory that match the filter.
+    
+    Args:
+        directory_path: Path to the directory containing pattern files
+        pattern_filter: Glob pattern to filter files (default: "*/*_specification.json")
+        limit: Optional limit on number of patterns to process
+    """
+    directory = Path(directory_path)
+    if not directory.exists() or not directory.is_dir():
+        print(f"Directory {directory_path} does not exist or is not a directory.")
+        return
+    
+    # Find all pattern files in the directory and subdirectories
+    pattern_paths = list(directory.glob(pattern_filter))
+    
+    if not pattern_paths:
+        print(f"No pattern files found in {directory_path} matching {pattern_filter}.")
+        return
+    
+    # Sort for consistent order and limit if specified
+    pattern_paths.sort()
+    if limit and limit > 0:
+        pattern_paths = pattern_paths[:limit]
+        print(f"Found {len(pattern_paths)} pattern files in {directory_path} (limited to {limit})")
+    else:
+        print(f"Found {len(pattern_paths)} pattern files in {directory_path}")
+    
+    # Run GA on all pattern files
+    run_ga_on_patterns(pattern_paths)
+
+# -----------------------------------------------------------------------------
 # CLI convenience
 # -----------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Check if specific patterns were provided as arguments
-    if len(sys.argv) > 1:
-        # Use the provided pattern paths
-        pattern_paths = sys.argv[1:]
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="Run genetic algorithm for pattern nesting optimization")
+    parser.add_argument("patterns", nargs="*", help="Paths to specific pattern files")
+    parser.add_argument("--dir", help="Directory containing pattern files to process")
+    parser.add_argument("--filter", default="*/*_specification.json", 
+                       help="Filter pattern for files in directory (default: */*_specification.json)")
+    parser.add_argument("--limit", type=int, 
+                       help="Limit the number of pattern files to process")
+    
+    args = parser.parse_args()
+    
+    if args.dir:
+        # Run on all patterns in directory
+        run_ga_on_directory(args.dir, args.filter, args.limit)
+    elif args.patterns:
+        # Run on specific patterns provided
+        pattern_paths = args.patterns
+        if args.limit and args.limit > 0 and args.limit < len(pattern_paths):
+            pattern_paths = pattern_paths[:args.limit]
+            print(f"Running GA on {len(pattern_paths)} pattern(s) (limited from {len(args.patterns)})")
+        else:
+            print(f"Running GA on {len(pattern_paths)} pattern(s)")
+        run_ga_on_patterns(pattern_paths)
     else:
         # Use the default pattern path
-        pattern_paths = [config.DEFAULT_PATTERN_PATH]
+        print("No patterns specified, using default pattern")
+        run_ga_on_patterns([config.DEFAULT_PATTERN_PATH])
     
-    print(f"Running GA on {len(pattern_paths)} pattern(s)")
-    # Run the GA on each pattern
-    run_ga_on_patterns(pattern_paths)
+    # Generate aggregate reports after all patterns have been processed
+    try:
+        print("\nGenerating aggregate statistics across all runs...")
+        MetaStatistics.generate_aggregate_reports()
+    except Exception as e:
+        print(f"Failed to generate aggregate statistics: {e}")

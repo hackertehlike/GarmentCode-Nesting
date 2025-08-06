@@ -432,6 +432,25 @@ class PlacementEngine:
         hull_area = hull.area if not hull.is_empty else 0.0
         total_area = sum(utils.polygon_area(p.get_outer_path()) for p in self.placed)
         return (total_area / hull_area) if hull_area > 0 else 0.0
+    
+    def concave_hull_area(self) -> float:
+        """
+        Calculate the area of the concave hull formed by all placed pieces.
+        Returns 0.0 if not all pieces have been placed or if the layout is invalid.
+        """
+        # First check if the layout is valid (includes check that all pieces are placed)
+        if not self.layout_is_valid():
+            return 0.0
+            
+        if not self.placed:
+            return 0.0
+
+        pts = self._flatten_piece_list()
+        hull = self.alpha_shape(pts,
+                                trim_ratio=config.HULL_TRIM_RATIO,
+                                interior_spacing=config.INTERIOR_SAMPLE_SPACING,
+                                boundary_spacing=config.BOUNDARY_SAMPLE_SPACING)
+        return hull.area if not hull.is_empty else 0.0
 
 @register_decoder("BL")
 class BottomLeftDecoder(PlacementEngine):
@@ -447,7 +466,7 @@ class BottomLeftDecoder(PlacementEngine):
           - Iterative gravitate otherwise.
         Place them in order and record their translations + rotation.
         """
-        for piece_id, piece in self.layout.order.items():
+        for _, piece in self.layout.order.items():
             # 1) Anchor against top‐right
             x0, y0 = self.anchor(piece)
 
@@ -676,3 +695,407 @@ class NFPDecoder(PlacementEngine):
                 moving.get_outer_path()
             )
         return self._nfp_cache[key]
+    
+
+@register_decoder("BLF")
+class BottomLeftFill(PlacementEngine):
+    """
+    Implementation of the Bottom-Left Fill (BLF) algorithm.
+    
+    1. Calculate the feasible region (IFR - NFPs)
+    2. Find the bottom-left most point in this region
+    3. Place the piece with its top reference point at this position
+    
+    Adapted from https://github.com/seanys/2D-Irregular-Packing-Algorithm/
+    """
+    
+    def __init__(self, layout: Layout, container: Container, *, vertical: bool = False, **kwargs):
+        super().__init__(layout, container)
+        self.vertical = vertical  # Whether to prioritize vertical placement
+        self._nfp_cache = {}  # Cache for No-Fit Polygons to avoid recalculations
+        
+    def decode(self):
+        """Place all pieces using the Bottom-Left Fill strategy."""
+        # First piece is placed at the bottom-left corner
+        if self.layout.order:
+            first_id, first_piece = next(iter(self.layout.order.items()))
+            self._place_first_piece(first_piece)
+            self.placed.append(first_piece)
+            
+            # Place remaining pieces
+            for _, piece in list(self.layout.order.items())[1:]:
+                success = self._place_piece(piece)
+                if success:
+                    self.placed.append(piece)
+        
+        # Return a list of (id, x, y, rotation) for all placed pieces
+        return [(p.id, p.translation[0], p.translation[1], p.rotation) for p in self.placed]
+    
+    def _place_first_piece(self, piece: Piece):
+        """Place the first piece at the bottom-left corner of the container."""
+        # First anchor against top-right, then gravitate to bottom-left
+        # (same pattern as BottomLeftDecoder)
+        x0, y0 = self.anchor(piece)
+        x, y = self.gravitate(piece, x0, y0)
+        piece.translation = (x, y)
+        
+    def _get_nfp(self, stationary_id: str, moving_id: str, 
+                 stationary_poly: List[Tuple[float, float]], 
+                 moving_poly: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
+        """
+        Return (cached) no-fit polygon between stationary and moving polygons.
+        If not in cache, calculate it and store in cache.
+        """
+        # Create a cache key based on piece IDs
+        key = (stationary_id, moving_id)
+        
+        if key not in self._nfp_cache:
+            # Calculate NFP if not in cache
+            self._nfp_cache[key] = utils.no_fit_polygon(stationary_poly, moving_poly)
+            
+        return self._nfp_cache[key]
+    
+    def _place_piece(self, piece: Piece) -> bool:
+        """
+        Place a piece using the Bottom-Left Fill strategy.
+        Returns True if placement was successful, False otherwise.
+        """
+        # Get the polygon path of the current piece
+        poly = piece.get_outer_path()
+        
+        # Use the container's inner_fit_rectangle method to get the IFR
+        ifr = self.container.inner_fit_rectangle(piece)
+        
+        # If the IFR is empty, the piece is too large for the container
+        if not ifr:
+            return False
+        
+        # Initialize the feasible region as the IFR
+        differ_region = Polygon(ifr)
+        
+        # Subtract the NFP of each placed piece
+        for placed_piece in self.placed:
+            # Translate the stationary piece by its current position
+            stationary_poly = utils._translate_polygon(
+                placed_piece.get_outer_path(), 
+                placed_piece.translation[0], 
+                placed_piece.translation[1]
+            )
+            
+            # Get the NFP between the placed piece and current piece using cache
+            nfp = self._get_nfp(placed_piece.id, piece.id, stationary_poly, piece.get_outer_path())
+            if not nfp:
+                continue
+                
+            nfp_poly = Polygon(nfp)
+            
+            try:
+                # Subtract the NFP from the feasible region
+                differ_region = differ_region.difference(nfp_poly)
+                if differ_region.is_empty:
+                    return False  # No valid placement found
+            except Exception as e:
+                print(f"Error computing difference: {e}")
+                return False
+        
+        # Convert the feasible region to a list of points
+        if differ_region.is_empty:
+            return False
+            
+        if isinstance(differ_region, MultiPolygon):
+            # If we got multiple polygons, use the one with the leftmost-bottom point
+            leftmost_bottom = None
+            selected_poly = None
+            
+            for poly in differ_region.geoms:
+                coords = list(poly.exterior.coords)
+                for x, y in coords:
+                    if leftmost_bottom is None:
+                        leftmost_bottom = (x, y)
+                        selected_poly = poly
+                    elif (self.vertical and y < leftmost_bottom[1]) or (not self.vertical and x < leftmost_bottom[0]):
+                        leftmost_bottom = (x, y)
+                        selected_poly = poly
+                    elif ((self.vertical and y == leftmost_bottom[1] and x < leftmost_bottom[0]) or 
+                          (not self.vertical and x == leftmost_bottom[0] and y < leftmost_bottom[1])):
+                        leftmost_bottom = (x, y)
+                        selected_poly = poly
+            
+            if selected_poly:
+                differ_points = list(selected_poly.exterior.coords)
+            else:
+                return False
+        else:
+            differ_points = list(differ_region.exterior.coords)
+        
+        # Find the bottom-left most point in the feasible region
+        bl_point = None
+        
+        if not differ_points:
+            return False
+            
+        # For vertical mode: (y, x) priority, for horizontal mode: (x, y) priority
+        try:
+            if self.vertical:
+                bl_point = min(differ_points, key=lambda p: (p[1], p[0]))
+            else:
+                bl_point = min(differ_points, key=lambda p: (p[0], p[1]))
+        except ValueError:
+            # This happens if differ_points is empty
+            return False
+            
+        if bl_point is None:
+            return False
+            
+        # Find the reference point (top-most point) of the piece using min()
+        # In screen coordinates, smaller y is higher (top)
+        top_point = min(poly, key=lambda point: point[1])
+        reference_point = top_point
+        
+        # Place the piece at the bottom-left point
+        dx = bl_point[0] - reference_point[0]
+        dy = bl_point[1] - reference_point[1]
+        piece.translation = (dx, dy)
+        
+        # Final check to ensure placement is valid
+        return self._fits(piece, dx, dy)
+
+@register_decoder("TOPOS")
+class TOPOSDecoder(PlacementEngine):
+    """
+    Implementation of the TOPOS heuristic algorithm.
+    Adapted from https://github.com/seanys/2D-Irregular-Packing-Algorithm/
+    """
+    def __init__(self, layout: Layout, container: Container, **kwargs):
+        super().__init__(layout, container)
+        self._nfp_cache = {}  # Cache for NFP calculations
+        
+        # Border tracking
+        self.border_left = 0
+        self.border_right = 0
+        self.border_bottom = 0
+        self.border_top = 0
+        self.border_height = 0
+        self.border_width = 0
+    
+    def decode(self):
+        # Handle empty layout
+        if not self.layout.order:
+            return []
+            
+        # Anchor the first piece against the top-right corner
+        _, first_piece = next(iter(self.layout.order.items()))
+        x0, y0 = self.anchor(first_piece)
+        first_piece.translation = (x0, y0)
+        
+        # Update borders after placing first piece
+        self._update_borders(first_piece)
+        
+        # Place remaining pieces
+        for _, piece in list(self.layout.order.items())[1:]:
+            # Calculate NFP union for feasible placement region
+            feasible_border = self._calculate_nfp_union(piece)
+            
+            # Get feasible points from the border
+            feasible_points = self._choose_feasible_points(feasible_border)
+            
+            # Get reference point and left/right widths
+            top_idx = self._find_top_point_index(piece)
+            reference_point = piece.get_outer_path()[top_idx]
+            
+            # Calculate left and right widths from top point
+            left_width, right_width = self._calculate_piece_widths(piece, top_idx)
+            
+            # Find best position using original width change logic
+            best_position = self._find_min_width_change_position(
+                feasible_points, left_width, right_width)
+            
+            if best_position is not None:
+                # Calculate translation to place the piece with its top point at the best position
+                dx = best_position[0] - reference_point[0]
+                dy = best_position[1] - reference_point[1]
+                piece.translation = (dx, dy)
+                self.placed.append(piece)
+                self._update_layout_borders(piece)
+        
+        # Slide everything to bottom-left at the end
+        self._slide_to_bottom_left()
+        
+        return [(p.id, p.translation[0], p.translation[1], p.rotation) for p in self.placed]
+    
+    def _calculate_nfp_union(self, piece):
+        """Calculate the union of NFPs against all placed pieces."""
+        from shapely.geometry import Polygon
+        
+        if not self.placed:
+            return None
+            
+        # Start with the first piece's NFP
+        first_placed = self.placed[0]
+        nfp = self._get_nfp(first_placed, piece)
+        merged_nfp = Polygon(nfp)
+        
+        # Union with the NFPs of all other placed pieces
+        for placed_piece in self.placed[1:]:
+            nfp = self._get_nfp(placed_piece, piece)
+            if nfp:
+                merged_nfp = merged_nfp.union(Polygon(nfp))
+                
+        return merged_nfp
+    
+    def _get_nfp(self, stationary_piece, moving_piece):
+        """Get (cached) NFP between two pieces."""
+        key = (stationary_piece.id, moving_piece.id)
+        if key not in self._nfp_cache:
+            # Translate stationary piece by its current position
+            sx, sy = stationary_piece.translation
+            stationary_poly = utils._translate_polygon(
+                stationary_piece.get_outer_path(), sx, sy
+            )
+            
+            # Calculate NFP
+            self._nfp_cache[key] = utils.no_fit_polygon(
+                stationary_poly, 
+                moving_piece.get_outer_path()
+            )
+            
+        return self._nfp_cache[key]
+    
+    def _choose_feasible_points(self, nfp_union):
+        """Extract feasible points from NFP union."""
+        if nfp_union is None:
+            return [(1000, 1000)]  # Default for first piece
+            
+        from shapely.geometry import mapping
+        
+        # Extract points using same approach as original TOPOS
+        res = mapping(nfp_union)
+        feasible_points = []
+        
+        # Handle MultiPolygon or simple Polygon
+        if res["type"] == "MultiPolygon":
+            for poly in res["coordinates"]:
+                feasible_points.extend(self._extract_feasible_points(poly))
+        else:
+            feasible_points.extend(self._extract_feasible_points(res["coordinates"][0]))
+            
+        return feasible_points
+    
+    def _extract_feasible_points(self, poly_coords):
+        """Filter feasible points just like original TOPOS."""
+        result = []
+        container_width = self.container.width
+        
+        for pt in poly_coords:
+            # Follow the original feasibility conditions
+            feasible1 = (pt[1] - self.border_top > 0 and 
+                         pt[1] - self.border_top + self.border_height <= container_width)
+            feasible2 = (self.border_bottom - pt[1] > 0 and 
+                         self.border_bottom - pt[1] + self.border_height <= container_width)
+            feasible3 = (pt[1] <= self.border_top and pt[1] >= self.border_bottom)
+            
+            if feasible1 or feasible2 or feasible3:
+                result.append(pt)
+                
+        return result
+    
+    def _find_top_point_index(self, piece):
+        """Find index of the top-most point in the piece."""
+        points = piece.get_outer_path()
+        return min(range(len(points)), key=lambda i: points[i][1])
+    
+    def _calculate_piece_widths(self, piece, top_idx):
+        """Calculate left and right widths from top point."""
+        points = piece.get_outer_path()
+        top_point = points[top_idx]
+        
+        # Find leftmost and rightmost points
+        left_idx = min(range(len(points)), key=lambda i: points[i][0])
+        right_idx = max(range(len(points)), key=lambda i: points[i][0])
+        
+        left_point = points[left_idx]
+        right_point = points[right_idx]
+        
+        # Calculate widths from top point
+        left_width = top_point[0] - left_point[0]
+        right_width = right_point[0] - top_point[0]
+        
+        return left_width, right_width
+    
+    def _find_min_width_change_position(self, feasible_points, left_width, right_width):
+        """Find position minimizing width change, exactly like original TOPOS."""
+        if not feasible_points:
+            return None
+            
+        min_change = float('inf')
+        target_position = None
+        
+        for pt in feasible_points:
+            # Use exact same width change calculation as original
+            change = min_change
+            
+            if (pt[0] - left_width >= self.border_left and 
+                pt[0] + right_width <= self.border_right):
+                # Piece fits within current borders
+                # Note: The original has what appears to be a typo, I think this is what is intended
+                change = min(self.border_left - pt[0], pt[0] - self.border_right)
+            elif min_change > 0:
+                # Piece extends borders
+                change = max(
+                    self.border_left - pt[0] + left_width,
+                    pt[0] + right_width - self.border_right
+                )
+            # else: pass (no change needed)
+            
+            if change < min_change:
+                min_change = change
+                target_position = pt
+                
+        return target_position
+    
+    def _update_layout_borders(self, piece):
+        """
+        Update the bounding box that contains all placed pieces by incorporating 
+        the newly placed piece's dimensions.
+        """
+        tx, ty = piece.translation
+        outer_path = piece.get_outer_path()
+        
+        # Calculate bounding box of the placed piece
+        xs = [tx + x for x, _ in outer_path]
+        ys = [ty + y for _, y in outer_path]
+        
+        piece_left = min(xs)
+        piece_right = max(xs)
+        piece_bottom = min(ys)
+        piece_top = max(ys)
+        
+        # Update layout borders to include this piece
+        if piece_left < self.border_left:
+            self.border_left = piece_left
+        if piece_bottom < self.border_bottom:
+            self.border_bottom = piece_bottom
+        if piece_right > self.border_right:
+            self.border_right = piece_right
+        if piece_top > self.border_top:
+            self.border_top = piece_top
+            
+        # Update layout width and height
+        self.border_height = self.border_top - self.border_bottom
+        self.border_width = self.border_right - self.border_left
+    
+    def _slide_to_bottom_left(self):
+        """Slide ALL pieces to bottom-left"""
+        if self.border_left == 0 and self.border_bottom == 0:
+            return  # Already at bottom-left
+            
+        # Apply translation to all pieces
+        for piece in self.placed:
+            x, y = piece.translation
+            piece.translation = (x - self.border_left, y - self.border_bottom)
+            
+        # Update borders
+        self.border_right -= self.border_left
+        self.border_top -= self.border_bottom
+        self.border_left = 0
+        self.border_bottom = 0

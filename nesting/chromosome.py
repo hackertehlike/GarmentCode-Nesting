@@ -101,7 +101,7 @@ def _random_value(old: Any, p_type: str, rng: Sequence[float | int]):
         
     lower, upper = rng[0], rng[1]
     span = upper - lower
-    max_delta = config.PARAM_CHANGE_MARGIN * span  # 20 % of the range
+    max_delta = config.PARAM_CHANGE_MARGIN * span
 
     # if span <= 0:
     #     return old  # degenerate range – nothing we can do
@@ -179,6 +179,11 @@ def fitness_usage_bb(chromosome: Chromosome, decoder: str):
 def fitness_concave_hull(chromosome: Chromosome, decoder: str):
     dec = _run_decoder(chromosome, decoder)
     return dec.concave_hull_utilization()
+
+@register_metric("concave_hull_area")
+def fitness_concave_hull_area(chromosome: Chromosome, decoder: str):
+    dec = _run_decoder(chromosome, decoder)
+    return dec.concave_hull_area()
 
 @register_metric("rest_length")
 def fitness_rest_length(chromosome: Chromosome, decoder: str):
@@ -383,17 +388,12 @@ class Chromosome(Layout):
             # self.meta_garment = mg
 
             piece_mirror = None
-            mirror_idx = None
             if 'left' in piece.id and piece.parent_id is None:
                 mirror_id = piece.id.replace("left", "right")
                 piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
-                if piece_mirror:
-                    mirror_idx = self.genes.index(piece_mirror)
             elif 'right' in piece.id and piece.parent_id is None:
                 mirror_id = piece.id.replace("right", "left")
                 piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
-                if piece_mirror:
-                    mirror_idx = self.genes.index(piece_mirror)
 
 
             if not self.meta_garment:
@@ -407,12 +407,14 @@ class Chromosome(Layout):
 
                 if piece_mirror and config.SYMMETRIC_SPLITS:
                     # If there's a mirror piece, also split it
-                    mirror_idx = self.genes.index(piece_mirror)
+                    # Find the current index of the mirror piece (may have shifted)
+                    current_mirror_idx = self.genes.index(piece_mirror)
                     left_mirror, right_mirror = piece_mirror.split()
                     # Remove the original mirror piece
                     self.genes.remove(piece_mirror)
-                    # Insert the split pieces at random positions
-                    self.genes.insert(mirror_idx, left_mirror)
+                    # Insert the split pieces - first at the original mirror position
+                    self.genes.insert(current_mirror_idx, left_mirror)
+                    # Insert the second at a random position
                     self.genes.insert(random.randrange(len(self.genes) + 1), right_mirror)
 
                 self._warn_if_panel_lost(before, "split")
@@ -489,19 +491,32 @@ class Chromosome(Layout):
                         p_new.translation = piece_mirror.translation
                         p_new.update_bbox()
 
+            # Replace the original piece with the two split pieces
             self.genes[idx:idx + 1] = [left_piece, right_piece]
 
-            # Randomly relocate one half like before
-            child = random.choice([left_piece, right_piece])
-            self.genes.remove(child)
-            self.genes.insert(random.randrange(len(self.genes) + 1), child)
+            # Randomly relocate one half - be careful with indices
+            child_to_move_idx = random.randint(0, 1)
+            actual_idx = idx + child_to_move_idx
+            child = self.genes.pop(actual_idx)
+            # Insert at random position, but avoid inserting at the position we just removed from
+            insert_pos = random.randrange(len(self.genes) + 1)
+            self.genes.insert(insert_pos, child)
 
-            if mirror_left is not None and mirror_right is not None and piece_mirror in self.genes:
-                mirror_idx = self.genes.index(piece_mirror)
-                self.genes[mirror_idx:mirror_idx + 1] = [mirror_left, mirror_right]
-                mchild = random.choice([mirror_left, mirror_right])
-                self.genes.remove(mchild)
-                self.genes.insert(random.randrange(len(self.genes) + 1), mchild)
+            if mirror_left is not None and mirror_right is not None:
+                try:
+                    # Find the mirror piece's current index (may have shifted due to previous operations)
+                    current_mirror_idx = self.genes.index(piece_mirror)
+                    self.genes[current_mirror_idx:current_mirror_idx + 1] = [mirror_left, mirror_right]
+                    
+                    # Relocate one of the mirror children
+                    mchild_to_move_idx = random.randint(0, 1)
+                    actual_mirror_idx = current_mirror_idx + mchild_to_move_idx
+                    mchild = self.genes.pop(actual_mirror_idx)
+                    # Insert at random position
+                    mirror_insert_pos = random.randrange(len(self.genes) + 1)
+                    self.genes.insert(mirror_insert_pos, mchild)
+                except ValueError:
+                    print(f"[Chromosome] WARNING: piece_mirror {piece_mirror.id} not in genes, but mirror_left and mirror_right were created.")
 
             self._warn_if_panel_lost(before, "split")
             return True  # Indicate successful mutation
@@ -603,8 +618,6 @@ class Chromosome(Layout):
                     return True # Success
 
         # If loop completes, no mutation led to a fitness change, restore state
-        # THIS SHOULD NEVER NEVER NEVER HAPPEN
-        # If it does something is very wrong with the logic
         self.design_params = original_design_params
         self._genes = original_genes
         self.fitness = original_fitness
@@ -909,17 +922,29 @@ class Chromosome(Layout):
             body_params=self.body_params,
         )
         
-        # Debug: Check if offspring has same fitness as a parent
+        # Debug: Check if offspring has same fitness as a parent and force mutation if so
         child.calculate_fitness()
+        force_mutation = False
+        
         if child.fitness is not None:
             if self.fitness is not None and child.fitness == self.fitness:
                 print(f"[DEBUG] Crossover offspring has same fitness as parent 1 ({self.fitness:.4f}).")
                 print(f"  Parent 1 signature: {self._signature()}")
                 print(f"  Child signature: {child._signature()}")
+                force_mutation = True
             if other.fitness is not None and child.fitness == other.fitness:
                 print(f"[DEBUG] Crossover offspring has same fitness as parent 2 ({other.fitness:.4f}).")
                 print(f"  Parent 2 signature: {other._signature()}")
                 print(f"  Child signature: {child._signature()}")
+                force_mutation = True
+                
+        # Force mutation if child has identical fitness to either parent
+        if force_mutation and config.FORCE_MUTATION_ON_CROSSOVER:
+            print(f"[DEBUG] Forcing mutation on crossover offspring to avoid copied children.")
+            old_fitness = child.fitness
+            child.mutate()
+            child.calculate_fitness()
+            print(f"[DEBUG] Forced mutation changed fitness from {old_fitness:.4f} to {child.fitness:.4f}")
 
         return child
 

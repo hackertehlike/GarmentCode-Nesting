@@ -1121,6 +1121,11 @@ class NestingGUI:
                 print(f"Body params: {self.body_params is not None}")
                 print(f"Design sampler: {self.design_sampler is not None}")
                 
+                # Get the pattern name from the current specification if available
+                pattern_name = None
+                if hasattr(self, 'specification_path') and self.specification_path:
+                    pattern_name = Path(self.specification_path).stem
+                
                 evo = Evolution(
                     self.pieces,
                     container,
@@ -1137,6 +1142,7 @@ class NestingGUI:
                     # crossover_method=config.SELECTED_CROSSOVER,
                     design_params=self.design_params if hasattr(self, 'design_params') else None,
                     body_params=self.body_params if hasattr(self, 'body_params') else None,
+                    pattern_name=pattern_name or "",
                 )
                 best_chromosome = evo.run()
                 if best_chromosome is None:
@@ -1325,7 +1331,7 @@ class NestingGUI:
         self._draw_outlines()
         ui.notify("All panel rotations reset", type="positive")
 
-    def _split_panel(self, proportion=0.7):
+    def _split_panel(self, proportion=0.17):
         """Split the currently selected panel into two and redraw.
         # """
         if not self.selected_panel:

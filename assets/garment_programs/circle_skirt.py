@@ -155,19 +155,36 @@ class CircleArcPanel(pyg.Panel):
             self.edges.reverse()
 
         # Get all edges by label
-        bottom_edge = split_utils.collect_edges_by_label(self, labels=['bottom'])
+        bottom_edges = split_utils.collect_edges_by_label(self, labels=['bottom'])
         top_edges = split_utils.collect_edges_by_label(self, labels=['top'])
-        left_edge = split_utils.collect_edges_by_label(self, labels=['left'])
-        right_edge = split_utils.collect_edges_by_label(self, labels=['right'])
+        left_edges = split_utils.collect_edges_by_label(self, labels=['left'])
+        right_edges = split_utils.collect_edges_by_label(self, labels=['right'])
 
-        # Get the appropriate edges and proportions for top and bottom
-        # bottom_edge, bottom_prop = self.get_appropriate_edge(bottom_edge, 1-proportion)
-        # top_edge, top_prop = self.get_appropriate_edge(top_edges, proportion)
+        # Check for cuts and find their tips (similar to how darts are handled in pant panels)
+        # Look for cut edges in ALL panel edges, not just bottom_edges
+        all_edges = list(self.edges)
+        cut_nums = {
+            split_utils.cut_number(lbl)
+            for e in all_edges
+            for lbl in e.semantic_labels
+            if lbl.startswith("cut_") and split_utils.cut_number(lbl) is not None
+        }
+        cut_tips = split_utils.find_cut_tips(all_edges, cut_nums) if cut_nums else {}
 
-        split_pt_top, split_edge_top = split_utils.split_point(top_edges, proportion)
-        split_pt_bottom, split_edge_bottom = split_utils.split_point(bottom_edge, 1-proportion)
+        # debug print statements to check edge labels
+        print(f"[CircleArcPanel.split] Bottom edges: {bottom_edges}, Top edges: {top_edges}, Left edges: {left_edges}, Right edges: {right_edges}")
+        print(f"[CircleArcPanel.split] All edges labels: {[(i, e.semantic_labels) for i, e in enumerate(self.edges)]}")
+        print(f"[CircleArcPanel.split] Found cuts: {cut_nums}, Cut tips: {cut_tips}")
 
-        # #debug all of the edge labels
+        # Get split points, considering cut tips for alignment
+        split_pt_top, split_edge_top = split_utils.split_point(
+            top_edges, proportion, bottom_edges=bottom_edges, cut_tips=cut_tips
+        )
+        split_pt_bottom, split_edge_bottom = split_utils.split_point(
+            bottom_edges, 1-proportion, bottom_edges=bottom_edges, cut_tips=cut_tips
+        )
+
+        # debug all of the edge labels
         # print(f"[CircleArcPanel.split] Edge labels before split:")
         # for edge in self.edges:
         #    print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
@@ -224,7 +241,7 @@ class CircleArcPanel(pyg.Panel):
             copy.deepcopy(top1),
             split_edge1,
             copy.deepcopy(bottom2),
-            copy.deepcopy(left_edge)
+            copy.deepcopy(left_edges[0]) if left_edges else None  # Take first left edge
         ])
 
         #print(f"[CircleArcPanel.split] Created panel1")
@@ -238,7 +255,7 @@ class CircleArcPanel(pyg.Panel):
         # - split edge: bottom to top (reverse of top to bottom)
         panel2.edges = pyg.EdgeSequence([
             copy.deepcopy(top2),
-            copy.deepcopy(right_edge),
+            copy.deepcopy(right_edges[0]) if right_edges else None,  # Take first right edge
             copy.deepcopy(bottom1),
             split_edge2
         ])
@@ -463,20 +480,22 @@ class SkirtCircle(StackableSkirtComponent):
             right=right
         )
 
-        #new_edges.add_semantic_label('top')
-        #interf_edges.add_semantic_label('top')
-
-
-        for edge in new_edges:
-            edge.add_semantic_label('top')
+        # Label the edges
         for edge in interf_edges:
-            edge.add_semantic_label('top')
+            edge.add_semantic_label('bottom')
         
+        cut_edges = [e for e in new_edges if e not in interf_edges]
+        if len(cut_edges) == 2:
+            cut_edges[0].add_semantic_label('cut_1')
+            cut_edges[0].add_semantic_label('cut_1_left')
+            cut_edges[1].add_semantic_label('cut_1')
+            cut_edges[1].add_semantic_label('cut_1_right')
 
         panel.edges.substitute(target_edge, new_edges)
         panel.interfaces['bottom'].substitute(
             target_edge, interf_edges,
             [panel for _ in range(len(interf_edges))])
+            
         
 
         

@@ -50,11 +50,13 @@ class Evolution:
         max_generations: int = 200,
         design_params: dict = None,
         body_params: object = None,
+        pattern_name: str = None,
     ) -> None:
         self.generation = 0
         self.container = container
         self.pieces = pieces
         self.population: list[Chromosome] = []
+        self.pattern_name = pattern_name or ""
         
         # Initialize logging first to avoid attribute errors
         self.log_lines = []
@@ -62,6 +64,10 @@ class Evolution:
         # Setup log files and directories
         ts = time.strftime("%Y%m%d_%H%M%S")
         log_dir = config.SAVE_LOGS_PATH
+        
+        # Use pattern name in the log directory path
+        if self.pattern_name:
+            log_dir = Path(log_dir) / self.pattern_name
         
         # append timestamp to log path
         log_dir = f"{log_dir}_{ts}"
@@ -228,20 +234,20 @@ class Evolution:
             self.population = [self._generate_random_chromosome() for _ in range(self.population_size)]
 
         # Print debug information about chromosomes
-        if config.VERBOSE:
-            self._log("DEBUG: Checking design_params uniqueness in population:")
-            dp_ids = [id(c.design_params) for c in self.population]
-            unique_ids = set(dp_ids)
-            self._log(f"Population size: {len(self.population)}, Unique design_params objects: {len(unique_ids)}")
-            if len(unique_ids) != len(self.population):
-                self._log("WARNING: Some chromosomes share the same design_params object!")
-                # Find which chromosomes share design_params
-                id_counts = {}
-                for i, dp_id in enumerate(dp_ids):
-                    id_counts.setdefault(dp_id, []).append(i)
-                for dp_id, indices in id_counts.items():
-                    if len(indices) > 1:
-                        self._log(f"design_params object {dp_id} is shared by chromosomes at indices: {indices}")
+        # if config.VERBOSE:
+        #     self._log("DEBUG: Checking design_params uniqueness in population:")
+        #     dp_ids = [id(c.design_params) for c in self.population]
+        #     unique_ids = set(dp_ids)
+        #     self._log(f"Population size: {len(self.population)}, Unique design_params objects: {len(unique_ids)}")
+        #     if len(unique_ids) != len(self.population):
+        #         self._log("WARNING: Some chromosomes share the same design_params object!")
+        #         # Find which chromosomes share design_params
+        #         id_counts = {}
+        #         for i, dp_id in enumerate(dp_ids):
+        #             id_counts.setdefault(dp_id, []).append(i)
+        #         for dp_id, indices in id_counts.items():
+        #             if len(indices) > 1:
+        #                 self._log(f"design_params object {dp_id} is shared by chromosomes at indices: {indices}")
         
         self.pop_fitness_history.append([chrom.fitness for chrom in self.population])
         # Record initial generation (gen 0) metrics for plots and CSV
@@ -387,6 +393,16 @@ class Evolution:
         if not old_elite:
             self._log("No elite chromosomes found. Cannot create next generation.", divider=True)
             return
+            
+        # Check if we have enough elite chromosomes for meaningful evolution
+        if len(old_elite) <= 1:
+            self._log("Only 1 elite chromosome found. Not enough for crossover operations.", divider=True)
+            self._log("Keeping current population and adding random chromosomes.")
+            # Add some random chromosomes to avoid stagnation
+            for _ in range(self.n_offspring + self.n_mutants):
+                random_chrom = self._generate_random_chromosome()
+                self.population.append(random_chrom)
+            return
 
         # 1) Start new population with elites
         new_population = list(old_elite)
@@ -407,7 +423,7 @@ class Evolution:
                 #     child = p1.crossover_pmx(p2)
                 # else:
                     # child = p1.crossover_oxk(p2)
-                child = p1.crossover_ox1_k(p2, config.OX_K)
+                child = p1.crossover_oxk(p2, config.OX_K)
                 if random.random() < self.mutation_rate:
                     child.mutate()
                 child.calculate_fitness()
@@ -419,8 +435,16 @@ class Evolution:
                 return None, parent_f, None, e
 
         offspring, off_gains = [], []
-
-        p1, p2 = random.sample(old_elite, 2)
+        
+        # Filter out parents with 0 fitness
+        viable_parents = [p for p in old_elite if p.fitness > 0]
+        if len(viable_parents) < 2:
+            # Not enough viable parents, use all elite chromosomes
+            self._log("Warning: Not enough parents with non-zero fitness. Using all elite chromosomes.")
+            viable_parents = old_elite
+            
+        # Select two different parents
+        p1, p2 = random.sample(viable_parents, 2)
         parent_f = max(p1.fitness, p2.fitness)
 
         if config.MULTITHREADING:
@@ -475,7 +499,13 @@ class Evolution:
                     except Exception as e:
                         return None, parent_f, None, e
                     
-        parent = random.choice(old_elite)
+        # Select parent with non-zero fitness for mutation
+        viable_parents = [p for p in old_elite if p.fitness > 0]
+        if not viable_parents:
+            self._log("Warning: No parents with non-zero fitness for mutation. Using all elite chromosomes.")
+            viable_parents = old_elite
+            
+        parent = random.choice(viable_parents)
 
         if config.MULTITHREADING:
             mutant_jobs = {}
@@ -637,6 +667,13 @@ class Evolution:
         self._log(f"Config: {config.__dict__}", divider=True)
         self.generate_population()
 
+        # Check if we have enough viable elites to run the GA
+        old_elite = self._get_elite()
+        if len(old_elite) <= 1:
+            self._log("Insufficient viable chromosomes to run GA (need at least 2 elites).", divider=True)
+            self._log("Returning best chromosome from initial population without running evolution.")
+            return max(self.population, key=lambda c: c.fitness) if self.population else None
+
         planned_generations = self.num_generations
         
         if planned_generations <= 0:
@@ -702,7 +739,8 @@ class Evolution:
 
         self._log("Evolution completed.", divider=True)
         end = time.time()
-        self._log(f"Total time: {end - start:.2f} seconds")
+        elapsed_time = end - start
+        self._log(f"Total time: {elapsed_time:.2f} seconds")
 
         # Save plots and CSV one last time
         self.update_plots()
@@ -713,8 +751,12 @@ class Evolution:
             self._flush_log()
             # Save design parameter changes
             self.save_design_param_changes()
-
-        return self._get_elite()[0]
+        
+        # Return the best chromosome from the population
+        if self.population:
+            best = max(self.population, key=lambda c: c.fitness)
+            return best
+        return None
 
     def _flush_log(self) -> None:
         """Write accumulated log lines to disk (append or create)."""
