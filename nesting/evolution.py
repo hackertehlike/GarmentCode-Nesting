@@ -148,6 +148,7 @@ class Evolution:
         self.avg_child_fitnesses: list[float] = []
         self.best_fitness_history: list[float] = []
         self.delta_best: list[float] = []
+        self.improvement_from_initial: list[float] = []  # New: track improvement from generation 0
         self.pop_fitness_history: list[list[float]] = []
         self.mean_offspring_gain: list[float] = []
         self.mean_mutant_gain: list[float] = []
@@ -262,6 +263,7 @@ class Evolution:
             'avg_rand': avg_pop,
             'best_fit': best0,
             'delta_best': 0.0,
+            'improvement_from_initial': 0.0,  # Always 0 for generation 0
             'mean_offspring_gain': 0.0,
             'mean_mutant_gain': 0.0,
         }
@@ -270,6 +272,7 @@ class Evolution:
         # Seed best and delta history
         self.best_fitness_history.append(best0)
         self.delta_best.append(0.0)
+        self.improvement_from_initial.append(0.0)  # Always 0 for generation 0
         # Seed swarm plot data for gen 0
         frame0 = pd.DataFrame([
             {'generation': 0, 'fitness': c.fitness, 'origin': c.origin or 'initial'}
@@ -621,9 +624,15 @@ class Evolution:
 
         best = max(c.fitness for c in new_population)
         delta = best - (self.best_fitness_history[-1] if self.best_fitness_history else best)
+        
+        # Calculate improvement from initial fitness (generation 0)
+        initial_fitness = self.best_fitness_history[0] if self.best_fitness_history else best
+        improvement_from_initial = best - initial_fitness
+        
         self.best_fitness_history.append(best)
         self.delta_best.append(delta)
-        self._log(f"Generation {self.generation}: best {best:.4f} (Δ {delta:+.4f})", divider=True)
+        self.improvement_from_initial.append(improvement_from_initial)
+        self._log(f"Generation {self.generation}: best {best:.4f} (Δ {delta:+.4f}) (from initial: {improvement_from_initial:+.4f})", divider=True)
 
         # 7) Log metrics
         row = {
@@ -635,6 +644,7 @@ class Evolution:
             'avg_rand': avg_rand,
             'best_fit': best,
             'delta_best': delta,
+            'improvement_from_initial': improvement_from_initial,
             'mean_offspring_gain': mean_offspring_gain,
             'mean_mutant_gain': mean_mutant_gain,
         }
