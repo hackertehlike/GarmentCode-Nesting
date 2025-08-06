@@ -217,6 +217,8 @@ class NestingGUI:
                 ui.button("Bottom-Left", on_click=self._auto_place).classes("w-full")
                 ui.button("Greedy", on_click=lambda _: self._auto_place("Greedy")).classes("w-full")
                 ui.button("NFP", on_click=lambda _: self._auto_place("NFP")).classes("w-full")
+                ui.button("BLF", on_click=lambda _: self._auto_place("BLF")).classes("w-full")
+                ui.button("TOPOS", on_click=lambda _: self._auto_place("TOPOS")).classes("w-full")
                 ui.button("Random BL", on_click=lambda _: self._auto_place("RandomBL")).classes("w-full")
                 ui.button("Random NFP", on_click=lambda _: self._auto_place("RandomNFP")).classes("w-full")
                 ui.button("Genetic Algorithm", on_click=lambda _: self._auto_place("Genetic Algorithm")).classes("w-full")
@@ -1162,6 +1164,10 @@ class NestingGUI:
             #     view    = LayoutView(layout)
             #     decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
 
+            elif method == "BLF":
+                decoder = BottomLeftFill(layout, container, step=config.GRAVITATE_STEP)
+            elif method == "TOPOS":
+                decoder = TOPOSDecoder(layout, container, step=config.GRAVITATE_STEP)
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             
