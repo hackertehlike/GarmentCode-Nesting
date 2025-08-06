@@ -56,7 +56,9 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
     # Process each pattern
     for pattern_path in pattern_paths:
         pattern_path = Path(pattern_path)
-        pattern_name = pattern_path.stem
+        # Extract the pattern name without the "_specification" suffix
+        pattern_stem = pattern_path.stem
+        pattern_name = pattern_stem.replace("_specification", "") if pattern_stem.endswith("_specification") else pattern_stem
         
         print(f"\n{'='*60}")
         print(f"Processing pattern: {pattern_name}")
@@ -178,13 +180,14 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
             # Save generation data
             gen_csv_path = os.path.join(pattern_output_dir, "generations.csv")
             with open(gen_csv_path, "w") as f:
-                f.write("Generation,BestFitness,AvgChildFitness,DeltaBest\n")
+                f.write("Generation,BestFitness,AvgChildFitness,DeltaBest,ImprovementFromInitial\n")
                 # Handle the arrays more carefully to avoid index errors
                 for g in range(1, evo.generation + 1):
                     best_fitness = evo.best_fitness_history[g] if g < len(evo.best_fitness_history) else "NA"
                     avg_fitness = evo.avg_child_fitnesses[g-1] if g-1 < len(evo.avg_child_fitnesses) else "NA"
                     delta = evo.delta_best[g] if g < len(evo.delta_best) else "NA"
-                    f.write(f"{g},{best_fitness},{avg_fitness},{delta}\n")
+                    improvement_from_initial = evo.improvement_from_initial[g] if g < len(evo.improvement_from_initial) else "NA"
+                    f.write(f"{g},{best_fitness},{avg_fitness},{delta},{improvement_from_initial}\n")
             
             # Save log
             log_path = os.path.join(pattern_output_dir, "evolution_log.txt")
@@ -213,9 +216,17 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(range(1, len(evo.delta_best)), evo.delta_best[1:], marker='o')
             ax.set(xlabel='Generation', ylabel='Δ-Best', 
-                   title=f'Fitness Improvement - {pattern_name}')
+                   title=f'Generation-to-Generation Improvement - {pattern_name}')
             ax.grid(True)
             _save_plot(fig, pattern_output_dir, "delta_best.png")
+            
+            # Save improvement from initial plot
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.plot(range(1, len(evo.improvement_from_initial)), evo.improvement_from_initial[1:], marker='o', color='green')
+            ax.set(xlabel='Generation', ylabel='Improvement from Initial', 
+                   title=f'Cumulative Improvement from Generation 0 - {pattern_name}')
+            ax.grid(True)
+            _save_plot(fig, pattern_output_dir, "improvement_from_initial.png")
             
             print(f"Results saved to {pattern_output_dir}")
             
