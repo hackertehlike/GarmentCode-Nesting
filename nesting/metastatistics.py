@@ -165,6 +165,8 @@ class MetaStatistics:
     MASTER_MUTATION_CSV_PATH = MASTER_DIR / "master_mutation_stats.csv"
     # New file to store raw mutation data from all runs
     MASTER_MUTATION_RAW_DATA_PATH = MASTER_DIR / "master_mutation_raw_data.csv"
+    # New file to store average improvement from initial by generation
+    AVERAGE_IMPROVEMENT_BY_GEN_PATH = MASTER_DIR / "average_improvement_by_generation.csv"
     CHECKPOINT_GENERATIONS = [5, 10, 15, 20]
     
     @classmethod
@@ -386,7 +388,29 @@ class MetaStatistics:
         try:
             # Check if file exists and has data beyond headers
             if cls.MASTER_CSV_PATH.exists() and cls.MASTER_CSV_PATH.stat().st_size > 100:
-                master_df = pd.read_csv(cls.MASTER_CSV_PATH)
+                # Try to read with header first
+                try:
+                    master_df = pd.read_csv(cls.MASTER_CSV_PATH)
+                    # Check if the columns look correct (should have pattern_name)
+                    if 'pattern_name' not in master_df.columns and len(master_df.columns) > 15:
+                        print("CSV appears to be missing header, attempting to read without header")
+                        # Read without header and assign column names manually
+                        master_df = pd.read_csv(cls.MASTER_CSV_PATH, header=None)
+                        # Expected column names based on ensure_master_files_exist
+                        expected_columns = [
+                            'timestamp', 'pattern_name', 'num_pieces', 'total_generations',
+                            'initial_fitness', 'final_fitness', 'improvement_percent',
+                            'fitness_at_gen_5', 'fitness_at_gen_10', 'fitness_at_gen_15', 'fitness_at_gen_20',
+                            'improvement_at_gen_5', 'improvement_at_gen_10', 'improvement_at_gen_15', 'improvement_at_gen_20',
+                            'elapsed_time', 'decoder', 'fitness_metric', 'crossover_method', 'mutation_rate',
+                            'container_width', 'container_height'
+                        ]
+                        # Assign column names up to the number of columns we have
+                        master_df.columns = expected_columns[:len(master_df.columns)]
+                        print(f"Assigned column names to headerless CSV. Columns: {list(master_df.columns)}")
+                except Exception as e:
+                    print(f"Error reading master CSV file: {e}")
+                    master_df = pd.DataFrame()
             else:
                 master_df = pd.DataFrame()
                 
@@ -406,6 +430,7 @@ class MetaStatistics:
             
         # We'll generate what we can even with a single data point
         print(f"Generating reports with {len(master_df)} data points")
+        print(f"Master DataFrame columns: {list(master_df.columns)}")
             
         # Create output directory - use the same parent directory as the master files
         reports_dir = cls.MASTER_DIR / "reports"
@@ -417,7 +442,7 @@ class MetaStatistics:
         if not mutation_df.empty:
             cls._generate_mutation_effectiveness(mutation_df, reports_dir)
         else:
-            print("No mutation data available, skipping mutation effectiveness reports")
+            print("No mutation data available for analysis")
             
         # Load raw mutation data file for detailed analysis
         try:
@@ -426,13 +451,17 @@ class MetaStatistics:
                 if not mutation_raw_df.empty:
                     cls._generate_mutation_fitness_changes_by_type(mutation_raw_df, reports_dir)
                 else:
-                    print("No raw mutation data available, skipping detailed mutation analysis")
+                    print("No raw mutation data available for analysis")
             else:
                 print("Raw mutation data file does not exist or is empty")
         except Exception as e:
             print(f"Error loading raw mutation data: {e}")
+            print("No detailed mutation data available for analysis")
             
         cls._generate_pattern_comparison(master_df, reports_dir)
+        
+        # Generate average improvement from initial by generation
+        cls._generate_average_improvement_by_generation(reports_dir)
         
         print(f"Aggregate reports generated in {reports_dir}")
     
@@ -604,33 +633,68 @@ class MetaStatistics:
             print("No pattern data for comparison")
             return
             
+        # Check if required columns exist
+        required_columns = ['pattern_name']
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        
+        if missing_columns:
+            print(f"Missing required columns for pattern comparison: {missing_columns}")
+            print(f"Available columns: {list(df.columns)}")
+            
+            # Create a diagnostic file
+            with open(output_dir / 'pattern_comparison_missing_columns.txt', 'w') as f:
+                f.write("Pattern comparison failed due to missing columns.\n")
+                f.write(f"Missing columns: {missing_columns}\n")
+                f.write(f"Available columns: {list(df.columns)}\n")
+                f.write(f"DataFrame shape: {df.shape}\n")
+                f.write("First few rows:\n")
+                f.write(df.head().to_string())
+            return
+            
         # Even with one pattern, we can generate statistics
         if len(df) < 2:
             print("Only one pattern available - generating single pattern statistics")
             
         try:
+            # Build aggregation dict based on available columns
+            agg_dict = {}
+            if 'improvement_percent' in df.columns:
+                agg_dict['improvement_percent'] = 'mean'
+            if 'elapsed_time' in df.columns:
+                agg_dict['elapsed_time'] = 'mean'
+            if 'total_generations' in df.columns:
+                agg_dict['total_generations'] = 'mean'
+            if 'timestamp' in df.columns:
+                agg_dict['timestamp'] = 'count'
+            
+            if not agg_dict:
+                print("No valid columns found for aggregation")
+                return
+                
             # Summary by pattern
-            pattern_summary = df.groupby('pattern_name').agg({
-                'improvement_percent': 'mean',
-                'elapsed_time': 'mean',
-                'total_generations': 'mean',
-                'timestamp': 'count'  # Count of runs
-            }).rename(columns={'timestamp': 'num_runs'}).reset_index()
+            pattern_summary = df.groupby('pattern_name').agg(agg_dict)
+            
+            # Rename timestamp column if it exists
+            if 'timestamp' in agg_dict:
+                pattern_summary = pattern_summary.rename(columns={'timestamp': 'num_runs'})
+            
+            pattern_summary = pattern_summary.reset_index()
             
             # Save as CSV (do this first in case plotting fails)
             pattern_summary.to_csv(output_dir / 'pattern_comparison.csv', index=False)
             
-            # Only attempt to plot if we have actual patterns
-            if not pattern_summary.empty:
+            # Only attempt to plot if we have actual patterns and improvement data
+            if not pattern_summary.empty and 'improvement_percent' in pattern_summary.columns:
                 # Plot improvement by pattern
                 plt.figure(figsize=(12, 6))
                 ax = sns.barplot(x='pattern_name', y='improvement_percent', data=pattern_summary)
                 
-                # Add run count labels
-                for i, row in pattern_summary.iterrows():
-                    ax.text(i, row['improvement_percent'] + 1, 
-                            f"n={int(row['num_runs'])}", 
-                            ha='center')
+                # Add run count labels if available
+                if 'num_runs' in pattern_summary.columns:
+                    for i, row in pattern_summary.iterrows():
+                        ax.text(i, row['improvement_percent'] + 1, 
+                                f"n={int(row['num_runs'])}", 
+                                ha='center')
                     
                 plt.title('Average Improvement by Pattern')
                 plt.xlabel('Pattern')
@@ -640,18 +704,159 @@ class MetaStatistics:
                 plt.savefig(output_dir / 'pattern_comparison.png')
                 plt.close()
             else:
-                print("Pattern summary is empty, skipping plot generation")
+                print("Pattern summary is empty or missing improvement data, skipping plot generation")
                 
         except Exception as e:
             print(f"Error generating pattern comparison: {e}")
             # Create a text file with the basic information
             with open(output_dir / 'pattern_data.txt', 'w') as f:
                 f.write("Pattern data (plot generation failed):\n")
-                for name in df['pattern_name'].unique():
-                    pattern_df = df[df['pattern_name'] == name]
-                    avg_improvement = pattern_df['improvement_percent'].mean() if 'improvement_percent' in df.columns else "N/A"
-                    count = len(pattern_df)
-                    f.write(f"Pattern {name}: {avg_improvement:.2f}% avg improvement (n={count})\n")
+                f.write(f"Error: {e}\n")
+                f.write(f"Available columns: {list(df.columns)}\n")
+                f.write(f"DataFrame shape: {df.shape}\n")
+                
+                # Try to iterate through patterns if the column exists
+                if 'pattern_name' in df.columns:
+                    for name in df['pattern_name'].unique():
+                        pattern_df = df[df['pattern_name'] == name]
+                        avg_improvement = pattern_df['improvement_percent'].mean() if 'improvement_percent' in df.columns else "N/A"
+                        count = len(pattern_df)
+                        f.write(f"Pattern {name}: {avg_improvement:.2f}% avg improvement (n={count})\n")
+                else:
+                    f.write("Cannot analyze patterns - pattern_name column missing\n")
+
+    @classmethod
+    def _generate_average_improvement_by_generation(cls, output_dir):
+        """
+        Generate analysis of average improvement from initial fitness by generation.
+        This reads all individual generations.csv files and aggregates them.
+        """
+        try:
+            # Find all generation CSV files in the results directories
+            results_base_dir = Path(config.SAVE_LOGS_PATH).parent / "results"
+            generation_files = []
+            
+            # Look for generations.csv files in all subdirectories
+            if results_base_dir.exists():
+                for pattern_dir in results_base_dir.iterdir():
+                    if pattern_dir.is_dir():
+                        gen_file = pattern_dir / "generations.csv"
+                        if gen_file.exists():
+                            generation_files.append(gen_file)
+            
+            if not generation_files:
+                print("No generation CSV files found for analysis")
+                with open(output_dir / 'average_improvement_by_generation_no_data.txt', 'w') as f:
+                    f.write("No generation CSV files found for analysis")
+                return
+            
+            print(f"Found {len(generation_files)} generation files for analysis")
+            
+            # Read and combine all generation data
+            all_generation_data = []
+            
+            for gen_file in generation_files:
+                try:
+                    df = pd.read_csv(gen_file)
+                    # Extract pattern name from file path
+                    pattern_name = gen_file.parent.name
+                    df['pattern_name'] = pattern_name
+                    df['run_id'] = f"{pattern_name}_{gen_file.stat().st_mtime}"
+                    all_generation_data.append(df)
+                except Exception as e:
+                    print(f"Error reading {gen_file}: {e}")
+                    continue
+            
+            if not all_generation_data:
+                print("No valid generation data found")
+                return
+            
+            # Combine all dataframes
+            combined_df = pd.concat(all_generation_data, ignore_index=True)
+            
+            # Save raw combined data
+            combined_df.to_csv(output_dir / 'all_generations_combined.csv', index=False)
+            
+            # Calculate average improvement from initial by generation
+            if 'ImprovementFromInitial' in combined_df.columns:
+                avg_by_generation = combined_df.groupby('Generation').agg({
+                    'ImprovementFromInitial': ['mean', 'std', 'count'],
+                    'BestFitness': ['mean', 'std'],
+                    'DeltaBest': ['mean', 'std']
+                }).round(6)
+                
+                # Flatten column names
+                avg_by_generation.columns = [f"{col[0]}_{col[1]}" for col in avg_by_generation.columns]
+                avg_by_generation = avg_by_generation.reset_index()
+                
+                # Save the aggregated data
+                avg_by_generation.to_csv(cls.AVERAGE_IMPROVEMENT_BY_GEN_PATH, index=False)
+                avg_by_generation.to_csv(output_dir / 'average_improvement_by_generation.csv', index=False)
+                
+                # Create visualization
+                plt.figure(figsize=(12, 8))
+                
+                # Plot average improvement from initial
+                plt.subplot(2, 1, 1)
+                generations = avg_by_generation['Generation']
+                avg_improvement = avg_by_generation['ImprovementFromInitial_mean']
+                std_improvement = avg_by_generation['ImprovementFromInitial_std']
+                
+                plt.plot(generations, avg_improvement, marker='o', linewidth=2, markersize=6, color='blue')
+                plt.fill_between(generations, 
+                                avg_improvement - std_improvement, 
+                                avg_improvement + std_improvement, 
+                                alpha=0.3, color='blue')
+                
+                plt.title('Average Improvement from Initial Fitness by Generation', fontsize=14)
+                plt.xlabel('Generation')
+                plt.ylabel('Average Improvement from Initial')
+                plt.grid(True, alpha=0.7)
+                
+                # Add sample size annotations
+                for i, row in avg_by_generation.iterrows():
+                    plt.annotate(f"n={int(row['ImprovementFromInitial_count'])}", 
+                               (row['Generation'], row['ImprovementFromInitial_mean']),
+                               textcoords="offset points", xytext=(0,10), ha='center', fontsize=8)
+                
+                # Plot generation-to-generation improvement (delta) for comparison
+                plt.subplot(2, 1, 2)
+                avg_delta = avg_by_generation['DeltaBest_mean']
+                std_delta = avg_by_generation['DeltaBest_std']
+                
+                plt.plot(generations, avg_delta, marker='s', linewidth=2, markersize=6, color='green')
+                plt.fill_between(generations, 
+                                avg_delta - std_delta, 
+                                avg_delta + std_delta, 
+                                alpha=0.3, color='green')
+                
+                plt.title('Average Generation-to-Generation Improvement (Delta Best)', fontsize=14)
+                plt.xlabel('Generation')
+                plt.ylabel('Average Delta Best')
+                plt.grid(True, alpha=0.7)
+                plt.axhline(y=0, color='red', linestyle='--', alpha=0.5)
+                
+                plt.tight_layout()
+                plt.savefig(output_dir / 'average_improvement_by_generation.png', dpi=150, bbox_inches='tight')
+                plt.close()
+                
+                print(f"Average improvement by generation analysis completed with {len(combined_df)} total data points")
+                
+            else:
+                print("ImprovementFromInitial column not found in generation data - this analysis requires updated data format")
+                # Still save what we can
+                with open(output_dir / 'improvement_by_generation_old_format.txt', 'w') as f:
+                    f.write("Generation files found but do not contain ImprovementFromInitial column.\n")
+                    f.write("This analysis requires data generated with the updated Evolution class.\n")
+                    f.write(f"Found columns: {list(combined_df.columns)}\n")
+                
+        except Exception as e:
+            print(f"Error generating average improvement by generation analysis: {e}")
+            import traceback
+            traceback.print_exc()
+            with open(output_dir / 'improvement_by_generation_error.txt', 'w') as f:
+                f.write(f"Error generating analysis: {e}\n")
+                f.write(f"Found {len(generation_files) if 'generation_files' in locals() else 0} generation files\n")
 
 
     @classmethod
