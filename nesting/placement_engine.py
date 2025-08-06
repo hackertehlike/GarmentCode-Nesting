@@ -787,16 +787,33 @@ class BottomLeftFill(PlacementEngine):
             if not nfp:
                 continue
                 
-            nfp_poly = Polygon(nfp)
-            
             try:
+                nfp_poly = Polygon(nfp)
+                # Validate the NFP polygon before using it
+                if not nfp_poly.is_valid:
+                    print(f"Warning: Invalid NFP polygon for pieces {placed_piece.id} and {piece.id}, attempting to fix...")
+                    nfp_poly = nfp_poly.buffer(0)  # Attempt to fix invalid geometry
+                    if not nfp_poly.is_valid:
+                        print(f"Failed to fix NFP polygon, skipping this constraint")
+                        continue
+                
+                # Validate the current differ_region before computing difference
+                if not differ_region.is_valid:
+                    print(f"Warning: Invalid feasible region, attempting to fix...")
+                    differ_region = differ_region.buffer(0)
+                    if not differ_region.is_valid:
+                        print(f"Failed to fix feasible region, placement failed")
+                        return False
+                
                 # Subtract the NFP from the feasible region
                 differ_region = differ_region.difference(nfp_poly)
                 if differ_region.is_empty:
                     return False  # No valid placement found
+                    
             except Exception as e:
-                print(f"Error computing difference: {e}")
-                return False
+                print(f"Error computing difference for pieces {placed_piece.id} and {piece.id}: {e}")
+                print(f"Skipping this NFP constraint and continuing...")
+                continue
         
         # Convert the feasible region to a list of points
         if differ_region.is_empty:
@@ -887,9 +904,10 @@ class TOPOSDecoder(PlacementEngine):
         _, first_piece = next(iter(self.layout.order.items()))
         x0, y0 = self.anchor(first_piece)
         first_piece.translation = (x0, y0)
+        self.placed.append(first_piece)
         
         # Update borders after placing first piece
-        self._update_borders(first_piece)
+        self._update_layout_borders(first_piece)
         
         # Place remaining pieces
         for _, piece in list(self.layout.order.items())[1:]:
