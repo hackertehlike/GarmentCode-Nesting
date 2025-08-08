@@ -345,19 +345,141 @@ class Chromosome(Layout):
             print(f"[Chromosome] WARNING: mutation '{mutation}' lost panels: {sorted(missing)}")
 
     # ── simple mutations ───────────────────────────────────────────────
+    def meta_split(self, piece: Piece, idx: int, piece_mirror: Piece | None = None) -> bool:
+        import tempfile
+        from nesting.path_extractor import PatternPathExtractor
+        from assets.garment_programs.meta_garment import MetaGarment
+        from pathlib import Path
+        mg = self.meta_garment
+
+        # add to split history even if the split fails so we don't try to split the same piece again
+        self.split_history.append((piece.id, proportion))
+        proportion = random.uniform(0.3, 0.7)
+        new_panel_names = mg.split_panel(piece.id, proportion=proportion)
+        if new_panel_names is None:
+            print(f"[Chromosome] MetaGarment split failed for {piece.id}: no new panels returned")
+            # self._warn_if_panel_lost(before, "split")
+            return False
+        
+        
+        print(f"[Chromosome] Split {piece.id} into {new_panel_names} with proportion {proportion}")
+        
+        if piece_mirror and config.SYMMETRIC_SPLITS:
+            # If there's a mirror piece, also split it
+            mirror_proportion = 1 - proportion
+            new_panel_names_mirror = mg.split_panel(
+                piece_mirror.id, proportion=mirror_proportion
+            )
+            if new_panel_names_mirror is None:
+                print(f"[Chromosome] MetaGarment split failed for mirror {piece_mirror.id}")
+                
+            else:
+                self.split_history.append((piece_mirror.id, mirror_proportion))
+                print(f"[Chromosome] Split {piece_mirror.id} into {new_panel_names_mirror} with proportion {mirror_proportion}")
+
+        pattern = mg.assembly()
+        with tempfile.TemporaryDirectory() as td:
+            spec_file = Path(td) / f"{pattern.name}_specification.json"
+            pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
+                                with_text=False, view_ids=False)
+            extractor = PatternPathExtractor(spec_file)
+            all_pieces = extractor.get_all_panel_pieces(
+                samples_per_edge=config.SAMPLES_PER_EDGE
+            )
+
+        # Build new Piece objects for the split panels
+        # if len(new_panel_names) != 2:
+        #     print(f"[Chromosome] Unexpected number of split panels for {piece.id}")
+        #     continue
+
+        left_piece = all_pieces.get(new_panel_names[0])
+        right_piece = all_pieces.get(new_panel_names[1])
+
+        # if left_piece is None or right_piece is None:
+        #     print(f"[Chromosome] Split pieces not found in regenerated pattern")
+        #     continue
+
+        for p_new in (left_piece, right_piece):
+            p_new.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+            p_new.parent_id = piece.id
+            p_new.root_id = getattr(piece, "root_id", piece.id)
+            p_new.rotation = piece.rotation
+            p_new.translation = piece.translation
+            p_new.update_bbox()
+
+        mirror_left, mirror_right = None, None
+        if piece_mirror and config.SYMMETRIC_SPLITS and new_panel_names_mirror:
+            mirror_left = all_pieces.get(new_panel_names_mirror[0])
+            mirror_right = all_pieces.get(new_panel_names_mirror[1])
+            if mirror_left is None or mirror_right is None:
+                print(f"[Chromosome] Mirror split pieces not found in regenerated pattern")
+            else:
+                for p_new in (mirror_left, mirror_right):
+                    p_new.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+                    p_new.parent_id = piece_mirror.id
+                    p_new.root_id = getattr(piece_mirror, "root_id", piece_mirror.id)
+                    p_new.rotation = piece_mirror.rotation
+                    p_new.translation = piece_mirror.translation
+                    p_new.update_bbox()
+
+        # Replace the original piece with the two split pieces
+        self.genes = self._replace(piece, left_piece, right_piece, self.genes)
+        # self.genes[idx:idx + 1] = [left_piece, right_piece]
+
+        # Randomly relocate one half - be careful with indices
+        # child_to_move_idx = random.randint(0, 1)
+        # actual_idx = idx + child_to_move_idx
+        # child = self.genes.pop(actual_idx)
+        # # Insert at random position, but avoid inserting at the position we just removed from
+        # insert_pos = random.randrange(len(self.genes) + 1)
+        # self.genes.insert(insert_pos, child)
+
+        if mirror_left is not None and mirror_right is not None:
+            try:
+                self.genes = self._replace(piece_mirror, mirror_left, mirror_right, self.genes)
+                # Find the mirror piece's current index (may have shifted due to previous operations)
+                # current_mirror_idx = self.genes.index(piece_mirror)
+                # self.genes[current_mirror_idx:current_mirror_idx + 1] = [mirror_left, mirror_right]
+                
+                # Relocate one of the mirror children
+                # mchild_to_move_idx = random.randint(0, 1)
+                # actual_mirror_idx = current_mirror_idx + mchild_to_move_idx
+                # mchild = self.genes.pop(actual_mirror_idx)
+                # # Insert at random position
+                # mirror_insert_pos = random.randrange(len(self.genes) + 1)
+                # self.genes.insert(mirror_insert_pos, mchild)
+            except ValueError:
+                print(f"[Chromosome] WARNING: piece_mirror {piece_mirror.id} not in genes, but mirror_left and mirror_right were created.")
+
+        return True  # Indicate successful mutation
+
+    # Recompute mutatable params since gene ids changed
+    # self._mutatable_params = _collect_mutatable_params(self.design_params, self._genes)
+
+    
+
+    def _replace(self, piece: Piece, new_piece_left: Piece, new_piece_right: Piece, genes:list) -> None:
+        """Replace a piece at index *idx* with *new_piece*."""
+        idx = self.genes.index(piece)
+        genes.remove(piece)
+        # insert the first piece at the original index
+        genes.insert(idx, new_piece_left)
+        # insert the second piece at a random position
+        genes.insert(random.randrange(len(genes)), new_piece_right)
+
+        return genes
 
     def _mutate_split(self):
         """Split a panel using the MetaGarment pipeline, preserving state."""
         #from nesting.panel_mapping import dispatch_split
-        from nesting.path_extractor import PatternPathExtractor
-        from assets.garment_programs.meta_garment import MetaGarment
-        import tempfile
-        from pathlib import Path
+        
 
         before = {g.root_id for g in self.genes}
 
+        self.split_set = getattr(self, 'split_set', set())
+
         max_splits = min(config.NUM_SPLITS, len(self.genes))
-        for _ in range(random.randint(1, max_splits)):
+        for _ in range(random.randint(0, min(max_splits, len(self.genes)-len(self.split_set)))):
             #unsplit = [i for i, g in enumerate(self.genes) if g.parent_id is None]
             #if not unsplit:
             #    break
@@ -367,17 +489,23 @@ class Chromosome(Layout):
             idx = random.randrange(len(self.genes))
             piece = self.genes[idx]
 
-            #retry until we find a piece that can be split
-            retries = 0
-            while 'split' in piece.id and retries < 10:
+            if piece in self.split_set:
                 print(f"[Chromosome] Skipping split for {piece.id} - already split")
-                idx = random.randrange(len(self.genes))
-                piece = self.genes[idx]
-                retries += 1
-
-            if 'split' in piece.id:
-                print(f"Max retries reached for split mutation on {piece.id}, skipping")
                 continue
+            else:
+                self.split_set.add(piece)
+
+            #retry until we find a piece that can be split
+            # retries = 0
+            # while 'split' in piece.id and retries < 10:
+            #     print(f"[Chromosome] Skipping split for {piece.id} - already split")
+            #     idx = random.randrange(len(self.genes))
+            #     piece = self.genes[idx]
+            #     retries += 1
+
+            # if 'split' in piece.id:
+            #     print(f"Max retries reached for split mutation on {piece.id}, skipping")
+            #     continue
 
             # Ensure a MetaGarment instance is fresh for the split operation
         
@@ -387,144 +515,81 @@ class Chromosome(Layout):
             #    mg.split_panel(panel_name, proportion)
             # self.meta_garment = mg
 
-            piece_mirror = None
-            if 'left' in piece.id and piece.parent_id is None:
-                mirror_id = piece.id.replace("left", "right")
-                piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
-            elif 'right' in piece.id and piece.parent_id is None:
-                mirror_id = piece.id.replace("right", "left")
-                piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
+            piece_mirror = next((p for p in self.genes if p.parent_id == piece.id.replace("left", "right") or p.parent_id == piece.id.replace("right", "left")), None)
+
+            # None
+            # if 'left' in piece.id and piece.parent_id is None:
+            #     mirror_id = piece.id.replace("left", "right")
+            #     piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
+            # elif 'right' in piece.id and piece.parent_id is None:
+            #     mirror_id = piece.id.replace("right", "left")
+            #     piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
 
 
-            if not self.meta_garment:
+            if True:#not self.meta_garment:
                 left, right = piece.split()
                 # remove the original piece
-                self.genes.remove(piece)
-                # insert the first piece at the original index
-                self.genes.insert(idx, left)
-                # insert the second piece at a random position
-                self.genes.insert(random.randrange(len(self.genes) + 1), right)
-
+                # self.genes.remove(piece)
+                # # insert the first piece at the original index
+                # self.genes.insert(idx, left)
+                # # insert the second piece at a random position
+                # self.genes.insert(random.randrange(len(self.genes)), right)
+                self._replace(piece, left, right, self.genes)
+                self.split_set.add(left)
+                self.split_set.add(right)
                 if piece_mirror and config.SYMMETRIC_SPLITS:
+                    self.split_set.add(piece_mirror)
                     # If there's a mirror piece, also split it
                     # Find the current index of the mirror piece (may have shifted)
-                    current_mirror_idx = self.genes.index(piece_mirror)
+                    # current_mirror_idx = self.genes.index(piece_mirror)
                     left_mirror, right_mirror = piece_mirror.split()
-                    # Remove the original mirror piece
-                    self.genes.remove(piece_mirror)
-                    # Insert the split pieces - first at the original mirror position
-                    self.genes.insert(current_mirror_idx, left_mirror)
-                    # Insert the second at a random position
-                    self.genes.insert(random.randrange(len(self.genes) + 1), right_mirror)
+                    self.genes = self._replace(piece_mirror, left_mirror, right_mirror, self.genes)
+                    # # Remove the original mirror piece
+                    # self.genes.remove(piece_mirror)
+                    # # Insert the split pieces - first at the original mirror position
+                    # self.genes.insert(current_mirror_idx, left_mirror)
+                    # # Insert the second at a random position
+                    # self.genes.insert(random.randrange(len(self.genes)), right_mirror)
+                    self.split_set.add(left_mirror)
+                    self.split_set.add(right_mirror)
 
                 self._warn_if_panel_lost(before, "split")
                 return True  # Indicate successful mutation
                 
-
-            # Use MetaGarment's split_panel pipeline
-            mg = self.meta_garment
-            proportion = random.uniform(0.3, 0.7)
-            new_panel_names = mg.split_panel(piece.id, proportion=proportion)
-            if new_panel_names is None:
-                print(f"[Chromosome] MetaGarment split failed for {piece.id}: no new panels returned")
-                self._warn_if_panel_lost(before, "split")
-                return False
-            self.split_history.append((piece.id, proportion))
-            print(f"[Chromosome] Split {piece.id} into {new_panel_names} with proportion {proportion}")
-           
-            new_panel_names_mirror = None
-            if piece_mirror and config.SYMMETRIC_SPLITS:
-                # If there's a mirror piece, also split it
-                mirror_proportion = 1 - proportion
-                new_panel_names_mirror = mg.split_panel(
-                    piece_mirror.id, proportion=mirror_proportion
-                )
-                if new_panel_names_mirror is None:
-                    print(f"[Chromosome] MetaGarment split failed for mirror {piece_mirror.id}")
-                    self._warn_if_panel_lost(before, "split")
-                    return False
-                self.split_history.append((piece_mirror.id, mirror_proportion))
-                print(f"[Chromosome] Split {piece_mirror.id} into {new_panel_names_mirror} with proportion {mirror_proportion}")
-
-            pattern = mg.assembly()
-            with tempfile.TemporaryDirectory() as td:
-                spec_file = Path(td) / f"{pattern.name}_specification.json"
-                pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
-                                  with_text=False, view_ids=False)
-                extractor = PatternPathExtractor(spec_file)
-                all_pieces = extractor.get_all_panel_pieces(
-                    samples_per_edge=config.SAMPLES_PER_EDGE
-                )
-
-            # Build new Piece objects for the split panels
-            if len(new_panel_names) != 2:
-                print(f"[Chromosome] Unexpected number of split panels for {piece.id}")
-                continue
-
-            left_piece = all_pieces.get(new_panel_names[0])
-            right_piece = all_pieces.get(new_panel_names[1])
-
-            if left_piece is None or right_piece is None:
-                print(f"[Chromosome] Split pieces not found in regenerated pattern")
-                continue
-
-            for p_new in (left_piece, right_piece):
-                p_new.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
-                p_new.parent_id = piece.id
-                p_new.root_id = getattr(piece, "root_id", piece.id)
-                p_new.rotation = piece.rotation
-                p_new.translation = piece.translation
-                p_new.update_bbox()
-
-            mirror_left = mirror_right = None
-            if piece_mirror and config.SYMMETRIC_SPLITS and new_panel_names_mirror:
-                mirror_left = all_pieces.get(new_panel_names_mirror[0])
-                mirror_right = all_pieces.get(new_panel_names_mirror[1])
-                if mirror_left is None or mirror_right is None:
-                    print(f"[Chromosome] Mirror split pieces not found in regenerated pattern")
-                else:
-                    for p_new in (mirror_left, mirror_right):
-                        p_new.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
-                        p_new.parent_id = piece_mirror.id
-                        p_new.root_id = getattr(piece_mirror, "root_id", piece_mirror.id)
-                        p_new.rotation = piece_mirror.rotation
-                        p_new.translation = piece_mirror.translation
-                        p_new.update_bbox()
-
-            # Replace the original piece with the two split pieces
-            self.genes[idx:idx + 1] = [left_piece, right_piece]
-
-            # Randomly relocate one half - be careful with indices
-            child_to_move_idx = random.randint(0, 1)
-            actual_idx = idx + child_to_move_idx
-            child = self.genes.pop(actual_idx)
-            # Insert at random position, but avoid inserting at the position we just removed from
-            insert_pos = random.randrange(len(self.genes) + 1)
-            self.genes.insert(insert_pos, child)
-
-            if mirror_left is not None and mirror_right is not None:
-                try:
-                    # Find the mirror piece's current index (may have shifted due to previous operations)
-                    current_mirror_idx = self.genes.index(piece_mirror)
-                    self.genes[current_mirror_idx:current_mirror_idx + 1] = [mirror_left, mirror_right]
-                    
-                    # Relocate one of the mirror children
-                    mchild_to_move_idx = random.randint(0, 1)
-                    actual_mirror_idx = current_mirror_idx + mchild_to_move_idx
-                    mchild = self.genes.pop(actual_mirror_idx)
-                    # Insert at random position
-                    mirror_insert_pos = random.randrange(len(self.genes) + 1)
-                    self.genes.insert(mirror_insert_pos, mchild)
-                except ValueError:
-                    print(f"[Chromosome] WARNING: piece_mirror {piece_mirror.id} not in genes, but mirror_left and mirror_right were created.")
-
+            else:
+                # Use MetaGarment's split_panel pipeline
+                success = self.meta_split(piece, idx, piece_mirror)
+                if not success:
+                    print(f"[Chromosome] MetaGarment split failed for {piece.id}")
+                    continue
             self._warn_if_panel_lost(before, "split")
-            return True  # Indicate successful mutation
+            return True
 
-        # Recompute mutatable params since gene ids changed
-        # self._mutatable_params = _collect_mutatable_params(self.design_params, self._genes)
+    # def _no_param_split(self, piece, idx, piece_mirror=None):
 
-        self._warn_if_panel_lost(before, "split")
+    #     left, right = piece.split()
+    #     # remove the original piece
+    #     self.genes.remove(piece)
+    #     # insert the first piece at the original index
+    #     self.genes.insert(idx, left)
+    #     # insert the second piece at a random position
+    #     self.genes.insert(random.randrange(len(self.genes) + 1), right)
+
+    #     if piece_mirror and config.SYMMETRIC_SPLITS:
+    #         # If there's a mirror piece, also split it
+    #         # Find the current index of the mirror piece (may have shifted)
+    #         current_mirror_idx = self.genes.index(piece_mirror)
+    #         left_mirror, right_mirror = piece_mirror.split()
+    #         # Remove the original mirror piece
+    #         self.genes.remove(piece_mirror)
+    #         # Insert the split pieces - first at the original mirror position
+    #         self.genes.insert(current_mirror_idx, left_mirror)
+    #         # Insert the second at a random position
+    #         self.genes.insert(random.randrange(len(self.genes) + 1), right_mirror)
+
+    #     self._warn_if_panel_lost(before, "split")
+    #     return True  # Indicate successful mutation
+
 
     def _mutate_rotate(self):
         before = {g.root_id for g in self.genes}

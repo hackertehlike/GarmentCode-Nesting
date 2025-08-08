@@ -3,6 +3,14 @@
 import math
 from typing import Literal, Mapping
 
+# GUI STUFF
+NUM_COPIES = 0
+
+CONTAINER_WIDTH_CM  = 300
+CONTAINER_HEIGHT_CM = 140
+
+SEAM_ALLOWANCE_CM = 1
+
 # ——— general settings —————————————————————————————————————
 MULTITHREADING: bool = False
 VERBOSE: bool = True
@@ -10,10 +18,11 @@ VERBOSE: bool = True
 # DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_design_params.yaml"
 # DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_body_measurements.yaml"
 
-DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_specification.json"
-DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_design_params.yaml"
-DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_body_measurements.yaml"
-
+DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_specification.json"
+# DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_design_params.yaml"
+DEFAULT_DESIGN_PARAM_PATH: str = ""
+# DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_body_measurements.yaml"
+DEFAULT_BODY_PARAM_PATH: str = ""
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
@@ -98,18 +107,18 @@ EXCLUDED_PARAM_PATHS = [
 # special handling is applied to prevent excessive changes when values are close to zero
 PARAM_CHANGE_MARGIN = 0.2
 
-SYMMETRIC_SPLITS: bool = True  # whether to split the pattern symmetrically (e.g., left and right halves of a skirt)
+SYMMETRIC_SPLITS: bool = False  # whether to split the pattern symmetrically (e.g., left and right halves of a skirt)
 
 
 # mutation weights
 MUTATION_WEIGHTS = {
-    "rotate":    0.1,
-    "swap":      0.1,
-    "inversion": 0.1,
-    "insertion": 0.1,
-    "scramble":  0.1,
-    "split":     0.25,
-    "design_params": 0.25
+    "rotate":    0,
+    "swap":      0,
+    "inversion": 0,
+    "insertion": 0,
+    "scramble":  0,
+    "split":     1,
+    "design_params": 0
 }
 
 
@@ -143,14 +152,6 @@ SAMPLES_PER_EDGE  = 7
 ENABLE_ROTATIONS  = True
 ALLOWED_ROTATIONS = [0, 90, 180, 270]  # allowed rotations in degrees, if ENABLE_ROTATIONS is True
 
-
-# GUI STUFF
-NUM_COPIES = 0
-
-CONTAINER_WIDTH_CM  = 1000
-CONTAINER_HEIGHT_CM = 140
-
-SEAM_ALLOWANCE_CM = 1
 
 def __dict__() -> dict:
     """
