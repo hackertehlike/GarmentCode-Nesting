@@ -1337,7 +1337,7 @@ class NestingGUI:
         self._draw_outlines()
         ui.notify("All panel rotations reset", type="positive")
 
-    def _split_panel(self, proportion=0.17):
+    def _split_panel(self, proportion=0.5):
         """Split the currently selected panel into two and redraw.
         # """
         if not self.selected_panel:
@@ -1360,8 +1360,12 @@ class NestingGUI:
             # use the Piece.split() method to split the panel
             try:
                 left, right = piece.split()
+                # Remove the original piece and add the two new split pieces
                 self.pieces[left.id] = left
-                self.pieces[right.id] = right
+                self.pieces[right.id] = right 
+                self.pieces.pop(pid)
+
+                
                 #self._draw_panel(left.id)
                 #self._draw_panel(right.id)
                 self.selected_panel = None # Clear selection after split

@@ -460,83 +460,65 @@ class Panel(BaseComponent):
         
         return leftmost
     
-    def split(self, proportion=0.5):
-        """Split this panel vertically at ``proportion`` of its bounding box width.
+    def split(self, proportion=0.5, use_centroid=False, epsilon=1e-7):
+        """Split this panel vertically by finding the optimal split line that 
+        minimizes area difference between the two resulting parts.
 
-        The implementation mirrors :meth:`nesting.layout.Piece.split` by
-        converting the current :class:`EdgeSequence` into a Shapely polygon,
-        performing the split using ``shapely.ops.split`` and constructing new
-        :class:`Panel` objects from the resulting geometries.  All curvature
-        information is lost as the polygon is approximated by straight edges.
+        Uses the shared optimal_polygon_split utility function from the nesting
+        module to find the optimal split line. All curvature information is lost 
+        as the polygon is approximated by straight edges.
+        
+        Args:
+            proportion: Position of the split line as proportion of bounding box width (ignored if use_centroid=True)
+            use_centroid: If True, use polygon centroid x-coordinate; if False, use proportion of bounding box
+            epsilon: Geometric tolerance for split line extension
         """
+        import sys
+        import os
+        # Add the nesting module to sys.path if not already there
+        nesting_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'nesting')
+        if nesting_path not in sys.path:
+            sys.path.append(nesting_path)
+        
+        from utils import polygon_split
 
-        # Convert current edges into a Shapely polygon using a linear
-        # approximation so that curved edges are handled as straight segments.
+        # Convert current edges into a Shapely polygon using linear approximation
         lin_edges = EdgeSequence([e.linearize() for e in self.edges])
         verts = lin_edges.verts()
-        poly = Polygon(verts)
+        
+        # Convert numpy arrays to regular coordinate tuples for the utility function
+        coords = [(float(v[0]), float(v[1])) for v in verts]
 
-        if not poly.is_valid:
-            raise ValueError(f"{self.name} produces an invalid polygon for split")
+        # Use the shared utility function for polygon splitting
+        left_coords, right_coords = polygon_split(
+            coordinates=coords,
+            object_name=f"Panel {self.name}",
+            use_centroid=use_centroid,
+            proportion=proportion,
+            epsilon=epsilon
+        )
 
-        # Vertical split-line at the given proportion of the bounding box width
-        minx, miny, maxx, maxy = poly.bounds
-        midx = minx + proportion * (maxx - minx)
-        split_line = LineString([(midx, miny - 1.0), (midx, maxy + 1.0)])
-
-        try:
-            result = shapely_split(poly, split_line)
-        except TopologyException as exc:  # pragma: no cover - geometry errors
-            raise RuntimeError(f"Failed to split panel {self.name}: {exc}")
-
-        parts = [g for g in result.geoms if isinstance(g, Polygon)]
-
-        # Group fragments into left and right halves by bounding box position
-        left_list, right_list = [], []
-        for p in parts:
-            minx_p, _, maxx_p, _ = p.bounds
-            if maxx_p <= midx:
-                left_list.append(p)
-            elif minx_p >= midx:
-                right_list.append(p)
-            else:
-                # This part is on the split line.
-                # The original code assigned it based on centroid, which is buggy.
-                # A better way is to split this part again, but that adds complexity.
-                # For now, let's assign it to both lists and let unary_union handle it.
-                # This might not be perfect, but it's better than the centroid logic.
-                left_list.append(p)
-                right_list.append(p)
-
-        if not left_list:
-            left_list = parts
-        if not right_list:
-            right_list = parts
-
-        def _combine(frags):
-            combined = unary_union(frags)
-            if isinstance(combined, Polygon):
-                return combined
-            if isinstance(combined, MultiPolygon):
-                return max(combined.geoms, key=lambda p: p.area)
-            raise ValueError("Unexpected geometry type after union")
-
-        poly_left = _combine(left_list)
-        poly_right = _combine(right_list)
-
-        def _poly_to_panel(poly, suffix):
-            ox_min, oy_min, _, _ = poly.bounds
-            coords_local = [
-                [x - ox_min, y - oy_min] for x, y in list(poly.exterior.coords)[:-1]
-            ]
+        def _coords_to_panel(coords, suffix):
+            """Convert split coordinates back to a Panel object."""
+            # Normalize coordinates to start from (0,0)
+            min_x = min(x for x, y in coords)
+            min_y = min(y for x, y in coords)
+            coords_local = [[x - min_x, y - min_y] for x, y in coords]
+            
+            # Create new panel
             p = Panel(f"{self.name}_split_{suffix}")
             p.label = ""
             p.rotation = self.rotation
-            p.translation = self.translation + self.rotation.apply([ox_min, oy_min, 0])
+            
+            # Apply translation offset for the split piece
+            offset_3d = self.rotation.apply([min_x, min_y, 0])
+            p.translation = self.translation + offset_3d
+            
+            # Create edges from coordinates
             p.edges = EdgeSeqFactory.from_verts(*coords_local, loop=True)
             return p
 
-        panel_left = _poly_to_panel(poly_left, 'left')
-        panel_right = _poly_to_panel(poly_right, 'right')
+        panel_left = _coords_to_panel(left_coords, 'left')
+        panel_right = _coords_to_panel(right_coords, 'right')
 
         return panel_left, panel_right

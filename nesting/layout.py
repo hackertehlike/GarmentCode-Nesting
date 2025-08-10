@@ -249,7 +249,8 @@ class Piece:
 
     def split(
         self,
-        use_centroid: bool = False,
+        use_centroid: bool = True,
+        proportion: float = 0.5,  # proportion of the bounding box width to split at
         epsilon: float = 1e-7,          # geometric tolerance
     ) -> Tuple["Piece", "Piece"]:
         """
@@ -257,19 +258,54 @@ class Piece:
         through either the x-centroid (`use_centroid=True`) or the
         midpoint of its bounding box (`use_centroid=False`, default).
 
-        The algorithm:
-        1.  Intersect the polygon with the vertical line to obtain an
-            even list of points  p0 … p(2k-1).
-        2.  Every consecutive pair (p0,p1), (p2,p3)… is an *inside*
-            segment.  For each such segment:
-               • split the polygon along that segment,
-               • measure the area difference between the two parts.
-        3.  Keep the pair with the **smallest** area difference.
-        4.  Wrap the two resulting polygons into new `Piece` objects
-            that inherit
-               • `parent_id`, `root_id`
-               • translation, rotation, seam allowance, etc.
+        Uses the shared optimal_polygon_split utility function to find the
+        optimal split line that minimizes area difference between parts.
         """
+        from nesting.utils import polygon_split
+
+        # Use the shared utility function for polygon splitting
+        left_coords, right_coords = polygon_split(
+            coordinates=self.inner_path,
+            object_name=f"Piece {self.id}",
+            use_centroid=use_centroid,
+            proportion=proportion,
+            epsilon=epsilon
+        )
+
+        # Create new Piece objects from the split coordinates
+        new_pieces: list["Piece"] = []
+        for idx, coords in enumerate([left_coords, right_coords], start=1):
+            # Normalize coordinates to start from (0,0)
+            min_x = min(x for x, y in coords)
+            min_y = min(y for x, y in coords)
+            local_coords = [(x - min_x, y - min_y) for x, y in coords]
+
+            side = "left" if idx == 1 else "right"
+            new_id = f"{self.id}_split_{side}"
+
+            child = Piece(local_coords, id=new_id)
+            child.parent_id = self.id
+            child.root_id = getattr(self, "root_id", self.id)
+
+            # Keep the absolute placement inherited from this piece
+            tx, ty = self.translation
+            child.translation = (tx + min_x, ty + min_y)
+
+            # Propagate rotation/seam-allowance bookkeeping
+            if self.rotation:
+                child.rotate(self.rotation)
+
+            # Add seam allowance to generate outer_path
+            try:
+                child.add_seam_allowance()  # falls back to default 1.0 cm
+            except Exception:
+                # if you sometimes call add_seam_allowance() later, skip here
+                pass
+
+            child.update_bbox()
+            new_pieces.append(child)
+
+        return tuple(new_pieces)  # (left_piece, right_piece)
 
         from shapely.geometry import Polygon, LineString, MultiPoint
         from shapely.ops import split as shapely_split, unary_union
@@ -338,7 +374,7 @@ class Piece:
             raise ValueError(f"Piece {self.id}: invalid polygon given.")
 
         minx, miny, maxx, maxy = poly_inner.bounds
-        x0 = poly_inner.centroid.x if use_centroid else 0.5 * (minx + maxx)
+        x0 = poly_inner.centroid.x if use_centroid else proportion * (minx + maxx)
 
         # a tall vertical line that surely crosses the piece
         vertical = LineString([(x0, miny - 1.0), (x0, maxy + 1.0)])
@@ -373,11 +409,8 @@ class Piece:
             q0  = (q.x, q.y + epsilon * max(1.0, abs(dy)))
             knife = LineString([p0, q0])        # **still a LineString** here
 
-            parts_gc = shapely_split(poly_inner, knife)   # → GeometryCollection
-            parts = [g for g in parts_gc.geoms if g.geom_type == "Polygon"]
-
             try:
-                parts_gc = shapely_split(poly_inner, knife)
+                parts_gc = shapely_split(poly_inner, knife)   # → GeometryCollection
                 parts = [g for g in parts_gc.geoms if g.geom_type == "Polygon"]
             except GEOSException:
                 continue                       # numerical failure → skip
@@ -407,7 +440,7 @@ class Piece:
                             for x, y in list(geom.exterior.coords)[:-1]]
 
             side = "left" if idx == 1 else "right"
-            new_id = f"{self.id}_{side}"
+            new_id = f"{self.id}_split_{side}"
 
             child = Piece(local_coords, id=new_id)
             child.parent_id = self.id

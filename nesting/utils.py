@@ -268,3 +268,146 @@ def compute_offset_path(contour: list[tuple[float, float]],
         offset_paths += shifted_outline
 
     return offset_paths
+
+
+def clean_polygon_coordinates(coordinates: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
+    """
+    Clean polygon coordinates by removing duplicate consecutive points and ensuring closure.
+    
+    Args:
+        coordinates: List of (x, y) coordinates defining the polygon
+        
+    Returns:
+        Cleaned list of coordinates with duplicates removed and polygon closed
+    """
+    # Remove duplicate consecutive points
+    cleaned_coords = []
+    for i, coord in enumerate(coordinates):
+        if i == 0 or coord != coordinates[i-1]:
+            cleaned_coords.append(coord)
+    
+    # Ensure polygon is closed (first == last)
+    if len(cleaned_coords) > 0 and cleaned_coords[0] != cleaned_coords[-1]:
+        cleaned_coords.append(cleaned_coords[0])
+        
+    return cleaned_coords
+
+
+def polygon_split(
+    coordinates: List[Tuple[float, float]],
+    object_name: str,
+    use_centroid: bool = True,
+    proportion: float = 0.5,
+    epsilon: float = 1e-7
+) -> Tuple[List[Tuple[float, float]], List[Tuple[float, float]]]:
+    """
+    Split a polygon into two parts by finding the optimal vertical split line
+    that minimizes area difference between the resulting parts.
+    
+    This is a utility function shared between Piece.split() and Panel.split()
+    to avoid code duplication.
+    
+    Args:
+        coordinates: List of (x, y) coordinates defining the polygon
+        object_name: Name of the object being split (for error messages)
+        use_centroid: If True, use polygon centroid x-coordinate; if False, use proportion of bounding box
+        proportion: Position of the split line as proportion of bounding box width (ignored if use_centroid=True)
+        epsilon: Geometric tolerance for split line extension
+        
+    Returns:
+        Tuple of (left_polygon_coords, right_polygon_coords) where each is a list of (x, y) tuples
+        
+    Raises:
+        ValueError: If the polygon is invalid or split fails
+        RuntimeError: If no valid split is found
+    """
+    from shapely.geometry import Polygon, LineString, MultiPoint
+    from shapely.ops import split as shapely_split
+    from shapely.errors import GEOSException
+    
+    # Clean the coordinates
+    cleaned_coords = clean_polygon_coordinates(coordinates)
+    
+    poly = Polygon(cleaned_coords)
+    
+    # If invalid, try to fix with buffer operation
+    if not poly.is_valid:
+        try:
+            poly = poly.buffer(0)
+            if not poly.is_valid:
+                raise ValueError(f"{object_name} produces an invalid polygon for split")
+        except Exception:
+            raise ValueError(f"{object_name} produces an invalid polygon for split")
+    
+    if poly.is_empty:
+        raise ValueError(f"{object_name}: empty polygon given")
+
+    # Determine split line position
+    minx, miny, maxx, maxy = poly.bounds
+    x0 = poly.centroid.x if use_centroid else minx + proportion * (maxx - minx)
+    
+    # Create vertical line that crosses the polygon
+    vertical = LineString([(x0, miny - 1.0), (x0, maxy + 1.0)])
+
+    # Find boundary intersections with the vertical line
+    hits = poly.boundary.intersection(vertical)
+    
+    if isinstance(hits, MultiPoint):
+        pts = sorted(hits.geoms, key=lambda p: p.y)
+    else:
+        pts = [hits] if hits else []
+        
+    if len(pts) < 2 or len(pts) % 2:
+        raise ValueError(f"{object_name}: expected even # of intersections, got {len(pts)}")
+
+    # Test every inside segment to find the one with minimal area difference
+    best_split = None
+    best_delta = float("inf")
+
+    for i in range(0, len(pts), 2):
+        p, q = pts[i], pts[i + 1]
+        
+        # Create a slightly extended cut line to ensure clean splitting
+        dy = q.y - p.y
+        p0 = (p.x, p.y - epsilon * max(1.0, abs(dy)))
+        q0 = (q.x, q.y + epsilon * max(1.0, abs(dy)))
+        knife = LineString([p0, q0])
+
+        try:
+            parts_gc = shapely_split(poly, knife)
+            parts = [g for g in parts_gc.geoms if g.geom_type == "Polygon"]
+            
+            if len(parts) >= 2:
+                area_left, area_right = parts[0].area, parts[1].area
+                delta = abs(area_left - area_right)
+                if delta < best_delta:
+                    best_delta = delta
+                    best_split = (parts[0], parts[1])
+        except GEOSException:
+            continue
+
+    if best_split is None:
+        raise RuntimeError(f"{object_name}: no valid split produced")
+
+    poly_left, poly_right = best_split
+    
+    # Validate that the total area is conserved (within numerical tolerance)
+    original_area = poly.area
+    split_total_area = poly_left.area + poly_right.area
+    area_tolerance = max(1e-6, original_area * 1e-9)  # Adaptive tolerance based on polygon size
+    area_diff = abs(original_area - split_total_area)
+    
+    if area_diff > area_tolerance:
+        raise ValueError(
+            f"{object_name}: area conservation violated after split. "
+            f"Original area: {original_area:.9f}, "
+            f"Split total area: {split_total_area:.9f}, "
+            f"Difference: {area_diff:.9f}, "
+            f"Tolerance: {area_tolerance:.9f}"
+        )
+    
+    # Convert back to coordinate lists (excluding the closing coordinate)
+    left_coords = list(poly_left.exterior.coords)[:-1]
+    right_coords = list(poly_right.exterior.coords)[:-1]
+    
+    return left_coords, right_coords

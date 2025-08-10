@@ -426,7 +426,7 @@ class Chromosome(Layout):
         self.genes = self._replace(piece, left_piece, right_piece, self.genes)
         # self.genes[idx:idx + 1] = [left_piece, right_piece]
 
-        # Randomly relocate one half - be careful with indices
+        # Randomly relocate one half - be careful with indicesx
         # child_to_move_idx = random.randint(0, 1)
         # actual_idx = idx + child_to_move_idx
         # child = self.genes.pop(actual_idx)
@@ -543,6 +543,9 @@ class Chromosome(Layout):
                     # Find the current index of the mirror piece (may have shifted)
                     # current_mirror_idx = self.genes.index(piece_mirror)
                     left_mirror, right_mirror = piece_mirror.split()
+                    for half in (left_mirror, right_mirror):
+                        half.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+                        half.update_bbox()
                     self.genes = self._replace(piece_mirror, left_mirror, right_mirror, self.genes)
                     # # Remove the original mirror piece
                     # self.genes.remove(piece_mirror)

@@ -256,11 +256,16 @@ class PlacementEngine:
         centroids = []
         for piece in self.placed:
             raw = piece.get_outer_path()
-            poly = Polygon([(x + piece.translation[0], y + piece.translation[1])
-                            for x, y in raw])
-            all_pts.extend(sample_boundary(poly))
-            all_pts.extend(sample_interior(poly))
-            centroids.append(poly.centroid.coords[0])
+            # Clean coordinates and translate
+            translated_coords = [(x + piece.translation[0], y + piece.translation[1]) for x, y in raw]
+            cleaned_coords = utils.clean_polygon_coordinates(translated_coords)
+            poly = Polygon(cleaned_coords)
+            
+            # Only proceed if polygon is valid
+            if poly.is_valid and not poly.is_empty:
+                all_pts.extend(sample_boundary(poly))
+                all_pts.extend(sample_interior(poly))
+                centroids.append(poly.centroid.coords[0])
 
         pts = np.array(all_pts, dtype=float)
         if pts.shape[0] < 4:
@@ -380,7 +385,9 @@ class PlacementEngine:
                     if corner not in snapped:
                         snapped.append(corner)
 
-            hull = Polygon(snapped)
+            # Clean the snapped coordinates before creating the polygon
+            cleaned_snapped = utils.clean_polygon_coordinates(snapped)
+            hull = Polygon(cleaned_snapped)
 
         # Check if the resulting hull is valid before returning it
         if not hull.is_valid:
@@ -402,7 +409,10 @@ class PlacementEngine:
         raw = new_piece.get_outer_path()
         x0, y0 = new_piece.translation
         shifted = [(x + x0, y + y0) for x, y in raw]
-        piece_poly = Polygon(shifted)
+        
+        # Clean coordinates before creating polygon
+        cleaned_shifted = utils.clean_polygon_coordinates(shifted)
+        piece_poly = Polygon(cleaned_shifted)
 
         if self._exterior_contour is None:
             self._exterior_contour = piece_poly
@@ -619,9 +629,11 @@ class NFPDecoder(PlacementEngine):
 
         # 2) Compute all NFP candidates
         moving_path = piece.get_outer_path()
+        cleaned_moving = utils.clean_polygon_coordinates(moving_path)
         all_nfp_pts: List[Tuple[float, float]] = []
         for ring_coords in rings:
-            pts = utils.no_fit_polygon(ring_coords, moving_path)
+            cleaned_ring = utils.clean_polygon_coordinates(ring_coords)
+            pts = utils.no_fit_polygon(cleaned_ring, cleaned_moving)
             all_nfp_pts.extend(pts)
 
         # 3) Compute bounding‐box of all placed pieces
@@ -690,9 +702,13 @@ class NFPDecoder(PlacementEngine):
         """
         key = (stationary.id, moving.id)
         if key not in self._nfp_cache:
+            # Clean both polygons before calculating NFP
+            cleaned_stationary = utils.clean_polygon_coordinates(stationary.get_outer_path())
+            cleaned_moving = utils.clean_polygon_coordinates(moving.get_outer_path())
+            
             self._nfp_cache[key] = utils.no_fit_polygon(
-                stationary.get_outer_path(),
-                moving.get_outer_path()
+                cleaned_stationary,
+                cleaned_moving
             )
         return self._nfp_cache[key]
     
@@ -750,8 +766,12 @@ class BottomLeftFill(PlacementEngine):
         key = (stationary_id, moving_id)
         
         if key not in self._nfp_cache:
+            # Clean both polygons before calculating NFP
+            cleaned_stationary = utils.clean_polygon_coordinates(stationary_poly)
+            cleaned_moving = utils.clean_polygon_coordinates(moving_poly)
+            
             # Calculate NFP if not in cache
-            self._nfp_cache[key] = utils.no_fit_polygon(stationary_poly, moving_poly)
+            self._nfp_cache[key] = utils.no_fit_polygon(cleaned_stationary, cleaned_moving)
             
         return self._nfp_cache[key]
     
@@ -762,6 +782,9 @@ class BottomLeftFill(PlacementEngine):
         """
         # Get the polygon path of the current piece
         poly = piece.get_outer_path()
+        
+        # Clean the polygon coordinates to avoid invalid geometry
+        cleaned_poly = utils.clean_polygon_coordinates(poly)
         
         # Use the container's inner_fit_rectangle method to get the IFR
         ifr = self.container.inner_fit_rectangle(piece)
@@ -782,13 +805,19 @@ class BottomLeftFill(PlacementEngine):
                 placed_piece.translation[1]
             )
             
+            # Clean both polygons before computing NFP
+            cleaned_stationary = utils.clean_polygon_coordinates(stationary_poly)
+            cleaned_moving = utils.clean_polygon_coordinates(piece.get_outer_path())
+            
             # Get the NFP between the placed piece and current piece using cache
-            nfp = self._get_nfp(placed_piece.id, piece.id, stationary_poly, piece.get_outer_path())
+            nfp = self._get_nfp(placed_piece.id, piece.id, cleaned_stationary, cleaned_moving)
             if not nfp:
                 continue
                 
             try:
-                nfp_poly = Polygon(nfp)
+                # Clean NFP coordinates before creating polygon
+                cleaned_nfp = utils.clean_polygon_coordinates(nfp)
+                nfp_poly = Polygon(cleaned_nfp)
                 # Validate the NFP polygon before using it
                 if not nfp_poly.is_valid:
                     print(f"Warning: Invalid NFP polygon for pieces {placed_piece.id} and {piece.id}, attempting to fix...")
@@ -866,7 +895,7 @@ class BottomLeftFill(PlacementEngine):
             
         # Find the reference point (top-most point) of the piece using min()
         # In screen coordinates, smaller y is higher (top)
-        top_point = min(poly, key=lambda point: point[1])
+        top_point = min(cleaned_poly, key=lambda point: point[1])
         reference_point = top_point
         
         # Place the piece at the bottom-left point
@@ -919,7 +948,13 @@ class TOPOSDecoder(PlacementEngine):
             
             # Get reference point and left/right widths
             top_idx = self._find_top_point_index(piece)
-            reference_point = piece.get_outer_path()[top_idx]
+            
+            # Use cleaned coordinates for reference point calculation
+            cleaned_points = utils.clean_polygon_coordinates(piece.get_outer_path())
+            # Adjust top_idx if cleaning changed the number of points
+            if top_idx >= len(cleaned_points):
+                top_idx = min(range(len(cleaned_points)), key=lambda i: cleaned_points[i][1])
+            reference_point = cleaned_points[top_idx]
             
             # Calculate left and right widths from top point
             left_width, right_width = self._calculate_piece_widths(piece, top_idx)
@@ -951,13 +986,56 @@ class TOPOSDecoder(PlacementEngine):
         # Start with the first piece's NFP
         first_placed = self.placed[0]
         nfp = self._get_nfp(first_placed, piece)
-        merged_nfp = Polygon(nfp)
+        if not nfp:
+            return None
+            
+        # Clean NFP coordinates before creating polygon
+        cleaned_nfp = utils.clean_polygon_coordinates(nfp)
+        try:
+            merged_nfp = Polygon(cleaned_nfp)
+            # Validate and fix if needed
+            if not merged_nfp.is_valid:
+                print(f"Warning: Invalid initial NFP polygon, attempting to fix...")
+                merged_nfp = merged_nfp.buffer(0)
+                if not merged_nfp.is_valid:
+                    print(f"Failed to fix initial NFP polygon")
+                    return None
+        except Exception as e:
+            print(f"Error creating initial NFP polygon: {e}")
+            return None
         
         # Union with the NFPs of all other placed pieces
         for placed_piece in self.placed[1:]:
             nfp = self._get_nfp(placed_piece, piece)
             if nfp:
-                merged_nfp = merged_nfp.union(Polygon(nfp))
+                try:
+                    # Clean NFP coordinates before creating polygon
+                    cleaned_nfp = utils.clean_polygon_coordinates(nfp)
+                    nfp_poly = Polygon(cleaned_nfp)
+                    
+                    # Validate NFP polygon before union
+                    if not nfp_poly.is_valid:
+                        print(f"Warning: Invalid NFP polygon for piece {placed_piece.id}, attempting to fix...")
+                        nfp_poly = nfp_poly.buffer(0)
+                        if not nfp_poly.is_valid:
+                            print(f"Failed to fix NFP polygon for piece {placed_piece.id}, skipping...")
+                            continue
+                    
+                    # Validate merged polygon before union
+                    if not merged_nfp.is_valid:
+                        print(f"Warning: Invalid merged NFP polygon, attempting to fix...")
+                        merged_nfp = merged_nfp.buffer(0)
+                        if not merged_nfp.is_valid:
+                            print(f"Failed to fix merged NFP polygon, skipping union...")
+                            continue
+                    
+                    # Perform union operation
+                    merged_nfp = merged_nfp.union(nfp_poly)
+                    
+                except Exception as e:
+                    print(f"Error during NFP union for piece {placed_piece.id}: {e}")
+                    print(f"Skipping this piece and continuing...")
+                    continue
                 
         return merged_nfp
     
@@ -971,10 +1049,14 @@ class TOPOSDecoder(PlacementEngine):
                 stationary_piece.get_outer_path(), sx, sy
             )
             
+            # Clean both polygons before calculating NFP
+            cleaned_stationary = utils.clean_polygon_coordinates(stationary_poly)
+            cleaned_moving = utils.clean_polygon_coordinates(moving_piece.get_outer_path())
+            
             # Calculate NFP
             self._nfp_cache[key] = utils.no_fit_polygon(
-                stationary_poly, 
-                moving_piece.get_outer_path()
+                cleaned_stationary, 
+                cleaned_moving
             )
             
         return self._nfp_cache[key]
@@ -986,18 +1068,23 @@ class TOPOSDecoder(PlacementEngine):
             
         from shapely.geometry import mapping
         
-        # Extract points using same approach as original TOPOS
-        res = mapping(nfp_union)
-        feasible_points = []
-        
-        # Handle MultiPolygon or simple Polygon
-        if res["type"] == "MultiPolygon":
-            for poly in res["coordinates"]:
-                feasible_points.extend(self._extract_feasible_points(poly))
-        else:
-            feasible_points.extend(self._extract_feasible_points(res["coordinates"][0]))
+        try:
+            # Extract points using same approach as original TOPOS
+            res = mapping(nfp_union)
+            feasible_points = []
             
-        return feasible_points
+            # Handle MultiPolygon or simple Polygon
+            if res["type"] == "MultiPolygon":
+                for poly in res["coordinates"]:
+                    feasible_points.extend(self._extract_feasible_points(poly))
+            else:
+                feasible_points.extend(self._extract_feasible_points(res["coordinates"][0]))
+                
+            return feasible_points
+            
+        except Exception as e:
+            print(f"Error extracting feasible points from NFP union: {e}")
+            return [(1000, 1000)]  # Return default fallback position
     
     def _extract_feasible_points(self, poly_coords):
         """Filter feasible points just like original TOPOS."""
@@ -1020,19 +1107,28 @@ class TOPOSDecoder(PlacementEngine):
     def _find_top_point_index(self, piece):
         """Find index of the top-most point in the piece."""
         points = piece.get_outer_path()
-        return min(range(len(points)), key=lambda i: points[i][1])
+        # Clean the points to ensure valid geometry
+        cleaned_points = utils.clean_polygon_coordinates(points)
+        return min(range(len(cleaned_points)), key=lambda i: cleaned_points[i][1])
     
     def _calculate_piece_widths(self, piece, top_idx):
         """Calculate left and right widths from top point."""
         points = piece.get_outer_path()
-        top_point = points[top_idx]
+        # Clean the points to ensure valid geometry
+        cleaned_points = utils.clean_polygon_coordinates(points)
+        
+        # Adjust top_idx if the cleaning changed the number of points
+        if top_idx >= len(cleaned_points):
+            top_idx = min(range(len(cleaned_points)), key=lambda i: cleaned_points[i][1])
+            
+        top_point = cleaned_points[top_idx]
         
         # Find leftmost and rightmost points
-        left_idx = min(range(len(points)), key=lambda i: points[i][0])
-        right_idx = max(range(len(points)), key=lambda i: points[i][0])
+        left_idx = min(range(len(cleaned_points)), key=lambda i: cleaned_points[i][0])
+        right_idx = max(range(len(cleaned_points)), key=lambda i: cleaned_points[i][0])
         
-        left_point = points[left_idx]
-        right_point = points[right_idx]
+        left_point = cleaned_points[left_idx]
+        right_point = cleaned_points[right_idx]
         
         # Calculate widths from top point
         left_width = top_point[0] - left_point[0]
@@ -1076,31 +1172,43 @@ class TOPOSDecoder(PlacementEngine):
         Update the bounding box that contains all placed pieces by incorporating 
         the newly placed piece's dimensions.
         """
-        tx, ty = piece.translation
-        outer_path = piece.get_outer_path()
-        
-        # Calculate bounding box of the placed piece
-        xs = [tx + x for x, _ in outer_path]
-        ys = [ty + y for _, y in outer_path]
-        
-        piece_left = min(xs)
-        piece_right = max(xs)
-        piece_bottom = min(ys)
-        piece_top = max(ys)
-        
-        # Update layout borders to include this piece
-        if piece_left < self.border_left:
-            self.border_left = piece_left
-        if piece_bottom < self.border_bottom:
-            self.border_bottom = piece_bottom
-        if piece_right > self.border_right:
-            self.border_right = piece_right
-        if piece_top > self.border_top:
-            self.border_top = piece_top
+        try:
+            tx, ty = piece.translation
+            outer_path = piece.get_outer_path()
             
-        # Update layout width and height
-        self.border_height = self.border_top - self.border_bottom
-        self.border_width = self.border_right - self.border_left
+            # Clean coordinates to ensure valid geometry
+            cleaned_path = utils.clean_polygon_coordinates(outer_path)
+            
+            # Calculate bounding box of the placed piece
+            xs = [tx + x for x, _ in cleaned_path]
+            ys = [ty + y for _, y in cleaned_path]
+            
+            if not xs or not ys:  # Safety check for empty coordinates
+                print(f"Warning: Empty coordinates for piece {piece.id}, skipping border update")
+                return
+            
+            piece_left = min(xs)
+            piece_right = max(xs)
+            piece_bottom = min(ys)
+            piece_top = max(ys)
+            
+            # Update layout borders to include this piece
+            if piece_left < self.border_left:
+                self.border_left = piece_left
+            if piece_bottom < self.border_bottom:
+                self.border_bottom = piece_bottom
+            if piece_right > self.border_right:
+                self.border_right = piece_right
+            if piece_top > self.border_top:
+                self.border_top = piece_top
+                
+            # Update layout width and height
+            self.border_height = self.border_top - self.border_bottom
+            self.border_width = self.border_right - self.border_left
+            
+        except Exception as e:
+            print(f"Error updating layout borders for piece {piece.id}: {e}")
+            print(f"Continuing without updating borders...")
     
     def _slide_to_bottom_left(self):
         """Slide ALL pieces to bottom-left"""
