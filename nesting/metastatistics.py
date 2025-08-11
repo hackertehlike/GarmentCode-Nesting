@@ -732,17 +732,18 @@ class MetaStatistics:
         This reads all individual generations.csv files and aggregates them.
         """
         try:
-            # Find all generation CSV files in the results directories
-            results_base_dir = Path(config.SAVE_LOGS_PATH).parent / "results"
+            # Find all generation CSV files in likely results directories
+            candidate_dirs = [
+                Path(config.SAVE_LOGS_PATH).parent / "results",  # nesting/results
+                Path("results")  # repo-root/results (used by run_experiments)
+            ]
             generation_files = []
             
-            # Look for generations.csv files in all subdirectories
-            if results_base_dir.exists():
-                for pattern_dir in results_base_dir.iterdir():
-                    if pattern_dir.is_dir():
-                        gen_file = pattern_dir / "generations.csv"
-                        if gen_file.exists():
-                            generation_files.append(gen_file)
+            for base_dir in candidate_dirs:
+                if base_dir.exists():
+                    # Search recursively for generations.csv
+                    for path in base_dir.rglob("generations.csv"):
+                        generation_files.append(path)
             
             if not generation_files:
                 print("No generation CSV files found for analysis")
@@ -758,7 +759,7 @@ class MetaStatistics:
             for gen_file in generation_files:
                 try:
                     df = pd.read_csv(gen_file)
-                    # Extract pattern name from file path
+                    # Extract pattern name from parent folder
                     pattern_name = gen_file.parent.name
                     df['pattern_name'] = pattern_name
                     df['run_id'] = f"{pattern_name}_{gen_file.stat().st_mtime}"
@@ -909,9 +910,7 @@ class MetaStatistics:
                 hue="mutation_type",
                 size=point_size,
                 alpha=point_alpha,
-                dodge=True,
-                # Increase dodge width to separate points better
-                dodge_kws={"width": 0.8}
+                dodge=True
             )
             
             plt.title("Fitness Gain by Mutation Type Across All Runs", fontsize=16)
@@ -1038,8 +1037,7 @@ class MetaStatistics:
                             hue="mutation_type",
                             size=4,  # Larger points for the split view
                             alpha=0.7,
-                            dodge=True,
-                            dodge_kws={"width": 0.8}
+                            dodge=True
                         )
                         
                         plt.title(f"Fitness Gain by Mutation Type ({phase.capitalize()} Generations: {start_gen}-{end_gen-1})", fontsize=16)

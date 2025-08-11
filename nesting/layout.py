@@ -250,8 +250,8 @@ class Piece:
     def split(
         self,
         use_centroid: bool = True,
-        proportion: float = 0.5,  # proportion of the bounding box width to split at
-        epsilon: float = 1e-7,          # geometric tolerance
+        proportion: float = 0.5,
+        epsilon: float = 1e-7,
     ) -> Tuple["Piece", "Piece"]:
         """
         Split this piece into two new Piece objects by a vertical line
@@ -263,13 +263,23 @@ class Piece:
         """
         from nesting.utils import polygon_split
 
-        # Use the shared utility function for polygon splitting
+        # Always split relative to the piece's original (0°) orientation.
+        # Work on a temporary 0-rotation copy, then rotate children back.
+        working = copy.deepcopy(self)
+        working.translation = self.translation
+        original_rotation = working.rotation
+        if original_rotation:
+            inv = (360 - original_rotation) % 360
+            if inv:
+                working.rotate(inv)  # silent 0° frame, no reset_rotation prints
+
+        # Use the shared utility function for polygon splitting on 0° geometry
         left_coords, right_coords = polygon_split(
-            coordinates=self.inner_path,
+            coordinates=working.inner_path,
             object_name=f"Piece {self.id}",
             use_centroid=use_centroid,
             proportion=proportion,
-            epsilon=epsilon
+            epsilon=epsilon,
         )
 
         # Create new Piece objects from the split coordinates
@@ -280,6 +290,21 @@ class Piece:
             min_y = min(y for x, y in coords)
             local_coords = [(x - min_x, y - min_y) for x, y in coords]
 
+            # Precompute rotated min for correct world translation after rotation
+            rot_min_x = rot_min_y = 0.0
+            if original_rotation:
+                ang = math.radians(original_rotation)
+                c, s = math.cos(ang), math.sin(ang)
+                xs_rot = []
+                ys_rot = []
+                for x, y in coords:
+                    xr = x * c - y * s
+                    yr = x * s + y * c
+                    xs_rot.append(xr)
+                    ys_rot.append(yr)
+                rot_min_x = min(xs_rot)
+                rot_min_y = min(ys_rot)
+
             side = "left" if idx == 1 else "right"
             new_id = f"{self.id}_split_{side}"
 
@@ -287,178 +312,22 @@ class Piece:
             child.parent_id = self.id
             child.root_id = getattr(self, "root_id", self.id)
 
-            # Keep the absolute placement inherited from this piece
             tx, ty = self.translation
+            # Set provisional translation in 0° frame (will override if rotated)
             child.translation = (tx + min_x, ty + min_y)
 
-            # Propagate rotation/seam-allowance bookkeeping
-            if self.rotation:
-                child.rotate(self.rotation)
+            # Rotate child back to the original rotation of the source piece
+            if original_rotation:
+                child.rotate(original_rotation)
+                # After rotate(), geometry is re‑anchored to its rotated min (0,0),
+                # so place it using rotated mins to preserve absolute placement.
+                child.translation = (tx + rot_min_x, ty + rot_min_y)
+                child.rotation = self.rotation
 
             # Add seam allowance to generate outer_path
             try:
                 child.add_seam_allowance()  # falls back to default 1.0 cm
             except Exception:
-                # if you sometimes call add_seam_allowance() later, skip here
-                pass
-
-            child.update_bbox()
-            new_pieces.append(child)
-
-        return tuple(new_pieces)  # (left_piece, right_piece)
-
-        from shapely.geometry import Polygon, LineString, MultiPoint
-        from shapely.ops import split as shapely_split, unary_union
-        from shapely.errors import GEOSException
-
-        # --- 0.  build Shapely polygon from the *inner* path ----------
-        # Clean the path first by removing duplicate consecutive points
-        cleaned_path = []
-        for i, coord in enumerate(self.inner_path):
-            if i == 0 or coord != self.inner_path[i-1]:
-                cleaned_path.append(coord)
-        
-        # Ensure polygon is closed (first == last)
-        if len(cleaned_path) > 0 and cleaned_path[0] != cleaned_path[-1]:
-            cleaned_path.append(cleaned_path[0])
-            
-        poly_inner = Polygon(cleaned_path)
-        
-        # If still invalid, try to fix with buffer operation
-        if not poly_inner.is_valid:
-            print(f"[DEBUG] Attempting to fix invalid polygon for piece {self.id}")
-            try:
-                # Buffer by a tiny amount to fix self-intersections
-                poly_inner = poly_inner.buffer(0)
-                if poly_inner.is_valid:
-                    print(f"[DEBUG] Successfully fixed polygon using buffer operation")
-                else:
-                    print(f"[DEBUG] Buffer operation failed to fix polygon")
-            except Exception as e:
-                print(f"[DEBUG] Buffer operation failed: {e}")
-        
-        if poly_inner.is_empty or not poly_inner.is_valid:
-            print(f"[DEBUG] Piece {self.id}: Polygon validation failed")
-            print(f"[DEBUG] Inner path length: {len(self.inner_path)}")
-            print(f"[DEBUG] Inner path: {self.inner_path}")
-            print(f"[DEBUG] Polygon is_empty: {poly_inner.is_empty}")
-            print(f"[DEBUG] Polygon is_valid: {poly_inner.is_valid}")
-            if not poly_inner.is_valid:
-                print(f"[DEBUG] Polygon validation error: {poly_inner}")
-                # Get specific validation error reason using shapely function
-                try:
-                    from shapely.predicates import is_valid_reason
-                    reason = is_valid_reason(poly_inner)
-                    print(f"[DEBUG] Validation reason: {reason}")
-                except ImportError:
-                    print("[DEBUG] shapely.predicates.is_valid_reason not available")
-                except Exception as e:
-                    print(f"[DEBUG] Error with is_valid_reason: {e}")
-                
-                # Additional debugging - check for common issues
-                print(f"[DEBUG] Number of coordinates: {len(self.inner_path)}")
-                if len(self.inner_path) > 0:
-                    print(f"[DEBUG] First coordinate: {self.inner_path[0]}")
-                    print(f"[DEBUG] Last coordinate: {self.inner_path[-1]}")
-                    # Check if polygon is closed
-                    if self.inner_path[0] != self.inner_path[-1]:
-                        print("[DEBUG] Polygon may not be closed (first != last coordinate)")
-                
-                # Check for duplicate consecutive points
-                if len(self.inner_path) > 1:
-                    duplicates = [i for i in range(1, len(self.inner_path)) 
-                                if self.inner_path[i] == self.inner_path[i-1]]
-                    if duplicates:
-                        print(f"[DEBUG] Duplicate consecutive points at indices: {duplicates}")
-                        
-            raise ValueError(f"Piece {self.id}: invalid polygon given.")
-
-        minx, miny, maxx, maxy = poly_inner.bounds
-        x0 = poly_inner.centroid.x if use_centroid else proportion * (minx + maxx)
-
-        # a tall vertical line that surely crosses the piece
-        vertical = LineString([(x0, miny - 1.0), (x0, maxy + 1.0)])
-
-        # --- 1.  boundary ∩ line  -> even number of points ------------
-        # try:
-        hits = poly_inner.boundary.intersection(vertical)
-        # except GEOSException as exc:
-        #     raise ValueError(f"Piece {self.id}: intersection failed.") from exc
-
-        if isinstance(hits, MultiPoint):
-            pts = sorted(hits.geoms, key=lambda p: p.y)  # Extract individual points with .geoms
-        else:                                 # includes single Point
-            pts = [hits] if hits else []
-        if len(pts) < 2 or len(pts) % 2:
-            raise ValueError(
-                f"Piece {self.id}: expected even # of intersections, got {len(pts)}."
-            )
-
-        # --- 2-3.  test every inside segment --------------------------
-        best_pair   = None          # (p_even, p_odd)
-        best_split  = None          # (polyL, polyR)
-        best_delta  = float("inf")  # area difference
-
-        for i in range(0, len(pts), 2):
-            p, q = pts[i], pts[i + 1]          # inside segment endpoints
-
-            # shave a *very* thin buffer so Shapely treats the segment as “knife”
-                        
-            dy  = q.y - p.y
-            p0  = (p.x, p.y - epsilon * max(1.0, abs(dy)))
-            q0  = (q.x, q.y + epsilon * max(1.0, abs(dy)))
-            knife = LineString([p0, q0])        # **still a LineString** here
-
-            try:
-                parts_gc = shapely_split(poly_inner, knife)   # → GeometryCollection
-                parts = [g for g in parts_gc.geoms if g.geom_type == "Polygon"]
-            except GEOSException:
-                continue                       # numerical failure → skip
-
-            # if len(parts) != 2:                # should have exactly 2 polygons
-            #     continue
-
-            areaL, areaR = parts[0].area, parts[1].area
-            delta = abs(areaL - areaR)
-            if delta < best_delta:
-                best_delta = delta
-                best_pair  = (p, q)
-                best_split = (parts[0], parts[1])
-
-        if best_split is None:
-            raise RuntimeError(f"Piece {self.id}: no valid split produced.")
-
-        # ------------------------------------------------------------------
-        # 4.  Wrap the two polygons as new Piece objects
-        # ------------------------------------------------------------------
-        new_pieces: list["Piece"] = []
-        for idx, geom in enumerate(best_split, start=1):
-
-            # local coordinates (0,0) at polygon’s min-x/min-y
-            gx_min, gy_min, _, _ = geom.bounds
-            local_coords = [(x - gx_min, y - gy_min)
-                            for x, y in list(geom.exterior.coords)[:-1]]
-
-            side = "left" if idx == 1 else "right"
-            new_id = f"{self.id}_split_{side}"
-
-            child = Piece(local_coords, id=new_id)
-            child.parent_id = self.id
-            child.root_id   = getattr(self, "root_id", self.id)
-
-            # keep the absolute placement inherited from this piece
-            tx, ty            = self.translation
-            child.translation = (tx + gx_min, ty + gy_min)
-
-            # propagate rotation/seam-allowance bookkeeping
-            if self.rotation:
-                child.rotate(self.rotation)
-
-            # *outer* path = inner + seam allowance (same allowance you used)
-            try:
-                child.add_seam_allowance()     # falls back to default 1.0 cm
-            except Exception:
-                # if you sometimes call add_seam_allowance() later, skip here
                 pass
 
             child.update_bbox()

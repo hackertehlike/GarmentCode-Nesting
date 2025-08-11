@@ -6,7 +6,7 @@ from typing import Literal, Mapping
 # GUI STUFF
 NUM_COPIES = 0
 
-CONTAINER_WIDTH_CM  = 300
+CONTAINER_WIDTH_CM  = 1000
 CONTAINER_HEIGHT_CM = 140
 
 SEAM_ALLOWANCE_CM = 1
@@ -19,10 +19,10 @@ VERBOSE: bool = True
 # DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_body_measurements.yaml"
 
 DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_specification.json"
-# DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_design_params.yaml"
-DEFAULT_DESIGN_PARAM_PATH: str = ""
-# DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_body_measurements.yaml"
-DEFAULT_BODY_PARAM_PATH: str = ""
+DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_design_params.yaml"
+# DEFAULT_DESIGN_PARAM_PATH: str = ""
+DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_body_measurements.yaml"
+# DEFAULT_BODY_PARAM_PATH: str = ""
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
@@ -33,7 +33,7 @@ SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 # ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
-SELECTED_FITNESS_METRIC: MetricName  = "concave_hull"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
+SELECTED_FITNESS_METRIC: MetricName  = "concave_hull_area"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
 SELECTED_CROSSOVER      : CrossoverName = "ox1"
 OX_CIRCULAR: bool = False  # whether to use circular walk in OX crossover
 OX_K = 1
@@ -112,13 +112,13 @@ SYMMETRIC_SPLITS: bool = False  # whether to split the pattern symmetrically (e.
 
 # mutation weights
 MUTATION_WEIGHTS = {
-    "rotate":    0,
-    "swap":      0,
-    "inversion": 0,
-    "insertion": 0,
-    "scramble":  0,
-    "split":     1,
-    "design_params": 0
+    "rotate":    0.14,
+    "swap":      0.14,
+    "inversion": 0.14,
+    "insertion": 0.14,
+    "scramble":  0.14,
+    "split":     0.15,
+    "design_params": 0.15
 }
 
 

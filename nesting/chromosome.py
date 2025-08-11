@@ -10,6 +10,10 @@ from fnmatch import fnmatch
 from pathlib import Path
 from typing import Callable, Iterable, Sequence, Any
 
+from collections import deque
+import copy
+from typing import List, Set
+
 from .layout import Piece, Container, Layout, LayoutView
 from .placement_engine import DECODER_REGISTRY
 #from pygarment.garmentcode.params import DesignSampler
@@ -352,52 +356,47 @@ class Chromosome(Layout):
         from pathlib import Path
         mg = self.meta_garment
 
-        # add to split history even if the split fails so we don't try to split the same piece again
-        self.split_history.append((piece.id, proportion))
+        # choose split proportion and perform
         proportion = random.uniform(0.3, 0.7)
         new_panel_names = mg.split_panel(piece.id, proportion=proportion)
-        if new_panel_names is None:
+        if not new_panel_names:
             print(f"[Chromosome] MetaGarment split failed for {piece.id}: no new panels returned")
-            # self._warn_if_panel_lost(before, "split")
             return False
-        
-        
+
+        # record only successful split, store ROOT id
+        self.split_history.append((piece.root_id, proportion))
         print(f"[Chromosome] Split {piece.id} into {new_panel_names} with proportion {proportion}")
-        
+
+        new_panel_names_mirror = None
         if piece_mirror and config.SYMMETRIC_SPLITS:
-            # If there's a mirror piece, also split it
+            # If there's a mirror piece, also split it with complementary proportion
             mirror_proportion = 1 - proportion
-            new_panel_names_mirror = mg.split_panel(
-                piece_mirror.id, proportion=mirror_proportion
-            )
-            if new_panel_names_mirror is None:
+            new_panel_names_mirror = mg.split_panel(piece_mirror.id, proportion=mirror_proportion)
+            if not new_panel_names_mirror:
                 print(f"[Chromosome] MetaGarment split failed for mirror {piece_mirror.id}")
-                
             else:
-                self.split_history.append((piece_mirror.id, mirror_proportion))
+                # record mirror split using ROOT id
+                self.split_history.append((piece_mirror.root_id, mirror_proportion))
                 print(f"[Chromosome] Split {piece_mirror.id} into {new_panel_names_mirror} with proportion {mirror_proportion}")
 
+        # Rebuild pattern and extract pieces
         pattern = mg.assembly()
         with tempfile.TemporaryDirectory() as td:
             spec_file = Path(td) / f"{pattern.name}_specification.json"
             pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
-                                with_text=False, view_ids=False)
+                            with_text=False, view_ids=False)
             extractor = PatternPathExtractor(spec_file)
             all_pieces = extractor.get_all_panel_pieces(
                 samples_per_edge=config.SAMPLES_PER_EDGE
             )
 
         # Build new Piece objects for the split panels
-        # if len(new_panel_names) != 2:
-        #     print(f"[Chromosome] Unexpected number of split panels for {piece.id}")
-        #     continue
+        left_piece = all_pieces.get(new_panel_names[0]) if new_panel_names else None
+        right_piece = all_pieces.get(new_panel_names[1]) if new_panel_names else None
 
-        left_piece = all_pieces.get(new_panel_names[0])
-        right_piece = all_pieces.get(new_panel_names[1])
-
-        # if left_piece is None or right_piece is None:
-        #     print(f"[Chromosome] Split pieces not found in regenerated pattern")
-        #     continue
+        if left_piece is None or right_piece is None:
+            print(f"[Chromosome] Split pieces not found for {piece.id} in regenerated pattern")
+            return False
 
         for p_new in (left_piece, right_piece):
             p_new.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
@@ -412,7 +411,7 @@ class Chromosome(Layout):
             mirror_left = all_pieces.get(new_panel_names_mirror[0])
             mirror_right = all_pieces.get(new_panel_names_mirror[1])
             if mirror_left is None or mirror_right is None:
-                print(f"[Chromosome] Mirror split pieces not found in regenerated pattern")
+                print(f"[Chromosome] Mirror split pieces not found for {piece_mirror.id} in regenerated pattern")
             else:
                 for p_new in (mirror_left, mirror_right):
                     p_new.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
@@ -424,34 +423,15 @@ class Chromosome(Layout):
 
         # Replace the original piece with the two split pieces
         self.genes = self._replace(piece, left_piece, right_piece, self.genes)
-        # self.genes[idx:idx + 1] = [left_piece, right_piece]
-
-        # Randomly relocate one half - be careful with indicesx
-        # child_to_move_idx = random.randint(0, 1)
-        # actual_idx = idx + child_to_move_idx
-        # child = self.genes.pop(actual_idx)
-        # # Insert at random position, but avoid inserting at the position we just removed from
-        # insert_pos = random.randrange(len(self.genes) + 1)
-        # self.genes.insert(insert_pos, child)
 
         if mirror_left is not None and mirror_right is not None:
             try:
                 self.genes = self._replace(piece_mirror, mirror_left, mirror_right, self.genes)
-                # Find the mirror piece's current index (may have shifted due to previous operations)
-                # current_mirror_idx = self.genes.index(piece_mirror)
-                # self.genes[current_mirror_idx:current_mirror_idx + 1] = [mirror_left, mirror_right]
-                
-                # Relocate one of the mirror children
-                # mchild_to_move_idx = random.randint(0, 1)
-                # actual_mirror_idx = current_mirror_idx + mchild_to_move_idx
-                # mchild = self.genes.pop(actual_mirror_idx)
-                # # Insert at random position
-                # mirror_insert_pos = random.randrange(len(self.genes) + 1)
-                # self.genes.insert(mirror_insert_pos, mchild)
             except ValueError:
                 print(f"[Chromosome] WARNING: piece_mirror {piece_mirror.id} not in genes, but mirror_left and mirror_right were created.")
 
         return True  # Indicate successful mutation
+
 
     # Recompute mutatable params since gene ids changed
     # self._mutatable_params = _collect_mutatable_params(self.design_params, self._genes)
@@ -543,9 +523,6 @@ class Chromosome(Layout):
                     # Find the current index of the mirror piece (may have shifted)
                     # current_mirror_idx = self.genes.index(piece_mirror)
                     left_mirror, right_mirror = piece_mirror.split()
-                    for half in (left_mirror, right_mirror):
-                        half.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
-                        half.update_bbox()
                     self.genes = self._replace(piece_mirror, left_mirror, right_mirror, self.genes)
                     # # Remove the original mirror piece
                     # self.genes.remove(piece_mirror)
@@ -770,14 +747,102 @@ class Chromosome(Layout):
         corresponding original panel (root) is blocked from being taken from parent 2.
         """
         n = len(self.genes)
-        child_genes: list[Piece | None] = [None] * n
-        child_gene_ids: set[str] = set()
-        blocked_root_ids: set[str] = set()
+        child_genes: List[Piece | None] = [None] * n
+        child_gene_ids: Set[str] = set()
+        blocked_root_ids: Set[str] = set()
 
-        # ------------------------------------------------------------------
-        # Handle design parameter conflicts
-        # ------------------------------------------------------------------
+        # ----------------------------- helpers ---------------------------------
+        def get_family_leaves(parent: "Chromosome", root_id: str) -> List[Piece]:
+            parent_ids = {p.parent_id for p in parent.genes if p.parent_id}
+            return [g for g in parent.genes if g.root_id == root_id and g.id not in parent_ids]
+
+        # Index map: piece.id -> index in that parent's gene order
+        p1_index = {g.id: i for i, g in enumerate(self.genes)}
+        p2_index = {g.id: i for i, g in enumerate(other.genes)}
+
+        free_indices = deque(range(n))  # always place something if we need to relocate
+
+        def occupy(idx: int, piece: Piece):
+            """Place piece at idx, relocating any occupant to the next free slot."""
+            if child_genes[idx] is None:
+                # remove idx from free list if present
+                try:
+                    free_indices.remove(idx)
+                except ValueError:
+                    pass
+                child_genes[idx] = piece
+                child_gene_ids.add(piece.id)
+                return True
+            else:
+                # relocate existing occupant to next free slot
+                if not free_indices:
+                    return False  # should not happen if logic maintains counts
+                new_idx = free_indices.popleft()
+                # If new_idx equals idx (rare if idx was still listed), try another
+                if new_idx == idx:
+                    if not free_indices:
+                        return False
+                    new_idx = free_indices.popleft()
+                displaced = child_genes[idx]
+                child_genes[new_idx] = displaced
+                # mark displaced id already accounted for
+                # Place the desired piece at idx
+                child_genes[idx] = piece
+                child_gene_ids.add(piece.id)
+                return True
+
+        def place_family(parent: "Chromosome", root_id: str) -> bool:
+            """Atomically place all leaf descendants of root_id using that parent's indices.
+            If a placement collides, we relocate the occupant to next free slot.
+            Only blocks the root after full success.
+            """
+            if root_id in blocked_root_ids:
+                return False
+            family = get_family_leaves(parent, root_id)
+            if not family:
+                return False
+            # Preferred indices from the appropriate parent's ordering
+            index_map = p1_index if parent is self else p2_index
+            targets = [index_map[m.id] for m in family]
+
+            # Stage pieces so we can roll back if something goes wrong (shouldn't)
+            snapshot = list(child_genes)
+            snapshot_free = deque(free_indices)
+
+            try:
+                for member, idx in zip(family, targets):
+                    if member.id in child_gene_ids:
+                        # already placed via a sibling/group earlier
+                        continue
+                    ok = occupy(idx, copy.deepcopy(member))
+                    if not ok:
+                        raise RuntimeError("No free slot available during family placement")
+            except Exception:
+                # rollback on failure
+                for i in range(n):
+                    child_genes[i] = snapshot[i]
+                free_indices.clear()
+                free_indices.extend(snapshot_free)
+                return False
+
+            # Success → block this root for the other parent
+            blocked_root_ids.add(root_id)
+            return True
+
+        # --------------------- design-parameter conflict groups -----------------
         from nesting.panel_mapping import affected_panels, select_genes
+        from pygarment.garmentcode.utils import nested_get
+
+        def _flatten_param_paths(node: dict, prefix: list[str] | None = None) -> list[str]:
+            prefix = prefix or []
+            out = []
+            for k, v in node.items():
+                if isinstance(v, dict):
+                    if "v" in v:
+                        out.append(".".join(prefix + [k]))
+                    else:
+                        out += _flatten_param_paths(v, prefix + [k])
+            return out
 
         def _get_val(dp: dict | None, path: str):
             if dp is None:
@@ -794,27 +859,25 @@ class Chromosome(Layout):
         if self.design_params is not None and other.design_params is not None:
             paths1 = set(_flatten_param_paths(self.design_params))
             paths2 = set(_flatten_param_paths(other.design_params))
-            all_paths = paths1 | paths2
-            for p in all_paths:
+            for p in paths1 | paths2:
                 if _get_val(self.design_params, p) != _get_val(other.design_params, p):
                     dp_conflicts.append(p)
 
-        # Build groups of root ids affected by differing params
         root_ids_p1 = {g.root_id for g in self.genes}
         root_ids_p2 = {g.root_id for g in other.genes}
         all_root_ids = root_ids_p1 | root_ids_p2
 
-        groups: list[dict] = []  # each: {"roots": set, "params": set, "owner": None|1|2}
+        groups: list[dict] = []  # {"roots": set, "params": set, "owner": None|1|2}
 
         for path in dp_conflicts:
             patterns = affected_panels([path], self.design_params)
             affected_roots = select_genes(all_root_ids, patterns)
             if not affected_roots:
                 continue
-            # merge with existing groups if overlapping
+            # merge into overlapping groups
             idxs = [i for i, g in enumerate(groups) if g["roots"] & affected_roots]
             if not idxs:
-                groups.append({"roots": set(affected_roots), "params": {path}})
+                groups.append({"roots": set(affected_roots), "params": {path}, "owner": None})
             else:
                 first = idxs[0]
                 groups[first]["roots"].update(affected_roots)
@@ -839,27 +902,34 @@ class Chromosome(Layout):
             else:
                 g["owner"] = None
 
-        processed_groups: set[int] = set()
+        processed_groups: Set[int] = set()
 
         child_design_params = copy.deepcopy(self.design_params) if self.design_params is not None else None
 
+        from pygarment.garmentcode.utils import nested_set, nested_del
+
         def assign_group(parent: "Chromosome", group_idx: int, owner: int):
-            """Assign an entire design group from *parent* to the child."""
             g = groups[group_idx]
             if g.get("owner") is not None and g["owner"] != owner:
-                return
-            g["owner"] = owner
+                return False
+            # Atomically place every root family
+            snapshot = list(child_genes)
+            snapshot_free = deque(free_indices)
+            placed_roots = []
             for root_id in g["roots"]:
-                family = get_family_leaves(root_id, parent)
-                for member in family:
-                    member_idx = next(idx for idx, gg in enumerate(parent.genes) if gg.id == member.id)
-                    if member_idx >= len(child_genes):
-                        child_genes.append(None)
-                    if child_genes[member_idx] is None:
-                        child_genes[member_idx] = copy.deepcopy(member)
-                        child_gene_ids.add(member.id)
-                blocked_root_ids.add(root_id)
+                if not place_family(parent, root_id):
+                    # rollback
+                    for i in range(n):
+                        child_genes[i] = snapshot[i]
+                    free_indices.clear(); free_indices.extend(snapshot_free)
+                    for r in placed_roots:
+                        blocked_root_ids.discard(r)
+                    return False
+                placed_roots.append(root_id)
+            g["owner"] = owner
+            processed_groups.add(group_idx)
 
+            # adopt other parent's param values if owner is 2
             if owner == 2 and child_design_params is not None and other.design_params is not None:
                 for p in g["params"]:
                     val = _get_val(other.design_params, p)
@@ -870,118 +940,153 @@ class Chromosome(Layout):
                             pass
                     else:
                         nested_set(child_design_params, p.split("."), copy.deepcopy(nested_get(other.design_params, p.split("."))))
+            return True
 
-            processed_groups.add(group_idx)
-
-
-        # Define the k segments from parent 1
+        # ------------------------- OX-k parent-1 segments ------------------------
         if 2 * k > n:
             k = n // 2
-        
-        sampled_points = sorted(random.sample(range(n), 2 * k))
+        import random
+        sampled = sorted(random.sample(range(n), 2 * k))
         p1_indices = set()
         for i in range(k):
-            start, end = sampled_points[2*i], sampled_points[2*i+1]
+            start, end = sampled[2 * i], sampled[2 * i + 1]
             p1_indices.update(range(start, end + 1))
 
-        # Helper to find all leaf-node descendants of a root in a parent
-        def get_family_leaves(root_id: str, parent: "Chromosome") -> list[Piece]:
-            parent_ids = {p.parent_id for p in parent.genes if p.parent_id}
-            return [
-                g for g in parent.genes
-                if g.root_id == root_id and g.id not in parent_ids
-            ]
-
-        # Pre-assign any groups that must come from parent 1
+        # Pre-assign groups that must come from parent 1
         for gi, g in enumerate(groups):
             if g.get("owner") == 1:
                 assign_group(self, gi, 1)
 
-        # Mark any groups that must come from parent 2 so parent 1 doesn't use them
+        # Mark roots that must come from parent 2 so P1 doesn't take them
         skip_p1_roots = {r for g in groups if g.get("owner") == 2 for r in g["roots"]}
 
-        # Process parent 1 in a single pass
-        for i in p1_indices:
-            if child_genes[i] is not None:
-                continue  # Already filled by a family member from a previous iteration
-
+        # Process parent 1 indices; place families atomically
+        for i in sorted(p1_indices):
             gene = self.genes[i]
-
-            if gene.root_id in skip_p1_roots:
+            if gene.root_id in skip_p1_roots or gene.root_id in blocked_root_ids:
                 continue
-
             gi = root_to_group.get(gene.root_id)
             if gi is not None and gi not in processed_groups:
                 assign_group(self, gi, 1)
                 continue
-
-            # If gene is a descendant, take the whole family
-            if gene.root_id != gene.id:
-                blocked_root_ids.add(gene.root_id)
-                family = get_family_leaves(gene.root_id, self)
-
-                for member in family:
-                    # Find the original index of the family member to place it correctly
-                    
-                    member_idx = next(
-                        idx for idx, g in enumerate(self.genes) if g.id == member.id
-                    )
-                    if child_genes[member_idx] is None:
-                        child_genes[member_idx] = copy.deepcopy(member)
-                        child_gene_ids.add(member.id)
-
-            # If it's a simple leaf gene
-            else:
-                parent_ids = {p.parent_id for p in self.genes if p.parent_id}
-                if gene.id not in parent_ids: # It's a leaf
-                    if gene.id not in child_gene_ids and gene.root_id not in blocked_root_ids:
-                        child_genes[i] = copy.deepcopy(gene)
-                        child_gene_ids.add(gene.id)
-                        blocked_root_ids.add(gene.root_id)
-
-        # Process parent 2, filling in the gaps
-        other_genes_iter = (g for g in other.genes)
+            place_family(self, gene.root_id)
 
         # Pre-assign groups that must come from parent 2
         for gi, g in enumerate(groups):
             if g.get("owner") == 2 and gi not in processed_groups:
                 assign_group(other, gi, 2)
 
+        # Fill remaining gaps from parent 2 (cycling through list, not a one-pass generator)
+        p2_cycle = list(other.genes)
+        p2_pos = 0
         for i in range(n):
-            if child_genes[i] is None:
-                for gene_from_other in other_genes_iter:
-                    # Determine if the gene from the other parent and its family are eligible
-                    family = get_family_leaves(gene_from_other.root_id, other)
-
-                    gi = root_to_group.get(gene_from_other.root_id)
-                    if gi is not None and gi not in processed_groups:
-                        if groups[gi].get("owner") == 1:
-                            continue
-                        assign_group(other, gi, 2)
+            if child_genes[i] is not None:
+                continue
+            # find next eligible root from P2
+            attempts = 0
+            while attempts < n:
+                gene2 = p2_cycle[p2_pos]
+                p2_pos = (p2_pos + 1) % n
+                attempts += 1
+                root = gene2.root_id
+                if root in blocked_root_ids:
+                    continue
+                gi = root_to_group.get(root)
+                if gi is not None and gi not in processed_groups:
+                    # try to assign the whole group from P2
+                    if assign_group(other, gi, 2):
                         break
+                    else:
+                        continue
+                if place_family(other, root):
+                    break
+            # loop proceeds; if we couldn't place anything, remaining slots will be handled by sanity step
 
-                    # Check if the root is blocked or any family member is already in the child
-                    if (gene_from_other.root_id not in blocked_root_ids and
-                            not any(m.id in child_gene_ids for m in family)):
+        # -------------------------- Sanity & backfill ----------------------------
+        # 1) No None slots
+        if any(g is None for g in child_genes):
+            # Backfill with any remaining P1 families not yet used, else P2, then random parents
+            available_roots = [r for r in (root_ids_p1 | root_ids_p2) if r not in blocked_root_ids]
+            for r in available_roots:
+                if not any(g is None for g in child_genes):
+                    break
+                if not place_family(self, r):
+                    place_family(other, r)
+            # If still None, try placing single leaves (as last resort)
+            for idx, slot in enumerate(child_genes):
+                if slot is None:
+                    # pick from P1 by index, else P2
+                    cand = copy.deepcopy(self.genes[idx])
+                    if cand.root_id in blocked_root_ids or cand.id in child_gene_ids:
+                        cand = copy.deepcopy(other.genes[idx])
+                    occupy(idx, cand)
 
-                        # Add the entire family to the child
-                        for member in family:
-                            # Find the next available slot
-                            try:
-                                insert_idx = child_genes.index(None)
-                                child_genes[insert_idx] = copy.deepcopy(member)
-                                child_gene_ids.add(member.id)
-                            except ValueError:
-                                # No more empty slots, append to the end
-                                child_genes.append(copy.deepcopy(member))
-                                child_gene_ids.add(member.id)
+        # 2) Family integrity: if any leaf of root R is present, ensure all leaves are present
+        present_roots = {g.root_id for g in child_genes if g is not None}
+        for r in list(present_roots):
+            leaves = get_family_leaves(self, r) or get_family_leaves(other, r)
+            missing = [m for m in leaves if m.id not in child_gene_ids]
+            for m in missing:
+                # place missing leaf into next free slot while preserving rotation/translation default
+                if not free_indices:
+                    # relocate some existing piece to make room (swap into first index)
+                    # pick the first index not already that root
+                    idx_to_relocate = next((j for j, cg in enumerate(child_genes) if cg is not None and cg.root_id != r), None)
+                    if idx_to_relocate is not None:
+                        new_slot = idx_to_relocate  # will be occupied() relocated
+                    else:
+                        # as an absolute fallback, append (keeps gene count consistent after final trim)
+                        child_genes.append(copy.deepcopy(m))
+                        child_gene_ids.add(m.id)
+                        continue
+                target_idx = p1_index.get(m.id, p2_index.get(m.id, None))
+                if target_idx is None:
+                    target_idx = free_indices[0] if free_indices else 0
+                occupy(target_idx, copy.deepcopy(m))
 
-                        blocked_root_ids.add(gene_from_other.root_id)
-                        break  # Move to the next empty slot in the child
+        # Trim any accidental expansion and assert size
+        child_genes = [g for g in child_genes if g is not None][:n]
 
-        # Create the new chromosome
-        final_genes = [g for g in child_genes if g is not None]
-        
+        # Integrity validation: ensure no panels (roots) are lost and families are consistent
+        expected_roots = {g.root_id for g in self.genes} | {g.root_id for g in other.genes}
+        child_roots = {g.root_id for g in child_genes}
+        missing_roots = sorted(list(expected_roots - child_roots))
+        unexpected_roots = sorted(list(child_roots - expected_roots))
+
+        # Build child parent_ids set to identify leaves within child
+        child_parent_ids = {p.parent_id for p in child_genes if p is not None and p.parent_id}
+
+        errors: list[str] = []
+        if missing_roots:
+            errors.append(f"Missing root panels in offspring: {missing_roots}")
+        if unexpected_roots:
+            errors.append(f"Unexpected roots in offspring: {unexpected_roots}")
+
+        # For each expected root, check that child contains a full leaf family equal to one of the parents
+        for r in sorted(expected_roots):
+            # Leaves in parents
+            p1_leaves = {m.id for m in (get_family_leaves(self, r) or [])}
+            p2_leaves = {m.id for m in (get_family_leaves(other, r) or [])}
+            # Leaves in child: pieces with same root and whose id is not any parent_id in child
+            child_leaves = {g.id for g in child_genes if g.root_id == r and g.id not in child_parent_ids}
+
+            if not child_leaves:
+                # if the entire root is missing, it will be covered by missing_roots above
+                if r in child_roots:
+                    errors.append(f"Root {r} present but has no leaves in offspring")
+                continue
+
+            # Family must match exactly one of the parents (IDs), allowing for parents with identical sets
+            if child_leaves != p1_leaves and child_leaves != p2_leaves:
+                errors.append(
+                    f"Root {r} leaf mismatch. child={sorted(child_leaves)} not in (p1={sorted(p1_leaves)}, p2={sorted(p2_leaves)})"
+                )
+
+        if errors:
+            raise RuntimeError("Crossover produced invalid offspring: " + "; ".join(errors))
+
+        # Build child
+        final_genes = [copy.deepcopy(g) for g in child_genes]
         child = Chromosome(
             pieces=final_genes,
             container=self.container,
@@ -989,32 +1094,25 @@ class Chromosome(Layout):
             design_params=child_design_params,
             body_params=self.body_params,
         )
-        
-        # Debug: Check if offspring has same fitness as a parent and force mutation if so
+
+        # Optional: force mutation if identical fitness to a parent and configured
         child.calculate_fitness()
         force_mutation = False
-        
         if child.fitness is not None:
             if self.fitness is not None and child.fitness == self.fitness:
-                print(f"[DEBUG] Crossover offspring has same fitness as parent 1 ({self.fitness:.4f}).")
-                print(f"  Parent 1 signature: {self._signature()}")
-                print(f"  Child signature: {child._signature()}")
                 force_mutation = True
             if other.fitness is not None and child.fitness == other.fitness:
-                print(f"[DEBUG] Crossover offspring has same fitness as parent 2 ({other.fitness:.4f}).")
-                print(f"  Parent 2 signature: {other._signature()}")
-                print(f"  Child signature: {child._signature()}")
                 force_mutation = True
-                
-        # Force mutation if child has identical fitness to either parent
-        if force_mutation and config.FORCE_MUTATION_ON_CROSSOVER:
-            print(f"[DEBUG] Forcing mutation on crossover offspring to avoid copied children.")
-            old_fitness = child.fitness
+        import nesting.config as config
+        if force_mutation and getattr(config, "FORCE_MUTATION_ON_CROSSOVER", False):
+            old_f = child.fitness
             child.mutate()
             child.calculate_fitness()
-            print(f"[DEBUG] Forced mutation changed fitness from {old_fitness:.4f} to {child.fitness:.4f}")
+            if config.VERBOSE:
+                print(f"[DEBUG] Forced mutation changed fitness from {old_f} to {child.fitness}")
 
         return child
+
 
 
     # def sync_order(self) -> None:
