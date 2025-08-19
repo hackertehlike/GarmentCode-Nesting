@@ -34,10 +34,12 @@ SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull_area"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
-SELECTED_CROSSOVER      : CrossoverName = "ox1"
+SELECTED_CROSSOVER      : CrossoverName = "oxk"
 OX_CIRCULAR: bool = False  # whether to use circular walk in OX crossover
 OX_K = 1
 NUM_SPLITS = 1  # number of splits for the split mutation operator
+SPLIT_LOWER_BOUND = 0.3  # lower bound for split proportion
+SPLIT_UPPER_BOUND = 0.7  # upper bound for split proportion
 
 
 # ——— decoder settings —————————————————————————————————————
@@ -108,6 +110,8 @@ EXCLUDED_PARAM_PATHS = [
 PARAM_CHANGE_MARGIN = 0.2
 
 SYMMETRIC_SPLITS: bool = False  # whether to split the pattern symmetrically (e.g., left and right halves of a skirt)
+ALLOW_RECURSIVE_SPLITS: bool = False  # whether to allow recursive splits (e.g., splitting a split pattern again)
+WEIGHT_BY_BBOX: bool = False  # whether to weight the split selection by bounding box area
 
 
 # mutation weights
@@ -129,12 +133,17 @@ EARLY_STOP_TOLERANCE: float    = 0.01
 ENABLE_EXTENSION: bool         = True
 EXTEND_WINDOW: int             = 10
 EXTEND_THRESHOLD: float        = 0.1
-MAX_GENERATIONS: int    = 200
+MAX_GENERATIONS: int    = 20
 GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 
 # log
 SAVE_LOGS = True
-SAVE_LOGS_PATH = "nesting/run_logs/"
+# Unified experiments directory structure (replaces separate run_logs/results/aggregate_stats)
+EXPERIMENTS_ROOT = "nesting/experiments"
+RUNS_DIR = f"{EXPERIMENTS_ROOT}/runs"
+AGGREGATE_DIR = f"{EXPERIMENTS_ROOT}/aggregate"
+# Primary logs & per-run artifacts directory
+SAVE_LOGS_PATH = f"{RUNS_DIR}/"
 LOG_TIME = True
 LOG_DESIGN_PARAM_PATHS = False
 SAVE_GENERATION_SVGS = True
@@ -184,6 +193,10 @@ def __dict__() -> dict:
         "SAVE_LOGS_PATH": SAVE_LOGS_PATH,
         "LOG_TIME": LOG_TIME,
         "LOG_DESIGN_PARAM_PATHS": LOG_DESIGN_PARAM_PATHS,
+        # unified experiments directories
+        "EXPERIMENTS_ROOT": EXPERIMENTS_ROOT,
+        "RUNS_DIR": RUNS_DIR,
+        "AGGREGATE_DIR": AGGREGATE_DIR,
         "HULL_TRIM_RATIO": HULL_TRIM_RATIO,
         "INTERIOR_SAMPLE_SPACING": INTERIOR_SAMPLE_SPACING,
         "BOUNDARY_SAMPLE_SPACING": BOUNDARY_SAMPLE_SPACING,

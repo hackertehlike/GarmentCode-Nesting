@@ -14,29 +14,29 @@ import nesting.config as config
 
 PARAM_TO_PATTERNS: Mapping[str, Set[str]] = {
     # Waistband
-    "waistband.width": {"wb_front", "wb_back"},
-    "waistband.waist": {"wb_front", "wb_back"},
+    "waistband.width": {"*wb_front*", "*wb_back*"},
+    "waistband.waist": {"*wb_front*", "*wb_back*"},
 
     # Shirt body (non-fitted shirt only)
-    "shirt.length": {"*ftorso", "*btorso"},
-    "shirt.width":  {"*ftorso", "*btorso"},
-    "shirt.flare":  {"*ftorso", "*btorso"},
-    "shirt.strapless": {"*ftorso", "*btorso"},
+    "shirt.length": {"*ftorso*", "*btorso*"},
+    "shirt.width":  {"*ftorso*", "*btorso*"},
+    "shirt.flare":  {"*ftorso*", "*btorso*"},
+    "shirt.strapless": {"*ftorso*", "*btorso*"},
 
     # Collars
-    "collar.width": {"*ftorso", "*btorso", "*lapel*", "*hood*"},
-    "collar.f_collar": {"*ftorso"},
-    "collar.b_collar": {"*btorso"},
-    "collar.fc_depth": {"*ftorso"},
-    "collar.bc_depth": {"*btorso"},
-    "collar.fc_angle": {"*ftorso"},
-    "collar.bc_angle": {"*btorso"},
-    "collar.f_bezier_x": {"*ftorso"},
-    "collar.f_bezier_y": {"*ftorso"},
-    "collar.b_bezier_x": {"*btorso"},
-    "collar.b_bezier_y": {"*btorso"},
-    "collar.f_flip_curve": {"*ftorso"},
-    "collar.b_flip_curve": {"*btorso"},
+    "collar.width": {"*ftorso*", "*btorso*", "*lapel*", "*hood*"},
+    "collar.f_collar": {"*ftorso*"},
+    "collar.b_collar": {"*btorso*"},
+    "collar.fc_depth": {"*ftorso*"},
+    "collar.bc_depth": {"*btorso*"},
+    "collar.fc_angle": {"*ftorso*"},
+    "collar.bc_angle": {"*btorso*"},
+    "collar.f_bezier_x": {"*ftorso*"},
+    "collar.f_bezier_y": {"*ftorso*"},
+    "collar.b_bezier_x": {"*btorso*"},
+    "collar.b_bezier_y": {"*btorso*"},
+    "collar.f_flip_curve": {"*ftorso*"},
+    "collar.b_flip_curve": {"*btorso*"},
     "collar.component.style": {"*lapel*", "*hood*"},
     "collar.component.depth": {"*lapel*", "*hood*"},
     "collar.component.lapel_standing": {"*lapel*"},
@@ -63,60 +63,87 @@ PARAM_TO_PATTERNS: Mapping[str, Set[str]] = {
     "sleeve.cuff.skirt_ruffle": {"*cuff*"},
 
     # Left-side overrides
-    "left.shirt.width": {"left_ftorso", "left_btorso"},
-    "left.shirt.flare": {"left_ftorso", "left_btorso"},
-    "left.shirt.strapless": {"left_ftorso", "left_btorso"},
-    "left.collar.f_collar": {"left_ftorso"},
-    "left.collar.b_collar": {"left_btorso"},
-    "left.sleeve.sleeveless": {"left_sleeve_*"},
+    "left.shirt.width": {"*left_ftorso*", "*left_btorso*"},
+    "left.shirt.flare": {"*left_ftorso*", "*left_btorso*"},
+    "left.shirt.strapless": {"*left_ftorso*", "*left_btorso*"},
+
+    "left.collar.width": {"*left_ftorso*", "*left_btorso*", "*lapel*", "*hood*"},
+    "left.collar.f_collar": {"*left_ftorso*"},
+    "left.collar.b_collar": {"*left_btorso*"},
+    "left.collar.fc_angle": {"*left_ftorso*"},
+    "left.collar.bc_angle": {"*left_btorso*"},
+    "left.collar.f_bezier_x": {"*left_ftorso*"},
+    "left.collar.f_bezier_y": {"*left_ftorso*"},
+    "left.collar.b_bezier_x": {"*left_btorso*"},
+    "left.collar.b_bezier_y": {"*left_btorso*"},
+    "left.collar.f_flip_curve": {"*left_ftorso*"},
+    "left.collar.b_flip_curve": {"*left_btorso*"},
+
+    "left.sleeve.sleeveless": {"*left_sleeve_*"},
+    "left.sleeve.armhole_shape": {"*left_sleeve_*", "*left_ftorso*", "*left_btorso*"},
+    "left.sleeve.length": {"*left_sleeve_*"},
+    "left.sleeve.connecting_width": {"*left_sleeve_*", "*left_ftorso*", "*left_btorso*"},
+    "left.sleeve.end_width": {"*left_sleeve_*"},
+    "left.sleeve.sleeve_angle": {"*left_sleeve_*"},
+    "left.sleeve.opening_dir_mix": {"*left_sleeve_*"},
+    "left.sleeve.standing_shoulder": {"*left_sleeve_*"},
+    "left.sleeve.standing_shoulder_len": {"*left_sleeve_*"},
+    "left.sleeve.connect_ruffle": {"*left_sleeve_*"},
+    "left.sleeve.smoothing_coeff": {"*left_sleeve_*"},
+    "left.sleeve.cuff.type": {"*left_cuff*"},
+    "left.sleeve.cuff.top_ruffle": {"*left_cuff*"},
+    "left.sleeve.cuff.cuff_len": {"*left_cuff*"},
+    "left.sleeve.cuff.skirt_fraction": {"*left_cuff*"},
+    "left.sleeve.cuff.skirt_flare": {"*left_cuff*"},
+    "left.sleeve.cuff.skirt_ruffle": {"*left_cuff*"},
 
     # Skirts (includes various styles)
-    "skirt.length": {"skirt_*"},
-    "skirt.rise": {"skirt_*"},
-    "skirt.ruffle": {"skirt_*"},
-    "skirt.bottom_cut": {"skirt_*"},
-    "skirt.flare": {"skirt_*"},
+    "skirt.length": {"*skirt_*"},
+    "skirt.rise": {"*skirt_*"},
+    "skirt.ruffle": {"*skirt_*"},
+    "skirt.bottom_cut": {"*skirt_*"},
+    "skirt.flare": {"*skirt_*"},
 
-    "flare-skirt.length": {"skirt_*"},
-    "flare-skirt.rise": {"skirt_*"},
-    "flare-skirt.suns": {"skirt_*"},
-    "flare-skirt.skirt-many-panels.n_panels": {"ins_skirt_*"},
-    "flare-skirt.skirt-many-panels.panel_curve": {"ins_skirt_*"},
-    "flare-skirt.asymm.front_length": {"skirt_*"},
-    "flare-skirt.cut.add": {"skirt_*"},
-    "flare-skirt.cut.depth": {"skirt_*"},
-    "flare-skirt.cut.width": {"skirt_*"},
+    "flare-skirt.length": {"*skirt_*"},
+    "flare-skirt.rise": {"*skirt_*"},
+    "flare-skirt.suns": {"*skirt_*"},
+    "flare-skirt.skirt-many-panels.n_panels": {"*ins_skirt_*"},
+    "flare-skirt.skirt-many-panels.panel_curve": {"*ins_skirt_*"},
+    "flare-skirt.asymm.front_length": {"*skirt_*"},
+    "flare-skirt.cut.add": {"*skirt_*"},
+    "flare-skirt.cut.depth": {"*skirt_*"},
+    "flare-skirt.cut.width": {"*skirt_*"},
     "flare-skirt.cut.place": {"skirt_*"},
 
     "godet-skirt.base": {"skirt_*"},
     "godet-skirt.insert_w": {"ins_*"},
-    "godet-skirt.insert_depth": {"ins_*"},
-    "godet-skirt.num_inserts": {"ins_*"},
-    "godet-skirt.cuts_distance": {"ins_*"},
+    "godet-skirt.insert_depth": {"*ins_*"},
+    "godet-skirt.num_inserts": {"*ins_*"},
+    "godet-skirt.cuts_distance": {"*ins_*"},
 
-    "pencil-skirt.length": {"skirt_*"},
-    "pencil-skirt.rise": {"skirt_*"},
-    "pencil-skirt.flare": {"skirt_*"},
-    "pencil-skirt.low_angle": {"skirt_*"},
-    "pencil-skirt.front_slit": {"skirt_*"},
-    "pencil-skirt.back_slit": {"skirt_*"},
-    "pencil-skirt.left_slit": {"skirt_*"},
-    "pencil-skirt.right_slit": {"skirt_*"},
-    "pencil-skirt.style_side_cut": {"skirt_*"},
+    "pencil-skirt.length": {"*skirt_*"},
+    "pencil-skirt.rise": {"*skirt_*"},
+    "pencil-skirt.flare": {"*skirt_*"},
+    "pencil-skirt.low_angle": {"*skirt_*"},
+    "pencil-skirt.front_slit": {"*skirt_*"},
+    "pencil-skirt.back_slit": {"*skirt_*"},
+    "pencil-skirt.left_slit": {"*skirt_*"},
+    "pencil-skirt.right_slit": {"*skirt_*"},
+    "pencil-skirt.style_side_cut": {"*skirt_*"},
 
-    "levels-skirt.base": {"skirt_*"},
-    "levels-skirt.level": {"skirt_*"},
-    "levels-skirt.num_levels": {"skirt_*"},
-    "levels-skirt.level_ruffle": {"skirt_*"},
-    "levels-skirt.length": {"skirt_*"},
-    "levels-skirt.rise": {"skirt_*"},
+    "levels-skirt.base": {"*skirt_*"},
+    "levels-skirt.level": {"*skirt_*"},
+    "levels-skirt.num_levels": {"*skirt_*"},
+    "levels-skirt.level_ruffle": {"*skirt_*"},
+    "levels-skirt.length": {"*skirt_*"},
+    "levels-skirt.rise": {"*skirt_*"},
     "levels-skirt.base_length_frac": {"skirt_*"},
 
     # Pants
-    "pants.length": {"pant_*"},
-    "pants.width": {"pant_*"},
-    "pants.flare": {"pant_*"},
-    "pants.rise": {"pant_*"},
+    "pants.length": {"*pant_*"},
+    "pants.width": {"*pant_*"},
+    "pants.flare": {"*pant_*"},
+    "pants.rise": {"*pant_*"},
     "pants.cuff.type": {"*cuff*"},
     "pants.cuff.top_ruffle": {"*cuff*"},
     "pants.cuff.cuff_len": {"*cuff*"},
@@ -240,7 +267,7 @@ def affected_panels(params: Sequence[str], design_params: Optional[Dict] = None)
     
     Args:
         params: Parameter paths to check
-        design_params: Optional design parameters to check active skirt type
+        design_params: Optional design parameters to filter by garment type
     """
     patterns: Set[str] = set()
     
@@ -288,7 +315,7 @@ def affected_panels(params: Sequence[str], design_params: Optional[Dict] = None)
         param_prefix = p.split('.')[0]
         parts = p.split('.')
         
-        # Filter skirt parameters
+        # Filter skirt parameters (there are many skirt types)
         is_skirt_param = param_prefix.endswith('-skirt') or param_prefix == 'skirt'
         if is_skirt_param and active_bottom_type and allowed_bottom_prefixes:
             if not any(param_prefix == prefix for prefix in allowed_bottom_prefixes):
@@ -296,7 +323,7 @@ def affected_panels(params: Sequence[str], design_params: Optional[Dict] = None)
                 continue
         
         # Filter bezier collar parameters
-        is_bezier_param = False
+        # is_bezier_param = False
         if len(parts) > 1 and parts[0] == 'collar':
             # Front collar bezier parameters
             if parts[1] in ['f_bezier_x', 'f_bezier_y', 'f_flip_curve'] and f_collar_type != 'Bezier2NeckHalf':

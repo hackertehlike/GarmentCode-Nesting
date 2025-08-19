@@ -11,6 +11,8 @@ import time
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
 from collections import defaultdict
+import argparse
+import shutil  # added for purge functionality
 
 import numpy as np
 import pandas as pd
@@ -159,8 +161,8 @@ class MetaStatistics:
     Static class that handles cross-run statistics and aggregation for the genetic algorithm.
     """
     
-    # Store master files in a dedicated 'aggregate' directory to prevent conflicts with pattern-specific logs
-    MASTER_DIR = Path(config.SAVE_LOGS_PATH).parent / "aggregate_stats"
+    # Store master files in unified experiments aggregate directory
+    MASTER_DIR = Path(config.AGGREGATE_DIR)
     MASTER_CSV_PATH = MASTER_DIR / "master_statistics.csv"
     MASTER_MUTATION_CSV_PATH = MASTER_DIR / "master_mutation_stats.csv"
     # New file to store raw mutation data from all runs
@@ -170,26 +172,95 @@ class MetaStatistics:
     CHECKPOINT_GENERATIONS = [5, 10, 15, 20]
     
     @classmethod
+    def purge_all(cls, include_reports: bool = True, include_root_csvs: bool = True) -> Dict[str, Any]:
+        """Remove all aggregate CSV/report files and reinitialize headers.
+        Args:
+            include_reports: Also delete generated report artifacts under reports/.
+            include_root_csvs: Also purge top-level CSVs (pattern_comparison, mutation effectiveness, etc.).
+        Returns: summary dict of actions performed.
+        """
+        summary = {"removed": [], "reinitialized": []}
+        cls.MASTER_DIR.mkdir(parents=True, exist_ok=True)
+        targets = [
+            cls.MASTER_CSV_PATH,
+            cls.MASTER_MUTATION_CSV_PATH,
+            cls.MASTER_MUTATION_RAW_DATA_PATH,
+            cls.AVERAGE_IMPROVEMENT_BY_GEN_PATH
+        ]
+        # Root-level CSVs we may want to purge as well
+        root_csvs = []
+        if include_root_csvs:
+            root_csvs = [
+                Path('pattern_comparison.csv'),
+                Path('all_generations.csv'),
+                Path('run_summary.csv'),
+                Path('mutation_effectiveness_temporal_stats.csv')
+            ]
+            targets.extend([p for p in root_csvs if p.exists()])
+        # Delete targets
+        seen = set()
+        for path in targets:
+            if path.exists() and path not in seen:
+                try:
+                    path.unlink()
+                    summary["removed"].append(str(path))
+                except Exception as e:
+                    print(f"Failed removing {path}: {e}")
+                seen.add(path)
+        # Delete reports dir
+        if include_reports:
+            reports_dir = cls.MASTER_DIR / "reports"
+            if reports_dir.exists():
+                try:
+                    shutil.rmtree(reports_dir)
+                    summary["removed"].append(str(reports_dir))
+                except Exception as e:
+                    print(f"Failed removing reports dir {reports_dir}: {e}")
+        # Recreate aggregate headers
+        cls.ensure_master_files_exist()
+        summary["reinitialized"].extend([str(p) for p in [cls.MASTER_CSV_PATH, cls.MASTER_MUTATION_CSV_PATH, cls.MASTER_MUTATION_RAW_DATA_PATH] if p.exists()])
+        # Recreate specific root CSV headers if desired
+        if include_root_csvs:
+            temporal_path = Path('mutation_effectiveness_temporal_stats.csv')
+            if True:  # always recreate header for temporal stats
+                with open(temporal_path, 'w', newline='') as f:
+                    f.write('mutation_type,generation_phase,improvements,total_mutations,mean_fitness_gain,std_fitness_gain,improvement_rate\n')
+                summary["reinitialized"].append(str(temporal_path))
+        print("Purged aggregate and root statistics; headers reinitialized where applicable")
+        return summary
+
+    @classmethod
     def ensure_master_files_exist(cls):
         """
         Ensures that the master CSV files exist with appropriate headers.
+        If legacy file exists without new columns (run_tag, config_hash) it will be preserved (renamed) and a new file created.
         """
-        # Create directories if needed
         cls.MASTER_DIR.mkdir(parents=True, exist_ok=True)
-        
-        # Create master CSV if it doesn't exist
+        desired_header = [
+            'timestamp', 'run_tag', 'config_hash', 'pattern_name', 'num_pieces', 'total_generations',
+            'initial_fitness', 'final_fitness', 'improvement_percent',
+            'fitness_at_gen_5', 'fitness_at_gen_10', 'fitness_at_gen_15', 'fitness_at_gen_20',
+            'improvement_at_gen_5', 'improvement_at_gen_10', 'improvement_at_gen_15', 'improvement_at_gen_20',
+            'elapsed_time', 'decoder', 'fitness_metric', 'crossover_method', 'mutation_rate',
+            'container_width', 'container_height'
+        ]
         if not cls.MASTER_CSV_PATH.exists():
             with open(cls.MASTER_CSV_PATH, 'w', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow([
-                    'timestamp', 'pattern_name', 'num_pieces', 'total_generations',
-                    'initial_fitness', 'final_fitness', 'improvement_percent',
-                    'fitness_at_gen_5', 'fitness_at_gen_10', 'fitness_at_gen_15', 'fitness_at_gen_20',
-                    'improvement_at_gen_5', 'improvement_at_gen_10', 'improvement_at_gen_15', 'improvement_at_gen_20',
-                    'elapsed_time', 'decoder', 'fitness_metric', 'crossover_method', 'mutation_rate',
-                    'container_width', 'container_height'
-                ])
-        
+                csv.writer(f).writerow(desired_header)
+        else:
+            # Check if header missing run_tag/config_hash
+            try:
+                with open(cls.MASTER_CSV_PATH, 'r') as f:
+                    first_line = f.readline().strip().split(',')
+                if 'run_tag' not in first_line or 'config_hash' not in first_line:
+                    # Rename legacy file
+                    legacy_path = cls.MASTER_CSV_PATH.with_name(f"master_statistics_legacy_{time.strftime('%Y%m%d_%H%M%S')}.csv")
+                    cls.MASTER_CSV_PATH.rename(legacy_path)
+                    print(f"Legacy master_statistics.csv renamed to {legacy_path.name}; creating new file with extended header")
+                    with open(cls.MASTER_CSV_PATH, 'w', newline='') as f:
+                        csv.writer(f).writerow(desired_header)
+            except Exception as e:
+                print(f"Could not inspect existing master statistics header: {e}")
         # Create master mutation statistics CSV if it doesn't exist
         if not cls.MASTER_MUTATION_CSV_PATH.exists():
             with open(cls.MASTER_MUTATION_CSV_PATH, 'w', newline='') as f:
@@ -211,13 +282,15 @@ class MetaStatistics:
                 ])
     
     @classmethod
-    def save_run_statistics(cls, evolution_instance, elapsed_time: float):
+    def save_run_statistics(cls, evolution_instance, elapsed_time: float, run_tag: str = None, config_hash: str = None):
         """
-        Save statistics from a completed evolution run to the master CSV.
+        Save statistics from a completed evolution run to the master CSV, including optional run tag and config hash.
         
         Args:
             evolution_instance: The Evolution instance that completed a run
             elapsed_time: Total elapsed time for the run
+            run_tag: Optional tag for the run
+            config_hash: Optional hash of the configuration
         """
         cls.ensure_master_files_exist()
         
@@ -233,6 +306,8 @@ class MetaStatistics:
         
         row = {
             'timestamp': time.strftime("%Y%m%d_%H%M%S"),
+            'run_tag': run_tag or '',
+            'config_hash': config_hash or '',
             'pattern_name': evolution_instance.pattern_name,
             'num_pieces': len(evolution_instance.pieces),
             'total_generations': evolution_instance.generation,
@@ -734,8 +809,10 @@ class MetaStatistics:
         try:
             # Find all generation CSV files in likely results directories
             candidate_dirs = [
-                Path(config.SAVE_LOGS_PATH).parent / "results",  # nesting/results
-                Path("results")  # repo-root/results (used by run_experiments)
+                Path(config.RUNS_DIR),              # unified experiments runs
+                Path(config.SAVE_LOGS_PATH),        # legacy path (now same as RUNS_DIR)
+                Path("results"),                   # legacy root-level results
+                Path(config.SAVE_LOGS_PATH).parent / "results"  # legacy nesting/results
             ]
             generation_files = []
             
@@ -1076,7 +1153,22 @@ class MetaStatisticsCLI:
         print("Generating aggregate statistics reports...")
         MetaStatistics.generate_aggregate_reports()
         print("Done!")
+    
+    @staticmethod
+    def purge():
+        """CLI helper to purge all aggregate CSVs and reports."""
+        MetaStatistics.purge_all()
 
 
 if __name__ == "__main__":
-    MetaStatisticsCLI.generate_reports()
+    parser = argparse.ArgumentParser(description="Meta statistics maintenance")
+    parser.add_argument("--purge", action="store_true", help="Purge all aggregate CSVs and reinitialize headers")
+    parser.add_argument("--reports", action="store_true", help="Generate aggregate reports after any action")
+    args = parser.parse_args()
+    if args.purge:
+        MetaStatisticsCLI.purge()
+    if args.reports:
+        MetaStatisticsCLI.generate_reports()
+    if not args.purge and not args.reports:
+        # default behavior: generate reports (backward compatible)
+        MetaStatisticsCLI.generate_reports()

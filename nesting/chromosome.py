@@ -93,7 +93,7 @@ def _numeric_range_ok(node: JsonDict) -> bool:
 
 
 def _random_value(old: Any, p_type: str, rng: Sequence[float | int]):
-    """Return a *new* value that differs from *old* by ≤ 20 % of *range* width."""
+    """Return a *new* value that differs from *old* by ≤ margin param % of *range* width."""
     
     # # Handle boolean type explicitly
     # if p_type == "bool" or isinstance(old, bool):
@@ -144,10 +144,10 @@ def _collect_mutatable_params(
     if design_params is None:
         return []
 
-    # flatten
+    # flatten design param paths
     all_paths = _flatten_param_paths(design_params)
 
-    # numeric & not excluded
+    # filter out non-numeric & excluded
     patterns = config.EXCLUDED_PARAM_PATHS or []
     numeric_ok = [
         p for p in all_paths
@@ -156,16 +156,11 @@ def _collect_mutatable_params(
     ]
     #print(f"[DEBUG] After numeric & exclusion filtering: {len(numeric_ok)} paths")
     
-    # touches at least one panel in this chromo
+    # filter out the ones that don't affect any panel in this chromosome
     panel_ids = {g.id for g in genes}
-    #print(f"[DEBUG] Panel IDs in chromosome: {panel_ids}")
-    
-    mutatable = []
-    for p in numeric_ok:
-        panel_patterns = affected_panels([p], design_params)
-        matching_panels = [pid for pid in panel_ids if any(fnmatch(pid, pat) for pat in panel_patterns)]
-        if matching_panels:
-            mutatable.append(p)
+    # print(f"[DEBUG] Panel IDs in chromosome: {panel_ids}")
+    mutatable = [p for p in numeric_ok if (panel_patterns := affected_panels([p], design_params)) 
+                 and any(fnmatch(pid, pat) for pat in panel_patterns for pid in panel_ids)]
             #print(f"[DEBUG] Parameter {p} affects panels: {matching_panels}")
     
     #print(f"[DEBUG] Final mutatable parameters: {len(mutatable)}")
@@ -187,7 +182,12 @@ def fitness_concave_hull(chromosome: Chromosome, decoder: str):
 @register_metric("concave_hull_area")
 def fitness_concave_hull_area(chromosome: Chromosome, decoder: str):
     dec = _run_decoder(chromosome, decoder)
-    return dec.concave_hull_area()
+    area = dec.concave_hull_area()
+
+    if area < 1e-6:
+        return 0
+    
+    return 10000/dec.concave_hull_area()
 
 @register_metric("rest_length")
 def fitness_rest_length(chromosome: Chromosome, decoder: str):
@@ -274,10 +274,6 @@ class Chromosome(Layout):
         self.origin: str | None = origin
         self.last_mutation: str | None = None
         
-        # # For backwards compatibility, if the origin is crossover, set last_mutation to crossover_params
-        # if origin == "crossover":
-        #     self.last_mutation = "crossover_params"
-        
         # Initialize empty list to track parameter changes in the current generation
         self.param_changes_this_gen = []
         
@@ -287,7 +283,7 @@ class Chromosome(Layout):
         self.mutation_improvement: float | None = None
         self.split_history: list[tuple[str, float]] = []
 
-        # Keep a MetaGarment instance for incremental operations similar to the GUI
+        # Keep a MetaGarment instance
         self.meta_garment = None
         if self.design_params and self.body_params:
             try:
@@ -300,6 +296,11 @@ class Chromosome(Layout):
     @property
     def genes(self) -> list[Piece]:
         return self._genes
+
+    @genes.setter
+    def genes(self, value: list[Piece]):
+        """Allow reassignment of the gene list (wraps _genes)."""
+        self._genes = value
 
     def calculate_fitness(self) -> None:
         """Compute fitness via the registered metric and decoder."""
@@ -346,18 +347,23 @@ class Chromosome(Layout):
         after_roots = {g.root_id for g in self.genes}
         missing = before_roots - after_roots
         if missing:
-            print(f"[Chromosome] WARNING: mutation '{mutation}' lost panels: {sorted(missing)}")
+            # print(f"[Chromosome] WARNING: mutation '{mutation}' lost panels: {sorted(missing)}")
+            # throw an error
+            raise AssertionError(f"[Chromosome] ERROR: mutation '{mutation}' lost panels: {sorted(missing)}. This should not happen!")
+
+        return
 
     # ── simple mutations ───────────────────────────────────────────────
     def meta_split(self, piece: Piece, idx: int, piece_mirror: Piece | None = None) -> bool:
-        import tempfile
         from nesting.path_extractor import PatternPathExtractor
         from assets.garment_programs.meta_garment import MetaGarment
         from pathlib import Path
+        import tempfile
+
         mg = self.meta_garment
 
         # choose split proportion and perform
-        proportion = random.uniform(0.3, 0.7)
+        proportion = random.uniform(config.SPLIT_LOWER_BOUND, config.SPLIT_UPPER_BOUND)
         new_panel_names = mg.split_panel(piece.id, proportion=proportion)
         if not new_panel_names:
             print(f"[Chromosome] MetaGarment split failed for {piece.id}: no new panels returned")
@@ -372,6 +378,7 @@ class Chromosome(Layout):
             # If there's a mirror piece, also split it with complementary proportion
             mirror_proportion = 1 - proportion
             new_panel_names_mirror = mg.split_panel(piece_mirror.id, proportion=mirror_proportion)
+            self.split_set.add(piece_mirror)  # track mirror piece as split
             if not new_panel_names_mirror:
                 print(f"[Chromosome] MetaGarment split failed for mirror {piece_mirror.id}")
             else:
@@ -439,137 +446,68 @@ class Chromosome(Layout):
     
 
     def _replace(self, piece: Piece, new_piece_left: Piece, new_piece_right: Piece, genes:list) -> None:
-        """Replace a piece at index *idx* with *new_piece*."""
-        idx = self.genes.index(piece)
-        genes.remove(piece)
-        # insert the first piece at the original index
-        genes.insert(idx, new_piece_left)
-        # insert the second piece at a random position
-        genes.insert(random.randrange(len(genes)), new_piece_right)
+        """Replace a piece at index *idx* with *new_piece_left* and insert the second
+        piece at a random position."""
+
+        idx = self.genes.index(piece) # get the index of the piece to replace
+        genes.remove(piece) # remove it
+        genes.insert(idx, new_piece_left) # insert the first piece at the original index
+        genes.insert(random.randrange(len(genes)), new_piece_right) # insert the second piece at a random position
 
         return genes
 
     def _mutate_split(self):
-        """Split a panel using the MetaGarment pipeline, preserving state."""
         #from nesting.panel_mapping import dispatch_split
-        
 
         before = {g.root_id for g in self.genes}
 
+        # Track already-split root pieces across calls
         self.split_set = getattr(self, 'split_set', set())
 
-        max_splits = min(config.NUM_SPLITS, len(self.genes))
-        for _ in range(random.randint(0, min(max_splits, len(self.genes)-len(self.split_set)))):
-            #unsplit = [i for i, g in enumerate(self.genes) if g.parent_id is None]
-            #if not unsplit:
-            #    break
+        def _unsplit_roots():
+            return [g for g in self.genes if g.parent_id is None and g not in self.split_set]
 
-            #idx = random.choices(unsplit, weights=[self.genes[i].bbox_area for i in unsplit])[0]
-            #idx = random.choices(range(len(self.genes)), weights=[g.bbox_area for g in self.genes])[0]
-            idx = random.randrange(len(self.genes))
-            piece = self.genes[idx]
+        candidates = _unsplit_roots()
 
-            if piece in self.split_set:
-                print(f"[Chromosome] Skipping split for {piece.id} - already split")
-                continue
-            else:
-                self.split_set.add(piece)
-
-            #retry until we find a piece that can be split
-            # retries = 0
-            # while 'split' in piece.id and retries < 10:
-            #     print(f"[Chromosome] Skipping split for {piece.id} - already split")
-            #     idx = random.randrange(len(self.genes))
-            #     piece = self.genes[idx]
-            #     retries += 1
-
-            # if 'split' in piece.id:
-            #     print(f"Max retries reached for split mutation on {piece.id}, skipping")
-            #     continue
-
-            # Ensure a MetaGarment instance is fresh for the split operation
-        
-            # mg = MetaGarment("chromosome_split", self.body_params, self.design_params)
-            # Re-apply existing splits to bring the new instance to the current state
-            #for panel_name, proportion in self.split_history:
-            #    mg.split_panel(panel_name, proportion)
-            # self.meta_garment = mg
-
-            piece_mirror = next((p for p in self.genes if p.parent_id == piece.id.replace("left", "right") or p.parent_id == piece.id.replace("right", "left")), None)
-
-            # None
-            # if 'left' in piece.id and piece.parent_id is None:
-            #     mirror_id = piece.id.replace("left", "right")
-            #     piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
-            # elif 'right' in piece.id and piece.parent_id is None:
-            #     mirror_id = piece.id.replace("right", "left")
-            #     piece_mirror = next((p for p in self.genes if p.id == mirror_id), None)
+        # TODO: allow recursive splits
+        # DO NOT TURN THIS ON, 
+        # IT DOES NOT CURRENTLY WORK
+        if not candidates and not config.ALLOW_RECURSIVE_SPLITS:
+            return False
 
 
-            if True:#not self.meta_garment:
-                left, right = piece.split()
-                # remove the original piece
-                # self.genes.remove(piece)
-                # # insert the first piece at the original index
-                # self.genes.insert(idx, left)
-                # # insert the second piece at a random position
-                # self.genes.insert(random.randrange(len(self.genes)), right)
-                self._replace(piece, left, right, self.genes)
-                self.split_set.add(left)
-                self.split_set.add(right)
-                if piece_mirror and config.SYMMETRIC_SPLITS:
-                    self.split_set.add(piece_mirror)
-                    # If there's a mirror piece, also split it
-                    # Find the current index of the mirror piece (may have shifted)
-                    # current_mirror_idx = self.genes.index(piece_mirror)
-                    left_mirror, right_mirror = piece_mirror.split()
-                    self.genes = self._replace(piece_mirror, left_mirror, right_mirror, self.genes)
-                    # # Remove the original mirror piece
-                    # self.genes.remove(piece_mirror)
-                    # # Insert the split pieces - first at the original mirror position
-                    # self.genes.insert(current_mirror_idx, left_mirror)
-                    # # Insert the second at a random position
-                    # self.genes.insert(random.randrange(len(self.genes)), right_mirror)
-                    self.split_set.add(left_mirror)
-                    self.split_set.add(right_mirror)
+        # randomly pick a piece from the candidates
+        if config.WEIGHT_BY_BBOX:
+            weights = [c.bbox_area for c in candidates]
+            piece = random.choices(candidates, weights=weights, k=1)[0]
+        else:
+            piece = random.choice(candidates)
 
-                self._warn_if_panel_lost(before, "split")
-                return True  # Indicate successful mutation
-                
-            else:
-                # Use MetaGarment's split_panel pipeline
-                success = self.meta_split(piece, idx, piece_mirror)
-                if not success:
-                    print(f"[Chromosome] MetaGarment split failed for {piece.id}")
-                    continue
-            self._warn_if_panel_lost(before, "split")
-            return True
+        self.split_set.add(piece)
 
-    # def _no_param_split(self, piece, idx, piece_mirror=None):
+        # Mirror lookup (basic left/right root swap)
+        # TODO: make this less sucky
+        piece_mirror = next((p for p in self.genes
+                              if p.parent_id is None and p is not piece and (
+                                  p.id == piece.id.replace("left", "right") or
+                                  p.id == piece.id.replace("right", "left"))), None)
 
-    #     left, right = piece.split()
-    #     # remove the original piece
-    #     self.genes.remove(piece)
-    #     # insert the first piece at the original index
-    #     self.genes.insert(idx, left)
-    #     # insert the second piece at a random position
-    #     self.genes.insert(random.randrange(len(self.genes) + 1), right)
+        if not self.meta_garment: # no parameter pipeline
+            left, right = piece.split()
+            self._replace(piece, left, right, self.genes)
+            # self.split_set.add(left); self.split_set.add(right) # split set is for roots so this should not be here
+            if piece_mirror and config.SYMMETRIC_SPLITS:  # if we have a mirror piece
+                self.split_set.add(piece_mirror)
+                left_mirror, right_mirror = piece_mirror.split()
+                self.genes = self._replace(piece_mirror, left_mirror, right_mirror, self.genes)
+                # self.split_set.add(left_mirror); self.split_set.add(right_mirror) # see above
+        else: # pipeline with design and body parameters
+            success = self.meta_split(piece, self.genes.index(piece), piece_mirror if config.SYMMETRIC_SPLITS else None)
+            if not success:
+                raise ValueError(f"[Chromosome] MetaGarment split failed for {piece.id}")
 
-    #     if piece_mirror and config.SYMMETRIC_SPLITS:
-    #         # If there's a mirror piece, also split it
-    #         # Find the current index of the mirror piece (may have shifted)
-    #         current_mirror_idx = self.genes.index(piece_mirror)
-    #         left_mirror, right_mirror = piece_mirror.split()
-    #         # Remove the original mirror piece
-    #         self.genes.remove(piece_mirror)
-    #         # Insert the split pieces - first at the original mirror position
-    #         self.genes.insert(current_mirror_idx, left_mirror)
-    #         # Insert the second at a random position
-    #         self.genes.insert(random.randrange(len(self.genes) + 1), right_mirror)
-
-    #     self._warn_if_panel_lost(before, "split")
-    #     return True  # Indicate successful mutation
-
+        self._warn_if_panel_lost(before, "split")
+        return True
 
     def _mutate_rotate(self):
         before = {g.root_id for g in self.genes}
@@ -627,16 +565,21 @@ class Chromosome(Layout):
         original_design_params = copy.deepcopy(self.design_params)
         original_genes = copy.deepcopy(self.genes)
 
+        # Somewhat weird way of doing things incoming
+        # It works and I am terrified of breaking it so for now it stays
+        # TODOLOW: Refactor this to be less weird
+
         # Get a shuffled list of parameters to try
         mutatable_params = list(self._mutatable_params)
         random.shuffle(mutatable_params)
 
-        for path in mutatable_params: # eh fuck it why not
+        # loop until we find a successful mutation or exhaust all options
+        for param in mutatable_params:
             # Restore state for the new attempt
             self.design_params = copy.deepcopy(original_design_params)
-            self._genes = copy.deepcopy(original_genes)
+            self.genes = copy.deepcopy(original_genes)
 
-            node = nested_get(self.design_params, path.split("."))
+            node = nested_get(self.design_params, param.split("."))
             p_type = node.get("type", "float")
             old_val = node["v"]
             new_val = _random_value(old_val, p_type, node["range"])
@@ -644,35 +587,34 @@ class Chromosome(Layout):
             if old_val == new_val:
                 continue # Value didn't change, try next parameter
 
-            nested_set(self.design_params, path.split(".") + ["v"], new_val)
+            nested_set(self.design_params, param.split(".") + ["v"], new_val)
 
             # Regenerate garment and update pieces
-            if self._apply_design_param_change(path, old_val, new_val):
+            if self._apply_design_param_change(param, old_val, new_val):
                 self.calculate_fitness() # Recalculate fitness with the new design
                 if self.fitness != original_fitness:
-                    print(f"[Chromosome] Successful mutation on {path}: {old_val} -> {new_val}")
+                    print(f"[Chromosome] Successful mutation on {param}: {old_val} -> {new_val}")
                     # Store this specific parameter change for tracking
                     if not hasattr(self, 'param_changes_this_gen'):
                         self.param_changes_this_gen = []
                     self.param_changes_this_gen.append({
-                        'param_path': path,
+                        'param_path': param,
                         'old_value': old_val,
                         'new_value': new_val
                     })
-                    self._warn_if_panel_lost(before, "design_params")
+                    self._warn_if_panel_lost(before, "design_params_1")
                     return True # Success
 
         # If loop completes, no mutation led to a fitness change, restore state
         self.design_params = original_design_params
-        self._genes = original_genes
+        self.genes = original_genes
         self.fitness = original_fitness
         if config.VERBOSE:
             print("[Chromosome] No design param mutation resulted in a fitness change.")
-        self._warn_if_panel_lost(before, "design_params")
+        self._warn_if_panel_lost(before, "design_params_2")
         return False
 
     def _apply_design_param_change(self, path: str, old_val: Any, new_val: Any) -> bool:
-        # TODO: fix split handling. it must happen before reassembly
         """Helper to regenerate garment pieces after a design param change and update genes."""
         from assets.garment_programs.meta_garment import MetaGarment
         from nesting.panel_mapping import affected_panels, select_genes
@@ -706,22 +648,30 @@ class Chromosome(Layout):
                 piece.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
 
         changed_ids = select_genes(new_pieces.keys(), affected)
-        split_cache: dict[str, tuple[Piece, Piece]] = {}
+        # Rebuild mapping for quicker lookups
+        new_piece_ids = set(new_pieces.keys())
+
+        # Extend changed ids: if a root id changed and we have split fragments for it in the current genes
+        # include those fragment ids so we directly replace them from new_pieces instead of re-splitting.
+        extended_changed_ids = set(changed_ids)
+        root_ids_changed = {cid for cid in changed_ids if cid in new_piece_ids}
+        for root_id in root_ids_changed:
+            # any existing gene whose root_id == root_id should be refreshed if its concrete id exists in new_pieces
+            for g in self.genes:
+                if g.root_id == root_id and g.id in new_piece_ids:
+                    extended_changed_ids.add(g.id)
+
         for i, g in enumerate(self.genes):
-            if g.id in changed_ids:
-                new_piece = copy.deepcopy(new_pieces[g.id])
-                new_piece.rotation, new_piece.translation = g.rotation, g.translation
-                self.genes[i] = new_piece
-            elif g.root_id in changed_ids:
-                if g.root_id not in split_cache:
-                    base_piece = copy.deepcopy(new_pieces[g.root_id])
-                    split_cache[g.root_id] = base_piece.split()
-                left, right = split_cache[g.root_id]
-                suffix = g.id[len(g.root_id) + 1:]
-                replacement = copy.deepcopy(left if suffix == "split_left" else right)
-                replacement.rotation, replacement.translation = g.rotation, g.translation
+            if g.id in extended_changed_ids and g.id in new_pieces:
+                # Direct replacement from regenerated pattern; preserve placement attributes
+                replacement = copy.deepcopy(new_pieces[g.id])
+                replacement.rotation = g.rotation
+                replacement.parent_id = g.parent_id
+                replacement.root_id = g.root_id
+                #replacement.translation = g.translation
                 self.genes[i] = replacement
 
+        # TODO: use a logger instead of this
         if config.LOG_DESIGN_PARAM_PATHS and changed_ids:
             log_path = Path(config.SAVE_LOGS_PATH) / "design_param_paths.csv"
             log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -729,395 +679,351 @@ class Chromosome(Layout):
                 writer = csv.writer(fh)
                 if fh.tell() == 0:
                     writer.writerow(["piece_id", "param_path", "old_v", "new_v"])
-                for pid in changed_ids:
-                    writer.writerow([pid, path, old_val, new_val])
+                for pid in extended_changed_ids:
+                    if pid in new_piece_ids:  # only log those we actually refreshed
+                        writer.writerow([pid, path, old_val, new_val])
         return True
+    
+       # -------------------- helpers for crossover --------------------
 
-    def crossover_oxk(
-        self,
-        other: "Chromosome",
-        k: int = 1
-    ) -> "Chromosome":
+    def _flatten_param_paths(self, node: dict, prefix: list[str] | None = None) -> list[str]:
+        prefix = prefix or []
+        out = []
+        for k, v in node.items():
+            if isinstance(v, dict):
+                if "v" in v:
+                    out.append(".".join(prefix + [k]))
+                else:
+                    out += self._flatten_param_paths(v, prefix + [k])
+        return out
+
+    def _conflict_groups(self, dp1: dict | None, dp2: dict | None, all_root_ids: set[str]):
+        """"
+        Return [{"roots": set[str], "paths": set[str]}] for params whose *values differ* in dp1 vs dp2.
+        Assumes both parents share the same design-parameter schema; only numeric 'v' values differ.
+        Uses dp1 as the canonical schema for affected_panels().
         """
-        Perform an order-based crossover (OX-k) with constraints using a single pass.
+        if not (dp1 and dp2):
+            return []
 
-        This crossover handles gene dependencies related to panel splitting.
-        If a descendant of a split panel is selected from parent 1, all its
-        sibling leaf-descendants are also taken from parent 1, and the
-        corresponding original panel (root) is blocked from being taken from parent 2.
-        """
-        n = len(self.genes)
-        child_genes: List[Piece | None] = [None] * n
-        child_gene_ids: Set[str] = set()
-        blocked_root_ids: Set[str] = set()
-
-        # ----------------------------- helpers ---------------------------------
-        def get_family_leaves(parent: "Chromosome", root_id: str) -> List[Piece]:
-            parent_ids = {p.parent_id for p in parent.genes if p.parent_id}
-            return [g for g in parent.genes if g.root_id == root_id and g.id not in parent_ids]
-
-        # Index map: piece.id -> index in that parent's gene order
-        p1_index = {g.id: i for i, g in enumerate(self.genes)}
-        p2_index = {g.id: i for i, g in enumerate(other.genes)}
-
-        free_indices = deque(range(n))  # always place something if we need to relocate
-
-        def occupy(idx: int, piece: Piece):
-            """Place piece at idx, relocating any occupant to the next free slot."""
-            if child_genes[idx] is None:
-                # remove idx from free list if present
-                try:
-                    free_indices.remove(idx)
-                except ValueError:
-                    pass
-                child_genes[idx] = piece
-                child_gene_ids.add(piece.id)
-                return True
-            else:
-                # relocate existing occupant to next free slot
-                if not free_indices:
-                    return False  # should not happen if logic maintains counts
-                new_idx = free_indices.popleft()
-                # If new_idx equals idx (rare if idx was still listed), try another
-                if new_idx == idx:
-                    if not free_indices:
-                        return False
-                    new_idx = free_indices.popleft()
-                displaced = child_genes[idx]
-                child_genes[new_idx] = displaced
-                # mark displaced id already accounted for
-                # Place the desired piece at idx
-                child_genes[idx] = piece
-                child_gene_ids.add(piece.id)
-                return True
-
-        def place_family(parent: "Chromosome", root_id: str) -> bool:
-            """Atomically place all leaf descendants of root_id using that parent's indices.
-            If a placement collides, we relocate the occupant to next free slot.
-            Only blocks the root after full success.
-            """
-            if root_id in blocked_root_ids:
-                return False
-            family = get_family_leaves(parent, root_id)
-            if not family:
-                return False
-            # Preferred indices from the appropriate parent's ordering
-            index_map = p1_index if parent is self else p2_index
-            targets = [index_map[m.id] for m in family]
-
-            # Stage pieces so we can roll back if something goes wrong (shouldn't)
-            snapshot = list(child_genes)
-            snapshot_free = deque(free_indices)
-
-            try:
-                for member, idx in zip(family, targets):
-                    if member.id in child_gene_ids:
-                        # already placed via a sibling/group earlier
-                        continue
-                    ok = occupy(idx, copy.deepcopy(member))
-                    if not ok:
-                        raise RuntimeError("No free slot available during family placement")
-            except Exception:
-                # rollback on failure
-                for i in range(n):
-                    child_genes[i] = snapshot[i]
-                free_indices.clear()
-                free_indices.extend(snapshot_free)
-                return False
-
-            # Success → block this root for the other parent
-            blocked_root_ids.add(root_id)
-            return True
-
-        # --------------------- design-parameter conflict groups -----------------
-        from nesting.panel_mapping import affected_panels, select_genes
         from pygarment.garmentcode.utils import nested_get
+        from nesting.panel_mapping import affected_panels, select_genes
 
-        def _flatten_param_paths(node: dict, prefix: list[str] | None = None) -> list[str]:
-            prefix = prefix or []
-            out = []
-            for k, v in node.items():
-                if isinstance(v, dict):
-                    if "v" in v:
-                        out.append(".".join(prefix + [k]))
-                    else:
-                        out += _flatten_param_paths(v, prefix + [k])
-            return out
-
-        def _get_val(dp: dict | None, path: str):
-            if dp is None:
-                return None
+        def _get_val(dp: dict, path: str):
+            # fetches the current value of a design parameter at *path*.
             try:
                 node = nested_get(dp, path.split("."))
             except Exception:
                 return None
-            if isinstance(node, dict) and "v" in node:
-                return node.get("v")
-            return node
+            return node.get("v") if isinstance(node, dict) and "v" in node else node
 
-        dp_conflicts: list[str] = []
-        if self.design_params is not None and other.design_params is not None:
-            paths1 = set(_flatten_param_paths(self.design_params))
-            paths2 = set(_flatten_param_paths(other.design_params))
-            for p in paths1 | paths2:
-                if _get_val(self.design_params, p) != _get_val(other.design_params, p):
-                    dp_conflicts.append(p)
+        # --- strict schema equivalence checks (fast fail if anything drifts) ---
+        paths1 = set(self._flatten_param_paths(dp1))
+        paths2 = set(self._flatten_param_paths(dp2))
+        if paths1 != paths2:
+            # If this ever trips, your "only numeric values differ" assumption has been violated.
+            raise RuntimeError("Design-parameter schema mismatch between parents (path sets differ).")
 
-        root_ids_p1 = {g.root_id for g in self.genes}
-        root_ids_p2 = {g.root_id for g in other.genes}
-        all_root_ids = root_ids_p1 | root_ids_p2
+        # same metadata checks per path
+        for p in paths1:
+            n1 = nested_get(dp1, p.split("."))
+            n2 = nested_get(dp2, p.split("."))
+            t1, t2 = (n1.get("type"), n2.get("type"))
+            if t1 != t2:
+                raise RuntimeError(f"Type mismatch at '{p}': {t1} vs {t2}")
+            if "range" in n1 or "range" in n2:
+                if n1.get("range") != n2.get("range"):
+                    raise RuntimeError(f"Range mismatch at '{p}': {n1.get('range')} vs {n2.get('range')}")
 
-        groups: list[dict] = []  # {"roots": set, "params": set, "owner": None|1|2}
+        # --- collect differing-value paths ---
+        diffs = [p for p in paths1 if _get_val(dp1, p) != _get_val(dp2, p)]
+        if not diffs:
+            return []
 
-        for path in dp_conflicts:
-            patterns = affected_panels([path], self.design_params)
-            affected_roots = select_genes(all_root_ids, patterns)
-            if not affected_roots:
+        # --- build groups: one group per differing param path (NO transitive merging) ---
+        # Requirement: panels share a group ONLY if they are co-affected by the *same* differing parameter.
+        # So if A,B affected by param p1 and B,C by param p2, we create two groups:
+        #   G1: roots {A,B}, paths {p1}
+        #   G2: roots {B,C}, paths {p2}
+        # A and C never appear together just because of B.
+        groups: list[dict] = []
+        for param in diffs:
+            pats = affected_panels([param], dp1) or []
+            roots = set(select_genes(all_root_ids, pats) or [])
+            if not roots:
                 continue
-            # merge into overlapping groups
-            idxs = [i for i, g in enumerate(groups) if g["roots"] & affected_roots]
-            if not idxs:
-                groups.append({"roots": set(affected_roots), "params": {path}, "owner": None})
+            groups.append({"roots": roots, "paths": {param}})
+
+        return groups
+
+    @staticmethod
+    def _history_by_root(history: list[tuple[str, float]] | None) -> dict[str, list[tuple[str, float]]]:
+        """Convert a history list of (root_id, property_value) tuples into a dict keyed by root_id."""
+        d: dict[str, list[tuple[str, float]]] = {}
+        for rid, prop in (history or []):
+            d.setdefault(rid, []).append((rid, prop))
+        return d
+
+    # -------- helpers for owner-stable weave (preserve non-contiguous patterns) --------
+
+    @staticmethod
+    def _root_order_index_map(order: list[str]) -> dict[str, int]:
+        """root_id -> its index in the child OX root order (for deterministic weaving)."""
+        return {r: i for i, r in enumerate(order)}
+    
+    def _root_order(parent: "Chromosome") -> list[str]:
+        """Unique root_ids in the order they first appear."""
+        seen, out = set(), []
+        for g in parent.genes:
+            if g.root_id not in seen:
+                seen.add(g.root_id)
+                out.append(g.root_id)
+        return out
+
+    
+
+    @staticmethod
+    def _filter_sequence_by_owner(seq: list["Piece"], owner: dict[str, int], take_owner: int) -> list["Piece"]:
+        """Keep pieces whose root is owned by take_owner, preserving original order."""
+        return [p for p in seq if owner.get(p.root_id, 0) == take_owner]
+
+    def _build_child_by_owner_weave(
+        self,
+        order_child_roots: list[str],
+        owner: dict[str, int],
+        p1_seq: list["Piece"],
+        p2_seq: list["Piece"],
+    ) -> list["Piece"]:
+        """
+        Stable-merge two parent sequences:
+          - take only leaves from the owning parent for each root
+          - preserve the relative order within each parent's kept subsequence
+          - interleave deterministically using the child root order as a tie-breaker
+        """
+        p1_keep = self._filter_sequence_by_owner(p1_seq, owner, 1)
+        p2_keep = self._filter_sequence_by_owner(p2_seq, owner, 2)
+
+        i, j = 0, 0
+        out: list["Piece"] = []
+        root_rank = self._root_order_index_map(order_child_roots)
+
+        while i < len(p1_keep) or j < len(p2_keep):
+            if j >= len(p2_keep):
+                out.append(copy.deepcopy(p1_keep[i])); i += 1; continue
+            if i >= len(p1_keep):
+                out.append(copy.deepcopy(p2_keep[j])); j += 1; continue
+
+            r1 = p1_keep[i].root_id
+            r2 = p2_keep[j].root_id
+            rank1 = root_rank.get(r1, 10**9)
+            rank2 = root_rank.get(r2, 10**9)
+
+            if rank1 < rank2:
+                out.append(copy.deepcopy(p1_keep[i])); i += 1
+            elif rank2 < rank1:
+                out.append(copy.deepcopy(p2_keep[j])); j += 1
             else:
-                first = idxs[0]
-                groups[first]["roots"].update(affected_roots)
-                groups[first]["params"].add(path)
-                for extra in sorted(idxs[1:], reverse=True):
-                    groups[first]["roots"].update(groups[extra]["roots"])
-                    groups[first]["params"].update(groups[extra]["params"])
-                    groups.pop(extra)
+                # same rank (incl. same root): prefer the owning parent for that root
+                if owner.get(r1, 0) == 1:
+                    out.append(copy.deepcopy(p1_keep[i])); i += 1
+                else:
+                    out.append(copy.deepcopy(p2_keep[j])); j += 1
 
-        root_to_group: dict[str, int] = {}
-        for gi, g in enumerate(groups):
-            for r in g["roots"]:
-                root_to_group[r] = gi
+        return out
 
-        for g in groups:
-            p1_roots = g["roots"] & root_ids_p1
-            p2_roots = g["roots"] & root_ids_p2
-            if p1_roots and not p2_roots:
-                g["owner"] = 1
-            elif p2_roots and not p1_roots:
-                g["owner"] = 2
-            else:
-                g["owner"] = None
+    # ------------------------- OX-k crossover (with weave) -------------------------
 
-        processed_groups: Set[int] = set()
+    def crossover_oxk(self, other: "Chromosome", k: int = 1) -> "Chromosome":
+        """
+        OX-k over *root order* with param-group closure & family integrity,
+        preserving non-contiguous interleaving via an owner-stable weave.
 
-        child_design_params = copy.deepcopy(self.design_params) if self.design_params is not None else None
-
-        from pygarment.garmentcode.utils import nested_set, nested_del
-
-        def assign_group(parent: "Chromosome", group_idx: int, owner: int):
-            g = groups[group_idx]
-            if g.get("owner") is not None and g["owner"] != owner:
-                return False
-            # Atomically place every root family
-            snapshot = list(child_genes)
-            snapshot_free = deque(free_indices)
-            placed_roots = []
-            for root_id in g["roots"]:
-                if not place_family(parent, root_id):
-                    # rollback
-                    for i in range(n):
-                        child_genes[i] = snapshot[i]
-                    free_indices.clear(); free_indices.extend(snapshot_free)
-                    for r in placed_roots:
-                        blocked_root_ids.discard(r)
-                    return False
-                placed_roots.append(root_id)
-            g["owner"] = owner
-            processed_groups.add(group_idx)
-
-            # adopt other parent's param values if owner is 2
-            if owner == 2 and child_design_params is not None and other.design_params is not None:
-                for p in g["params"]:
-                    val = _get_val(other.design_params, p)
-                    if val is None:
-                        try:
-                            nested_del(child_design_params, p.split("."))
-                        except Exception:
-                            pass
-                    else:
-                        nested_set(child_design_params, p.split("."), copy.deepcopy(nested_get(other.design_params, p.split("."))))
-            return True
-
-        # ------------------------- OX-k parent-1 segments ------------------------
-        if 2 * k > n:
-            k = n // 2
+        Invariants enforced:
+        - Every root appears in child (no loss).
+        - For each root, the child's *leaf set* equals exactly one parent's leaf set (no mixing within a root).
+        - For any differing-parameter group, *all* its roots come from a single parent.
+        - split_history kept only from the owning parent per root.
+        """
         import random
-        sampled = sorted(random.sample(range(n), 2 * k))
-        p1_indices = set()
-        for i in range(k):
-            start, end = sampled[2 * i], sampled[2 * i + 1]
-            p1_indices.update(range(start, end + 1))
+        from copy import deepcopy
+        from pygarment.garmentcode.utils import nested_set, nested_get, nested_del
 
-        # Pre-assign groups that must come from parent 1
-        for gi, g in enumerate(groups):
-            if g.get("owner") == 1:
-                assign_group(self, gi, 1)
+        # --- Root orders
+        order_p1 = self._root_order()
+        order_p2 = other._root_order()
 
-        # Mark roots that must come from parent 2 so P1 doesn't take them
-        skip_p1_roots = {r for g in groups if g.get("owner") == 2 for r in g["roots"]}
+        if not order_p1 and not order_p2:
+            raise RuntimeError("Both parents have no roots (empty chromosomes).")
+            # return Chromosome([], self.container, origin="crossover",
+            #                   design_params=deepcopy(self.design_params),
+            #                   body_params=self.body_params)
 
-        # Process parent 1 indices; place families atomically
-        for i in sorted(p1_indices):
-            gene = self.genes[i]
-            if gene.root_id in skip_p1_roots or gene.root_id in blocked_root_ids:
-                continue
-            gi = root_to_group.get(gene.root_id)
-            if gi is not None and gi not in processed_groups:
-                assign_group(self, gi, 1)
-                continue
-            place_family(self, gene.root_id)
+        # must share the same root set (leaf counts may differ due to splits)
+        if set(order_p1) != set(order_p2):
+            raise RuntimeError("Parents must contain identical root sets (pre-split panels).")
 
-        # Pre-assign groups that must come from parent 2
-        for gi, g in enumerate(groups):
-            if g.get("owner") == 2 and gi not in processed_groups:
-                assign_group(other, gi, 2)
+        n = len(order_p1)
 
-        # Fill remaining gaps from parent 2 (cycling through list, not a one-pass generator)
-        p2_cycle = list(other.genes)
-        p2_pos = 0
+        # --- Step 1: True OX-k on parent-1 root order (to produce child root order)
+        if n >= 2:
+            # k = max(1, min(k, n // 2))
+            k = min(k, n // 2) if k > 0 else 1
+            cuts = sorted(random.sample(range(n), 2 * k))
+        else:
+            k = 1
+            cuts = [0, 0]
+
+        child_roots: list[str | None] = [None] * n
+        chosen: set[str] = set()
+        segment_positions: set[int] = set()
+
+        for i in range(0, len(cuts), 2):
+            a, b = cuts[i], cuts[i + 1]
+            for pos in range(a, b + 1):
+                root = order_p1[pos]
+                #if child_roots[pos] is None:
+                child_roots[pos] = root
+                chosen.add(root)
+                segment_positions.add(pos)
+
+        # Fill remaining slots with roots from P2, skipping already chosen ones
+        it2 = (root for root in order_p2 if root not in chosen)
         for i in range(n):
-            if child_genes[i] is not None:
-                continue
-            # find next eligible root from P2
-            attempts = 0
-            while attempts < n:
-                gene2 = p2_cycle[p2_pos]
-                p2_pos = (p2_pos + 1) % n
-                attempts += 1
-                root = gene2.root_id
-                if root in blocked_root_ids:
-                    continue
-                gi = root_to_group.get(root)
-                if gi is not None and gi not in processed_groups:
-                    # try to assign the whole group from P2
-                    if assign_group(other, gi, 2):
-                        break
-                    else:
-                        continue
-                if place_family(other, root):
-                    break
-            # loop proceeds; if we couldn't place anything, remaining slots will be handled by sanity step
+            if child_roots[i] is None:
+                try:
+                    child_roots[i] = next(it2)
+                except StopIteration:
+                    remaining = [root for root in order_p2 if root not in set(child_roots)]
+                    child_roots[i] = remaining[0] if remaining else order_p1[i]
 
-        # -------------------------- Sanity & backfill ----------------------------
-        # 1) No None slots
-        if any(g is None for g in child_genes):
-            # Backfill with any remaining P1 families not yet used, else P2, then random parents
-            available_roots = [r for r in (root_ids_p1 | root_ids_p2) if r not in blocked_root_ids]
-            for r in available_roots:
-                if not any(g is None for g in child_genes):
-                    break
-                if not place_family(self, r):
-                    place_family(other, r)
-            # If still None, try placing single leaves (as last resort)
-            for idx, slot in enumerate(child_genes):
-                if slot is None:
-                    # pick from P1 by index, else P2
-                    cand = copy.deepcopy(self.genes[idx])
-                    if cand.root_id in blocked_root_ids or cand.id in child_gene_ids:
-                        cand = copy.deepcopy(other.genes[idx])
-                    occupy(idx, cand)
+        assert all(r is not None for r in child_roots), "OX-k produced empty slots."
 
-        # 2) Family integrity: if any leaf of root R is present, ensure all leaves are present
-        present_roots = {g.root_id for g in child_genes if g is not None}
-        for r in list(present_roots):
-            leaves = get_family_leaves(self, r) or get_family_leaves(other, r)
-            missing = [m for m in leaves if m.id not in child_gene_ids]
-            for m in missing:
-                # place missing leaf into next free slot while preserving rotation/translation default
-                if not free_indices:
-                    # relocate some existing piece to make room (swap into first index)
-                    # pick the first index not already that root
-                    idx_to_relocate = next((j for j, cg in enumerate(child_genes) if cg is not None and cg.root_id != r), None)
-                    if idx_to_relocate is not None:
-                        new_slot = idx_to_relocate  # will be occupied() relocated
-                    else:
-                        # as an absolute fallback, append (keeps gene count consistent after final trim)
-                        child_genes.append(copy.deepcopy(m))
-                        child_gene_ids.add(m.id)
-                        continue
-                target_idx = p1_index.get(m.id, p2_index.get(m.id, None))
-                if target_idx is None:
-                    target_idx = free_indices[0] if free_indices else 0
-                occupy(target_idx, copy.deepcopy(m))
+        # --- Step 2: Differing-parameter groups & ownership (closure)
+        groups = self._conflict_groups(self.design_params, other.design_params, set(order_p1))
 
-        # Trim any accidental expansion and assert size
-        child_genes = [g for g in child_genes if g is not None][:n]
+        # owner[root] ∈ {0 undecided, 1 P1, 2 P2}
+        owner: dict[str, int] = {r: 0 for r in order_p1}
 
-        # Integrity validation: ensure no panels (roots) are lost and families are consistent
-        expected_roots = {g.root_id for g in self.genes} | {g.root_id for g in other.genes}
-        child_roots = {g.root_id for g in child_genes}
-        missing_roots = sorted(list(expected_roots - child_roots))
-        unexpected_roots = sorted(list(child_roots - expected_roots))
+        # seed from P1 segments
+        for pos in segment_positions:
+            owner[order_p1[pos]] = 1
 
-        # Build child parent_ids set to identify leaves within child
-        child_parent_ids = {p.parent_id for p in child_genes if p is not None and p.parent_id}
+        # closure: any differing group touched by a P1 seed ⇒ whole group P1
+        # (NON-transitive: newly claimed roots do not propagate ownership further)
+        seed_roots = {r for r, v in owner.items() if v == 1}
+        for g in groups:
+            if any(r in seed_roots for r in g["roots"]):
+                for r in g["roots"]:
+                    owner[r] = 1
 
-        errors: list[str] = []
-        if missing_roots:
-            errors.append(f"Missing root panels in offspring: {missing_roots}")
-        if unexpected_roots:
-            errors.append(f"Unexpected roots in offspring: {unexpected_roots}")
+        # remaining undecided groups: single owner (default P2)
+        for g in groups:
+            if all(owner[r] == 0 for r in g["roots"]):
+                for r in g["roots"]:
+                    owner[r] = 2
 
-        # For each expected root, check that child contains a full leaf family equal to one of the parents
-        for r in sorted(expected_roots):
-            # Leaves in parents
-            p1_leaves = {m.id for m in (get_family_leaves(self, r) or [])}
-            p2_leaves = {m.id for m in (get_family_leaves(other, r) or [])}
-            # Leaves in child: pieces with same root and whose id is not any parent_id in child
-            child_leaves = {g.id for g in child_genes if g.root_id == r and g.id not in child_parent_ids}
+        # roots not in any differing group: default by segment position
+        roots_in_groups = set().union(*(g["roots"] for g in groups)) if groups else set()
+        for pos, r in enumerate(order_p1):
+            if owner[r] == 0 and r not in roots_in_groups:
+                owner[r] = 1 if pos in segment_positions else 2
 
-            if not child_leaves:
-                # if the entire root is missing, it will be covered by missing_roots above
-                if r in child_roots:
-                    errors.append(f"Root {r} present but has no leaves in offspring")
-                continue
+        # no mixed ownership inside any differing group
+        for g in groups:
+            assert len({owner[r] for r in g["roots"]}) == 1, "Mixed ownership in a differing-parameter group."
 
-            # Family must match exactly one of the parents (IDs), allowing for parents with identical sets
-            if child_leaves != p1_leaves and child_leaves != p2_leaves:
-                errors.append(
-                    f"Root {r} leaf mismatch. child={sorted(child_leaves)} not in (p1={sorted(p1_leaves)}, p2={sorted(p2_leaves)})"
+        # --- Step 3: Build child by owner-stable weave (preserve non-contiguous patterns)
+        child_genes: list[Piece] = self._build_child_by_owner_weave(
+            order_child_roots=[r for r in child_roots if r is not None],
+            owner=owner,
+            p1_seq=self.genes,
+            p2_seq=other.genes,
+        )
+
+        # --- Step 4: Post-build assertions
+        # A) no root lost
+        child_roots_set = {g.root_id for g in child_genes}
+        if child_roots_set != set(order_p1):
+            raise RuntimeError(f"Root mismatch: expected {sorted(order_p1)}, got {sorted(child_roots_set)}")
+
+        # B) each root's leaves equal exactly one parent's leaf set
+        # collect per-root leaf IDs from parents (only leaves: id not in parent_ids)
+        def _leaf_ids(seq: list["Piece"]) -> dict[str, set[str]]:
+            parent_ids = {p.parent_id for p in seq if p.parent_id}
+            out: dict[str, set[str]] = {}
+            for p in seq:
+                if p.id not in parent_ids:
+                    out.setdefault(p.root_id, set()).add(p.id)
+            return out
+
+        p1_leaf_ids = _leaf_ids(self.genes)
+        p2_leaf_ids = _leaf_ids(other.genes)
+        child_leaf_ids = _leaf_ids(child_genes)
+
+        for r in order_p1:
+            cl = child_leaf_ids.get(r, set())
+            if cl != p1_leaf_ids.get(r, set()) and cl != p2_leaf_ids.get(r, set()):
+                raise RuntimeError(
+                    f"Root {r} leaf mismatch: child={sorted(cl)} "
+                    f"not equal to P1={sorted(p1_leaf_ids.get(r, set()))} "
+                    f"nor P2={sorted(p2_leaf_ids.get(r, set()))}"
                 )
 
-        if errors:
-            raise RuntimeError("Crossover produced invalid offspring: " + "; ".join(errors))
+        # --- Step 5: Merge design_params per owning group
+        child_dp = deepcopy(self.design_params) if self.design_params is not None else None
+        if child_dp is not None and other.design_params is not None and groups:
+            for g in groups:
+                g_owner = next(iter({owner[r] for r in g["roots"]}))  # uniform by assertion
+                if g_owner == 2:
+                    for path in g["paths"]:
+                        node = None
+                        try:
+                            node = nested_get(other.design_params, path.split("."))
+                        except Exception:
+                            node = None
+                        if node is None:
+                            try:
+                                nested_del(child_dp, path.split("."))
+                            except Exception:
+                                pass
+                        else:
+                            nested_set(child_dp, path.split("."), deepcopy(node))
+                # if g_owner == 1, P1 values already in child_dp via deepcopy
 
-        # Build child
-        final_genes = [copy.deepcopy(g) for g in child_genes]
+        # --- Step 6: Build child & propagate split_history relevant to the child
         child = Chromosome(
-            pieces=final_genes,
+            pieces=child_genes,
             container=self.container,
             origin="crossover",
-            design_params=child_design_params,
+            design_params=child_dp,
             body_params=self.body_params,
         )
 
-        # Optional: force mutation if identical fitness to a parent and configured
+        p1_hist_by_root = self._history_by_root(getattr(self, "split_history", []))
+        p2_hist_by_root = self._history_by_root(getattr(other, "split_history", []))
+
+        seen_entries: set[tuple[str, float]] = set()
+        child.split_history = []
+        for r in order_p1:
+            src = p1_hist_by_root if owner[r] == 1 else p2_hist_by_root
+            for entry in src.get(r, []):
+                if entry not in seen_entries:
+                    seen_entries.add(entry)
+                    child.split_history.append(entry)
+
+        # optional: force mutation if configured and child fitness equals a parent
         child.calculate_fitness()
-        force_mutation = False
-        if child.fitness is not None:
-            if self.fitness is not None and child.fitness == self.fitness:
-                force_mutation = True
-            if other.fitness is not None and child.fitness == other.fitness:
-                force_mutation = True
         import nesting.config as config
-        if force_mutation and getattr(config, "FORCE_MUTATION_ON_CROSSOVER", False):
-            old_f = child.fitness
+        # force = getattr(config, "FORCE_MUTATION_ON_CROSSOVER", False)
+        if config.FORCE_MUTATION_ON_CROSSOVER and (child.fitness in (self.fitness, other.fitness)):
+            before = child.fitness
             child.mutate()
             child.calculate_fitness()
-            if config.VERBOSE:
-                print(f"[DEBUG] Forced mutation changed fitness from {old_f} to {child.fitness}")
+            if getattr(config, "VERBOSE", False):
+                print(f"[DEBUG] Forced mutation: {before} -> {child.fitness}")
 
         return child
 
-
-
-    # def sync_order(self) -> None:
-    #     """Sync the order dict to reflect the current gene sequence."""
-    #     self.order = OrderedDict((p.id, p) for p in self.genes)
 
     def _signature(self) -> tuple:
         """
@@ -1128,34 +1034,20 @@ class Chromosome(Layout):
         """
         # Get signature based on genes
         gene_signature = tuple((p.id, p.rotation) for p in self.genes)
-        
-        # Include design params hash if available
         design_params_hash = None
         if self.design_params is not None:
-            
-            # Convert design params to a stable string representation and hash it
-            design_params_str = json.dumps(self.design_params, sort_keys=True)
-            design_params_hash = hash(design_params_str)
-    
-        # Return signature components
+            try:
+                design_params_str = json.dumps(self.design_params, sort_keys=True)
+                design_params_hash = hash(design_params_str)
+            except Exception:
+                design_params_hash = None
         return (gene_signature, design_params_hash)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Chromosome):
             return NotImplemented
-        self_sig = self._signature()
-        other_sig = other._signature()
-        return self_sig[0] == other_sig[0] and self_sig[1] == other_sig[1]
-
-    # def __hash__(self) -> int:
-    #     return hash(self._signature())
+        return self._signature() == other._signature()
 
     def __repr__(self) -> str:
-        signature = self._signature()
-        gene_signature = signature[0]
-        design_params_hash = signature[1]
-        
-        # Original gene signature representation
-        genes_str = str(gene_signature)
-        
-        return f"Chromosome(genes={genes_str}, design_params_hash={design_params_hash})"
+        sig = self._signature()
+        return f"Chromosome(genes={sig[0]}, design_params_hash={sig[1]})"

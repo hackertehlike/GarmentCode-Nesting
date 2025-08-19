@@ -208,6 +208,8 @@ class MetaGarment(pyg.Component):
             if not (self.belt_name or self.upper_name):
                 raise IncorrectElementConfiguration()
 
+
+    # TODO: make it work downstream with the 3D assembly
     def split_panel(self, panel_name, proportion=0.5):
         """Split a panel into two subpieces and replace it in the component hierarchy.
         
@@ -215,7 +217,8 @@ class MetaGarment(pyg.Component):
         and then replaces the original panel with the two new subpanels in the component structure.
         This ensures that the assembly() method will use the new subpanels instead of the original.
         
-            ```
+        Returns:
+            List[str]: Names of the new subpanels created from the split.
         """
         # find the panel
         panel = self.get_panel_by_name(panel_name)

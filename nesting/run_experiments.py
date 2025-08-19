@@ -7,18 +7,13 @@ Pattern nesting optimization using genetic algorithm
 """
 
 from __future__ import annotations
-import os, time, shutil
-import copy
+import os, time, shutil, traceback, json
 import yaml
-import json
-from itertools import product
-from pathlib import Path
-import traceback
-import sys
-
+import copy
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from pathlib import Path
 import nesting.config as config
 
 from nesting.path_extractor import PatternPathExtractor
@@ -26,12 +21,12 @@ from .evolution import Evolution
 from .layout import Container, Piece, Layout
 from assets.bodies.body_params import BodyParameters
 from nesting.metastatistics import MetaStatistics
+from .pattern_loader import load_pattern_bundle
 
 # -----------------------------------------------------------------------------
 # Helper functions
 # -----------------------------------------------------------------------------
 def _save_plot(fig, out_dir: str, fname: str) -> None:
-    """Save a matplotlib figure to a file."""
     os.makedirs(out_dir, exist_ok=True)
     fig.savefig(os.path.join(out_dir, fname), dpi=300, bbox_inches="tight")
     plt.close(fig)
@@ -39,102 +34,26 @@ def _save_plot(fig, out_dir: str, fname: str) -> None:
 # -----------------------------------------------------------------------------
 # Main function
 # -----------------------------------------------------------------------------
+
 def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
-    """
-    Run the genetic algorithm on multiple patterns.
-    
-    Args:
-        pattern_paths: List of paths to pattern files
-        output_dir: Directory to save results
-    """
-    # Create output directory
     os.makedirs(output_dir, exist_ok=True)
-    
-    # Track results across all patterns
     all_results = []
-    
-    # Process each pattern
+
     for pattern_path in pattern_paths:
         pattern_path = Path(pattern_path)
-        # Extract the pattern name without the "_specification" suffix
-        pattern_stem = pattern_path.stem
-        pattern_name = pattern_stem.replace("_specification", "") if pattern_stem.endswith("_specification") else pattern_stem
-        
-        print(f"\n{'='*60}")
-        print(f"Processing pattern: {pattern_name}")
-        print(f"{'='*60}")
-        
-        # Create pattern-specific output directory
-        pattern_output_dir = os.path.join(output_dir, pattern_name)
-        os.makedirs(pattern_output_dir, exist_ok=True)
-        
-        # Load pattern using PatternPathExtractor (like GUI does)
         try:
-            extractor = PatternPathExtractor(pattern_path)
-            panel_pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE)
-            
-            if not panel_pieces:
-                print(f"No pieces found in pattern {pattern_name}. Skipping.")
-                continue
-                
-            pieces = {
-                f"{piece.id}": copy.deepcopy(piece) for piece in panel_pieces.values()
-            }
-            
-            # Add copies if needed
-            # if config.NUM_COPIES > 0:
-            #     for i in range(config.NUM_COPIES):
-            #         for piece in panel_pieces.values():
-            #             copy_piece = copy.deepcopy(piece)
-            #             copy_piece.id = f"{piece.id}_copy{i+1}"
-            #             pieces[copy_piece.id] = copy_piece
-
-            
-            #     print(f"Created {config.NUM_COPIES+1} copies, {len(pieces)} pieces in total")
-
-
-            # Apply seam allowance and reset translations just like GUI
-            for piece in pieces.values():
-                piece.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
-                piece.translation = (0, 0)
+            pieces, design_params, body_params, pattern_name = load_pattern_bundle(pattern_path)
         except Exception as e:
-            print(f"Error loading pattern {pattern_name}: {e}")
+            print(f"Failed loading pattern {pattern_path}: {e}")
             traceback.print_exc()
             continue
-        
-        # Load design parameters
-        design_params = None
-        try:
-            yaml_path = pattern_path.parent / f"{pattern_name}_design_params.yaml"
-            if not yaml_path.exists():
-                raise FileNotFoundError(f"Design parameters file not found: {yaml_path}")
-            with open(yaml_path, "r", encoding="utf-8") as f:
-                yaml_data = yaml.safe_load(f)
-            if "design" not in yaml_data:
-                raise KeyError(f"No 'design' key in {yaml_path}")
-            design_params = yaml_data["design"]
-            print(f"Loaded design parameters from {yaml_path}")
-            
-        except Exception as e:
-            print(f"Error loading design parameters: {e}")
-            traceback.print_exc()
-        
-        # Load body parameters (like GUI does)
-        body_params = None
-        try:
-            body_path = pattern_path.parent / f"{pattern_name}_body_measurements.yaml"
-            if not body_path.exists():
-                raise FileNotFoundError(f"Body parameters file not found: {body_path}")
-            body_params = BodyParameters(body_path)
-            print(f"Body parameters loaded from {body_path}")
-        except Exception as e:
-            print(f"Error loading body parameters: {e}")
-            traceback.print_exc()
-        
-        # Create container
+
+        print(f"\n{'='*60}\nProcessing pattern: {pattern_name}\n{'='*60}")
+        pattern_output_dir = os.path.join(output_dir, pattern_name)
+        os.makedirs(pattern_output_dir, exist_ok=True)
+
         container = Container(config.CONTAINER_WIDTH_CM, config.CONTAINER_HEIGHT_CM)
-        
-        # Set up Evolution and run it
+
         start_time = time.time()
         try:
             print("Initializing Evolution...")
@@ -155,19 +74,16 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
                 body_params=body_params,
                 pattern_name=pattern_name,
             )
-            
             print("Running evolution...")
             best_chromosome = evo.run()
             if best_chromosome is None:
                 print(f"No valid solution found for {pattern_name}")
                 continue
-                
-            # Record elapsed time
+
             elapsed_time = time.time() - start_time
             print(f"Evolution completed in {elapsed_time:.2f} seconds")
             print(f"Best fitness: {best_chromosome.fitness:.4f}")
-            
-            # Save results
+
             result = {
                 'pattern': pattern_name,
                 'num_pieces': len(pieces),
@@ -176,87 +92,69 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
                 'elapsed_seconds': elapsed_time
             }
             all_results.append(result)
-            
-            # Save generation data
+
             gen_csv_path = os.path.join(pattern_output_dir, "generations.csv")
             with open(gen_csv_path, "w") as f:
                 f.write("Generation,BestFitness,AvgChildFitness,DeltaBest,ImprovementFromInitial\n")
-                # Handle the arrays more carefully to avoid index errors
                 for g in range(1, evo.generation + 1):
                     best_fitness = evo.best_fitness_history[g] if g < len(evo.best_fitness_history) else "NA"
                     avg_fitness = evo.avg_child_fitnesses[g-1] if g-1 < len(evo.avg_child_fitnesses) else "NA"
                     delta = evo.delta_best[g] if g < len(evo.delta_best) else "NA"
                     improvement_from_initial = evo.improvement_from_initial[g] if g < len(evo.improvement_from_initial) else "NA"
                     f.write(f"{g},{best_fitness},{avg_fitness},{delta},{improvement_from_initial}\n")
-            
-            # Save log
+
             log_path = os.path.join(pattern_output_dir, "evolution_log.txt")
             with open(log_path, "w") as f:
                 f.write("\n".join(evo.log_lines))
-                
-            # Update master statistics after each pattern
+
             try:
                 print(f"Updating master statistics for {pattern_name}...")
                 MetaStatistics.save_run_statistics(evo, elapsed_time)
             except Exception as e:
                 print(f"Failed to update master statistics: {e}")
                 traceback.print_exc()
-            
-            # Save fitness plot
+
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(range(1, len(evo.best_fitness_history)), 
-                   [evo.best_fitness_history[g] for g in range(1, len(evo.best_fitness_history))], 
-                   marker='o', label='Best Fitness')
-            ax.set(xlabel='Generation', ylabel='Fitness', 
-                   title=f'Fitness Evolution - {pattern_name}')
+            ax.plot(range(1, len(evo.best_fitness_history)), [evo.best_fitness_history[g] for g in range(1, len(evo.best_fitness_history))], marker='o', label='Best Fitness')
+            ax.set(xlabel='Generation', ylabel='Fitness', title=f'Fitness Evolution - {pattern_name}')
             ax.grid(True)
             _save_plot(fig, pattern_output_dir, "fitness_history.png")
-            
-            # Save delta best plot
+
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(range(1, len(evo.delta_best)), evo.delta_best[1:], marker='o')
-            ax.set(xlabel='Generation', ylabel='Δ-Best', 
-                   title=f'Generation-to-Generation Improvement - {pattern_name}')
+            ax.set(xlabel='Generation', ylabel='Δ-Best', title=f'Generation-to-Generation Improvement - {pattern_name}')
             ax.grid(True)
             _save_plot(fig, pattern_output_dir, "delta_best.png")
-            
-            # Save improvement from initial plot
+
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(range(1, len(evo.improvement_from_initial)), evo.improvement_from_initial[1:], marker='o', color='green')
-            ax.set(xlabel='Generation', ylabel='Improvement from Initial', 
-                   title=f'Cumulative Improvement from Generation 0 - {pattern_name}')
+            ax.set(xlabel='Generation', ylabel='Improvement from Initial', title=f'Cumulative Improvement from Generation 0 - {pattern_name}')
             ax.grid(True)
             _save_plot(fig, pattern_output_dir, "improvement_from_initial.png")
-            
+
             print(f"Results saved to {pattern_output_dir}")
-            
         except Exception as e:
             print(f"Error running evolution on {pattern_name}: {e}")
             traceback.print_exc()
             continue
-    
-    # Save summary of all patterns
+
     if all_results:
         summary_path = os.path.join(output_dir, "summary.csv")
         df = pd.DataFrame(all_results)
         df.to_csv(summary_path, index=False)
         print(f"\nSummary saved to {summary_path}")
-        
-        # Create summary plot
         if len(all_results) > 1:
             fig, ax = plt.subplots(figsize=(12, 8))
             patterns = [r['pattern'] for r in all_results]
             fitness = [r['best_fitness'] for r in all_results]
             ax.bar(patterns, fitness)
-            ax.set(xlabel='Pattern', ylabel='Best Fitness', 
-                   title='Fitness Comparison Across Patterns')
+            ax.set(xlabel='Pattern', ylabel='Best Fitness', title='Fitness Comparison Across Patterns')
             plt.xticks(rotation=45, ha='right')
             plt.tight_layout()
             _save_plot(fig, output_dir, "pattern_comparison.png")
     else:
         print("No successful results to save")
-    # This content is now handled within run_ga_on_patterns
-        
+
 # -----------------------------------------------------------------------------
 # Helper functions for running on multiple patterns
 # -----------------------------------------------------------------------------
@@ -322,8 +220,7 @@ if __name__ == "__main__":
         run_ga_on_patterns(pattern_paths)
     else:
         # Use the default pattern path
-        print("No patterns specified, using default pattern")
-        run_ga_on_patterns([config.DEFAULT_PATTERN_PATH])
+        raise ValueError("No pattern entered. Please enter a pattern.")
     
     # Generate aggregate reports after all patterns have been processed
     try:

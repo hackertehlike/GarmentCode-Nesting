@@ -17,11 +17,13 @@ import matplotlib.pyplot as plt
 # import io
 # import base64
 
-# from pygarment.garmentcode.params import DesignSampler
+from pygarment.garmentcode.params import DesignSampler
 from .path_extractor import *
 from .layout import *
 from .placement_engine import *
 import nesting.config as config
+from .pattern_loader import load_pattern_bundle  # added import
+
 # from nesting.panel_mapping import affected_panels, select_genes
 # from shapely.errors import GEOSException as TopologyException
 
@@ -564,157 +566,80 @@ class NestingGUI:
     
     def _load_pattern_core(self, path: Path, update_params: bool = True) -> None:
         """
-        Clear old state, load geometry + design parameters from *path*,
+        Clear old state, load geometry + design/body parameters from *path* using shared loader,
         and rebuild the sidebar.
         """
-        # Store the pattern path for regeneration
         self.pattern_path = path
-        
-        # Store current use_default_params state
         current_use_default_params = self.use_default_params
-        
-        # --- clear old GUI/scene state ---------------------------------
+
+        # reset GUI state
         self.panel_path_refs.clear()
         self.selected_panel = ""
         self.pieces.clear()
         self.drag_data.clear()
         self.scene.clear()
 
-        # --- geometry --------------------------------------------------
-        extractor = PatternPathExtractor(path)
-        
-        panel_pieces = extractor.get_all_panel_pieces(samples_per_edge=config.SAMPLES_PER_EDGE,)
-        # duplicate the pieces twice and add to pieces so we have 3 copies of each piece and add them to pieces
-       
-        # avoid modifying the original pieces
-        self.pieces.update({
-            f"{piece.id}": copy.deepcopy(piece) for piece in panel_pieces.values()
-        })
+        # --- shared loader -----------------------------------------------------
+        try:
+            pieces_dict, design_params, body_params, pattern_name = load_pattern_bundle(path)
+        except Exception as exc:
+            print(f"Failed to load pattern bundle: {exc}")
+            ui.notify(f"Failed to load pattern: {exc}", type="negative")
+            return
 
-        # # split the first piece into two halves
-        # if self.pieces:
-        #     first_id = next(iter(self.pieces))
-        #     original_piece = self.pieces.pop(first_id)
-        #     left_piece, right_piece = original_piece.split()
-        #     self.pieces[left_piece.id] = left_piece
-        #     self.pieces[right_piece.id] = right_piece
-
-        # split every piece into two halves
-        # for piece_id, piece in panel_pieces.items():
-        #     original_piece = self.pieces.pop(piece_id)
-        #     left_piece, right_piece = original_piece.split()
-        #     self.pieces[left_piece.id] = left_piece
-        #     self.pieces[right_piece.id] = right_piece
-
-        self.layout = Layout(self.pieces)
-
+        # apply NUM_COPIES logic
+        self.pieces.update(pieces_dict)
+        panel_pieces = list(pieces_dict.values())
         num_copies = config.NUM_COPIES
         for i in range(num_copies):
-            # Add copies of each piece with updated ids
-            for piece in panel_pieces.values():
-                copy_piece = copy.deepcopy(piece)
-                copy_piece.id = f"{piece.id}_copy{i+1}"
-                self.pieces[copy_piece.id] = copy_piece
+            for piece in panel_pieces:
+                cp = copy.deepcopy(piece)
+                cp.id = f"{piece.id}_copy{i+1}"
+                self.pieces[cp.id] = cp
+        if num_copies:
+            print(f"Loaded {num_copies+1} copies, {len(self.pieces)} pieces in total.")
 
-        print(f"Loaded {num_copies+1} copies, {len(self.pieces)} pieces in total.")
-
-        # print all the pieces
-        # for piece_id, piece in self.pieces.items():
-        #     print(f"Loaded piece: {piece_id} with translation {piece.translation} and rotation {piece.rotation}")
+        self.layout = Layout(self.pieces)
         self._rebuild_panel_outlines()
         self.pattern_loaded = True
-
         self._draw_outlines()
 
+        # --- params / body (respect existing flags) ----------------------------
         if update_params:
-            # --- design parameters ----------------------------------------
-            yaml_path = path.parent / "design_params.yaml"
-            try:
-                import yaml
-                if yaml_path.exists() and not self.use_default_params:
-                    with open(yaml_path, "r", encoding="utf-8") as f:
-                        self.design_params = yaml.safe_load(f).get("design", {})
-                    #print("Design parameters loaded from pattern folder:", self.design_params)
-                elif not self.use_default_params:
-                    with path.open("r", encoding="utf-8") as f:
-                        spec = json.load(f)
-                        self.design_params = spec.get("design", {})
-                    #print("Design parameters loaded from pattern JSON:", self.design_params)
-                else:
+            if not current_use_default_params and design_params is not None:
+                self.design_params = design_params
+            elif current_use_default_params:
+                # keep existing or fall back to default file if provided
+                if not self.design_params:
                     default_design_path = Path(config.DEFAULT_DESIGN_PARAM_PATH)
                     if default_design_path.exists():
-                        with open(default_design_path, "r", encoding="utf-8") as f:
-                            self.design_params = yaml.safe_load(f).get("design", {})
-                        #print("Default design parameters loaded:", self.design_params)
-                    else:
-                        #print(f"Default design params file not found: {default_design_path}")
-                        self.design_params = {}
-            except Exception as exc:
-                print(f"Failed to load design parameters: {exc}")
-                self.design_params = {}
-
-        if update_params:
-            # --- body parameters -----------------------------------------
-            body_path = path.parent / "body_measurements.yaml"
-            default_body_path = Path(config.DEFAULT_BODY_PARAM_PATH)
-            try:
-                from assets.bodies.body_params import BodyParameters
-                if body_path.exists() and not self.use_default_params:
-                    self.body_params = BodyParameters(body_path)
-                    print("Body parameters loaded from pattern folder")
-                elif default_body_path.exists() and self.use_default_params:
-                    self.body_params = BodyParameters(default_body_path)
-                    print("Default body parameters loaded")
-                else:
-                    print(f"No body parameters found")
-                    self.body_params = None
-            except Exception as exc:
-                print(f"Failed to load body parameters: {exc}")
-                self.body_params = None
-
-        if update_params:
-            # --- design sampler -----------------------------------------
-            try:
-                from pygarment.garmentcode.params import DesignSampler
-                import tempfile
-
-                if self.design_params:
-                    print("Creating design sampler from design parameters...")
-                    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.yaml') as tmp:
-                        import yaml
-                        yaml_content = {'design': self.design_params}
-                        yaml.dump(yaml_content, tmp, default_flow_style=False)
-                        tmp_path = tmp.name
-                        print(f"Created temporary YAML file: {tmp_path}")
-
+                        try:
+                            import yaml as _yaml
+                            with open(default_design_path, 'r', encoding='utf-8') as f:
+                                self.design_params = _yaml.safe_load(f).get('design', {})
+                        except Exception as _exc:
+                            print(f"Could not load default design params: {_exc}")
+            if not current_use_default_params and body_params is not None:
+                self.body_params = body_params
+            elif current_use_default_params and not getattr(self, 'body_params', None):
+                default_body_path = Path(config.DEFAULT_BODY_PARAM_PATH)
+                if default_body_path.exists():
                     try:
-                        print(f"Creating DesignSampler with file: {tmp_path}")
-                        self.design_sampler = DesignSampler(tmp_path)
-                        print("DesignSampler created successfully!")
-                    except Exception as e:
-                        print(f"Error creating DesignSampler: {e}")
-                        self.design_sampler = None
+                        from assets.bodies.body_params import BodyParameters as _BP
+                        self.body_params = _BP(default_body_path)
+                    except Exception as _exc:
+                        print(f"Could not load default body params: {_exc}")
 
-                    print(f"Design sampler state: {self.design_sampler is not None}")
-                else:
-                    self.design_sampler = None
-                    print("No design parameters available for sampler")
-            except Exception as exc:
-                print(f"Failed to create design sampler: {exc}")
-                self.design_sampler = None
-
-            # Keep a MetaGarment instance for successive operations
+            # MetaGarment instance
             try:
                 from assets.garment_programs.meta_garment import MetaGarment
                 if self.body_params and self.design_params:
                     self.meta_garment = MetaGarment("GUI_base", self.body_params, self.design_params)
-            except Exception as e:
-                print(f"Failed to create MetaGarment: {e}")
+            except Exception as exc:
+                print(f"Failed to create MetaGarment: {exc}")
 
-        # --- sidebar ---------------------------------------------------
-        self._build_sidebar()          # see next section
-        
-        # Restore use_default_params state unless explicitly set in the method call
+        # rebuild sidebar
+        self._build_sidebar()
         self.use_default_params = current_use_default_params
 
 
