@@ -473,13 +473,14 @@ class MetaStatistics:
                         master_df = pd.read_csv(cls.MASTER_CSV_PATH, header=None)
                         # Expected column names based on ensure_master_files_exist
                         expected_columns = [
-                            'timestamp', 'pattern_name', 'num_pieces', 'total_generations',
+                            'timestamp', 'run_tag', 'config_hash', 'pattern_name', 'num_pieces', 'total_generations',
                             'initial_fitness', 'final_fitness', 'improvement_percent',
                             'fitness_at_gen_5', 'fitness_at_gen_10', 'fitness_at_gen_15', 'fitness_at_gen_20',
                             'improvement_at_gen_5', 'improvement_at_gen_10', 'improvement_at_gen_15', 'improvement_at_gen_20',
                             'elapsed_time', 'decoder', 'fitness_metric', 'crossover_method', 'mutation_rate',
                             'container_width', 'container_height'
                         ]
+
                         # Assign column names up to the number of columns we have
                         master_df.columns = expected_columns[:len(master_df.columns)]
                         print(f"Assigned column names to headerless CSV. Columns: {list(master_df.columns)}")

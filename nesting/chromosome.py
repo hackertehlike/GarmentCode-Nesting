@@ -807,16 +807,20 @@ class Chromosome(Layout):
         out: list["Piece"] = []
         root_rank = self._root_order_index_map(order_child_roots)
 
+        # while we have remaining pieces in either parent
         while i < len(p1_keep) or j < len(p2_keep):
-            if j >= len(p2_keep):
+            if j >= len(p2_keep): # all of p2_keep has been added
                 out.append(copy.deepcopy(p1_keep[i])); i += 1; continue
-            if i >= len(p1_keep):
+            if i >= len(p1_keep): # all of p1_keep has been added
                 out.append(copy.deepcopy(p2_keep[j])); j += 1; continue
 
-            r1 = p1_keep[i].root_id
-            r2 = p2_keep[j].root_id
-            rank1 = root_rank.get(r1, 10**9)
-            rank2 = root_rank.get(r2, 10**9)
+            r1 = p1_keep[i].root_id # root_id of the next piece in p1
+            r2 = p2_keep[j].root_id # root_id of the next piece in p2
+
+            assert r1 in root_rank and r2 in root_rank
+
+            rank1 = root_rank[r1]
+            rank2 = root_rank[r2]
 
             if rank1 < rank2:
                 out.append(copy.deepcopy(p1_keep[i])); i += 1
@@ -908,13 +912,29 @@ class Chromosome(Layout):
         for pos in segment_positions:
             owner[order_p1[pos]] = 1
 
-        # closure: any differing group touched by a P1 seed ⇒ whole group P1
-        # (NON-transitive: newly claimed roots do not propagate ownership further)
+        # --- TRANSITIVE closure over overlapping differing groups ---
+        # Build a lightweight adjacency: connect roots that appear together in a differing group.
         seed_roots = {r for r, v in owner.items() if v == 1}
-        for g in groups:
-            if any(r in seed_roots for r in g["roots"]):
-                for r in g["roots"]:
-                    owner[r] = 1
+        if groups and seed_roots:
+            adj: dict[str, set[str]] = {r: set() for r in order_p1}
+            for g in groups:
+                rs = list(g["roots"])
+                if len(rs) > 1:
+                    hub = rs[0]
+                    for r in rs[1:]:
+                        adj[hub].add(r)
+                        adj[r].add(hub)
+            # BFS from all seed roots to pull entire connected components to owner=1
+            from collections import deque  # local import (already available globally, kept for clarity)
+            q = deque(seed_roots)
+            seen = set(seed_roots)
+            while q:
+                r = q.popleft()
+                owner[r] = 1
+                for nb in adj[r]:
+                    if nb not in seen:
+                        seen.add(nb)
+                        q.append(nb)
 
         # remaining undecided groups: single owner (default P2)
         for g in groups:

@@ -464,7 +464,7 @@ class Panel(BaseComponent):
         """Split this panel vertically by finding the optimal split line that 
         minimizes area difference between the two resulting parts.
 
-        Uses the shared optimal_polygon_split utility function from the nesting
+        Uses the shared polygon_split utility function from the nesting
         module to find the optimal split line. All curvature information is lost 
         as the polygon is approximated by straight edges.
         
