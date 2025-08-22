@@ -650,12 +650,24 @@ class NestingGUI:
             tmp_path = Path(tmp.name)
 
         try:
-            self._load_pattern_core(tmp_path)
+            # --- CLEAR ALL PARAM/STATE WHEN A NEW JSON IS UPLOADED ---
+            # Do NOT carry over params/samplers/meta from previous session
+            self.design_params = {}
+            self.body_params = None
+            self.design_sampler = None
+            self.meta_garment = None
+            self.use_default_params = False  # ensure no defaults get injected
+
+            # Load only geometry; do not (re)load any params
+            self._load_pattern_core(tmp_path, update_params=False)
+
+            # Rebuild the sidebar so it reflects empty/cleared params
+            self._build_sidebar()
+
             ui.notify("Pattern loaded ✓", type="positive")
         except Exception as exc:
             ui.notify(f"Could not load pattern: {exc}", type="negative")
-            raise                    # optional: keep traceback in server log
-
+            raise  # keep traceback in server log
 
     def _load_default_pattern(self):
         """
