@@ -229,6 +229,78 @@ class MetaStatistics:
                 summary["reinitialized"].append(str(temporal_path))
         print("Purged aggregate and root statistics; headers reinitialized where applicable")
         return summary
+    
+    @classmethod
+    def purge_runs(cls, run_tags: List[str] | None, config_hashes: List[str] | None) -> Dict[str, Any]:
+        """Remove specific runs from the master statistics and mutation statistics.
+
+        Args:
+            run_tags: Optional list of run tags to purge.
+            config_hashes: Optional list of configuration hashes to purge.
+
+        Returns:
+            Summary dictionary with counts of removed rows from each CSV.
+        """
+        if not run_tags and not config_hashes:
+            print("No run tags or configuration hashes provided; nothing to purge.")
+            return {"master_rows_removed": 0, "mutation_rows_removed": 0}
+
+        cls.ensure_master_files_exist()
+
+        try:
+            master_df = pd.read_csv(cls.MASTER_CSV_PATH)
+        except Exception:
+            master_df = pd.DataFrame()
+
+        try:
+            mutation_df = pd.read_csv(cls.MASTER_MUTATION_CSV_PATH)
+        except Exception:
+            mutation_df = pd.DataFrame()
+
+        if master_df.empty:
+            print("Master statistics CSV is empty; nothing to purge.")
+            return {"master_rows_removed": 0, "mutation_rows_removed": 0}
+
+        mask = pd.Series([False] * len(master_df))
+        if run_tags:
+            mask |= master_df.get('run_tag', pd.Series(dtype=str)).astype(str).isin(run_tags)
+        if config_hashes:
+            mask |= master_df.get('config_hash', pd.Series(dtype=str)).astype(str).isin(config_hashes)
+
+        removed_master_df = master_df[mask]
+        remaining_master_df = master_df[~mask]
+
+        if removed_master_df.empty:
+            print("No matching runs found; nothing removed.")
+            return {"master_rows_removed": 0, "mutation_rows_removed": 0}
+
+        print(
+            f"About to remove {len(removed_master_df)} rows from {cls.MASTER_CSV_PATH} "
+            f"and associated rows from {cls.MASTER_MUTATION_CSV_PATH}."
+        )
+        confirmation = input("Type 'yes' to confirm: ").strip().lower()
+        if confirmation not in {"y", "yes"}:
+            print("Purge cancelled.")
+            return {"master_rows_removed": 0, "mutation_rows_removed": 0}
+
+        remaining_master_df.to_csv(cls.MASTER_CSV_PATH, index=False)
+
+        mutation_rows_removed = 0
+        if not mutation_df.empty and 'timestamp' in mutation_df.columns:
+            timestamps = removed_master_df['timestamp'].astype(str).unique()
+            mask_mut = mutation_df['timestamp'].astype(str).isin(timestamps)
+            mutation_rows_removed = int(mask_mut.sum())
+            mutation_df = mutation_df[~mask_mut]
+            mutation_df.to_csv(cls.MASTER_MUTATION_CSV_PATH, index=False)
+
+        print(
+            f"Removed {len(removed_master_df)} master rows and {mutation_rows_removed} mutation rows."
+        )
+        return {
+            "master_rows_removed": int(len(removed_master_df)),
+            "mutation_rows_removed": mutation_rows_removed,
+        }
+
 
     @classmethod
     def ensure_master_files_exist(cls):
@@ -375,61 +447,65 @@ class MetaStatistics:
         return result
     
     @classmethod
-    def _save_mutation_statistics(cls, evolution_instance):
+    def _save_mutation_statistics(cls, evolution_instance, run_tag: str = None, config_hash: str = None):
         """
         Save mutation statistics to the master mutation CSV.
-        
+
         Args:
             evolution_instance: The Evolution instance that completed a run
+            run_tag: Optional tag for the run
+            config_hash: Optional hash of the configuration
         """
         # Get mutation data from the swarm DataFrame
         if evolution_instance._mutation_swarm_data.empty:
             return
-            
+
         df = evolution_instance._mutation_swarm_data
-        
+
         # Group mutations by type and calculate statistics
         by_type = df.groupby('mutation_type')
-        
+
         # Also group by generation ranges
         early = df[df['generation'] <= 5]
         mid = df[(df['generation'] > 5) & (df['generation'] <= 10)]
         late = df[df['generation'] > 10]
-        
+
         early_by_type = early.groupby('mutation_type')
         mid_by_type = mid.groupby('mutation_type')
         late_by_type = late.groupby('mutation_type')
-        
+
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         run_id = f"{evolution_instance.pattern_name}_{timestamp}"
-        
+
         # Save aggregated statistics to master mutation CSV
         with open(cls.MASTER_MUTATION_CSV_PATH, 'a', newline='') as f:
             writer = csv.writer(f)
-            
+
             for mutation_type in df['mutation_type'].unique():
                 # Get overall stats
                 total_data = by_type.get_group(mutation_type) if mutation_type in by_type.groups else None
                 total_avg = total_data['fitness_gain'].mean() if total_data is not None else 0
                 total_count = len(total_data) if total_data is not None else 0
-                
+
                 # Get early-generation stats (1-5)
                 early_data = early_by_type.get_group(mutation_type) if mutation_type in early_by_type.groups else None
                 early_avg = early_data['fitness_gain'].mean() if early_data is not None else 0
                 early_count = len(early_data) if early_data is not None else 0
-                
+
                 # Get mid-generation stats (6-10)
                 mid_data = mid_by_type.get_group(mutation_type) if mutation_type in mid_by_type.groups else None
                 mid_avg = mid_data['fitness_gain'].mean() if mid_data is not None else 0
                 mid_count = len(mid_data) if mid_data is not None else 0
-                
+
                 # Get late-generation stats (11+)
                 late_data = late_by_type.get_group(mutation_type) if mutation_type in late_by_type.groups else None
                 late_avg = late_data['fitness_gain'].mean() if late_data is not None else 0
                 late_count = len(late_data) if late_data is not None else 0
-                
+
                 writer.writerow([
                     timestamp,
+                    run_tag or '',
+                    config_hash or '',
                     evolution_instance.pattern_name,
                     mutation_type,
                     total_avg,
@@ -441,15 +517,17 @@ class MetaStatistics:
                     late_avg,
                     late_count
                 ])
-        
+
         # Save raw mutation data for detailed analysis
         with open(cls.MASTER_MUTATION_RAW_DATA_PATH, 'a', newline='') as f:
             writer = csv.writer(f)
-            
+
             # Write each individual mutation record with run identifier
             for _, row in df.iterrows():
                 writer.writerow([
                     timestamp,
+                    run_tag or '',
+                    config_hash or '',
                     evolution_instance.pattern_name,
                     row['mutation_type'],
                     row['fitness_gain'],
@@ -572,7 +650,7 @@ class MetaStatistics:
         cls._generate_pattern_comparison(master_df, reports_dir)
 
         # Generate average improvement from initial by generation
-        cls._generate_average_improvement_by_generation(reports_dir)
+        cls._generate_average_improvement_by_generation(reports_dir, run_tags=run_tags)
 
         print(f"Aggregate reports generated in {reports_dir}")
     
@@ -837,26 +915,40 @@ class MetaStatistics:
                     f.write("Cannot analyze patterns - pattern_name column missing\n")
 
     @classmethod
-    def _generate_average_improvement_by_generation(cls, output_dir):
+    def _generate_average_improvement_by_generation(cls, output_dir, run_tags: List[str] | None = None):
         """
         Generate analysis of average improvement from initial fitness by generation.
         This reads all individual generations.csv files and aggregates them.
+
+        Args:
+            output_dir: Directory where output files should be written.
+            run_tags: Optional list of run tags to restrict which generation files
+                are included. When provided, only files matching
+                ``nesting/experiments/runs/*/<run_tag>/generations.csv`` will be
+                considered.
         """
         try:
-            # Find all generation CSV files in likely results directories
-            candidate_dirs = [
-                Path(config.RUNS_DIR),              # unified experiments runs
-                Path(config.SAVE_LOGS_PATH),        # legacy path (now same as RUNS_DIR)
-                Path("results"),                   # legacy root-level results
-                Path(config.SAVE_LOGS_PATH).parent / "results"  # legacy nesting/results
-            ]
-            generation_files = []
-            
-            for base_dir in candidate_dirs:
-                if base_dir.exists():
-                    # Search recursively for generations.csv
-                    for path in base_dir.rglob("generations.csv"):
-                        generation_files.append(path)
+            generation_files: List[Path] = []
+
+            if run_tags:
+                runs_dir = Path(config.RUNS_DIR)
+                if runs_dir.exists():
+                    for tag in run_tags:
+                        generation_files.extend(runs_dir.glob(f"*/{tag}/generations.csv"))
+            else:
+                # Find all generation CSV files in likely results directories
+                candidate_dirs = [
+                    Path(config.RUNS_DIR),              # unified experiments runs
+                    Path(config.SAVE_LOGS_PATH),        # legacy path (now same as RUNS_DIR)
+                    Path("results"),                   # legacy root-level results
+                    Path(config.SAVE_LOGS_PATH).parent / "results"  # legacy nesting/results
+                ]
+
+                for base_dir in candidate_dirs:
+                    if base_dir.exists():
+                        # Search recursively for generations.csv
+                        for path in base_dir.rglob("generations.csv"):
+                            generation_files.append(path)
             
             if not generation_files:
                 print("No generation CSV files found for analysis")
@@ -872,10 +964,16 @@ class MetaStatistics:
             for gen_file in generation_files:
                 try:
                     df = pd.read_csv(gen_file)
-                    # Extract pattern name from parent folder
-                    pattern_name = gen_file.parent.name
+                    # Extract pattern name and run tag from path
+                    run_tag = gen_file.parent.name
+                    pattern_name = gen_file.parent.parent.name if run_tags else run_tag
                     df['pattern_name'] = pattern_name
-                    df['run_id'] = f"{pattern_name}_{gen_file.stat().st_mtime}"
+                    if run_tags:
+                        df['run_tag'] = run_tag
+                        df['config_hash'] = gen_file.parent.parent.parent.name  # Assuming config_hash is part of the path
+                        df['run_id'] = f"{pattern_name}_{run_tag}_{gen_file.stat().st_mtime}"
+                    else:
+                        df['run_id'] = f"{pattern_name}_{gen_file.stat().st_mtime}"
                     all_generation_data.append(df)
                 except Exception as e:
                     print(f"Error reading {gen_file}: {e}")
@@ -893,7 +991,7 @@ class MetaStatistics:
             
             # Calculate average improvement from initial by generation
             if 'ImprovementFromInitial' in combined_df.columns:
-                avg_by_generation = combined_df.groupby('Generation').agg({
+                avg_by_generation = combined_df.groupby(['Generation', 'run_tag', 'config_hash']).agg({
                     'ImprovementFromInitial': ['mean', 'std', 'count'],
                     'BestFitness': ['mean', 'std'],
                     'DeltaBest': ['mean', 'std']
@@ -919,7 +1017,7 @@ class MetaStatistics:
                 plt.plot(generations, avg_improvement, marker='o', linewidth=2, markersize=6, color='blue')
                 plt.fill_between(generations, 
                                 avg_improvement - std_improvement, 
-                                avg_improvement + std_improvement, 
+                                avg_improvement + std_improvement,
                                 alpha=0.3, color='blue')
                 
                 plt.title('Average Improvement from Initial Fitness by Generation', fontsize=14)
@@ -1011,7 +1109,7 @@ class MetaStatistics:
             # Get unique generations for better width calculation
             unique_generations = df['generation'].unique().shape[0]
             
-            # Adjust the point size based on the amount of data
+            # Adjust the point size and alpha based on the amount of data
             point_size = 2.5 if len(df) > 1000 else 3.5
             point_alpha = 0.5 if len(df) > 1000 else 0.7
             
@@ -1195,6 +1293,7 @@ class MetaStatisticsCLI:
         """CLI helper to purge all aggregate CSVs and reports."""
         MetaStatistics.purge_all()
 
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Meta statistics maintenance")
