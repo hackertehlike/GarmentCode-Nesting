@@ -136,6 +136,9 @@ EXTEND_THRESHOLD: float        = 0.1
 MAX_GENERATIONS: int    = 20
 GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
 
+# How often to flush log lines to disk (in generations)
+LOG_FLUSH_INTERVAL: int = GENERATION_PER_FLUSH
+
 # log
 SAVE_LOGS = True
 # Unified experiments directory structure (replaces separate run_logs/results/aggregate_stats)
@@ -190,6 +193,7 @@ def __dict__() -> dict:
         "MAX_GENERATIONS": MAX_GENERATIONS,
         "MUTATION_WEIGHTS": MUTATION_WEIGHTS,
         "SAVE_LOGS": SAVE_LOGS,
+        "LOG_FLUSH_INTERVAL": LOG_FLUSH_INTERVAL,
         "SAVE_LOGS_PATH": SAVE_LOGS_PATH,
         "LOG_TIME": LOG_TIME,
         "LOG_DESIGN_PARAM_PATHS": LOG_DESIGN_PARAM_PATHS,
