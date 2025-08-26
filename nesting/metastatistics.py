@@ -458,14 +458,17 @@ class MetaStatistics:
                 ])
     
     @classmethod
-    def generate_aggregate_reports(cls):
+    def generate_aggregate_reports(cls, run_tags: List[str] | None = None, config_hashes: List[str] | None = None):
         """
         Generate aggregate reports and visualizations from the master statistics.
-        This should be called after evolution runs have been completed.
+
+        Args:
+            run_tags: Optional list of run tags to include in the reports.
+            config_hashes: Optional list of configuration hashes to include.
         """
         # Ensure master files exist (creates empty files with headers if they don't)
         cls.ensure_master_files_exist()
-            
+
         # Load the data - handle cases where files don't exist or are empty
         try:
             # Check if file exists and has data beyond headers
@@ -496,7 +499,7 @@ class MetaStatistics:
                     master_df = pd.DataFrame()
             else:
                 master_df = pd.DataFrame()
-                
+
             # Check mutation data file
             if cls.MASTER_MUTATION_CSV_PATH.exists() and cls.MASTER_MUTATION_CSV_PATH.stat().st_size > 100:
                 mutation_df = pd.read_csv(cls.MASTER_MUTATION_CSV_PATH)
@@ -506,31 +509,56 @@ class MetaStatistics:
             print(f"Error loading master statistics files: {e}")
             master_df = pd.DataFrame()
             mutation_df = pd.DataFrame()
-        
+
+        # Apply optional filters
+        allowed_timestamps = None
+        if run_tags:
+            master_df = master_df[master_df['run_tag'].isin(run_tags)]
+        if config_hashes:
+            master_df = master_df[master_df['config_hash'].isin(config_hashes)]
+        if run_tags or config_hashes:
+            allowed_timestamps = master_df['timestamp'].astype(str).unique()
+            if not mutation_df.empty and 'timestamp' in mutation_df.columns:
+                mutation_df = mutation_df[mutation_df['timestamp'].astype(str).isin(allowed_timestamps)]
+
         if len(master_df) < 1:
-            print("Not enough data to generate aggregate reports yet. Run at least one evolution first.")
+            msg = "Not enough data to generate aggregate reports yet. Run at least one evolution first."
+            if run_tags or config_hashes:
+                msg = "No data available after applying filters; cannot generate reports."
+            print(msg)
             return
-            
+
         # We'll generate what we can even with a single data point
         print(f"Generating reports with {len(master_df)} data points")
         print(f"Master DataFrame columns: {list(master_df.columns)}")
-            
+
         # Create output directory - use the same parent directory as the master files
         reports_dir = cls.MASTER_DIR / "reports"
+        if run_tags or config_hashes:
+            def _sanitize(s: str) -> str:
+                return ''.join(c if c.isalnum() or c in ('-', '_') else '_' for c in s)
+            parts = []
+            if run_tags:
+                parts.append("runs_" + "-".join(_sanitize(t) for t in run_tags))
+            if config_hashes:
+                parts.append("configs_" + "-".join(_sanitize(h) for h in config_hashes))
+            reports_dir = reports_dir / "__".join(parts)
         reports_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Generate reports - each method will check if there's enough data
         cls._generate_checkpoint_comparison(master_df, reports_dir)
-        
+
         if not mutation_df.empty:
             cls._generate_mutation_effectiveness(mutation_df, reports_dir)
         else:
             print("No mutation data available for analysis")
-            
+
         # Load raw mutation data file for detailed analysis
         try:
             if cls.MASTER_MUTATION_RAW_DATA_PATH.exists() and cls.MASTER_MUTATION_RAW_DATA_PATH.stat().st_size > 100:
                 mutation_raw_df = pd.read_csv(cls.MASTER_MUTATION_RAW_DATA_PATH)
+                if allowed_timestamps is not None and not mutation_raw_df.empty:
+                    mutation_raw_df = mutation_raw_df[mutation_raw_df['timestamp'].astype(str).isin(allowed_timestamps)]
                 if not mutation_raw_df.empty:
                     cls._generate_mutation_fitness_changes_by_type(mutation_raw_df, reports_dir)
                 else:
@@ -540,12 +568,12 @@ class MetaStatistics:
         except Exception as e:
             print(f"Error loading raw mutation data: {e}")
             print("No detailed mutation data available for analysis")
-            
+
         cls._generate_pattern_comparison(master_df, reports_dir)
-        
+
         # Generate average improvement from initial by generation
         cls._generate_average_improvement_by_generation(reports_dir)
-        
+
         print(f"Aggregate reports generated in {reports_dir}")
     
     @classmethod
