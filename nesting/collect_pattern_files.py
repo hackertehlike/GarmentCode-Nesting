@@ -12,9 +12,6 @@ def collect_files(source_dir, dest_dir, file_extensions=['.json', '.yaml', '.yml
         dest_dir (str): Destination directory
         file_extensions (list): List of file extensions to collect
     """
-    # Ensure the destination folder exists
-    os.makedirs(dest_dir, exist_ok=True)
-    
     # Get list of garment folders (rand_XXX folders)
     data_dir = os.path.join(source_dir, "data")
     if not os.path.exists(data_dir):
@@ -30,32 +27,41 @@ def collect_files(source_dir, dest_dir, file_extensions=['.json', '.yaml', '.yml
     for garment_folder in garment_folders:
         garment_path = os.path.join(data_dir, garment_folder)
         garment_dest = os.path.join(dest_dir, garment_folder)
-        
-        # Create destination folder for this garment
-        os.makedirs(garment_dest, exist_ok=True)
-        
-        # Walk through the garment folder and collect files
+
+        # Walk through the garment folder and collect matching files first
+        matches = []
         for root, _, files in os.walk(garment_path):
             for filename in files:
                 if any(filename.lower().endswith(ext) for ext in file_extensions):
-                    source_path = os.path.join(root, filename)
-                    
-                    # Create relative path to preserve structure
-                    rel_path = os.path.relpath(root, garment_path)
-                    if rel_path == ".":
-                        dest_path = os.path.join(garment_dest, filename)
-                    else:
-                        subfolder = os.path.join(garment_dest, rel_path)
-                        os.makedirs(subfolder, exist_ok=True)
-                        dest_path = os.path.join(subfolder, filename)
-                    
-                    try:
-                        shutil.copy2(source_path, dest_path)
-                        print(f"Copied {source_path} → {dest_path}")
-                    except shutil.SameFileError:
-                        print(f"Skipped (same file exists): {dest_path}")
-                    except Exception as e:
-                        print(f"Error copying {source_path}: {e}")
+                    matches.append((root, filename))
+
+        if not matches:
+            print(f"Skipping {garment_folder}: no matching files found")
+            continue
+
+        # Create destination folder for this garment only if matches exist
+        os.makedirs(garment_dest, exist_ok=True)
+
+        # Copy the collected files
+        for root, filename in matches:
+            source_path = os.path.join(root, filename)
+
+            # Create relative path to preserve structure
+            rel_path = os.path.relpath(root, garment_path)
+            if rel_path == ".":
+                dest_path = os.path.join(garment_dest, filename)
+            else:
+                subfolder = os.path.join(garment_dest, rel_path)
+                os.makedirs(subfolder, exist_ok=True)
+                dest_path = os.path.join(subfolder, filename)
+
+            try:
+                shutil.copy2(source_path, dest_path)
+                print(f"Copied {source_path} → {dest_path}")
+            except shutil.SameFileError:
+                print(f"Skipped (same file exists): {dest_path}")
+            except Exception as e:
+                print(f"Error copying {source_path}: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description='Collect JSON and YAML files from T7 volume')
