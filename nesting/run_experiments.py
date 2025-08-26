@@ -7,7 +7,7 @@ Pattern nesting optimization using genetic algorithm
 """
 
 from __future__ import annotations
-import os, time, shutil, traceback, json
+import os, time, shutil, traceback, json, hashlib, uuid
 import yaml
 import copy
 import matplotlib.pyplot as plt
@@ -31,12 +31,31 @@ def _save_plot(fig, out_dir: str, fname: str) -> None:
     fig.savefig(os.path.join(out_dir, fname), dpi=300, bbox_inches="tight")
     plt.close(fig)
 
+def _serialize_config(config_obj):
+    """
+    Serialize the config object, filtering out non-serializable attributes.
+    """
+    def default_serializer(obj):
+        if isinstance(obj, (int, float, str, bool, type(None))):
+            return obj
+        return str(obj)  # Fallback to string representation
+
+    return {
+        k: default_serializer(v) for k, v in vars(config_obj).items()
+    }
+
 # -----------------------------------------------------------------------------
 # Main function
 # -----------------------------------------------------------------------------
 
 def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
     os.makedirs(output_dir, exist_ok=True)
+
+    run_tag = uuid.uuid4().hex
+    config_hash = hashlib.md5(
+        json.dumps(_serialize_config(config), sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
     all_results = []
 
     for pattern_path in pattern_paths:
@@ -49,7 +68,7 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
             continue
 
         print(f"\n{'='*60}\nProcessing pattern: {pattern_name}\n{'='*60}")
-        pattern_output_dir = os.path.join(output_dir, pattern_name)
+        pattern_output_dir = os.path.join(output_dir, pattern_name, run_tag)
         os.makedirs(pattern_output_dir, exist_ok=True)
 
         container = Container(config.CONTAINER_WIDTH_CM, config.CONTAINER_HEIGHT_CM)
@@ -109,7 +128,9 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
 
             try:
                 print(f"Updating master statistics for {pattern_name}...")
-                MetaStatistics.save_run_statistics(evo, elapsed_time)
+                MetaStatistics.save_run_statistics(
+                    evo, elapsed_time, run_tag=run_tag, config_hash=config_hash
+                )
             except Exception as e:
                 print(f"Failed to update master statistics: {e}")
                 traceback.print_exc()
