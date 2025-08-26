@@ -924,42 +924,17 @@ class Chromosome(Layout):
 
         return out
 
-    # ------------------------- OX-k crossover (with weave) -------------------------
-
-    def crossover_oxk(self, other: "Chromosome", k: int = 1) -> "Chromosome":
-        """
-        OX-k over *root order* with param-group closure & family integrity,
-        preserving non-contiguous interleaving via an owner-stable weave.
-
-        Invariants enforced:
-        - Every root appears in child (no loss).
-        - For each root, the child's *leaf set* equals exactly one parent's leaf set (no mixing within a root).
-        - For any differing-parameter group, *all* its roots come from a single parent.
-        - split_history kept only from the owning parent per root.
-        """
-        import random
-        from copy import deepcopy
-        from pygarment.garmentcode.utils import nested_set, nested_get, nested_del
-
-        # --- Root orders
-        order_p1 = self._root_order()
-        order_p2 = other._root_order()
-
-        if not order_p1 and not order_p2:
-            raise RuntimeError("Both parents have no roots (empty chromosomes).")
-            # return Chromosome([], self.container, origin="crossover",
-            #                   design_params=deepcopy(self.design_params),
-            #                   body_params=self.body_params)
-
-        # must share the same root set (leaf counts may differ due to splits)
-        if set(order_p1) != set(order_p2):
-            raise RuntimeError("Parents must contain identical root sets (pre-split panels).")
-
+    def _select_oxk_root_segments(
+        self,
+        order_p1: list[str],
+        order_p2: list[str],
+        k: int,
+    ) -> tuple[list[str], set[int]]:
+        """Select root segments from *order_p1* using OX-k and return the
+        resulting child root order along with the positions seeded from
+        parent 1."""
         n = len(order_p1)
-
-        # --- Step 1: True OX-k on parent-1 root order (to produce child root order)
         if n >= 2:
-            # k = max(1, min(k, n // 2))
             k = min(k, n // 2) if k > 0 else 1
             cuts = sorted(random.sample(range(n), 2 * k))
         else:
@@ -974,35 +949,33 @@ class Chromosome(Layout):
             a, b = cuts[i], cuts[i + 1]
             for pos in range(a, b + 1):
                 root = order_p1[pos]
-                #if child_roots[pos] is None:
                 child_roots[pos] = root
                 chosen.add(root)
                 segment_positions.add(pos)
 
-        # Fill remaining slots with roots from P2, skipping already chosen ones
         it2 = (root for root in order_p2 if root not in chosen)
         for i in range(n):
             if child_roots[i] is None:
                 try:
                     child_roots[i] = next(it2)
                 except StopIteration:
-                    remaining = [root for root in order_p2 if root not in set(child_roots)]
+                    remaining = [r for r in order_p2 if r not in set(child_roots)]
                     child_roots[i] = remaining[0] if remaining else order_p1[i]
 
         assert all(r is not None for r in child_roots), "OX-k produced empty slots."
+        return [r for r in child_roots], segment_positions
 
-        # --- Step 2: Differing-parameter groups & ownership (closure)
-        groups = self._conflict_groups(self.design_params, other.design_params, set(order_p1))
-
-        # owner[root] ∈ {None, "P1", "P2"}
+    def _propagate_root_ownership(
+        self,
+        groups: list[dict],
+        order_p1: list[str],
+        segment_positions: set[int],
+    ) -> dict[str, str | None]:
+        """Propagate root ownership across differing-parameter groups."""
         owner: dict[str, str | None] = {r: None for r in order_p1}
-
-        # seed from P1 segments
         for pos in segment_positions:
             owner[order_p1[pos]] = "P1"
 
-        # --- TRANSITIVE closure over overlapping differing groups ---
-        # Build a lightweight adjacency: connect roots that appear together in a differing group.
         seed_roots = {r for r, v in owner.items() if v == "P1"}
         if groups and seed_roots:
             adj: dict[str, set[str]] = {r: set() for r in order_p1}
@@ -1013,8 +986,6 @@ class Chromosome(Layout):
                     for r in rs[1:]:
                         adj[hub].add(r)
                         adj[r].add(hub)
-            # BFS from all seed roots to pull entire connected components to owner=P1
-            from collections import deque  # local import (already available globally, kept for clarity)
             q = deque(seed_roots)
             seen = set(seed_roots)
             while q:
@@ -1025,38 +996,96 @@ class Chromosome(Layout):
                         seen.add(nb)
                         q.append(nb)
 
-        # remaining undecided groups: single owner (default P2)
         for g in groups:
             if all(owner[r] is None for r in g["roots"]):
                 for r in g["roots"]:
                     owner[r] = "P2"
 
-        # roots not in any differing group: default by segment position
         roots_in_groups = set().union(*(g["roots"] for g in groups)) if groups else set()
         for pos, r in enumerate(order_p1):
             if owner[r] is None and r not in roots_in_groups:
                 owner[r] = "P1" if pos in segment_positions else "P2"
 
-        # no mixed ownership inside any differing group
         for g in groups:
             assert len({owner[r] for r in g["roots"]}) == 1, "Mixed ownership in a differing-parameter group."
+        return owner
 
-        # --- Step 3: Build child by owner-stable weave (preserve non-contiguous patterns)
+    def _merge_design_params(
+        self,
+        owner: dict[str, str | None],
+        groups: list[dict],
+        dp1: JsonDict | None,
+        dp2: JsonDict | None,
+    ) -> JsonDict | None:
+        """Merge design parameters from parents based on root ownership."""
+        child_dp = copy.deepcopy(dp1) if dp1 is not None else None
+        if child_dp is not None and dp2 is not None and groups:
+            for g in groups:
+                g_owner = next(iter({owner[r] for r in g["roots"]}))
+                if g_owner == "P2":
+                    for path in g["paths"]:
+                        try:
+                            node = nested_get(dp2, path.split("."))
+                        except Exception:
+                            node = None
+                        if node is None:
+                            try:
+                                nested_del(child_dp, path.split("."))
+                            except Exception:
+                                pass
+                        else:
+                            nested_set(child_dp, path.split("."), copy.deepcopy(node))
+        return child_dp
+
+    def _propagate_split_history(
+        self,
+        owner: dict[str, str | None],
+        p1_hist: list,
+        p2_hist: list,
+        order: list[str],
+    ) -> list:
+        """Return split history entries from the owning parent for each root."""
+        p1_hist_by_root = self._history_by_root(p1_hist)
+        p2_hist_by_root = self._history_by_root(p2_hist)
+        seen_entries: set[tuple[str, float]] = set()
+        out: list = []
+        for r in order:
+            src = p1_hist_by_root if owner[r] == "P1" else p2_hist_by_root
+            for entry in src.get(r, []):
+                if entry not in seen_entries:
+                    seen_entries.add(entry)
+                    out.append(entry)
+        return out
+
+    # ------------------------- OX-k crossover (with weave) -------------------------
+
+    def crossover_oxk(self, other: "Chromosome", k: int = 1) -> "Chromosome":
+        """OX-k crossover over root order with parameter-group closure."""
+        order_p1 = self._root_order()
+        order_p2 = other._root_order()
+
+        if not order_p1 and not order_p2:
+            raise RuntimeError("Both parents have no roots (empty chromosomes).")
+
+        if set(order_p1) != set(order_p2):
+            raise RuntimeError("Parents must contain identical root sets (pre-split panels).")
+
+        child_roots, segment_positions = self._select_oxk_root_segments(order_p1, order_p2, k)
+
+        groups = self._conflict_groups(self.design_params, other.design_params, set(order_p1))
+        owner = self._propagate_root_ownership(groups, order_p1, segment_positions)
+
         child_genes: list[Piece] = self._build_child_by_owner_weave(
-            order_child_roots=[r for r in child_roots if r is not None],
+            order_child_roots=child_roots,
             owner=owner,
             p1_seq=self.genes,
             p2_seq=other.genes,
         )
 
-        # --- Step 4: Post-build assertions
-        # A) no root lost
         child_roots_set = {g.root_id for g in child_genes}
         if child_roots_set != set(order_p1):
             raise RuntimeError(f"Root mismatch: expected {sorted(order_p1)}, got {sorted(child_roots_set)}")
 
-        # B) each root's leaves equal exactly one parent's leaf set
-        # collect per-root leaf IDs from parents (only leaves: id not in parent_ids)
         def _leaf_ids(seq: list["Piece"]) -> dict[str, set[str]]:
             parent_ids = {p.parent_id for p in seq if p.parent_id}
             out: dict[str, set[str]] = {}
@@ -1078,28 +1107,8 @@ class Chromosome(Layout):
                     f"nor P2={sorted(p2_leaf_ids.get(r, set()))}"
                 )
 
-        # --- Step 5: Merge design_params per owning group
-        child_dp = deepcopy(self.design_params) if self.design_params is not None else None
-        if child_dp is not None and other.design_params is not None and groups:
-            for g in groups:
-                g_owner = next(iter({owner[r] for r in g["roots"]}))  # uniform by assertion
-                if g_owner == "P2":
-                    for path in g["paths"]:
-                        node = None
-                        try:
-                            node = nested_get(other.design_params, path.split("."))
-                        except Exception:
-                            node = None
-                        if node is None:
-                            try:
-                                nested_del(child_dp, path.split("."))
-                            except Exception:
-                                pass
-                        else:
-                            nested_set(child_dp, path.split("."), deepcopy(node))
-                # if g_owner == 1, P1 values already in child_dp via deepcopy
+        child_dp = self._merge_design_params(owner, groups, self.design_params, other.design_params)
 
-        # --- Step 6: Build child & propagate split_history relevant to the child
         child = Chromosome(
             pieces=child_genes,
             container=self.container,
@@ -1109,22 +1118,15 @@ class Chromosome(Layout):
             initial_design_params=self.initial_design_params,
         )
 
-        p1_hist_by_root = self._history_by_root(getattr(self, "split_history", []))
-        p2_hist_by_root = self._history_by_root(getattr(other, "split_history", []))
+        child.split_history = self._propagate_split_history(
+            owner,
+            getattr(self, "split_history", []),
+            getattr(other, "split_history", []),
+            order_p1,
+        )
 
-        seen_entries: set[tuple[str, float]] = set()
-        child.split_history = []
-        for r in order_p1:
-            src = p1_hist_by_root if owner[r] == "P1" else p2_hist_by_root
-            for entry in src.get(r, []):
-                if entry not in seen_entries:
-                    seen_entries.add(entry)
-                    child.split_history.append(entry)
-
-        # optional: force mutation if configured and child fitness equals a parent
         child.calculate_fitness()
         import nesting.config as config
-        # force = getattr(config, "FORCE_MUTATION_ON_CROSSOVER", False)
         if config.FORCE_MUTATION_ON_CROSSOVER and (child.fitness in (self.fitness, other.fitness)):
             before = child.fitness
             child.mutate()
@@ -1132,9 +1134,7 @@ class Chromosome(Layout):
             if getattr(config, "VERBOSE", False):
                 print(f"[DEBUG] Forced mutation: {before} -> {child.fitness}")
 
-        # Warn if any root/panel was lost compared to the parents' root set
         child._warn_if_panel_lost(set(order_p1), "crossover_oxk")
-
         return child
 
 
