@@ -716,10 +716,15 @@ class Evolution:
         best_chrom = max(new_population, key=lambda c: c.fitness)
         self._save_generation_svg(best_chrom, self.generation)
 
-        if (len(self._metrics_buffer) >= config.GENERATION_PER_FLUSH
-                or self.generation == self.num_generations) and config.SAVE_LOGS:
-            self._flush_metrics()
+        flush_metrics = (
+            len(self._metrics_buffer) >= config.GENERATION_PER_FLUSH
+            or self.generation == self.num_generations
+        )
+        if flush_metrics and config.SAVE_LOGS:
+            self._flush_metrics()  # also flushes logs
             self.update_plots()
+        elif config.SAVE_LOGS and self.generation % config.LOG_FLUSH_INTERVAL == 0:
+            self._flush_log()
 
         self._log(f"Generation {self.generation} completed in {time.time() - start:.2f}s.")
 
@@ -824,13 +829,17 @@ class Evolution:
 
     def _flush_log(self) -> None:
         """Write accumulated log lines to disk (append or create)."""
-        # Final overwrite for a clean, deduplicated log; guarded for thread safety
-        with self._log_lock:
-            with self.log_path.open("w", encoding="utf-8") as f:
-                for line in self.log_lines:
-                    f.write(line + "\n")
+        # Ensure the log directory exists before writing
+        if not self.log_path.parent.exists():
+            self.log_path.parent.mkdir(parents=True, exist_ok=True)
+        if not self.log_path.exists():
+            self.log_path.touch()
 
-    
+        with self.log_path.open("w", encoding="utf-8") as f:
+            for line in self.log_lines:
+                f.write(line + "\n")
+
+
     def _flush_metrics(self) -> None:
         """Thread-safe flush of buffered metrics to CSV."""
         self._log("Flushing metrics to CSV…")
@@ -857,6 +866,9 @@ class Evolution:
             writer.writerows(self._metrics_buffer)
 
         self._metrics_buffer.clear()
+
+        # Ensure logs are persisted whenever metrics are flushed
+        self._flush_log()
 
 
     def update_plots(self) -> None:
