@@ -92,6 +92,8 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
                 design_params=design_params,
                 body_params=body_params,
                 pattern_name=pattern_name,
+                run_tag=run_tag,
+                config_hash=config_hash,
             )
             print("Running evolution...")
             best_chromosome = evo.run()

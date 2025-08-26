@@ -170,6 +170,8 @@ class MetaStatistics:
     MASTER_MUTATION_RAW_DATA_PATH = MASTER_DIR / "master_mutation_raw_data.csv"
     # New file to store average improvement from initial by generation
     AVERAGE_IMPROVEMENT_BY_GEN_PATH = MASTER_DIR / "average_improvement_by_generation.csv"
+    # New file to store per-generation progress snapshots
+    MASTER_PROGRESS_CSV_PATH = MASTER_DIR / "master_run_progress.csv"
     CHECKPOINT_GENERATIONS = [5, 10, 15, 20]
     
     @classmethod
@@ -353,6 +355,71 @@ class MetaStatistics:
                 writer.writerow([
                     'timestamp', 'pattern_name', 'mutation_type', 'fitness_gain', 'generation', 'run_id'
                 ])
+
+        # Create progress CSV if it doesn't exist
+        if not cls.MASTER_PROGRESS_CSV_PATH.exists():
+            with open(cls.MASTER_PROGRESS_CSV_PATH, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow([
+                    'timestamp', 'run_tag', 'config_hash', 'pattern_name', 'num_pieces', 'current_generation',
+                    'initial_fitness', 'current_best_fitness', 'improvement_percent',
+                    'fitness_at_gen_5', 'fitness_at_gen_10', 'fitness_at_gen_15', 'fitness_at_gen_20',
+                    'improvement_at_gen_5', 'improvement_at_gen_10', 'improvement_at_gen_15', 'improvement_at_gen_20',
+                    'decoder', 'fitness_metric', 'crossover_method', 'mutation_rate',
+                    'container_width', 'container_height', 'is_final'
+                ])
+
+    @classmethod
+    def append_run_progress(cls, evolution_instance, run_tag: str | None = None, config_hash: str | None = None, is_final: bool = False):
+        """Append a per-generation progress snapshot to the progress CSV.
+
+        Safe to call each generation. Does not aggregate mutation stats (keeps it light).
+        """
+        cls.ensure_master_files_exist()
+
+        # Pull current metrics
+        initial_fitness = evolution_instance.best_fitness_history[0] if evolution_instance.best_fitness_history else 0
+        current_best = evolution_instance.best_fitness_history[-1] if evolution_instance.best_fitness_history else 0
+        improvement = current_best - initial_fitness
+        improvement_percent = (improvement / initial_fitness * 100) if initial_fitness > 0 else 0
+
+        # Build row
+        row = {
+            'timestamp': time.strftime("%Y%m%d_%H%M%S"),
+            'run_tag': run_tag or '',
+            'config_hash': config_hash or '',
+            'pattern_name': getattr(evolution_instance, 'pattern_name', ''),
+            'num_pieces': len(getattr(evolution_instance, 'pieces', [])),
+            'current_generation': getattr(evolution_instance, 'generation', 0),
+            'initial_fitness': initial_fitness,
+            'current_best_fitness': current_best,
+            'improvement_percent': improvement_percent,
+            'decoder': config.SELECTED_DECODER,
+            'fitness_metric': config.SELECTED_FITNESS_METRIC,
+            'crossover_method': config.SELECTED_CROSSOVER,
+            'mutation_rate': config.MUTATION_RATE,
+            'container_width': config.CONTAINER_WIDTH_CM,
+            'container_height': config.CONTAINER_HEIGHT_CM,
+            'is_final': bool(is_final)
+        }
+
+        # Add checkpoint fields where available
+        checkpoints = cls._extract_checkpoint_metrics(evolution_instance)
+        for gen in cls.CHECKPOINT_GENERATIONS:
+            row[f'fitness_at_gen_{gen}'] = checkpoints.get(gen, {}).get('fitness', '')
+            row[f'improvement_at_gen_{gen}'] = checkpoints.get(gen, {}).get('improvement_percent', '')
+
+        # Write out
+        with open(cls.MASTER_PROGRESS_CSV_PATH, 'a', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=[
+                'timestamp', 'run_tag', 'config_hash', 'pattern_name', 'num_pieces', 'current_generation',
+                'initial_fitness', 'current_best_fitness', 'improvement_percent',
+                'fitness_at_gen_5', 'fitness_at_gen_10', 'fitness_at_gen_15', 'fitness_at_gen_20',
+                'improvement_at_gen_5', 'improvement_at_gen_10', 'improvement_at_gen_15', 'improvement_at_gen_20',
+                'decoder', 'fitness_metric', 'crossover_method', 'mutation_rate',
+                'container_width', 'container_height', 'is_final'
+            ])
+            writer.writerow(row)
     
     @classmethod
     def save_run_statistics(cls, evolution_instance, elapsed_time: float, run_tag: str = None, config_hash: str = None):
@@ -534,6 +601,42 @@ class MetaStatistics:
                     row['generation'],
                     run_id
                 ])
+
+    @classmethod
+    def append_mutation_swarm_rows(cls, evolution_instance, rows: List[Dict[str, Any]], run_tag: str | None = None, config_hash: str | None = None):
+        """Append raw mutation rows mid-run. Rows are dicts with keys: mutation_type, fitness_gain, generation."""
+        if not rows:
+            return
+        cls.ensure_master_files_exist()
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        run_id = f"{evolution_instance.pattern_name}_{timestamp}"
+        with open(cls.MASTER_MUTATION_RAW_DATA_PATH, 'a', newline='') as f:
+            writer = csv.writer(f)
+            for r in rows:
+                writer.writerow([
+                    timestamp,
+                    run_tag or '',
+                    config_hash or '',
+                    evolution_instance.pattern_name,
+                    r.get('mutation_type', ''),
+                    r.get('fitness_gain', 0.0),
+                    r.get('generation', getattr(evolution_instance, 'generation', 0)),
+                    run_id,
+                ])
+
+    @classmethod
+    def append_generation_metrics(cls, evolution_instance, run_tag: str | None = None, config_hash: str | None = None, recompute_average: bool = False):
+        """Append per-generation metrics to progress CSV and optionally recompute global average-improvement-by-generation CSV in MASTER_DIR."""
+        # We already logged one progress row via append_run_progress. This hook is here to optionally recompute averages.
+        if not recompute_average:
+            return
+        try:
+            reports_dir = cls.MASTER_DIR / "reports"
+            reports_dir.mkdir(parents=True, exist_ok=True)
+            # Re-run average aggregation into MASTER file and reports file
+            cls._generate_average_improvement_by_generation(reports_dir, run_tags=[run_tag] if run_tag else None)
+        except Exception as e:
+            print(f"Average-by-generation recompute failed: {e}")
     
     @classmethod
     def generate_aggregate_reports(cls, run_tags: List[str] | None = None, config_hashes: List[str] | None = None):

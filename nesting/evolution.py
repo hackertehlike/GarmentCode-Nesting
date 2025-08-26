@@ -49,15 +49,35 @@ class Evolution:
         extend_window: int = 10,
         extend_threshold: float = 0.1,
         max_generations: int = 200,
-        design_params: dict = None,
-        body_params: object = None,
-        pattern_name: str = None,
+    design_params: dict = None,
+    body_params: object = None,
+    pattern_name: str = None,
+    run_tag: str | None = None,
+    config_hash: str | None = None,
     ) -> None:
         self.generation = 0
         self.container = container
         self.pieces = pieces
         self.population: list[Chromosome] = []
         self.pattern_name = pattern_name or ""
+        self.run_tag = run_tag
+        self.config_hash = config_hash
+
+        # Fill defaults for tagging if not supplied
+        if self.run_tag is None:
+            self.run_tag = getattr(config, 'RUN_TAG', None)
+            if self.run_tag is None:
+                try:
+                    from .metastatistics import MetaStatistics
+                    self.run_tag = MetaStatistics._get_default_run_tag()
+                except Exception:
+                    self.run_tag = ''
+        if self.config_hash is None:
+            try:
+                from .metastatistics import MetaStatistics
+                self.config_hash = MetaStatistics._compute_config_hash()
+            except Exception:
+                self.config_hash = ''
         
         # Initialize logging first to avoid attribute errors
         self.log_lines = []
@@ -727,6 +747,29 @@ class Evolution:
             self._flush_log()
 
         self._log(f"Generation {self.generation} completed in {time.time() - start:.2f}s.")
+        # Append a lightweight progress snapshot to aggregate stats (if enabled)
+        try:
+            from .metastatistics import MetaStatistics
+            MetaStatistics.append_run_progress(self, run_tag=self.run_tag, config_hash=self.config_hash, is_final=False)
+        except Exception as e:
+            # Never fail the run because of progress logging
+            self._log(f"[MetaStats] progress append failed: {e}")
+
+        # Append per-generation mutation stats (raw + aggregated) if available
+        try:
+            from .metastatistics import MetaStatistics
+            # mut_swarm_rows is built earlier in next_generation; use if present
+            if 'mut_swarm_rows' in locals() and mut_swarm_rows:
+                MetaStatistics.append_mutation_swarm_rows(self, mut_swarm_rows, run_tag=self.run_tag, config_hash=self.config_hash)
+        except Exception as e:
+            self._log(f"[MetaStats] mutation rows append failed: {e}")
+
+        # Append per-generation generation metrics and update averages
+        try:
+            from .metastatistics import MetaStatistics
+            MetaStatistics.append_generation_metrics(self, run_tag=self.run_tag, config_hash=self.config_hash, recompute_average=True)
+        except Exception as e:
+            self._log(f"[MetaStats] generation metrics append failed: {e}")
 
     def run(self) -> Chromosome:
         """Evolve the population, applying dynamic‑stopping logic if enabled."""
@@ -824,6 +867,12 @@ class Evolution:
         # Return the best chromosome from the population
         if self.population:
             best = max(self.population, key=lambda c: c.fitness)
+            # Mark final snapshot
+            try:
+                from .metastatistics import MetaStatistics
+                MetaStatistics.append_run_progress(self, run_tag=self.run_tag, config_hash=self.config_hash, is_final=True)
+            except Exception as e:
+                self._log(f"[MetaStats] final progress append failed: {e}")
             return best
         return None
 
