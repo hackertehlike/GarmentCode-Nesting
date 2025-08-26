@@ -9,6 +9,7 @@ import csv
 from fnmatch import fnmatch
 from pathlib import Path
 from typing import Callable, Iterable, Sequence, Any
+from functools import wraps
 
 from collections import deque
 import copy
@@ -37,6 +38,18 @@ def register_metric(name: str):
 # ──────────────────────────────────────────────────────────────────────────────
 
 JsonDict = dict[str, Any]
+
+
+def track_roots(fn: Callable):
+    """Decorator to track root IDs before and after a mutation."""
+    @wraps(fn)
+    def wrapper(self, *args, **kwargs):
+        before = {g.root_id for g in self.genes}
+        result = fn(self, *args, **kwargs)
+        mutation = fn.__name__.replace("_mutate_", "")
+        self._warn_if_panel_lost(before, mutation)
+        return result
+    return wrapper
 
 
 def _run_decoder(chrom: "Chromosome", decoder_name: str):
@@ -467,10 +480,9 @@ class Chromosome(Layout):
 
         return genes
 
+    @track_roots
     def _mutate_split(self):
         #from nesting.panel_mapping import dispatch_split
-
-        before = {g.root_id for g in self.genes}
 
         # Track already-split root pieces across calls
         self.split_set = getattr(self, 'split_set', set())
@@ -517,16 +529,15 @@ class Chromosome(Layout):
             if not success:
                 raise ValueError(f"[Chromosome] MetaGarment split failed for {piece.id}")
 
-        self._warn_if_panel_lost(before, "split")
         return True
 
+    @track_roots
     def _mutate_rotate(self):
-        before = {g.root_id for g in self.genes}
         for _ in range(random.randint(1, len(self.genes))):
             idx = random.randrange(len(self.genes))
             self.genes[idx].rotate(random.choice(config.ALLOWED_ROTATIONS))
-        self._warn_if_panel_lost(before, "rotate")
 
+    @track_roots
     def _mutate_swap(self, k=config.SWAP_MUTATION_K):
         """
         Swap two non-overlapping contiguous blocks of length k.
@@ -546,7 +557,7 @@ class Chromosome(Layout):
 
         print(f"[DEBUG] k: {k}, max_k: {max_k}")
 
-        before = {g.root_id for g in self.genes}
+    # roots tracked by decorator
 
         # Build all valid non-overlapping (i, j) with i < j and j >= i + k
         pairs: list[tuple[int, int]] = []
@@ -569,14 +580,14 @@ class Chromosome(Layout):
         post = self.genes[j + k:]
         self.genes = pre + B + mid + A + post
 
-        self._warn_if_panel_lost(before, "swap")
+    # post-check is handled by decorator
 
+    @track_roots
     def _mutate_inversion(self):
-        before = {g.root_id for g in self.genes}
         i, j = sorted(random.sample(range(len(self.genes)), 2))
         self.genes[i:j + 1] = reversed(self.genes[i:j + 1])
-        self._warn_if_panel_lost(before, "inversion")
 
+    @track_roots
     def _mutate_insertion(self, k = 1):
         if len(self.genes) < 2:
             return
@@ -586,90 +597,110 @@ class Chromosome(Layout):
         if k > n:
             raise ValueError("Invalid insertion operation: k too big for n")
         
-        before = {g.root_id for g in self.genes}
-
+    # roots tracked by decorator
         
         i = random.randrange(len(self.genes))
         insert_at = random.randrange(len(self.genes) + 1)
         gene = self.genes.pop(i)
         self.genes.insert(insert_at, gene)
-        self._warn_if_panel_lost(before, "insertion")
+    # post-check is handled by decorator
 
+    @track_roots
     def _mutate_scramble(self):
-        before = {g.root_id for g in self.genes}
         i, j = sorted(random.sample(range(len(self.genes)), 2))
         subset = self.genes[i:j + 1]
         random.shuffle(subset)
         self.genes[i:j + 1] = subset
-        self._warn_if_panel_lost(before, "scramble")
+        # post-check is handled by decorator
 
     # ── design‑parameter mutation ──────────────────────────
 
+    def _select_candidate_params(self) -> list[str]:
+        """Return a shuffled list of parameter paths to try."""
+        params = list(self._mutatable_params)
+        random.shuffle(params)
+        return params
+
+    def _apply_single_param_change(
+        self,
+        param: str,
+        original_design_params: JsonDict,
+        original_genes: list[Piece],
+        original_fitness: float,
+    ) -> bool:
+        """Attempt a single parameter modification and evaluate fitness."""
+        self.design_params = copy.deepcopy(original_design_params)
+        self.genes = copy.deepcopy(original_genes)
+
+        node = nested_get(self.design_params, param.split("."))
+        p_type = node.get("type", "float")
+        old_val = node["v"]
+        base_val = nested_get(self.initial_design_params, param.split("."))["v"]
+        new_val = _random_value(old_val, base_val, p_type, node["range"])
+
+        if old_val == new_val:
+            return False
+
+        nested_set(self.design_params, param.split(".") + ["v"], new_val)
+
+        if self._apply_design_param_change(param, old_val, new_val):
+            self.calculate_fitness()
+            if self.fitness != original_fitness:
+                self._record_mutation_stats(param, old_val, new_val, original_fitness)
+                return True
+        return False
+
+    def _record_mutation_stats(
+        self, param: str, old_val: Any, new_val: Any, old_fitness: float
+    ) -> None:
+        """Store parameter change and mutation improvement statistics."""
+        print(f"[Chromosome] Successful mutation on {param}: {old_val} -> {new_val}")
+        self.param_changes_this_gen.append(
+            {"param_path": param, "old_value": old_val, "new_value": new_val}
+        )
+        self.old_fitness = old_fitness
+        self.new_fitness = self.fitness
+        if self.new_fitness is not None and old_fitness is not None:
+            self.mutation_improvement = self.new_fitness - old_fitness
+
+    def _restore_state_after_failure(
+        self,
+        original_design_params: JsonDict,
+        original_genes: list[Piece],
+        original_fitness: float,
+    ) -> None:
+        """Restore chromosome state when no parameter change succeeds."""
+        self.design_params = original_design_params
+        self.genes = original_genes
+        self.fitness = original_fitness
+        if config.VERBOSE:
+            print("[Chromosome] No design param mutation resulted in a fitness change.")
+
+    @track_roots
     def _mutate_design_params(self):
         if not (self.design_params and self.body_params):
             if config.VERBOSE:
                 print("[Chromosome] design‑param mutation skipped - missing design or body params")
             return
 
-        before = {g.root_id for g in self.genes}
+        # roots tracked by decorator
 
-        # Ensure fitness is calculated before attempting mutation
         if self.fitness is None:
             self.calculate_fitness()
         original_fitness = self.fitness
 
-        # Backup original state
         original_design_params = copy.deepcopy(self.design_params)
         original_genes = copy.deepcopy(self.genes)
 
-        # Somewhat weird way of doing things incoming
-        # It works and I am terrified of breaking it so for now it stays
-        # TODOLOW: Refactor this to be less weird
+        for param in self._select_candidate_params():
+            if self._apply_single_param_change(
+                param, original_design_params, original_genes, original_fitness
+            ):
+                return True
 
-        # Get a shuffled list of parameters to try
-        mutatable_params = list(self._mutatable_params)
-        random.shuffle(mutatable_params)
-
-        # loop until we find a successful mutation or exhaust all options
-        for param in mutatable_params:
-            # Restore state for the new attempt
-            self.design_params = copy.deepcopy(original_design_params)
-            self.genes = copy.deepcopy(original_genes)
-
-            node = nested_get(self.design_params, param.split("."))
-            p_type = node.get("type", "float")
-            old_val = node["v"]
-            base_val = nested_get(self.initial_design_params, param.split("."))["v"]
-            new_val = _random_value(old_val, base_val, p_type, node["range"])
-
-            if old_val == new_val:
-                continue # Value didn't change, try next parameter
-
-            nested_set(self.design_params, param.split(".") + ["v"], new_val)
-
-            # Regenerate garment and update pieces
-            if self._apply_design_param_change(param, old_val, new_val):
-                self.calculate_fitness() # Recalculate fitness with the new design
-                if self.fitness != original_fitness:
-                    print(f"[Chromosome] Successful mutation on {param}: {old_val} -> {new_val}")
-                    # Store this specific parameter change for tracking
-                    if not hasattr(self, 'param_changes_this_gen'):
-                        self.param_changes_this_gen = []
-                    self.param_changes_this_gen.append({
-                        'param_path': param,
-                        'old_value': old_val,
-                        'new_value': new_val
-                    })
-                    self._warn_if_panel_lost(before, "design_params_1")
-                    return True # Success
-
-        # If loop completes, no mutation led to a fitness change, restore state
-        self.design_params = original_design_params
-        self.genes = original_genes
-        self.fitness = original_fitness
-        if config.VERBOSE:
-            print("[Chromosome] No design param mutation resulted in a fitness change.")
-        self._warn_if_panel_lost(before, "design_params_2")
+        self._restore_state_after_failure(
+            original_design_params, original_genes, original_fitness
+        )
         return False
 
     def _apply_design_param_change(self, path: str, old_val: Any, new_val: Any) -> bool:
