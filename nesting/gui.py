@@ -23,6 +23,7 @@ from .layout import *
 from .placement_engine import *
 import nesting.config as config
 from .pattern_loader import load_pattern_bundle  # added import
+from nesting.metastatistics import MetaStatistics
 
 # from nesting.panel_mapping import affected_panels, select_genes
 # from shapely.errors import GEOSException as TopologyException
@@ -66,6 +67,9 @@ class NestingGUI:
         #self.yaml_loaded     = False
 
         self.design_params: Dict[str, any] = {}  # design specification from JSON
+        # Ensure these attributes always exist before any optional creation/assignment paths
+        self.body_params = None
+        self.design_sampler = None
         self.meta_garment = None  # keeps MetaGarment instance for incremental operations
 
         # Currently selected panel for style editing.
@@ -1057,8 +1061,8 @@ class NestingGUI:
                 
                 # Debug: Print what we're passing to Evolution
                 print(f"Design params: {self.design_params is not None}")
-                print(f"Body params: {self.body_params is not None}")
-                print(f"Design sampler: {self.design_sampler is not None}")
+                print(f"Body params: {getattr(self, 'body_params', None) is not None}")
+                print(f"Design sampler: {getattr(self, 'design_sampler', None) is not None}")
                 
                 # Get the pattern name from the current specification if available
                 pattern_name = None
@@ -1087,6 +1091,11 @@ class NestingGUI:
                 if best_chromosome is None:
                     ui.notify("No valid solution found by the Genetic Algorithm", type="negative")
                     return
+                # Update aggregate master statistics for GUI-driven runs
+                try:
+                    MetaStatistics.save_run_statistics(evo, elapsed_time=0.0)
+                except Exception as e:
+                    print(f"Failed to update master statistics from GUI run: {e}")
                 
                 self.pieces = {p.id: copy.deepcopy(p) for p in best_chromosome.genes}
                 self.layout = Layout(self.pieces)          # keep layout in sync
@@ -1101,10 +1110,10 @@ class NestingGUI:
             #     view    = LayoutView(layout)
             #     decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
 
-            elif method == "BLF":
-                decoder = BottomLeftFill(layout, container, step=config.GRAVITATE_STEP)
+            # elif method == "BLF":
+                #decoder = BottomLeftFill(layout, container, step=config.GRAVITATE_STEP)
             elif method == "TOPOS":
-                decoder = TOPOSDecoder(layout, container, step=config.GRAVITATE_STEP)
+                decoder = TOPOSDecoder(layout, container, eval_terms=("distance",))
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             

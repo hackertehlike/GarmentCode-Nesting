@@ -213,7 +213,7 @@ class PlacementEngine:
         ys = [v[1] for v in flattened]
         return min(ys)
 
-    # ── UNIFIED α-SHAPE (CONCAVE HULL) HELPER ────────────────────────────────────
+    # ──  α-SHAPE (CONCAVE HULL) HELPER ────────────────────────────────────
 
     def alpha_shape(self,
                     points: List[Tuple[float, float]],
@@ -584,8 +584,6 @@ class RandomDecoder(PlacementEngine):
 @register_decoder("NFP")
 class NFPDecoder(PlacementEngine):
     """
-    NFPDecoder inherits concave‐hull utilities from PlacementEngine but
-    provides its own decode() and _find_best_position() using NFP logic.
     """
 
     def __init__(self, layout: Layout, container: Container, *, step=None, **kwargs):
@@ -713,515 +711,380 @@ class NFPDecoder(PlacementEngine):
         return self._nfp_cache[key]
     
 
-@register_decoder("BLF")
-class BottomLeftFill(PlacementEngine):
-    """
-    Implementation of the Bottom-Left Fill (BLF) algorithm.
-    
-    1. Calculate the feasible region (IFR - NFPs)
-    2. Find the bottom-left most point in this region
-    3. Place the piece with its top reference point at this position
-    
-    Adapted from https://github.com/seanys/2D-Irregular-Packing-Algorithm/
-    """
-    
-    def __init__(self, layout: Layout, container: Container, *, vertical: bool = False, **kwargs):
-        super().__init__(layout, container)
-        self.vertical = vertical  # Whether to prioritize vertical placement
-        self._nfp_cache = {}  # Cache for No-Fit Polygons to avoid recalculations
-        
-    def decode(self):
-        """Place all pieces using the Bottom-Left Fill strategy."""
-        # First piece is placed at the bottom-left corner
-        if self.layout.order:
-            first_id, first_piece = next(iter(self.layout.order.items()))
-            self._place_first_piece(first_piece)
-            self.placed.append(first_piece)
-            
-            # Place remaining pieces
-            for _, piece in list(self.layout.order.items())[1:]:
-                success = self._place_piece(piece)
-                if success:
-                    self.placed.append(piece)
-        
-        # Return a list of (id, x, y, rotation) for all placed pieces
-        return [(p.id, p.translation[0], p.translation[1], p.rotation) for p in self.placed]
-    
-    def _place_first_piece(self, piece: Piece):
-        """Place the first piece at the bottom-left corner of the container."""
-        # First anchor against top-right, then gravitate to bottom-left
-        # (same pattern as BottomLeftDecoder)
-        x0, y0 = self.anchor(piece)
-        x, y = self.gravitate(piece, x0, y0)
-        piece.translation = (x, y)
-        
-    def _get_nfp(self, stationary_id: str, moving_id: str, 
-                 stationary_poly: List[Tuple[float, float]], 
-                 moving_poly: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
-        """
-        Return (cached) no-fit polygon between stationary and moving polygons.
-        If not in cache, calculate it and store in cache.
-        """
-        # Create a cache key based on piece IDs
-        key = (stationary_id, moving_id)
-        
-        if key not in self._nfp_cache:
-            # Clean both polygons before calculating NFP
-            cleaned_stationary = utils.clean_polygon_coordinates(stationary_poly)
-            cleaned_moving = utils.clean_polygon_coordinates(moving_poly)
-            
-            # Calculate NFP if not in cache
-            self._nfp_cache[key] = utils.no_fit_polygon(cleaned_stationary, cleaned_moving)
-            
-        return self._nfp_cache[key]
-    
-    def _place_piece(self, piece: Piece) -> bool:
-        """
-        Place a piece using the Bottom-Left Fill strategy.
-        Returns True if placement was successful, False otherwise.
-        """
-        # Get the polygon path of the current piece
-        poly = piece.get_outer_path()
-        
-        # Clean the polygon coordinates to avoid invalid geometry
-        cleaned_poly = utils.clean_polygon_coordinates(poly)
-        
-        # Use the container's inner_fit_rectangle method to get the IFR
-        ifr = self.container.inner_fit_rectangle(piece)
-        
-        # If the IFR is empty, the piece is too large for the container
-        if not ifr:
-            return False
-        
-        # Initialize the feasible region as the IFR
-        differ_region = Polygon(ifr)
-        
-        # Subtract the NFP of each placed piece
-        for placed_piece in self.placed:
-            # Translate the stationary piece by its current position
-            stationary_poly = utils._translate_polygon(
-                placed_piece.get_outer_path(), 
-                placed_piece.translation[0], 
-                placed_piece.translation[1]
-            )
-            
-            # Clean both polygons before computing NFP
-            cleaned_stationary = utils.clean_polygon_coordinates(stationary_poly)
-            cleaned_moving = utils.clean_polygon_coordinates(piece.get_outer_path())
-            
-            # Get the NFP between the placed piece and current piece using cache
-            nfp = self._get_nfp(placed_piece.id, piece.id, cleaned_stationary, cleaned_moving)
-            if not nfp:
-                continue
-                
-            try:
-                # Clean NFP coordinates before creating polygon
-                cleaned_nfp = utils.clean_polygon_coordinates(nfp)
-                nfp_poly = Polygon(cleaned_nfp)
-                # Validate the NFP polygon before using it
-                if not nfp_poly.is_valid:
-                    print(f"Warning: Invalid NFP polygon for pieces {placed_piece.id} and {piece.id}, attempting to fix...")
-                    nfp_poly = nfp_poly.buffer(0)  # Attempt to fix invalid geometry
-                    if not nfp_poly.is_valid:
-                        print(f"Failed to fix NFP polygon, skipping this constraint")
-                        continue
-                
-                # Validate the current differ_region before computing difference
-                if not differ_region.is_valid:
-                    print(f"Warning: Invalid feasible region, attempting to fix...")
-                    differ_region = differ_region.buffer(0)
-                    if not differ_region.is_valid:
-                        print(f"Failed to fix feasible region, placement failed")
-                        return False
-                
-                # Subtract the NFP from the feasible region
-                differ_region = differ_region.difference(nfp_poly)
-                if differ_region.is_empty:
-                    return False  # No valid placement found
-                    
-            except Exception as e:
-                print(f"Error computing difference for pieces {placed_piece.id} and {piece.id}: {e}")
-                print(f"Skipping this NFP constraint and continuing...")
-                continue
-        
-        # Convert the feasible region to a list of points
-        if differ_region.is_empty:
-            return False
-            
-        if isinstance(differ_region, MultiPolygon):
-            # If we got multiple polygons, use the one with the leftmost-bottom point
-            leftmost_bottom = None
-            selected_poly = None
-            
-            for poly in differ_region.geoms:
-                coords = list(poly.exterior.coords)
-                for x, y in coords:
-                    if leftmost_bottom is None:
-                        leftmost_bottom = (x, y)
-                        selected_poly = poly
-                    elif (self.vertical and y < leftmost_bottom[1]) or (not self.vertical and x < leftmost_bottom[0]):
-                        leftmost_bottom = (x, y)
-                        selected_poly = poly
-                    elif ((self.vertical and y == leftmost_bottom[1] and x < leftmost_bottom[0]) or 
-                          (not self.vertical and x == leftmost_bottom[0] and y < leftmost_bottom[1])):
-                        leftmost_bottom = (x, y)
-                        selected_poly = poly
-            
-            if selected_poly:
-                differ_points = list(selected_poly.exterior.coords)
-            else:
-                return False
-        else:
-            differ_points = list(differ_region.exterior.coords)
-        
-        # Find the bottom-left most point in the feasible region
-        bl_point = None
-        
-        if not differ_points:
-            return False
-            
-        # For vertical mode: (y, x) priority, for horizontal mode: (x, y) priority
-        try:
-            if self.vertical:
-                bl_point = min(differ_points, key=lambda p: (p[1], p[0]))
-            else:
-                bl_point = min(differ_points, key=lambda p: (p[0], p[1]))
-        except ValueError:
-            # This happens if differ_points is empty
-            return False
-            
-        if bl_point is None:
-            return False
-            
-        # Find the reference point (top-most point) of the piece using min()
-        # In screen coordinates, smaller y is higher (top)
-        top_point = min(cleaned_poly, key=lambda point: point[1])
-        reference_point = top_point
-        
-        # Place the piece at the bottom-left point
-        dx = bl_point[0] - reference_point[0]
-        dy = bl_point[1] - reference_point[1]
-        piece.translation = (dx, dy)
-        
-        # Final check to ensure placement is valid
-        return self._fits(piece, dx, dy)
-
 @register_decoder("TOPOS")
 class TOPOSDecoder(PlacementEngine):
     """
-    Implementation of the TOPOS heuristic algorithm.
-    Adapted from https://github.com/seanys/2D-Irregular-Packing-Algorithm/
+    Based on the TOPOS paper
+    Parameters
+    ----------
+    control : {"local_search","initial_sorting"}
+        Search control (Sect. 2.5): evaluate all remaining piece/orientation options
+        each iteration ("local_search"), or sort pieces first and at each iteration
+        evaluate only orientations of the next piece ("initial_sorting").
+    nesting_strategy : {"min_area","min_length","max_overlap"}
+        Placement-point selection rule (Sect. 2.3): choose candidate (dx,dy) that
+        minimizes area or length of the rectangular enclosure with the partial
+        solution, or maximizes the overlap between the two rectangular enclosures.
+    eval_terms : tuple subset of {"waste","overlap","distance"}
+        Evaluation criteria for comparing alternative partial solutions (Sect. 2.4).
+        Combined as: score = WASTE_rel - OVERLAP_abs + DISTANCE_rel over the
+        selected terms (defaults to all three with unit weights).
+    rotations_on : bool
+        If True, test all orientations in config.ALLOWED_ROTATIONS (e.g., {0,180}).
+    sorting_key : {"length","area","concavity","rectangularity","total_area", None}
+        Initial sorting criterion for "initial_sorting" (Fig. 6). Ignored for
+        "local_search".
+    edge_samples : int
+        # samples per NFP edge for "extended search" along edges (Sect. 2.3).
+        Vertices are always included; edges add (edge_samples-1) interior samples.
     """
-    def __init__(self, layout: Layout, container: Container, **kwargs):
-        super().__init__(layout, container)
-        self._nfp_cache = {}  # Cache for NFP calculations
-        
-        # Border tracking
-        self.border_left = 0
-        self.border_right = 0
-        self.border_bottom = 0
-        self.border_top = 0
-        self.border_height = 0
-        self.border_width = 0
-    
-    def decode(self):
-        # Handle empty layout
-        if not self.layout.order:
-            return []
-            
-        # Anchor the first piece against the top-right corner
-        _, first_piece = next(iter(self.layout.order.items()))
-        x0, y0 = self.anchor(first_piece)
-        first_piece.translation = (x0, y0)
-        self.placed.append(first_piece)
-        
-        # Update borders after placing first piece
-        self._update_layout_borders(first_piece)
-        
-        # Place remaining pieces
-        for _, piece in list(self.layout.order.items())[1:]:
-            # Calculate NFP union for feasible placement region
-            feasible_border = self._calculate_nfp_union(piece)
-            
-            # Get feasible points from the border
-            feasible_points = self._choose_feasible_points(feasible_border)
-            
-            # Get reference point and left/right widths
-            top_idx = self._find_top_point_index(piece)
-            
-            # Use cleaned coordinates for reference point calculation
-            cleaned_points = utils.clean_polygon_coordinates(piece.get_outer_path())
-            # Adjust top_idx if cleaning changed the number of points
-            if top_idx >= len(cleaned_points):
-                top_idx = min(range(len(cleaned_points)), key=lambda i: cleaned_points[i][1])
-            reference_point = cleaned_points[top_idx]
-            
-            # Calculate left and right widths from top point
-            left_width, right_width = self._calculate_piece_widths(piece, top_idx)
-            
-            # Find best position using original width change logic
-            best_position = self._find_min_width_change_position(
-                feasible_points, left_width, right_width)
-            
-            if best_position is not None:
-                # Calculate translation to place the piece with its top point at the best position
-                dx = best_position[0] - reference_point[0]
-                dy = best_position[1] - reference_point[1]
-                piece.translation = (dx, dy)
-                self.placed.append(piece)
-                self._update_layout_borders(piece)
-        
-        # Slide everything to bottom-left at the end
-        self._slide_to_bottom_left()
-        
-        return [(p.id, p.translation[0], p.translation[1], p.rotation) for p in self.placed]
-    
-    def _calculate_nfp_union(self, piece):
-        """Calculate the union of NFPs against all placed pieces."""
-        from shapely.geometry import Polygon
-        
-        if not self.placed:
-            return None
-            
-        # Start with the first piece's NFP
-        first_placed = self.placed[0]
-        nfp = self._get_nfp(first_placed, piece)
-        if not nfp:
-            return None
-            
-        # Clean NFP coordinates before creating polygon
-        cleaned_nfp = utils.clean_polygon_coordinates(nfp)
-        try:
-            merged_nfp = Polygon(cleaned_nfp)
-            # Validate and fix if needed
-            if not merged_nfp.is_valid:
-                print(f"Warning: Invalid initial NFP polygon, attempting to fix...")
-                merged_nfp = merged_nfp.buffer(0)
-                if not merged_nfp.is_valid:
-                    print(f"Failed to fix initial NFP polygon")
-                    return None
-        except Exception as e:
-            print(f"Error creating initial NFP polygon: {e}")
-            return None
-        
-        # Union with the NFPs of all other placed pieces
-        for placed_piece in self.placed[1:]:
-            nfp = self._get_nfp(placed_piece, piece)
-            if nfp:
-                try:
-                    # Clean NFP coordinates before creating polygon
-                    cleaned_nfp = utils.clean_polygon_coordinates(nfp)
-                    nfp_poly = Polygon(cleaned_nfp)
-                    
-                    # Validate NFP polygon before union
-                    if not nfp_poly.is_valid:
-                        print(f"Warning: Invalid NFP polygon for piece {placed_piece.id}, attempting to fix...")
-                        nfp_poly = nfp_poly.buffer(0)
-                        if not nfp_poly.is_valid:
-                            print(f"Failed to fix NFP polygon for piece {placed_piece.id}, skipping...")
+
+    def __init__(
+        self,
+        layout: Layout,
+        container: Container,
+        *,
+        control: str = "local_search",
+        nesting_strategy: Literal["min_area","min_length","max_overlap"] = "min_area",
+        eval_terms: Tuple[str, ...] = ("waste","overlap","distance"),
+        rotations_on: bool = True,
+        sorting_key: Optional[Literal["length","area","concavity","rectangularity","total_area"]] = None,
+        edge_samples: int = 16,
+        **kwargs
+    ):
+        super().__init__(layout, container, **kwargs)
+        self.control = control
+        self.nesting_strategy = nesting_strategy
+        self.eval_terms = tuple(eval_terms)
+        self.rotations_on = rotations_on
+        self.sorting_key = sorting_key
+        self.edge_samples = max(2, int(edge_samples))
+
+    # ---------- Public API ----------
+
+    def decode(self) -> list[Tuple[str, float, float, float]]:
+        if self.control not in ("local_search","initial_sorting"):
+            raise ValueError(f"TOPOSDecoder: unsupported control '{self.control}'")
+
+        # Optionally reorder upfront (initial sorting variant, Sect. 2.5)
+        if self.control == "initial_sorting" and self.sorting_key:
+            self._apply_initial_sorting(self.sorting_key)
+
+        remaining: OrderedDict[str, Piece] = OrderedDict(self.layout.order)
+
+        # Iteratively build the partial solution (Fig. 7)
+        while remaining:
+            if self.control == "local_search":
+                # Evaluate *all* piece/orientation options from S (Sect. 2.5)
+                best = None
+                for pid, piece in list(remaining.items()):
+                    for angle in self._iter_orientations():
+                        cand = self._place_and_score(piece, angle)
+                        if cand is None:
                             continue
-                    
-                    # Validate merged polygon before union
-                    if not merged_nfp.is_valid:
-                        print(f"Warning: Invalid merged NFP polygon, attempting to fix...")
-                        merged_nfp = merged_nfp.buffer(0)
-                        if not merged_nfp.is_valid:
-                            print(f"Failed to fix merged NFP polygon, skipping union...")
-                            continue
-                    
-                    # Perform union operation
-                    merged_nfp = merged_nfp.union(nfp_poly)
-                    
-                except Exception as e:
-                    print(f"Error during NFP union for piece {placed_piece.id}: {e}")
-                    print(f"Skipping this piece and continuing...")
+                        score, dx, dy, chosen_angle = cand
+                        if (best is None) or (score < best[0]):  # minimize
+                            best = (score, pid, piece, dx, dy, chosen_angle)
+                # if best is None:
+                #     # Fallback: nothing feasible — try to BL-place next arbitrary piece
+                #     pid, piece = next(iter(remaining.items()))
+                #     dx, dy = self.anchor(piece)
+                #     dx, dy = self.gravitate(piece, dx, dy)
+                #     piece.translation = (dx, dy)
+                #     self.placed.append(piece)
+                #     self._update_exterior_contour(piece)
+                #     del remaining[pid]
+                #     continue
+
+                _, pid, piece, dx, dy, angle = best
+                self._commit(piece, pid, dx, dy, angle)
+                del remaining[pid]
+
+            else:  # initial_sorting
+                pid, piece = next(iter(remaining.items()))
+                best = None
+                for angle in self._iter_orientations():
+                    cand = self._place_and_score(piece, angle)
+                    if cand is None:
+                        continue
+                    score, dx, dy, chosen_angle = cand
+                    if (best is None) or (score < best[0]):  # minimize
+                        best = (score, dx, dy, chosen_angle)
+                if best is None:
+                    # Fallback: BL-place this piece
+                    dx, dy = self.anchor(piece)
+                    dx, dy = self.gravitate(piece, dx, dy)
+                    piece.translation = (dx, dy)
+                    self.placed.append(piece)
+                    self._update_exterior_contour(piece)
+                    del remaining[pid]
                     continue
-                
-        return merged_nfp
-    
-    def _get_nfp(self, stationary_piece, moving_piece):
-        """Get (cached) NFP between two pieces."""
-        key = (stationary_piece.id, moving_piece.id)
-        if key not in self._nfp_cache:
-            # Translate stationary piece by its current position
-            sx, sy = stationary_piece.translation
-            stationary_poly = utils._translate_polygon(
-                stationary_piece.get_outer_path(), sx, sy
-            )
-            
-            # Clean both polygons before calculating NFP
-            cleaned_stationary = utils.clean_polygon_coordinates(stationary_poly)
-            cleaned_moving = utils.clean_polygon_coordinates(moving_piece.get_outer_path())
-            
-            # Calculate NFP
-            self._nfp_cache[key] = utils.no_fit_polygon(
-                cleaned_stationary, 
-                cleaned_moving
-            )
-            
-        return self._nfp_cache[key]
-    
-    def _choose_feasible_points(self, nfp_union):
-        """Extract feasible points from NFP union."""
-        if nfp_union is None:
-            return [(1000, 1000)]  # Default for first piece
-            
-        from shapely.geometry import mapping
-        
+
+                score, dx, dy, angle = best
+                self._commit(piece, pid, dx, dy, angle)
+                del remaining[pid]
+
+        return [(p.id, p.translation[0], p.translation[1], p.rotation) for p in self.placed]
+
+    # ---------- Core helpers ----------
+
+    def _commit(self, piece: "Piece", pid: str, dx: float, dy: float, angle: float) -> None:
+        orig = piece.rotation
         try:
-            # Extract points using same approach as original TOPOS
-            res = mapping(nfp_union)
-            feasible_points = []
-            
-            # Handle MultiPolygon or simple Polygon
-            if res["type"] == "MultiPolygon":
-                for poly in res["coordinates"]:
-                    feasible_points.extend(self._extract_feasible_points(poly))
+            if self.rotations_on:
+                piece.rotate(angle)
+            piece.translation = (dx, dy)
+            self.placed.append(piece)
+            self._update_exterior_contour(piece)
+        finally:
+            # Keep piece at chosen rotation; we won't reuse it after placement
+            pass
+
+    def _iter_orientations(self):
+        if not self.rotations_on:
+            yield 0.0
+            return
+        allowed = getattr(config, "ALLOWED_ROTATIONS", [0.0, 180.0])
+        for a in allowed:
+            yield float(a)
+
+    def _place_and_score(self, piece: "Piece", angle: float):
+        """Rotate piece (temporarily), choose best placement point by the nesting strategy,
+        then evaluate the resulting partial solution by TOPOS criteria."""
+        orig_rot = piece.rotation
+        try:
+            if self.rotations_on:
+                piece.rotate(angle)
+            dx, dy = self._select_placement_point(piece)
+            if dx is None:
+                return None
+            score = self._evaluate_partial_solution(piece, dx, dy)
+            return (score, dx, dy, angle)
+        finally:
+            # restore orientation
+            if self.rotations_on:
+                piece.rotate(orig_rot)
+
+    # ---------- Nesting strategy (Sect. 2.3) ----------
+
+    def _select_placement_point(self, piece: "Piece") -> Tuple[Optional[float], Optional[float]]:
+        # First piece: put it bottom-left (to match our y-down convention)
+        if not self.placed:
+            return 0.0, self.container.height - piece.height
+
+        # Gather NFP candidate points (vertices + extended-search samples on edges)
+        candidates: list[Tuple[float, float]] = []
+        moving_path = utils.clean_polygon_coordinates(piece.get_outer_path())
+
+        contour = self._exterior_contour
+        rings: list[list[Tuple[float, float]]] = []
+        if isinstance(contour, Polygon):
+            rings.append(list(contour.exterior.coords))
+        elif contour is not None:
+            for geom in getattr(contour, "geoms", []):
+                if isinstance(geom, Polygon):
+                    rings.append(list(geom.exterior.coords))
+
+        # Build candidates from each exterior ring
+        for ring in rings:
+            ring = utils.clean_polygon_coordinates(ring)
+            for nfp_path in self._nfp_polygons(ring, moving_path):
+                if len(nfp_path) < 2:
+                    continue
+                # vertices
+                candidates.extend(nfp_path[:-1])  # exclude closing duplicate
+                # extended-search samples (uniform along edges)
+                for (x0, y0), (x1, y1) in zip(nfp_path, nfp_path[1:]):
+                    for t in range(1, self.edge_samples):
+                        tt = t / self.edge_samples
+                        candidates.append((x0 + tt * (x1 - x0), y0 + tt * (y1 - y0)))
+
+        if not candidates:
+            # Fallback to BL gravity relative to anchor
+            ax, ay = self.anchor(piece)
+            return self.gravitate(piece, ax, ay)
+
+        # Evaluate objective for each feasible candidate
+        best_val = float("inf")
+        best_xy = (None, None)
+
+        ps_rect = self._partial_solution_rect()
+        for (cx, cy) in candidates:
+            if not self._fits(piece, cx, cy):
+                continue
+            val = self._location_objective(piece, cx, cy, ps_rect)
+            if val < best_val:
+                best_val = val
+                best_xy = (cx, cy)
+
+        if best_xy[0] is None:
+            # Fallback to gravity
+            ax, ay = self.anchor(piece)
+            return self.gravitate(piece, ax, ay)
+
+        # Optional: light gravity polish (keeps “tightness”)
+        # if getattr(config, "NFP_GRAVITATE_ON", True):
+        #     gx, gy = self.gravitate(piece, best_xy[0], best_xy[1])
+        #     if self._fits(piece, gx, gy):
+        #         return gx, gy
+        return best_xy
+
+    def _location_objective(self, piece: "Piece", dx: float, dy: float, ps_rect: Tuple[float,float,float,float]) -> float:
+        """Min-area / min-length / max-overlap between rectangular enclosures."""
+        p_rect = self._piece_rect_at(piece, dx, dy)
+        if self.nesting_strategy == "min_area":
+            rect = self._rect_union(ps_rect, p_rect)
+            return self._rect_area(rect)
+        elif self.nesting_strategy == "min_length":
+            rect = self._rect_union(ps_rect, p_rect)
+            return rect[2] - rect[0]  # width (x-extent)
+        elif self.nesting_strategy == "max_overlap":
+            # Maximize overlap ⇒ minimize negative overlap
+            return -self._rect_overlap_area(ps_rect, p_rect)
+        else:
+            raise ValueError(f"Unknown nesting_strategy: {self.nesting_strategy}")
+
+    # ---------- Evaluation criteria (Sect. 2.4) ----------
+
+    def _evaluate_partial_solution(self, piece: "Piece", dx: float, dy: float) -> float:
+        """Return WASTE_rel - OVERLAP_abs + DISTANCE_rel across selected terms."""
+        # Rectangles
+        ps_rect_before = self._partial_solution_rect()
+        p_rect = self._piece_rect_at(piece, dx, dy)
+        union_rect = self._rect_union(ps_rect_before, p_rect)
+
+        # Areas
+        union_area = self._rect_area(union_rect)
+        total_piece_area = sum(utils.polygon_area(p.get_outer_path()) for p in self.placed) + \
+                           utils.polygon_area(piece.get_outer_path())
+
+        # Terms
+        waste_rel = 0.0
+        if "waste" in self.eval_terms:
+            # Waste = rectangular enclosure area minus sum of polygon areas, normalized by piece area
+            piece_area = max(utils.polygon_area(piece.get_outer_path()), 1e-12)
+            waste = union_area - total_piece_area
+            waste_rel = waste / piece_area
+
+        overlap_abs = 0.0
+        if "overlap" in self.eval_terms:
+            # Sum overlap between p_rect and each placed piece's rectangle
+            for q in self.placed:
+                q_rect = self._piece_rect_at(q, *q.translation)
+                overlap_abs += self._rect_overlap_area(p_rect, q_rect)
+
+        distance_rel = 0.0
+        if "distance" in self.eval_terms:
+            # Distance between centers of p_rect and current partial solution rect (before placement),
+            # normalized by (piece_rect_width + piece_rect_height)
+            pcx, pcy = self._rect_center(p_rect)
+            scx, scy = self._rect_center(ps_rect_before)
+            dist = math.hypot(pcx - scx, pcy - scy)
+            pw = (p_rect[2] - p_rect[0])
+            ph = (p_rect[3] - p_rect[1])
+            denom = max(pw + ph, 1e-9)
+            distance_rel = dist / denom
+
+        # Combine (unit weights)
+        score = 0.0
+        if "waste" in self.eval_terms:
+            score += waste_rel
+        if "overlap" in self.eval_terms:
+            score -= overlap_abs
+        if "distance" in self.eval_terms:
+            score += distance_rel
+        return score
+
+    # ---------- Initial sorting (Sect. 2.5, Fig. 6) ----------
+
+    def _apply_initial_sorting(self, key: str):
+        metrics = {}
+        for pid, p in self.layout.order.items():
+            poly = Polygon(utils.clean_polygon_coordinates(p.get_outer_path()))
+            minx, miny, maxx, maxy = poly.bounds
+            width = maxx - minx
+            height = maxy - miny
+            area = max(poly.area, 0.0)
+            hull_area = max(poly.convex_hull.area, 1e-12)
+            rect_area = max(width * height, 1e-12)
+            rectangularity = area / rect_area
+            concavity = (hull_area - area) / hull_area  # ∈[0,1]
+
+            if key == "length":
+                metrics[pid] = width             # decreasing
+            elif key == "area":
+                metrics[pid] = area              # decreasing
+            elif key == "concavity":
+                metrics[pid] = concavity         # decreasing
+            elif key == "rectangularity":
+                metrics[pid] = rectangularity    # increasing
+            elif key == "total_area":
+                # If quantities are already expanded in Layout, this equals 'area'
+                metrics[pid] = area              # decreasing
             else:
-                feasible_points.extend(self._extract_feasible_points(res["coordinates"][0]))
-                
-            return feasible_points
-            
-        except Exception as e:
-            print(f"Error extracting feasible points from NFP union: {e}")
-            return [(1000, 1000)]  # Return default fallback position
-    
-    def _extract_feasible_points(self, poly_coords):
-        """Filter feasible points just like original TOPOS."""
-        result = []
-        container_width = self.container.width
-        
-        for pt in poly_coords:
-            # Follow the original feasibility conditions
-            feasible1 = (pt[1] - self.border_top > 0 and 
-                         pt[1] - self.border_top + self.border_height <= container_width)
-            feasible2 = (self.border_bottom - pt[1] > 0 and 
-                         self.border_bottom - pt[1] + self.border_height <= container_width)
-            feasible3 = (pt[1] <= self.border_top and pt[1] >= self.border_bottom)
-            
-            if feasible1 or feasible2 or feasible3:
-                result.append(pt)
-                
-        return result
-    
-    def _find_top_point_index(self, piece):
-        """Find index of the top-most point in the piece."""
-        points = piece.get_outer_path()
-        # Clean the points to ensure valid geometry
-        cleaned_points = utils.clean_polygon_coordinates(points)
-        return min(range(len(cleaned_points)), key=lambda i: cleaned_points[i][1])
-    
-    def _calculate_piece_widths(self, piece, top_idx):
-        """Calculate left and right widths from top point."""
-        points = piece.get_outer_path()
-        # Clean the points to ensure valid geometry
-        cleaned_points = utils.clean_polygon_coordinates(points)
-        
-        # Adjust top_idx if the cleaning changed the number of points
-        if top_idx >= len(cleaned_points):
-            top_idx = min(range(len(cleaned_points)), key=lambda i: cleaned_points[i][1])
-            
-        top_point = cleaned_points[top_idx]
-        
-        # Find leftmost and rightmost points
-        left_idx = min(range(len(cleaned_points)), key=lambda i: cleaned_points[i][0])
-        right_idx = max(range(len(cleaned_points)), key=lambda i: cleaned_points[i][0])
-        
-        left_point = cleaned_points[left_idx]
-        right_point = cleaned_points[right_idx]
-        
-        # Calculate widths from top point
-        left_width = top_point[0] - left_point[0]
-        right_width = right_point[0] - top_point[0]
-        
-        return left_width, right_width
-    
-    def _find_min_width_change_position(self, feasible_points, left_width, right_width):
-        """Find position minimizing width change, exactly like original TOPOS."""
-        if not feasible_points:
-            return None
-            
-        min_change = float('inf')
-        target_position = None
-        
-        for pt in feasible_points:
-            # Use exact same width change calculation as original
-            change = min_change
-            
-            if (pt[0] - left_width >= self.border_left and 
-                pt[0] + right_width <= self.border_right):
-                # Piece fits within current borders
-                # Note: The original has what appears to be a typo, I think this is what is intended
-                change = min(self.border_left - pt[0], pt[0] - self.border_right)
-            elif min_change > 0:
-                # Piece extends borders
-                change = max(
-                    self.border_left - pt[0] + left_width,
-                    pt[0] + right_width - self.border_right
-                )
-            # else: pass (no change needed)
-            
-            if change < min_change:
-                min_change = change
-                target_position = pt
-                
-        return target_position
-    
-    def _update_layout_borders(self, piece):
+                raise ValueError(f"Unknown sorting_key: {key}")
+
+        if key == "rectangularity":
+            sorted_ids = sorted(metrics.keys(), key=lambda pid: metrics[pid])  # increasing
+        else:
+            sorted_ids = sorted(metrics.keys(), key=lambda pid: metrics[pid], reverse=True)
+
+        self.layout = Layout(OrderedDict((pid, self.layout.order[pid]) for pid in sorted_ids))
+
+    # ---------- Geometry utilities ----------
+
+    def _partial_solution_rect(self) -> Tuple[float,float,float,float]:
+        if not self.placed:
+            return (0.0, 0.0, 0.0, 0.0)
+        xs, ys = [], []
+        for p in self.placed:
+            for (x, y) in utils._translate_polygon(p.get_outer_path(), *p.translation):
+                xs.append(x)
+                ys.append(y)
+        return (min(xs), min(ys), max(xs), max(ys))
+
+    def _piece_rect_at(self, piece: "Piece", dx: float, dy: float) -> Tuple[float,float,float,float]:
+        xs, ys = [], []
+        for (x, y) in utils._translate_polygon(piece.get_outer_path(), dx, dy):
+            xs.append(x); ys.append(y)
+        return (min(xs), min(ys), max(xs), max(ys))
+
+    @staticmethod
+    def _rect_union(a, b):
+        if a == (0.0,0.0,0.0,0.0):
+            return b
+        return (min(a[0], b[0]), min(a[1], b[1]), max(a[2], b[2]), max(a[3], b[3]))
+
+    @staticmethod
+    def _rect_area(r):
+        return max(0.0, (r[2] - r[0])) * max(0.0, (r[3] - r[1]))
+
+    @staticmethod
+    def _rect_overlap_area(a, b):
+        dx = min(a[2], b[2]) - max(a[0], b[0])
+        dy = min(a[3], b[3]) - max(a[1], b[1])
+        return max(0.0, dx) * max(0.0, dy)
+
+    @staticmethod
+    def _rect_center(r):
+        return ((r[0] + r[2]) * 0.5, (r[1] + r[3]) * 0.5)
+
+    # ---------- NFP with full polygon paths (to enable edge "extended search") ----------
+
+    def _nfp_polygons(self, stationary: list[tuple[float,float]], moving: list[tuple[float,float]]) -> list[list[tuple[float,float]]]:
         """
-        Update the bounding box that contains all placed pieces by incorporating 
-        the newly placed piece's dimensions.
+        Return list of NFP polygon paths (floats) for moving about stationary.
+        Matches utils.no_fit_polygon but **preserves paths** for edge sampling.
         """
-        try:
-            tx, ty = piece.translation
-            outer_path = piece.get_outer_path()
-            
-            # Clean coordinates to ensure valid geometry
-            cleaned_path = utils.clean_polygon_coordinates(outer_path)
-            
-            # Calculate bounding box of the placed piece
-            xs = [tx + x for x, _ in cleaned_path]
-            ys = [ty + y for _, y in cleaned_path]
-            
-            if not xs or not ys:  # Safety check for empty coordinates
-                print(f"Warning: Empty coordinates for piece {piece.id}, skipping border update")
-                return
-            
-            piece_left = min(xs)
-            piece_right = max(xs)
-            piece_bottom = min(ys)
-            piece_top = max(ys)
-            
-            # Update layout borders to include this piece
-            if piece_left < self.border_left:
-                self.border_left = piece_left
-            if piece_bottom < self.border_bottom:
-                self.border_bottom = piece_bottom
-            if piece_right > self.border_right:
-                self.border_right = piece_right
-            if piece_top > self.border_top:
-                self.border_top = piece_top
-                
-            # Update layout width and height
-            self.border_height = self.border_top - self.border_bottom
-            self.border_width = self.border_right - self.border_left
-            
-        except Exception as e:
-            print(f"Error updating layout borders for piece {piece.id}: {e}")
-            print(f"Continuing without updating borders...")
-    
-    def _slide_to_bottom_left(self):
-        """Slide ALL pieces to bottom-left"""
-        if self.border_left == 0 and self.border_bottom == 0:
-            return  # Already at bottom-left
-            
-        # Apply translation to all pieces
-        for piece in self.placed:
-            x, y = piece.translation
-            piece.translation = (x - self.border_left, y - self.border_bottom)
-            
-        # Update borders
-        self.border_right -= self.border_left
-        self.border_top -= self.border_bottom
-        self.border_left = 0
-        self.border_bottom = 0
+        import pyclipper
+        # Reference at the top-leftmost vertex of moving (y grows downward)
+        idx = utils.find_topleft_vertex(moving)
+        rx, ry = moving[idx]
+        moving_centered = [(x - rx, y - ry) for (x, y) in moving]
+
+        A = utils.to_clipper(stationary)
+        B = [(-x, -y) for (x, y) in moving_centered]
+        B = utils.to_clipper(B)
+
+        raw = pyclipper.MinkowskiSum(B, A, True)
+        return [utils.from_clipper(p) for p in raw]

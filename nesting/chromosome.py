@@ -92,8 +92,13 @@ def _numeric_range_ok(node: JsonDict) -> bool:
 #     return random.choice(numeric)
 
 
-def _random_value(old: Any, p_type: str, rng: Sequence[float | int]):
-    """Return a *new* value that differs from *old* by ≤ margin param % of *range* width."""
+def _random_value(old: Any, base: Any, p_type: str, rng: Sequence[float | int]):
+    """Return a *new* value that differs from *base* by ≤ margin param % of *range* width
+    while still being different from *old*.
+
+    The *base* value represents the original design parameter value before any
+    mutations, which allows us to limit cumulative drift across generations.
+    """
     
     # # Handle boolean type explicitly
     # if p_type == "bool" or isinstance(old, bool):
@@ -113,7 +118,7 @@ def _random_value(old: Any, p_type: str, rng: Sequence[float | int]):
     # integer parameters --------------------------------------------------
     if p_type == "int":
         vals = list(range(int(lower), int(upper) + 1))
-        candidates = [v for v in vals if abs(v - old) <= max_delta and v != old]
+        candidates = [v for v in vals if abs(v - base) <= max_delta and v != old]
         if not candidates:
             return old  # no valid candidates, return old value
         return random.choice(candidates)
@@ -122,17 +127,18 @@ def _random_value(old: Any, p_type: str, rng: Sequence[float | int]):
     attempts = 0
     while attempts < 10:
         cand = random.uniform(lower, upper)
-        if abs(cand - old) <= max_delta and cand != old:
+        if abs(cand - base) <= max_delta and cand != old:
             return cand
         attempts += 1
-    # fallback – choose a value slightly different from old but within max_delta
-    if old + max_delta <= upper:
-        return old + max_delta / 2
-    elif old - max_delta >= lower:
-        return old - max_delta / 2
-    else:
-        # should not happen in theory
-        return old
+    # fallback – choose a value slightly different from base but within max_delta
+    cand = base + max_delta / 2
+    if cand <= upper and cand != old:
+        return cand
+    cand = base - max_delta / 2
+    if cand >= lower and cand != old:
+        return cand
+    # should not happen in theory
+    return old
     
 
 def _collect_mutatable_params(
@@ -257,6 +263,7 @@ class Chromosome(Layout):
         *,
         design_params: dict | None = None,
         body_params: object | None = None,
+        initial_design_params: dict | None = None,
         #design_sampler: "DesignSampler" | None = None,
     ):
         # Store a deep copy of each piece
@@ -266,6 +273,10 @@ class Chromosome(Layout):
 
         self.design_params = copy.deepcopy(design_params) if design_params else None
         self.body_params = body_params
+        if initial_design_params is not None:
+            self.initial_design_params = copy.deepcopy(initial_design_params)
+        else:
+            self.initial_design_params = copy.deepcopy(design_params) if design_params else None
         self._mutatable_params = _collect_mutatable_params(
             self.design_params, self._genes
         )
@@ -516,10 +527,48 @@ class Chromosome(Layout):
             self.genes[idx].rotate(random.choice(config.ALLOWED_ROTATIONS))
         self._warn_if_panel_lost(before, "rotate")
 
-    def _mutate_swap(self):
+    def _mutate_swap(self, k=config.SWAP_MUTATION_K):
+        """
+        Swap two non-overlapping contiguous blocks of length k.
+        If k is None, choose a random valid k in [1, floor(n/2)].
+        """
+
+        n = len(self.genes)
+        if n < 2:
+            return
+
+        # Determine a suitable k
+        max_k = n // 2  # must allow two non-overlapping blocks
+        if max_k < 1:
+            return
+        if k is None:
+            k = random.randint(1, max_k)
+
+        print(f"[DEBUG] k: {k}, max_k: {max_k}")
+
         before = {g.root_id for g in self.genes}
-        i, j = random.sample(range(len(self.genes)), 2)
-        self.genes[i], self.genes[j] = self.genes[j], self.genes[i]
+
+        # Build all valid non-overlapping (i, j) with i < j and j >= i + k
+        pairs: list[tuple[int, int]] = []
+        last_start = n - k
+        for i in range(0, n - 2 * k + 1):
+            for j in range(i + k, last_start + 1):
+                pairs.append((i, j))
+
+        if not pairs:
+            # No valid non-overlapping blocks (shouldn't happen with k <= n//2)
+            return
+
+        i, j = random.choice(pairs)
+
+        # Splice: genes = pre + B + mid + A + post
+        pre = self.genes[:i]
+        A = self.genes[i:i + k]
+        mid = self.genes[i + k:j]
+        B = self.genes[j:j + k]
+        post = self.genes[j + k:]
+        self.genes = pre + B + mid + A + post
+
         self._warn_if_panel_lost(before, "swap")
 
     def _mutate_inversion(self):
@@ -528,10 +577,18 @@ class Chromosome(Layout):
         self.genes[i:j + 1] = reversed(self.genes[i:j + 1])
         self._warn_if_panel_lost(before, "inversion")
 
-    def _mutate_insertion(self):
+    def _mutate_insertion(self, k = 1):
         if len(self.genes) < 2:
             return
+        
+        n = len(self.genes)
+
+        if k > n:
+            raise ValueError("Invalid insertion operation: k too big for n")
+        
         before = {g.root_id for g in self.genes}
+
+        
         i = random.randrange(len(self.genes))
         insert_at = random.randrange(len(self.genes) + 1)
         gene = self.genes.pop(i)
@@ -582,7 +639,8 @@ class Chromosome(Layout):
             node = nested_get(self.design_params, param.split("."))
             p_type = node.get("type", "float")
             old_val = node["v"]
-            new_val = _random_value(old_val, p_type, node["range"])
+            base_val = nested_get(self.initial_design_params, param.split("."))["v"]
+            new_val = _random_value(old_val, base_val, p_type, node["range"])
 
             if old_val == new_val:
                 continue # Value didn't change, try next parameter
@@ -783,14 +841,14 @@ class Chromosome(Layout):
     
 
     @staticmethod
-    def _filter_sequence_by_owner(seq: list["Piece"], owner: dict[str, int], take_owner: int) -> list["Piece"]:
+    def _filter_sequence_by_owner(seq: list["Piece"], owner: dict[str, str | None], take_owner: str) -> list["Piece"]:
         """Keep pieces whose root is owned by take_owner, preserving original order."""
-        return [p for p in seq if owner.get(p.root_id, 0) == take_owner]
+        return [p for p in seq if owner.get(p.root_id) == take_owner]
 
     def _build_child_by_owner_weave(
         self,
         order_child_roots: list[str],
-        owner: dict[str, int],
+        owner: dict[str, str | None],
         p1_seq: list["Piece"],
         p2_seq: list["Piece"],
     ) -> list["Piece"]:
@@ -800,8 +858,8 @@ class Chromosome(Layout):
           - preserve the relative order within each parent's kept subsequence
           - interleave deterministically using the child root order as a tie-breaker
         """
-        p1_keep = self._filter_sequence_by_owner(p1_seq, owner, 1)
-        p2_keep = self._filter_sequence_by_owner(p2_seq, owner, 2)
+        p1_keep = self._filter_sequence_by_owner(p1_seq, owner, "P1")
+        p2_keep = self._filter_sequence_by_owner(p2_seq, owner, "P2")
 
         i, j = 0, 0
         out: list["Piece"] = []
@@ -809,13 +867,13 @@ class Chromosome(Layout):
 
         # while we have remaining pieces in either parent
         while i < len(p1_keep) or j < len(p2_keep):
-            if j >= len(p2_keep): # all of p2_keep has been added
+            if j >= len(p2_keep):  # all of p2_keep has been added
                 out.append(copy.deepcopy(p1_keep[i])); i += 1; continue
-            if i >= len(p1_keep): # all of p1_keep has been added
+            if i >= len(p1_keep):  # all of p1_keep has been added
                 out.append(copy.deepcopy(p2_keep[j])); j += 1; continue
 
-            r1 = p1_keep[i].root_id # root_id of the next piece in p1
-            r2 = p2_keep[j].root_id # root_id of the next piece in p2
+            r1 = p1_keep[i].root_id  # root_id of the next piece in p1
+            r2 = p2_keep[j].root_id  # root_id of the next piece in p2
 
             assert r1 in root_rank and r2 in root_rank
 
@@ -828,7 +886,7 @@ class Chromosome(Layout):
                 out.append(copy.deepcopy(p2_keep[j])); j += 1
             else:
                 # same rank (incl. same root): prefer the owning parent for that root
-                if owner.get(r1, 0) == 1:
+                if owner.get(r1) == "P1":
                     out.append(copy.deepcopy(p1_keep[i])); i += 1
                 else:
                     out.append(copy.deepcopy(p2_keep[j])); j += 1
@@ -905,16 +963,16 @@ class Chromosome(Layout):
         # --- Step 2: Differing-parameter groups & ownership (closure)
         groups = self._conflict_groups(self.design_params, other.design_params, set(order_p1))
 
-        # owner[root] ∈ {0 undecided, 1 P1, 2 P2}
-        owner: dict[str, int] = {r: 0 for r in order_p1}
+        # owner[root] ∈ {None, "P1", "P2"}
+        owner: dict[str, str | None] = {r: None for r in order_p1}
 
         # seed from P1 segments
         for pos in segment_positions:
-            owner[order_p1[pos]] = 1
+            owner[order_p1[pos]] = "P1"
 
         # --- TRANSITIVE closure over overlapping differing groups ---
         # Build a lightweight adjacency: connect roots that appear together in a differing group.
-        seed_roots = {r for r, v in owner.items() if v == 1}
+        seed_roots = {r for r, v in owner.items() if v == "P1"}
         if groups and seed_roots:
             adj: dict[str, set[str]] = {r: set() for r in order_p1}
             for g in groups:
@@ -924,13 +982,13 @@ class Chromosome(Layout):
                     for r in rs[1:]:
                         adj[hub].add(r)
                         adj[r].add(hub)
-            # BFS from all seed roots to pull entire connected components to owner=1
+            # BFS from all seed roots to pull entire connected components to owner=P1
             from collections import deque  # local import (already available globally, kept for clarity)
             q = deque(seed_roots)
             seen = set(seed_roots)
             while q:
                 r = q.popleft()
-                owner[r] = 1
+                owner[r] = "P1"
                 for nb in adj[r]:
                     if nb not in seen:
                         seen.add(nb)
@@ -938,15 +996,15 @@ class Chromosome(Layout):
 
         # remaining undecided groups: single owner (default P2)
         for g in groups:
-            if all(owner[r] == 0 for r in g["roots"]):
+            if all(owner[r] is None for r in g["roots"]):
                 for r in g["roots"]:
-                    owner[r] = 2
+                    owner[r] = "P2"
 
         # roots not in any differing group: default by segment position
         roots_in_groups = set().union(*(g["roots"] for g in groups)) if groups else set()
         for pos, r in enumerate(order_p1):
-            if owner[r] == 0 and r not in roots_in_groups:
-                owner[r] = 1 if pos in segment_positions else 2
+            if owner[r] is None and r not in roots_in_groups:
+                owner[r] = "P1" if pos in segment_positions else "P2"
 
         # no mixed ownership inside any differing group
         for g in groups:
@@ -994,7 +1052,7 @@ class Chromosome(Layout):
         if child_dp is not None and other.design_params is not None and groups:
             for g in groups:
                 g_owner = next(iter({owner[r] for r in g["roots"]}))  # uniform by assertion
-                if g_owner == 2:
+                if g_owner == "P2":
                     for path in g["paths"]:
                         node = None
                         try:
@@ -1017,6 +1075,7 @@ class Chromosome(Layout):
             origin="crossover",
             design_params=child_dp,
             body_params=self.body_params,
+            initial_design_params=self.initial_design_params,
         )
 
         p1_hist_by_root = self._history_by_root(getattr(self, "split_history", []))
@@ -1025,7 +1084,7 @@ class Chromosome(Layout):
         seen_entries: set[tuple[str, float]] = set()
         child.split_history = []
         for r in order_p1:
-            src = p1_hist_by_root if owner[r] == 1 else p2_hist_by_root
+            src = p1_hist_by_root if owner[r] == "P1" else p2_hist_by_root
             for entry in src.get(r, []):
                 if entry not in seen_entries:
                     seen_entries.add(entry)
@@ -1042,7 +1101,316 @@ class Chromosome(Layout):
             if getattr(config, "VERBOSE", False):
                 print(f"[DEBUG] Forced mutation: {before} -> {child.fitness}")
 
+        # Warn if any root/panel was lost compared to the parents' root set
+        child._warn_if_panel_lost(set(order_p1), "crossover_oxk")
+
         return child
+
+
+    # --------------------- Cross-Stitch OX ---------------------
+
+    def cross_stitch(
+        self,
+        owner: dict[str, str],
+        p1_seq: list["Piece"],
+        p2_seq: list["Piece"],
+        *,
+        mode: str = "sticky",
+    ) -> list["Piece"]:
+        """
+        Pointer-based weave with clash tie-break modes.
+
+        - Only append genes whose root owner matches that parent.
+        - Clash occurs when both sides' next item is owned by that side.
+          Tie-break:
+            sticky:   emit full run from P1 until gap then continue.
+            lexicographic: emit P1[i], then P2[j], then continue normal logic.
+        """
+
+        def next_owned_run(seq: list["Piece"], take_owner: str, start: int) -> tuple[int | None, int | None]:
+            # find first index >= start that belongs to take_owner
+            n = len(seq)
+            s = start
+            while s < n and owner.get(seq[s].root_id) != take_owner:
+                s += 1
+            if s >= n:
+                return None, None
+            e = s
+            while e < n and owner.get(seq[e].root_id) == take_owner:
+                e += 1
+            return s, e  # [s, e)
+
+        out: list["Piece"] = []
+        i, j = 0, 0
+        # n1, n2 = len(p1_seq), len(p2_seq)
+        # choose initial side by earliest first-owned index; tie -> P1
+        i0_init, _ = next_owned_run(p1_seq, "P1", 0)
+        j0_init, _ = next_owned_run(p2_seq, "P2", 0)
+        if i0_init is None and j0_init is None:
+            return out
+        if i0_init is None:
+            side = "P2"; j = 0 if j0_init is None else j0_init
+        elif j0_init is None:
+            side = "P1"; i = 0 if i0_init is None else i0_init
+        else:
+            if i0_init <= j0_init:
+                side = "P1"; i = i0_init
+            else:
+                side = "P2"; j = j0_init
+
+        while True:
+            i0, i1 = next_owned_run(p1_seq, "P1", i)
+            j0, j1 = next_owned_run(p2_seq, "P2", j)
+
+            p1_ready = i0 is not None and i0 == i
+            p2_ready = j0 is not None and j0 == j
+
+            # no more owned genes on either side -> done
+            if (i0 is None) and (j0 is None):
+                break
+
+            # clash: both sides ready at current pointers
+            if p1_ready and p2_ready:
+                if mode == "lexicographic":
+                    # emit one from P1 then one from P2
+                    out.append(copy.deepcopy(p1_seq[i])); i += 1
+                    out.append(copy.deepcopy(p2_seq[j])); j += 1
+                    # continue without forcing side; recompute next
+                    continue
+                else:  # sticky
+                    # emit the maximal run from P1, then continue
+                    assert i1 is not None
+                    while i < i1:
+                        out.append(copy.deepcopy(p1_seq[i])); i += 1
+                    # after finishing run, side naturally changes according to availability
+                    continue
+
+            # non-clash: follow the active side greedily
+            if side == "P1":
+                if p1_ready:
+                    assert i1 is not None
+                    while i < i1:
+                        out.append(copy.deepcopy(p1_seq[i])); i += 1
+                    # keep side=P1 until next gap; loop will recompute
+                    continue
+                # gap on P1: switch to P2 and jump to its next owned start to avoid oscillation
+                side = "P2"
+                if j0 is not None and j < j0:
+                    j = j0
+                continue
+            else:  # side == "P2"
+                if p2_ready:
+                    assert j1 is not None
+                    while j < j1:
+                        out.append(copy.deepcopy(p2_seq[j])); j += 1
+                    # keep side=P2 until next gap
+                    continue
+                # gap on P2: switch to P1 and jump to its next owned start
+                side = "P1"
+                if i0 is not None and i < i0:
+                    i = i0
+                continue
+
+        return out
+
+    def cross_stitch_oxk(
+        self,
+        other: "Chromosome",
+        *,
+        k: int = 1,
+        mode: str = "sticky",
+    ) -> tuple["Chromosome", "Chromosome"]:
+        """
+        OX-k variant over gene indices with split-root closure and design-parameter closure.
+
+        Steps:
+        1) Select k disjoint contiguous segments on parent1's gene sequence.
+           Seed ownership: any root appearing in these segments is owned by P1 (root closure).
+        2) DP closure: compute differing design parameters; for each param, find affected roots.
+           Build an adjacency among roots that co-occur in any differing group. Propagate ownership
+           from the seed roots through this graph (BFS). Unassigned roots default to P2.
+        3) Weave: build child sequence using a pointer-based weave with clash handling.
+           mode in {"sticky", "lexicographic"} controls tie-break behavior.
+        4) Build complementary child by flipping owners and re-weaving with the same mode.
+
+        Returns (child_primary, child_complementary).
+        """
+        # Preconditions: parents must contain identical root sets (pre-split identifiers)
+        p1_roots = [g.root_id for g in self.genes]
+        p2_roots = [g.root_id for g in other.genes]
+        set1, set2 = set(p1_roots), set(p2_roots)
+        if set1 != set2:
+            raise RuntimeError("Parents must contain identical root sets (pre-split panels).")
+
+        # 1) Choose k random gene segments on parent1 and seed P1 ownership via root closure
+        n = len(self.genes)
+        if n == 0:
+            raise RuntimeError("Empty parent genes.")
+        if n == 1:
+            k = 1
+        else:
+            k = max(1, min(k, n // 2))
+
+        cuts = sorted(random.sample(range(n), 2 * k)) if n > 1 else [0, 0]
+        segs: list[tuple[int, int]] = []
+        for i in range(0, len(cuts), 2):
+            a, b = cuts[i], cuts[i + 1]
+            if a > b:
+                a, b = b, a
+            segs.append((a, b))  # inclusive
+
+        # Seed ownership
+        owner: dict[str, str | None] = {r: None for r in set1}
+        for a, b in segs:
+            for idx in range(a, b + 1):
+                r = self.genes[idx].root_id
+                owner[r] = "P1"
+
+        # 2) DP closure (grouped by differing params) and BFS propagation
+        groups = self._conflict_groups(self.design_params, other.design_params, set1)
+        if groups:
+            # adjacency among roots that appear together in a group
+            adj: dict[str, set[str]] = {r: set() for r in set1}
+            for g in groups:
+                rs = list(g["roots"])  # set[str]
+                for u in range(len(rs)):
+                    for v in range(u + 1, len(rs)):
+                        a, b = rs[u], rs[v]
+                        adj[a].add(b)
+                        adj[b].add(a)
+
+            # BFS from seed roots owned by P1
+            from collections import deque
+            seeds = deque([r for r, ow in owner.items() if ow == "P1"])
+            seen = set(seeds)
+            while seeds:
+                cur = seeds.popleft()
+                owner[cur] = "P1"
+                for nb in adj.get(cur, ()):  # pull whole connected component to P1
+                    if nb not in seen:
+                        seen.add(nb)
+                        seeds.append(nb)
+
+            # Any fully-unassigned differing groups go to P2 wholesale
+            for g in groups:
+                rs = g["roots"]
+                if all(owner[r] is None for r in rs):
+                    for r in rs:
+                        owner[r] = "P2"
+
+        # Assign any remaining undecided roots to P2
+        for r in set1:
+            if owner[r] is None:
+                owner[r] = "P2"
+
+        # 3) Build child via pointer-based weave
+        child_genes = self.cross_stitch(owner, self.genes, other.genes, mode=mode)
+
+        # 3b) Post invariants: root set and leaf ownership integrity
+        child_roots_set = {g.root_id for g in child_genes}
+        if child_roots_set != set1:
+            raise RuntimeError("Child lost or gained roots unexpectedly.")
+
+        def _leaf_ids(seq: list["Piece"]) -> dict[str, set[str]]:
+            parent_ids = {p.parent_id for p in seq if p.parent_id}
+            out: dict[str, set[str]] = {}
+            for p in seq:
+                if p.id not in parent_ids:
+                    out.setdefault(p.root_id, set()).add(p.id)
+            return out
+
+        p1_leaf_ids = _leaf_ids(self.genes)
+        p2_leaf_ids = _leaf_ids(other.genes)
+        child_leaf_ids = _leaf_ids(child_genes)
+        for r in set1:
+            cl = child_leaf_ids.get(r, set())
+            if cl != p1_leaf_ids.get(r, set()) and cl != p2_leaf_ids.get(r, set()):
+                raise RuntimeError(f"Root {r} leaf set in child differs from both parents.")
+
+        # 4) Build complementary owner map and weave again
+        owner_flip = {r: ("P2" if ow == "P1" else "P1") for r, ow in owner.items()}
+        child2_genes = self.cross_stitch(owner_flip, self.genes, other.genes, mode=mode)
+
+        # 5) Merge design params per owning groups for both children
+        def merge_dp(owner_map: dict[str, str]) -> dict | None:
+            if self.design_params is None:
+                return None
+            dp = copy.deepcopy(self.design_params)
+            if other.design_params is None:
+                return dp
+            if not groups:
+                return dp
+            from pygarment.garmentcode.utils import nested_get, nested_set, nested_del
+            for g in groups:
+                # owner is uniform per group by construction
+                any_r = next(iter(g["roots"]))
+                g_owner = owner_map[any_r]
+                if g_owner == "P2":
+                    for path in g["paths"]:
+                        try:
+                            node = nested_get(other.design_params, path.split("."))
+                        except Exception:
+                            node = None
+                        if node is None:
+                            try:
+                                nested_del(dp, path.split("."))
+                            except Exception:
+                                pass
+                        else:
+                            nested_set(dp, path.split("."), copy.deepcopy(node))
+            return dp
+
+        child1_dp = merge_dp(owner)
+        child2_dp = merge_dp(owner_flip)
+
+        # 6) Construct Chromosome objects and propagate split histories per ownership
+        def build_child(pieces: list["Piece"], owner_map: dict[str, str], dp: dict | None) -> "Chromosome":
+            ch = Chromosome(
+                pieces=pieces,
+                container=self.container,
+                origin="crossover",
+                design_params=dp,
+                body_params=self.body_params,
+                initial_design_params=self.initial_design_params,
+            )
+            p1_hist_by_root = self._history_by_root(getattr(self, "split_history", []))
+            p2_hist_by_root = self._history_by_root(getattr(other, "split_history", []))
+            seen_entries: set[tuple[str, float]] = set()
+            ch.split_history = []
+            for r in set1:
+                src = p1_hist_by_root if owner_map[r] == "P1" else p2_hist_by_root
+                for entry in src.get(r, []):
+                    if entry not in seen_entries:
+                        seen_entries.add(entry)
+                        ch.split_history.append(entry)
+            # optional immediate fitness
+            try:
+                ch.calculate_fitness()
+            except Exception:
+                pass
+
+            # Warn if any root/panel was lost compared to the parents' root set
+            ch._warn_if_panel_lost(set1, "cross_stitch_oxk")
+            return ch
+
+        child1 = build_child(child_genes, owner, child1_dp)
+        child2 = build_child(child2_genes, owner_flip, child2_dp)
+
+        # Optional: force mutation if configured and child's fitness equals a parent's
+        import nesting.config as config
+        for ch in (child1, child2):
+            try:
+                if config.FORCE_MUTATION_ON_CROSSOVER and (ch.fitness in (self.fitness, other.fitness)):
+                    before = ch.fitness
+                    ch.mutate()
+                    ch.calculate_fitness()
+                    if getattr(config, "VERBOSE", False):
+                        print(f"[DEBUG] Forced mutation: {before} -> {ch.fitness}")
+            except Exception:
+                # do not derail crossover if fitness cannot be computed here
+                pass
+
+        return child1, child2
 
 
     def _signature(self) -> tuple:

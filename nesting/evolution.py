@@ -7,6 +7,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 import seaborn as sns
+import threading
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -101,10 +102,14 @@ class Evolution:
         # Create a violin plot path as well
         self.mut_violin_plot_path = plots_dir / "mutation_gains_violin.png"
 
+        # Metrics/CSV state and swarm-plot buffer
         self._metrics_buffer = []
         self._all_metrics = []
         self._csv_header_done = False
         self._swarm_df = pd.DataFrame(columns=["generation", "fitness", "origin"])
+
+        # Thread-safe logging
+        self._log_lock = threading.Lock()
 
         # GA parameters
         self.num_generations = num_generations
@@ -177,13 +182,23 @@ class Evolution:
     # ------------------------------------------------------------------
 
     def _log(self, msg: str = "", *, divider: bool = False) -> None:
+        lines_to_write = []
         if divider:
             line = "-" * 60
             print(line)
             self.log_lines.append(line)
+            lines_to_write.append(line)
         if msg:
             print(msg)
             self.log_lines.append(msg)
+            lines_to_write.append(msg)
+
+        # Continuous flush to disk for each log call
+        if config.SAVE_LOGS and lines_to_write:
+            with self._log_lock:
+                with self.log_path.open("a", encoding="utf-8") as f:
+                    for ln in lines_to_write:
+                        f.write(ln + "\n")
 
     # ------------------------------------------------------------------
     # Population helpers
@@ -208,7 +223,7 @@ class Evolution:
 
         # ramdomize rotations
         for piece in chrom.genes:
-            rotation = random.choice([0, 90, 180, 270])
+            rotation = random.choice(config.ALLOWED_ROTATIONS)
             # rotation = 90
             if rotation != 0:
                 piece.rotate(rotation)
@@ -421,21 +436,31 @@ class Evolution:
         self._log("Phase A: creating offspring…")
 
         def do_offspring(p1, p2, parent_f):
+            """Produce one mating -> 1 or 2 children depending on config flag."""
             try:
-                # if self.crossover_method == 'pmx':
-                #     child = p1.crossover_pmx(p2)
-                # else:
-                    # child = p1.crossover_oxk(p2)
-                child = p1.crossover_oxk(p2, config.OX_K)
-                if random.random() < self.mutation_rate:
-                    child.mutate()
-                child.calculate_fitness()
-                if config.VERBOSE:
-                    self._log(f"Offspring created with fitness: {child.fitness:.4f}")
-                child.origin = "offspring"
-                return child, parent_f, None, None
+                # Use cross-stitch crossover with DP-closure and split-root handling
+                if (config.SELECTED_CROSSOVER == "cross_stitch_oxk"):
+                    res = p1.cross_stitch_oxk(p2, k=config.OX_K, mode=config.CROSS_STITCH_MODE)
+                elif (config.SELECTED_CROSSOVER == "oxk"):
+                    res = p1.crossover_oxk(p2, k=config.OX_K)
+                children = []
+                if isinstance(res, tuple) or isinstance(res, list):
+                    children = [c for c in res if c is not None]
+                else:
+                    children = [res]
+
+                out_children = []
+                for child in children:
+                    if random.random() < self.mutation_rate:
+                        child.mutate()
+                    child.calculate_fitness()
+                    if config.VERBOSE:
+                        self._log(f"Offspring created with fitness: {child.fitness:.4f}")
+                    child.origin = "offspring"
+                    out_children.append(child)
+                return out_children, parent_f, None
             except Exception as e:
-                return None, parent_f, None, e
+                return [], parent_f, e
 
         offspring, off_gains = [], []
         
@@ -450,31 +475,53 @@ class Evolution:
         p1, p2 = random.sample(viable_parents, 2)
         parent_f = max(p1.fitness, p2.fitness)
 
+        # Create offspring using cross-stitch crossover
+        target_offspring = self.n_offspring
         if config.MULTITHREADING:
             offspring_jobs = {}
             with ThreadPoolExecutor() as ex:
-                for _ in range(self.n_offspring):
+                # Submit one mating per job; each job may return up to 2 kids
+                for _ in range(max(1, (target_offspring + 1) // 2)):
                     fut = ex.submit(do_offspring, p1, p2, parent_f)
                     offspring_jobs[fut] = None
             for fut in as_completed(offspring_jobs):
-                child, parent_f, _, err = fut.result()
-                if err:                                         # ← keep old checks
-                    self._log(f"‼ offspring task failed: {err}")
-                    continue
-                gain = child.fitness - parent_f
-                offspring.append(child)
-                off_gains.append(gain)
-                new_population.append(child)
-        else:  # ───────────── single-threaded fallback ─────────────
-            for _ in range(self.n_offspring):
-                child, parent_f, _, err = do_offspring(p1, p2, parent_f)
+                kids, parent_f, err = fut.result()
                 if err:
-                    self._log(f"‼ offspring task failed: {err}")
+                    self._log(f"offspring task failed: {err}")
                     continue
-                gain = child.fitness - parent_f
-                offspring.append(child)
-                off_gains.append(gain)
-                new_population.append(child)
+                for child in kids:
+                    if len(offspring) >= target_offspring:
+                        break
+                    gain = child.fitness - parent_f
+                    offspring.append(child)
+                    off_gains.append(gain)
+                    new_population.append(child)
+            # If still short (e.g., single-child mode), top up with extra matings
+            while len(offspring) < target_offspring:
+                kids, parent_f, err = do_offspring(p1, p2, parent_f)
+                if err:
+                    self._log(f"offspring task failed: {err}")
+                    break
+                for child in kids:
+                    if len(offspring) >= target_offspring:
+                        break
+                    gain = child.fitness - parent_f
+                    offspring.append(child)
+                    off_gains.append(gain)
+                    new_population.append(child)
+        else:  # single-threaded fallback
+            while len(offspring) < target_offspring:
+                kids, parent_f, err = do_offspring(p1, p2, parent_f)
+                if err:
+                    self._log(f"offspring task failed: {err}")
+                    continue
+                for child in kids:
+                    if len(offspring) >= target_offspring:
+                        break
+                    gain = child.fitness - parent_f
+                    offspring.append(child)
+                    off_gains.append(gain)
+                    new_population.append(child)
 
         # ────────────────
         # Phase B: Mutants
@@ -484,71 +531,68 @@ class Evolution:
         mutants, mut_gains = [], []
 
         def do_mutant(parent):
-                    try:
-                        # Create a deep copy of the parent and ensure design_params is deeply copied
-                        parent_f = parent.fitness
-                        child = copy.deepcopy(parent)
-                        if child.design_params is not None:
-                            child.design_params = copy.deepcopy(parent.design_params)
-                        # mutate the child until child.mutate() returns True
-                        mutated = child.mutate()
-                        while not mutated:
-                            mutated = child.mutate()
-                        child.calculate_fitness()
-                        if config.VERBOSE:
-                            self._log(f"Mutant created with fitness: {child.fitness:.4f}")
-                        child.origin = "mutant"
-                        return child, parent_f, child.last_mutation, None
-                    except Exception as e:
-                        return None, parent_f, None, e
+            try:
+                # Create a deep copy of the parent and ensure design_params is deeply copied
+                parent_f = parent.fitness
+                child = copy.deepcopy(parent)
+                if child.design_params is not None:
+                    child.design_params = copy.deepcopy(parent.design_params)
+                # mutate the child until child.mutate() returns True
+                mutated = child.mutate()
+                while not mutated:
+                    mutated = child.mutate()
+                child.calculate_fitness()
+                if config.VERBOSE:
+                    self._log(f"Mutant created with fitness: {child.fitness:.4f}")
+                child.origin = "mutant"
+                return child, parent_f, child.last_mutation, None
+            except Exception as e:
+                return None, parent_f, None, e
                     
-        # Select parent with non-zero fitness for mutation
-        viable_parents = [p for p in old_elite if p.fitness > 0]
-        if not viable_parents:
-            self._log("Warning: No parents with non-zero fitness for mutation. Using all elite chromosomes.")
-            viable_parents = old_elite
-            
-        parent = random.choice(viable_parents)
 
+        mutants, mut_gains = [], []
+        # Collect rows for mutation swarm data (to avoid concurrent writes)
+        mut_swarm_rows: list[dict] = []
         if config.MULTITHREADING:
             mutant_jobs = {}
             with ThreadPoolExecutor() as ex:
                 for _ in range(self.n_mutants):
-                    fut = ex.submit(do_mutant, parent)
+                    par = random.choice(viable_parents)
+                    fut = ex.submit(do_mutant, par)
                     mutant_jobs[fut] = None
             for fut in as_completed(mutant_jobs):
-                child, parent_f, op_used, err = fut.result()
+                mutant, parent_f, mut_type, err = fut.result()
                 if err:
                     self._log(f"‼ mutant task failed: {err}")
                     continue
-                gain = child.fitness - parent_f
-                mutants.append(child)
+                mutants.append(mutant)
+                gain = mutant.fitness - parent_f
                 mut_gains.append(gain)
-                if op_used:
-                    self._mutation_swarm_data = pd.concat(
-                        [self._mutation_swarm_data,
-                        pd.DataFrame({"mutation_type":[op_used],
-                                    "fitness_gain":[gain],
-                                    "generation":[self.generation]})],
-                        ignore_index=True)
-                new_population.append(child)
-        else:  # ───────────── single-threaded fallback ─────────────
+                new_population.append(mutant)
+                # Stage row for mutation swarm data
+                if mut_type is not None:
+                    mut_swarm_rows.append({
+                        "mutation_type": mut_type,
+                        "fitness_gain": gain,
+                        "generation": self.generation + 1  # next gen index
+                    })
+        else:
             for _ in range(self.n_mutants):
-                child, parent_f, op_used, err = do_mutant(parent)
+                par = random.choice(viable_parents)
+                mutant, parent_f, mut_type, err = do_mutant(par)
                 if err:
                     self._log(f"‼ mutant task failed: {err}")
                     continue
-                gain = child.fitness - parent_f
-                mutants.append(child)
+                mutants.append(mutant)
+                gain = mutant.fitness - parent_f
                 mut_gains.append(gain)
-                if op_used:
-                    self._mutation_swarm_data = pd.concat(
-                        [self._mutation_swarm_data,
-                        pd.DataFrame({"mutation_type":[op_used],
-                                    "fitness_gain":[gain],
-                                    "generation":[self.generation]})],
-                        ignore_index=True)
-                new_population.append(child)
+                new_population.append(mutant)
+                if mut_type is not None:
+                    mut_swarm_rows.append({
+                        "mutation_type": mut_type,
+                        "fitness_gain": gain,
+                        "generation": self.generation + 1
+                    })
 
         # ───────────────────
         # Phase C: Randoms
@@ -614,6 +658,16 @@ class Evolution:
         self.population = new_population
         self.pop_fitness_history.append([chrom.fitness for chrom in self.population])
         self.generation += 1
+
+        # Append any collected mutation swarm rows
+        if mut_swarm_rows:
+            try:
+                self._mutation_swarm_data = pd.concat(
+                    [self._mutation_swarm_data, pd.DataFrame(mut_swarm_rows)],
+                    ignore_index=True
+                )
+            except Exception as e:
+                self._log(f"Failed appending mutation swarm rows: {e}")
 
         frame = pd.DataFrame([{
             "generation": self.generation,
@@ -770,9 +824,11 @@ class Evolution:
 
     def _flush_log(self) -> None:
         """Write accumulated log lines to disk (append or create)."""
-        with self.log_path.open("w", encoding="utf-8") as f:
-            for line in self.log_lines:
-                f.write(line + "\n")
+        # Final overwrite for a clean, deduplicated log; guarded for thread safety
+        with self._log_lock:
+            with self.log_path.open("w", encoding="utf-8") as f:
+                for line in self.log_lines:
+                    f.write(line + "\n")
 
     
     def _flush_metrics(self) -> None:

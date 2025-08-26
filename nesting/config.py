@@ -12,7 +12,7 @@ CONTAINER_HEIGHT_CM = 140
 SEAM_ALLOWANCE_CM = 1
 
 # ——— general settings —————————————————————————————————————
-MULTITHREADING: bool = False
+MULTITHREADING: bool = True
 VERBOSE: bool = True
 # DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_specification.json"
 # DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_design_params.yaml"
@@ -27,15 +27,20 @@ DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/ran
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
 #CrossoverName = Literal["pmx", "ox1"]
-CrossoverName = Literal["oxk"]
+CrossoverName = Literal["oxk", "cross_stitch_oxk"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
+CrossStitchMode = Literal["sticky", "lexicographic"]
+
 
 # ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
 SELECTED_FITNESS_METRIC: MetricName  = "concave_hull_area"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
-SELECTED_CROSSOVER      : CrossoverName = "oxk"
-OX_CIRCULAR: bool = False  # whether to use circular walk in OX crossover
+SELECTED_CROSSOVER      : CrossoverName = "cross_stitch_oxk"  # can be "pmx" or "ox1" or "oxk" or "cross_stitch_oxk"
+# When True, crossover operations will produce only one child per mating.
+# When False, crossover can return two children and the GA will consume both.
+#SINGLE_CHILD_CROSSOVER: bool = True
+CROSS_STITCH_MODE = "sticky"
 OX_K = 1
 NUM_SPLITS = 1  # number of splits for the split mutation operator
 SPLIT_LOWER_BOUND = 0.3  # lower bound for split proportion
@@ -48,7 +53,7 @@ GRAVITATE_ONCE: bool = False  # whether to gravitate the pattern once or continu
 GRAVITATE_STEP = 2
 # Greedy
 SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
-REST_PENALTY = 0.01  # penalty for rest length in greedy placement, since rest length is in centimeters and cc is in percentage, this should be a small value
+REST_PENALTY = 0.01  # penalty for rest length, since rest length is in centimeters and cc is in percentage, this should be a small value
 BB_WEIGHT = 0.5  # weight for bounding box utilization in combined fitness metric
 CC_WEIGHT = 0.5  # weight for concave hull utilization in combined fitness metric
 
@@ -59,8 +64,8 @@ NFP_GRAVITATE_ON: bool = True  # whether to gravitate after NFP placement
 POPULATION_SIZE       = 100
 NUM_GENERATIONS       = 20
 MUTATION_RATE         = 0.2
-FORCE_MUTATION_ON_CROSSOVER: bool = True  # force mutation if offspring has same fitness as a parent
-
+FORCE_MUTATION_ON_CROSSOVER: bool = False  # force mutation if offspring has same fitness as a parent
+SWAP_MUTATION_K = None
 
 POPULATION_WEIGHTS: Mapping[str, float] = {
     "elites": 0.25,  # weight for elite population
@@ -159,7 +164,7 @@ SNAP_TOLERANCE = 0.1 # how close points must be to snap to the hull, in percenta
 # ——— sampling (path extractor) —————————————————————————————————————
 SAMPLES_PER_EDGE  = 7
 ENABLE_ROTATIONS  = True
-ALLOWED_ROTATIONS = [0, 90, 180, 270]  # allowed rotations in degrees, if ENABLE_ROTATIONS is True
+ALLOWED_ROTATIONS = [0, 180]  # allowed rotations in degrees, if ENABLE_ROTATIONS is True
 
 
 def __dict__() -> dict:
@@ -205,6 +210,7 @@ def __dict__() -> dict:
         "NUM_COPIES": NUM_COPIES,
         "NUM_SPLITS": NUM_SPLITS,
         "OX_K": OX_K,
+    #"SINGLE_CHILD_CROSSOVER": SINGLE_CHILD_CROSSOVER,
         "POPULATION_WEIGHTS": POPULATION_WEIGHTS,
         "PRESERVE_HOLES": PRESERVE_HOLES,
         "EXCLUDED_PARAM_PATHS": EXCLUDED_PARAM_PATHS,

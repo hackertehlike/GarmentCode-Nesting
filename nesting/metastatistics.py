@@ -13,6 +13,7 @@ from typing import Dict, List, Any, Optional, Tuple
 from collections import defaultdict
 import argparse
 import shutil  # added for purge functionality
+import hashlib
 
 import numpy as np
 import pandas as pd
@@ -293,6 +294,12 @@ class MetaStatistics:
             config_hash: Optional hash of the configuration
         """
         cls.ensure_master_files_exist()
+        
+        # Resolve defaults if not provided
+        if not run_tag:
+            run_tag = cls._get_default_run_tag()
+        if not config_hash:
+            config_hash = cls._compute_config_hash()
         
         # Extract checkpoint metrics
         checkpoints = cls._extract_checkpoint_metrics(evolution_instance)
