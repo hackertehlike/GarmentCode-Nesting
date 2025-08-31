@@ -781,17 +781,7 @@ class Chromosome(Layout):
                 #replacement.translation = g.translation
                 self.genes[i] = replacement
 
-        # TODO: use a logger instead of this
-        if config.LOG_DESIGN_PARAM_PATHS and changed_ids:
-            log_path = Path(config.SAVE_LOGS_PATH) / "design_param_paths.csv"
-            log_path.parent.mkdir(parents=True, exist_ok=True)
-            with log_path.open("a", newline="") as fh:
-                writer = csv.writer(fh)
-                if fh.tell() == 0:
-                    writer.writerow(["piece_id", "param_path", "old_v", "new_v"])
-                for pid in extended_changed_ids:
-                    if pid in new_piece_ids:  # only log those we actually refreshed
-                        writer.writerow([pid, path, old_val, new_val])
+        # Removed CSV logging of design parameter paths
         return True
     
        # -------------------- helpers for crossover --------------------
@@ -1090,8 +1080,13 @@ class Chromosome(Layout):
 
     # ------------------------- OX-k crossover (with weave) -------------------------
 
-    def crossover_oxk(self, other: "Chromosome", k: int = 1) -> "Chromosome":
-        """OX-k crossover over root order with parameter-group closure."""
+    def crossover_oxk(self, other: "Chromosome", k: int = 1) -> tuple["Chromosome", "Chromosome"]:
+        """OX-k crossover over root order producing two complementary children.
+
+        Child 1 uses the propagated ownership map; Child 2 uses the flipped map.
+        Both children are built by the owner-stable weave, preserving non-contiguous
+        families and taking leaves only from the owning parent for each root.
+        """
         order_p1 = self._root_order()
         order_p2 = other._root_order()
 
@@ -1106,59 +1101,97 @@ class Chromosome(Layout):
         groups = self._conflict_groups(self.design_params, other.design_params, set(order_p1))
         owner = self._propagate_root_ownership(groups, order_p1, segment_positions)
 
-        child_genes: list[Piece] = self._build_child_by_owner_weave(
+        # Build first child using ownership map
+        child1_genes: list[Piece] = self._build_child_by_owner_weave(
             order_child_roots=child_roots,
             owner=owner,
             p1_seq=self.genes,
             p2_seq=other.genes,
         )
+        # Build second child using flipped ownership
+        owner_flip = {r: ("P2" if ow == "P1" else "P1") for r, ow in owner.items()}
+        child2_genes: list[Piece] = self._build_child_by_owner_weave(
+            order_child_roots=child_roots,
+            owner=owner_flip,
+            p1_seq=self.genes,
+            p2_seq=other.genes,
+        )
 
-        child_roots_set = {g.root_id for g in child_genes}
-        if child_roots_set != set(order_p1):
-            raise RuntimeError(f"Root mismatch: expected {sorted(order_p1)}, got {sorted(child_roots_set)}")
+        # Validate roots for both children
+        expect_roots = set(order_p1)
+        for tag, genes in (("child1", child1_genes), ("child2", child2_genes)):
+            got = {g.root_id for g in genes}
+            if got != expect_roots:
+                raise RuntimeError(f"Root mismatch in {tag}: expected {sorted(expect_roots)}, got {sorted(got)}")
 
         p1_leaf_ids = self._leaf_ids(self.genes)
         p2_leaf_ids = self._leaf_ids(other.genes)
-        child_leaf_ids = self._leaf_ids(child_genes)
+        for tag, genes in (("child1", child1_genes), ("child2", child2_genes)):
+            child_leaf_ids = self._leaf_ids(genes)
+            for r in order_p1:
+                cl = child_leaf_ids.get(r, set())
+                if cl != p1_leaf_ids.get(r, set()) and cl != p2_leaf_ids.get(r, set()):
+                    raise RuntimeError(
+                        f"Root {r} leaf mismatch in {tag}: child={sorted(cl)} "
+                        f"not equal to P1={sorted(p1_leaf_ids.get(r, set()))} "
+                        f"nor P2={sorted(p2_leaf_ids.get(r, set()))}"
+                    )
 
-        for r in order_p1:
-            cl = child_leaf_ids.get(r, set())
-            if cl != p1_leaf_ids.get(r, set()) and cl != p2_leaf_ids.get(r, set()):
-                raise RuntimeError(
-                    f"Root {r} leaf mismatch: child={sorted(cl)} "
-                    f"not equal to P1={sorted(p1_leaf_ids.get(r, set()))} "
-                    f"nor P2={sorted(p2_leaf_ids.get(r, set()))}"
-                )
+        child1_dp = self._merge_design_params(owner, groups, self.design_params, other.design_params)
+        child2_dp = self._merge_design_params(owner_flip, groups, self.design_params, other.design_params)
 
-        child_dp = self._merge_design_params(owner, groups, self.design_params, other.design_params)
-
-        child = Chromosome(
-            pieces=child_genes,
+        child1 = Chromosome(
+            pieces=child1_genes,
             container=self.container,
             origin="crossover",
-            design_params=child_dp,
+            design_params=child1_dp,
+            body_params=self.body_params,
+            initial_design_params=self.initial_design_params,
+        )
+        child2 = Chromosome(
+            pieces=child2_genes,
+            container=self.container,
+            origin="crossover",
+            design_params=child2_dp,
             body_params=self.body_params,
             initial_design_params=self.initial_design_params,
         )
 
-        child.split_history = self._propagate_split_history(
+        child1.split_history = self._propagate_split_history(
             owner,
             getattr(self, "split_history", []),
             getattr(other, "split_history", []),
             order_p1,
         )
+        child2.split_history = self._propagate_split_history(
+            owner_flip,
+            getattr(self, "split_history", []),
+            getattr(other, "split_history", []),
+            order_p1,
+        )
 
-        child.calculate_fitness()
+        for ch in (child1, child2):
+            try:
+                ch.calculate_fitness()
+            except Exception:
+                pass
+
         import nesting.config as config
-        if config.FORCE_MUTATION_ON_CROSSOVER and (child.fitness in (self.fitness, other.fitness)):
-            before = child.fitness
-            child.mutate()
-            child.calculate_fitness()
-            if getattr(config, "VERBOSE", False):
-                print(f"[DEBUG] Forced mutation: {before} -> {child.fitness}")
+        for ch in (child1, child2):
+            try:
+                if config.FORCE_MUTATION_ON_CROSSOVER and (ch.fitness in (self.fitness, other.fitness)):
+                    before = ch.fitness
+                    ch.mutate()
+                    ch.calculate_fitness()
+                    if getattr(config, "VERBOSE", False):
+                        print(f"[DEBUG] Forced mutation: {before} -> {ch.fitness}")
+            except Exception:
+                pass
 
-        child._warn_if_panel_lost(set(order_p1), "crossover_oxk")
-        return child
+        for ch in (child1, child2):
+            ch._warn_if_panel_lost(set(order_p1), "crossover_oxk")
+
+        return child1, child2
 
 
     # --------------------- Cross-Stitch OX ---------------------

@@ -51,10 +51,11 @@ def _serialize_config(config_obj):
 def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
     os.makedirs(output_dir, exist_ok=True)
 
-    run_tag = uuid.uuid4().hex
+    # Use a short, directory-safe run tag for readability
+    run_tag = MetaStatistics._get_default_run_tag()
     config_hash = hashlib.md5(
         json.dumps(_serialize_config(config), sort_keys=True).encode("utf-8")
-    ).hexdigest()
+    ).hexdigest()[:8]  # Truncate to first 8 chars
 
     all_results = []
 
@@ -70,6 +71,18 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
         print(f"\n{'='*60}\nProcessing pattern: {pattern_name}\n{'='*60}")
         pattern_output_dir = os.path.join(output_dir, pattern_name, run_tag)
         os.makedirs(pattern_output_dir, exist_ok=True)
+        # Persist minimal run metadata for downstream aggregations
+        try:
+            run_info = {
+                "pattern_name": pattern_name,
+                "run_tag": run_tag,
+                "config_hash": config_hash,
+                "timestamp": time.strftime("%Y%m%d_%H%M%S"),
+            }
+            with open(os.path.join(pattern_output_dir, "run_info.json"), "w") as rf:
+                json.dump(run_info, rf, indent=2)
+        except Exception as e:
+            print(f"Warning: failed to write run_info.json: {e}")
 
         container = Container(config.CONTAINER_WIDTH_CM, config.CONTAINER_HEIGHT_CM)
 
@@ -149,11 +162,11 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
             ax.grid(True)
             _save_plot(fig, pattern_output_dir, "delta_best.png")
 
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(range(1, len(evo.improvement_from_initial)), evo.improvement_from_initial[1:], marker='o', color='green')
-            ax.set(xlabel='Generation', ylabel='Improvement from Initial', title=f'Cumulative Improvement from Generation 0 - {pattern_name}')
-            ax.grid(True)
-            _save_plot(fig, pattern_output_dir, "improvement_from_initial.png")
+            # fig, ax = plt.subplots(figsize=(10, 6))
+            # ax.plot(range(1, len(evo.improvement_from_initial)), evo.improvement_from_initial[1:], marker='o', color='green')
+            # ax.set(xlabel='Generation', ylabel='Improvement from Initial', title=f'Cumulative Improvement from Generation 0 - {pattern_name}')
+            # ax.grid(True)
+            # _save_plot(fig, pattern_output_dir, "improvement_from_initial.png")
 
             print(f"Results saved to {pattern_output_dir}")
         except Exception as e:
@@ -246,8 +259,8 @@ if __name__ == "__main__":
         raise ValueError("No pattern entered. Please enter a pattern.")
     
     # Generate aggregate reports after all patterns have been processed
-    try:
-        print("\nGenerating aggregate statistics across all runs...")
-        MetaStatistics.generate_aggregate_reports()
-    except Exception as e:
-        print(f"Failed to generate aggregate statistics: {e}")
+    # try:
+    #     print("\nGenerating aggregate statistics across all runs...")
+    #     MetaStatistics.generate_aggregate_reports()
+    # except Exception as e:
+    #     print(f"Failed to generate aggregate statistics: {e}")

@@ -6,7 +6,6 @@ import random
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-import seaborn as sns
 import threading
 
 import pandas as pd
@@ -49,11 +48,11 @@ class Evolution:
         extend_window: int = 10,
         extend_threshold: float = 0.1,
         max_generations: int = 200,
-    design_params: dict = None,
-    body_params: object = None,
-    pattern_name: str = None,
-    run_tag: str | None = None,
-    config_hash: str | None = None,
+        design_params: dict = None,
+        body_params: object = None,
+        pattern_name: str = None,
+        run_tag: str | None = None,
+        config_hash: str | None = None,
     ) -> None:
         self.generation = 0
         self.container = container
@@ -62,22 +61,6 @@ class Evolution:
         self.pattern_name = pattern_name or ""
         self.run_tag = run_tag
         self.config_hash = config_hash
-
-        # Fill defaults for tagging if not supplied
-        if self.run_tag is None:
-            self.run_tag = getattr(config, 'RUN_TAG', None)
-            if self.run_tag is None:
-                try:
-                    from .metastatistics import MetaStatistics
-                    self.run_tag = MetaStatistics._get_default_run_tag()
-                except Exception:
-                    self.run_tag = ''
-        if self.config_hash is None:
-            try:
-                from .metastatistics import MetaStatistics
-                self.config_hash = MetaStatistics._compute_config_hash()
-            except Exception:
-                self.config_hash = ''
         
         # Initialize logging first to avoid attribute errors
         self.log_lines = []
@@ -96,7 +79,7 @@ class Evolution:
             Path(log_dir).mkdir(parents=True, exist_ok=True)        # ensure folder exists
         
         self.log_path = Path(log_dir) / f"evolution_log_{ts}.txt"
-        self.csv_path = Path(log_dir) / f"evolution_metrics_{ts}.csv"
+        #self.csv_path = Path(log_dir) / f"evolution_metrics_{ts}.csv"
         
         plots_dir = Path(log_dir) / "plots"
         if config.SAVE_LOGS:
@@ -130,6 +113,27 @@ class Evolution:
 
         # Thread-safe logging
         self._log_lock = threading.Lock()
+
+        # Per-chromosome raw data CSV (one file per run)
+        # Name: run_tag + pattern_name + timestamp (without year)
+        ts_short = time.strftime("%m%d_%H%M")
+        safe_pat = (self.pattern_name or "pattern").replace("/", "_")
+        raw_name = f"{self.run_tag}_{safe_pat}_{ts_short}.csv" if self.run_tag else f"{safe_pat}_{ts_short}.csv"
+        Path(config.RUNS_DIR).mkdir(parents=True, exist_ok=True)
+        self.raw_chromosome_csv_path = Path(config.RUNS_DIR) / raw_name
+        self._raw_header_written = False
+        # Lock to guard concurrent writes to the raw CSV
+        self._raw_lock = threading.Lock()
+        self._raw_fieldnames = [
+            "config_hash",
+            "run_tag",
+            "pattern_name",
+            "generation",
+            "origin",
+            "parent1_fitness",
+            "parent2_fitness",
+            "self_fitness",
+        ]
 
         # GA parameters
         self.num_generations = num_generations
@@ -320,6 +324,21 @@ class Evolution:
             self._log(f"Layout {i}: {[(p.id, p.rotation) for p in chrom.genes]} | Fitness: {chrom.fitness:.4f}")
         self._log("Population generation completed.", divider=True)
 
+        # Write raw rows for initial population (generation 0, origin random, no parents)
+        init_rows = []
+        for c in self.population:
+            init_rows.append({
+                "config_hash": self.config_hash or "",
+                "run_tag": self.run_tag or "",
+                "pattern_name": self.pattern_name or "",
+                "generation": 0,
+                "origin": c.origin or "random",
+                "parent1_fitness": "N/A",
+                "parent2_fitness": "N/A",
+                "self_fitness": float(c.fitness or 0.0),
+            })
+        self._append_raw_rows(init_rows)
+
 
     # ------------------------------------------------------------------
     # GA core operations
@@ -455,10 +474,8 @@ class Evolution:
         # ────────────────
         self._log("Phase A: creating offspring…")
 
-        def do_offspring(p1, p2, parent_f):
-            """Produce one mating -> 1 or 2 children depending on config flag."""
+        def do_offspring(p1, p2):
             try:
-                # Use cross-stitch crossover with DP-closure and split-root handling
                 if (config.SELECTED_CROSSOVER == "cross_stitch_oxk"):
                     res = p1.cross_stitch_oxk(p2, k=config.OX_K, mode=config.CROSS_STITCH_MODE)
                 elif (config.SELECTED_CROSSOVER == "oxk"):
@@ -478,9 +495,9 @@ class Evolution:
                         self._log(f"Offspring created with fitness: {child.fitness:.4f}")
                     child.origin = "offspring"
                     out_children.append(child)
-                return out_children, parent_f, None
+                return out_children, float(p1.fitness), float(p2.fitness), None
             except Exception as e:
-                return [], parent_f, e
+                return [], float(p1.fitness), float(p2.fitness), e
 
         offspring, off_gains = [], []
         
@@ -502,46 +519,84 @@ class Evolution:
             with ThreadPoolExecutor() as ex:
                 # Submit one mating per job; each job may return up to 2 kids
                 for _ in range(max(1, (target_offspring + 1) // 2)):
-                    fut = ex.submit(do_offspring, p1, p2, parent_f)
+                    fut = ex.submit(do_offspring, p1, p2)
                     offspring_jobs[fut] = None
             for fut in as_completed(offspring_jobs):
-                kids, parent_f, err = fut.result()
+                kids, p1f, p2f, err = fut.result()
                 if err:
                     self._log(f"offspring task failed: {err}")
                     continue
                 for child in kids:
                     if len(offspring) >= target_offspring:
                         break
+                    parent_f = max(p1f, p2f)
                     gain = child.fitness - parent_f
                     offspring.append(child)
                     off_gains.append(gain)
                     new_population.append(child)
+                    # stage raw row for this child
+                    # generation for created children is next generation index
+                    raw_rows = [{
+                        "config_hash": self.config_hash or "",
+                        "run_tag": self.run_tag or "",
+                        "pattern_name": self.pattern_name or "",
+                        "generation": self.generation + 1,
+                        "origin": child.origin or "offspring",
+                        "parent1_fitness": p1f,
+                        "parent2_fitness": p2f,
+                        "self_fitness": float(child.fitness or 0.0),
+                    }]
+                    self._append_raw_rows(raw_rows)
             # If still short (e.g., single-child mode), top up with extra matings
             while len(offspring) < target_offspring:
-                kids, parent_f, err = do_offspring(p1, p2, parent_f)
+                kids, p1f, p2f, err = do_offspring(p1, p2)
                 if err:
                     self._log(f"offspring task failed: {err}")
                     break
                 for child in kids:
                     if len(offspring) >= target_offspring:
                         break
+                    parent_f = max(p1f, p2f)
                     gain = child.fitness - parent_f
                     offspring.append(child)
                     off_gains.append(gain)
                     new_population.append(child)
+                    raw_rows = [{
+                        "config_hash": self.config_hash,
+                        "run_tag": self.run_tag,
+                        "pattern_name": self.pattern_name,
+                        "generation": self.generation + 1,
+                        "origin": child.origin or "offspring",
+                        "parent1_fitness": p1f,
+                        "parent2_fitness": p2f,
+                        "self_fitness": float(child.fitness or 0.0),
+                    }]
+                    self._append_raw_rows(raw_rows)
         else:  # single-threaded fallback
             while len(offspring) < target_offspring:
-                kids, parent_f, err = do_offspring(p1, p2, parent_f)
+                kids, p1f, p2f, err = do_offspring(p1, p2)
                 if err:
                     self._log(f"offspring task failed: {err}")
                     continue
                 for child in kids:
                     if len(offspring) >= target_offspring:
                         break
+                    parent_f = max(p1f, p2f)
                     gain = child.fitness - parent_f
                     offspring.append(child)
                     off_gains.append(gain)
                     new_population.append(child)
+                    raw_rows = [{
+                        "config_hash": self.config_hash,
+                        "run_tag": self.run_tag,
+                        "pattern_name": self.pattern_name,
+                        "generation": self.generation + 1,
+                        "origin": child.origin or "offspring",
+                        "parent1_fitness": p1f,
+                        "parent2_fitness": p2f,
+                        "self_fitness": float(child.fitness or 0.0),
+                    }]
+                    self._append_raw_rows(raw_rows)
 
         # ────────────────
         # Phase B: Mutants
@@ -596,6 +651,17 @@ class Evolution:
                         "fitness_gain": gain,
                         "generation": self.generation + 1  # next gen index
                     })
+                # Append raw row for this mutant
+                self._append_raw_rows([{
+                    "config_hash": self.config_hash,
+                    "run_tag": self.run_tag,
+                    "pattern_name": self.pattern_name,
+                    "generation": self.generation + 1,
+                    "origin": mutant.origin or "mutant",
+                    "parent1_fitness": float(parent_f),
+                    "parent2_fitness": "N/A",
+                    "self_fitness": float(mutant.fitness or 0.0),
+                }])
         else:
             for _ in range(self.n_mutants):
                 par = random.choice(viable_parents)
@@ -613,6 +679,16 @@ class Evolution:
                         "fitness_gain": gain,
                         "generation": self.generation + 1
                     })
+                self._append_raw_rows([{
+                    "config_hash": self.config_hash,
+                    "run_tag": self.run_tag,
+                    "pattern_name": self.pattern_name,
+                    "generation": self.generation + 1,
+                    "origin": mutant.origin or "mutant",
+                    "parent1_fitness": float(parent_f),
+                    "parent2_fitness": "N/A",
+                    "self_fitness": float(mutant.fitness or 0.0),
+                }])
 
         # ───────────────────
         # Phase C: Randoms
@@ -644,6 +720,17 @@ class Evolution:
                     continue
                 randoms.append(child)
                 new_population.append(child)
+                # Append raw row for this random child
+                self._append_raw_rows([{
+                    "config_hash": self.config_hash,
+                    "run_tag": self.run_tag,
+                    "pattern_name": self.pattern_name,
+                    "generation": self.generation + 1,
+                    "origin": child.origin or "random",
+                    "parent1_fitness": "N/A",
+                    "parent2_fitness": "N/A",
+                    "self_fitness": float(child.fitness or 0.0),
+                }])
         else:  # ───────────── single-threaded fallback ─────────────
             for _ in range(self.n_randoms):
                 child, _, _, err = do_random()
@@ -652,6 +739,16 @@ class Evolution:
                     continue
                 randoms.append(child)
                 new_population.append(child)
+                self._append_raw_rows([{
+                    "config_hash": self.config_hash,
+                    "run_tag": self.run_tag,
+                    "pattern_name": self.pattern_name,
+                    "generation": self.generation + 1,
+                    "origin": child.origin or "random",
+                    "parent1_fitness": "N/A",
+                    "parent2_fitness": "N/A",
+                    "self_fitness": float(child.fitness or 0.0),
+                }])
 
         # Summary of collected results
         self._log(
@@ -747,29 +844,6 @@ class Evolution:
             self._flush_log()
 
         self._log(f"Generation {self.generation} completed in {time.time() - start:.2f}s.")
-        # Append a lightweight progress snapshot to aggregate stats (if enabled)
-        try:
-            from .metastatistics import MetaStatistics
-            MetaStatistics.append_run_progress(self, run_tag=self.run_tag, config_hash=self.config_hash, is_final=False)
-        except Exception as e:
-            # Never fail the run because of progress logging
-            self._log(f"[MetaStats] progress append failed: {e}")
-
-        # Append per-generation mutation stats (raw + aggregated) if available
-        try:
-            from .metastatistics import MetaStatistics
-            # mut_swarm_rows is built earlier in next_generation; use if present
-            if 'mut_swarm_rows' in locals() and mut_swarm_rows:
-                MetaStatistics.append_mutation_swarm_rows(self, mut_swarm_rows, run_tag=self.run_tag, config_hash=self.config_hash)
-        except Exception as e:
-            self._log(f"[MetaStats] mutation rows append failed: {e}")
-
-        # Append per-generation generation metrics and update averages
-        try:
-            from .metastatistics import MetaStatistics
-            MetaStatistics.append_generation_metrics(self, run_tag=self.run_tag, config_hash=self.config_hash, recompute_average=True)
-        except Exception as e:
-            self._log(f"[MetaStats] generation metrics append failed: {e}")
 
     def run(self) -> Chromosome:
         """Evolve the population, applying dynamic‑stopping logic if enabled."""
@@ -854,25 +928,15 @@ class Evolution:
         elapsed_time = end - start
         self._log(f"Total time: {elapsed_time:.2f} seconds")
 
-        # Save plots and CSV one last time
+        # Save plots one last time
         self.update_plots()
         if config.SAVE_LOGS:
-            # Output best result with all changed parameters
-            self.output_best_result()
-            # Flush the log to include the best result output
+            # Flush only logs (no additional CSV outputs)
             self._flush_log()
-            # Save design parameter changes
-            self.save_design_param_changes()
         
         # Return the best chromosome from the population
         if self.population:
             best = max(self.population, key=lambda c: c.fitness)
-            # Mark final snapshot
-            try:
-                from .metastatistics import MetaStatistics
-                MetaStatistics.append_run_progress(self, run_tag=self.run_tag, config_hash=self.config_hash, is_final=True)
-            except Exception as e:
-                self._log(f"[MetaStats] final progress append failed: {e}")
             return best
         return None
 
@@ -890,33 +954,9 @@ class Evolution:
 
 
     def _flush_metrics(self) -> None:
-        """Thread-safe flush of buffered metrics to CSV."""
-        self._log("Flushing metrics to CSV…")
-        if not self._metrics_buffer:
-            return
-
-        # 1. Build a superset header
-        all_keys: set[str] = set().union(*self._metrics_buffer)
-        if self._csv_header_done:
-            # include any new keys discovered since the first header was written
-            all_keys.update(self._csv_fieldnames)
-        self._csv_fieldnames = sorted(all_keys)      # stable column order
-
-        mode = "a" if self._csv_header_done else "w"
-        with self.csv_path.open(mode, newline="") as f:
-            writer = csv.DictWriter(
-                f,
-                fieldnames=self._csv_fieldnames,
-                extrasaction="ignore",   # 2. never raise on unseen keys
-            )
-            if not self._csv_header_done:
-                writer.writeheader()
-                self._csv_header_done = True
-            writer.writerows(self._metrics_buffer)
-
-        self._metrics_buffer.clear()
-
-        # Ensure logs are persisted whenever metrics are flushed
+        """Disable metrics CSV output; keep plots and logs only."""
+        if self._metrics_buffer:
+            self._metrics_buffer.clear()
         self._flush_log()
 
 
@@ -931,6 +971,7 @@ class Evolution:
 
         import pandas as pd
         import matplotlib.pyplot as plt
+        import seaborn as sns
 
         self._log("Updating plots…")
 
@@ -1136,6 +1177,23 @@ class Evolution:
 
             self._log(f"Mutation swarm plot saved to {self.mut_swarm_plot_path}")
 
+    def _append_raw_rows(self, rows: list[dict]) -> None:
+        """Append raw per-chromosome rows to the run-level CSV in runs/.
+
+        Columns: config_hash, run_tag, pattern_name, generation, origin, parent1_fitness, parent2_fitness, self_fitness
+        """
+        if not rows:
+            return
+        # Ensure directory exists
+        self.raw_chromosome_csv_path.parent.mkdir(parents=True, exist_ok=True)
+        mode = "a" if self._raw_header_written else "w"
+        with self.raw_chromosome_csv_path.open(mode, newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=self._raw_fieldnames, extrasaction="ignore")
+            if not self._raw_header_written:
+                writer.writeheader()
+                self._raw_header_written = True
+            writer.writerows(rows)
+
     def _track_design_param_changes(self, generation: int, population: list[Chromosome]) -> None:
         """
         Track and log design parameter changes in the population.
@@ -1190,7 +1248,7 @@ class Evolution:
             self._log(f"[Generation {generation}] Total of {mutated_count} chromosomes with design parameter differences")
     
     def save_design_param_changes(self):
-        """Save design parameter changes to a CSV file with enhanced details."""
+        """Summarize design parameter changes; CSV export removed."""
         if not hasattr(self, 'design_param_changes') or not self.design_param_changes:
             self._log("No design parameter changes to save.")
             return
@@ -1201,13 +1259,10 @@ class Evolution:
         # Create a DataFrame from the changes
         df = pd.DataFrame(self.design_param_changes)
         
-        # Save to CSV with timestamp in the directory for this run
+        # CSV export removed
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         log_dir = Path(self.log_path).parent
-        csv_path = log_dir / f"design_param_changes.csv"
-        df.to_csv(csv_path, index=False)
-        
-        self._log(f"Saved {len(self.design_param_changes)} design parameter changes to {csv_path}")
+        self._log(f"Design parameter changes collected: {len(self.design_param_changes)} (no CSV export)")
         
         # Print comprehensive summary
         param_counts = df['parameter'].value_counts()
@@ -1380,39 +1435,14 @@ class Evolution:
                 change['affected_pieces'] = affected_pieces
                 change['affected_count'] = len(affected_pieces)
             
-            # Write enhanced report to CSV
-            report_path = Path(self.log_path).parent / "best_result_changes.csv"
-            
-            # First write the main CSV with parameter changes
-            with report_path.open('w', newline='') as f:
-                writer = csv.DictWriter(f, fieldnames=['parameter', 'original_value', 'best_value', 'affected_count'])
-                writer.writeheader()
-                for change in changed_params:
-                    # Create a copy without the affected_pieces list for the main CSV
-                    row = {k: v for k, v in change.items() if k != 'affected_pieces'}
-                    writer.writerow(row)
-            
-            # Then write a detailed CSV with all affected pieces
-            detailed_report_path = Path(self.log_path).parent / "best_result_paths.csv"
-            with detailed_report_path.open('w', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow(["parameter", "piece_id", "old_path", "new_path"])
-                for change in changed_params:
-                    param_name = change['parameter']
-                    for piece in change.get('affected_pieces', []):
-                        writer.writerow([
-                            param_name,
-                            piece['piece_id'],
-                            json.dumps(piece['old_path']),
-                            json.dumps(piece['new_path'])
-                        ])
+            # CSV exports removed; rely on log summaries only
+            self._log("CSV export of best-result parameter changes removed")
             
             # Log the changes
             for change in changed_params:
                 self._log(f"  {change['parameter']}: {change['original_value']} -> {change['best_value']} (affects {change['affected_count']} pieces)")
             
-            self._log(f"Parameter change report saved to {report_path}")
-            self._log(f"Detailed path changes saved to {detailed_report_path}")
+            # No CSV paths to report
         else:
             self._log("No parameter changes in the best result")
 
@@ -1585,4 +1615,3 @@ class Evolution:
             dwg.add(dwg.polygon(points=pts, fill="none", stroke="black", stroke_width=0.5))
 
         dwg.save()
-

@@ -1091,11 +1091,7 @@ class NestingGUI:
                 if best_chromosome is None:
                     ui.notify("No valid solution found by the Genetic Algorithm", type="negative")
                     return
-                # Update aggregate master statistics for GUI-driven runs
-                try:
-                    MetaStatistics.save_run_statistics(evo, elapsed_time=0.0)
-                except Exception as e:
-                    print(f"Failed to update master statistics from GUI run: {e}")
+                # Removed aggregate master statistics update for GUI-driven runs
                 
                 self.pieces = {p.id: copy.deepcopy(p) for p in best_chromosome.genes}
                 self.layout = Layout(self.pieces)          # keep layout in sync
