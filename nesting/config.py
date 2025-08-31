@@ -25,7 +25,7 @@ DEFAULT_DESIGN_PARAM_PATH: str = ""
 DEFAULT_BODY_PARAM_PATH: str = ""
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
-MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
+MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc", "bb_cc_area"]
 #CrossoverName = Literal["pmx", "ox1"]
 CrossoverName = Literal["oxk", "cross_stitch_oxk"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
@@ -35,7 +35,7 @@ CrossStitchMode = Literal["sticky", "lexicographic"]
 # ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
-SELECTED_FITNESS_METRIC: MetricName  = "concave_hull_area"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
+SELECTED_FITNESS_METRIC: MetricName  = "bb_cc"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
 SELECTED_CROSSOVER      : CrossoverName = "cross_stitch_oxk"  # can be "pmx" or "ox1" or "oxk" or "cross_stitch_oxk"
 # When True, crossover operations will produce only one child per mating.
 # When False, crossover can return two children and the GA will consume both.

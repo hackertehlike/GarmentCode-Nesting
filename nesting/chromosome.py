@@ -285,6 +285,7 @@ def fitness_bb_cc(chromosome: Chromosome, decoder: str):
         return 0
     return config.BB_WEIGHT * bb_area + config.CC_WEIGHT * cc_area
 
+@register_metric("bb_cc_area")
 def fitness_bb_cc_area(chromosome: Chromosome, decoder: str):
     dec = _run_decoder(chromosome, decoder)
     bb_area = dec.bbox_area()
