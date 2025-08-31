@@ -285,6 +285,15 @@ def fitness_bb_cc(chromosome: Chromosome, decoder: str):
         return 0
     return config.BB_WEIGHT * bb_area + config.CC_WEIGHT * cc_area
 
+def fitness_bb_cc_area(chromosome: Chromosome, decoder: str):
+    dec = _run_decoder(chromosome, decoder)
+    bb_area = dec.bbox_area()
+    cc_area = dec.concave_hull_area()
+
+    if bb_area == 0 or cc_area == 0:
+        return 0
+    return 10000 / (config.BB_WEIGHT * bb_area + config.CC_WEIGHT * cc_area)
+
 # ── Chromosome Definition ───────────────────────────────────────────────────────
 
 class Chromosome(Layout):

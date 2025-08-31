@@ -178,7 +178,7 @@ class PlacementEngine:
                     return False
         return True
 
-    def usage_BB(self) -> float:
+    def bbox_area(self) -> float:
         """
         Calculate the utilization ratio based on the bounding box.
         Returns 0.0 if not all pieces have been placed or if the layout is invalid.
@@ -194,7 +194,14 @@ class PlacementEngine:
         ys = [v[1] for v in flattened]
         min_x, max_x = min(xs), max(xs)
         min_y, max_y = min(ys), max(ys)
-        bbox_area = (max_x - min_x) * (max_y - min_y)
+        return (max_x - min_x) * (max_y - min_y)
+
+    def usage_BB(self) -> float:
+        """
+        Calculate the utilization ratio based on the bounding box.
+        Returns 0.0 if not all pieces have been placed or if the layout is invalid.
+        """
+        bbox_area = self.bbox_area()
         total_area = sum(utils.polygon_area(p.get_outer_path()) for p in self.placed)
         ratio = total_area / bbox_area if bbox_area > 0 else 0.0
         return ratio
