@@ -133,6 +133,7 @@ class Evolution:
             "parent1_fitness",
             "parent2_fitness",
             "self_fitness",
+            "last_mutation",
         ]
 
         # GA parameters
@@ -336,6 +337,7 @@ class Evolution:
                 "parent1_fitness": "N/A",
                 "parent2_fitness": "N/A",
                 "self_fitness": float(c.fitness or 0.0),
+                "last_mutation": getattr(c, 'last_mutation', None),
             })
         self._append_raw_rows(init_rows)
 
@@ -545,6 +547,7 @@ class Evolution:
                         "parent1_fitness": p1f,
                         "parent2_fitness": p2f,
                         "self_fitness": float(child.fitness or 0.0),
+                        "last_mutation": getattr(child, 'last_mutation', None),
                     }]
                     self._append_raw_rows(raw_rows)
             # If still short (e.g., single-child mode), top up with extra matings
@@ -570,6 +573,7 @@ class Evolution:
                         "parent1_fitness": p1f,
                         "parent2_fitness": p2f,
                         "self_fitness": float(child.fitness or 0.0),
+                        "last_mutation": getattr(child, 'last_mutation', None),
                     }]
                     self._append_raw_rows(raw_rows)
         else:  # single-threaded fallback
@@ -595,6 +599,7 @@ class Evolution:
                         "parent1_fitness": p1f,
                         "parent2_fitness": p2f,
                         "self_fitness": float(child.fitness or 0.0),
+                        "last_mutation": getattr(child, 'last_mutation', None),
                     }]
                     self._append_raw_rows(raw_rows)
 
@@ -661,6 +666,7 @@ class Evolution:
                     "parent1_fitness": float(parent_f),
                     "parent2_fitness": "N/A",
                     "self_fitness": float(mutant.fitness or 0.0),
+                    "last_mutation": getattr(mutant, 'last_mutation', None),
                 }])
         else:
             for _ in range(self.n_mutants):
@@ -730,6 +736,7 @@ class Evolution:
                     "parent1_fitness": "N/A",
                     "parent2_fitness": "N/A",
                     "self_fitness": float(child.fitness or 0.0),
+                    "last_mutation": getattr(child, 'last_mutation', None),
                 }])
         else:  # ───────────── single-threaded fallback ─────────────
             for _ in range(self.n_randoms):
@@ -748,6 +755,7 @@ class Evolution:
                     "parent1_fitness": "N/A",
                     "parent2_fitness": "N/A",
                     "self_fitness": float(child.fitness or 0.0),
+                    "last_mutation": getattr(child, 'last_mutation', None),
                 }])
 
         # Summary of collected results
