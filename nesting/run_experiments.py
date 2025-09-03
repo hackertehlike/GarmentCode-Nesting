@@ -21,7 +21,6 @@ from .evolution import Evolution
 from .layout import Container, Piece, Layout
 from assets.bodies.body_params import BodyParameters
 from nesting.metastatistics import MetaStatistics
-from .pattern_loader import load_pattern_bundle
 
 # -----------------------------------------------------------------------------
 # Helper functions
@@ -61,8 +60,67 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
 
     for pattern_path in pattern_paths:
         pattern_path = Path(pattern_path)
+
+        # Old-style pattern loading (no pattern_loader)
         try:
-            pieces, design_params, body_params, pattern_name = load_pattern_bundle(pattern_path)
+            # Derive pattern name from file stem, drop optional _specification suffix
+            pattern_stem = pattern_path.stem
+            pattern_name = (
+                pattern_stem.replace("_specification", "")
+                if pattern_stem.endswith("_specification")
+                else pattern_stem
+            )
+
+            # Geometry via PatternPathExtractor (same approach as GUI)
+            extractor = PatternPathExtractor(pattern_path)
+            panel_pieces = extractor.get_all_panel_pieces(
+                samples_per_edge=config.SAMPLES_PER_EDGE
+            )
+            if not panel_pieces:
+                print(f"No pieces found in pattern {pattern_name}. Skipping.")
+                continue
+
+            pieces = {f"{piece.id}": copy.deepcopy(piece) for piece in panel_pieces.values()}
+
+            # Apply seam allowance and reset translations
+            for piece in pieces.values():
+                piece.add_seam_allowance(config.SEAM_ALLOWANCE_CM)
+                piece.translation = (0, 0)
+
+            # Design params alongside spec file: <pattern_name>_design_params.yaml
+            design_params = None
+            try:
+                yaml_path = pattern_path.parent / f"{pattern_name}_design_params.yaml"
+                if not yaml_path.exists():
+                    raise FileNotFoundError(
+                        f"Design parameters file not found: {yaml_path}"
+                    )
+                with open(yaml_path, "r", encoding="utf-8") as f:
+                    yaml_data = yaml.safe_load(f)
+                if "design" not in yaml_data:
+                    raise KeyError(f"No 'design' key in {yaml_path}")
+                design_params = yaml_data["design"]
+                print(f"Loaded design parameters from {yaml_path}")
+            except Exception as e:
+                print(f"Error loading design parameters: {e}")
+                traceback.print_exc()
+                design_params = None
+
+            # Body parameters alongside spec file: <pattern_name>_body_measurements.yaml
+            body_params = None
+            try:
+                body_path = pattern_path.parent / f"{pattern_name}_body_measurements.yaml"
+                if not body_path.exists():
+                    raise FileNotFoundError(
+                        f"Body parameters file not found: {body_path}"
+                    )
+                body_params = BodyParameters(body_path)
+                print(f"Body parameters loaded from {body_path}")
+            except Exception as e:
+                print(f"Error loading body parameters: {e}")
+                traceback.print_exc()
+                body_params = None
+
         except Exception as e:
             print(f"Failed loading pattern {pattern_path}: {e}")
             traceback.print_exc()
