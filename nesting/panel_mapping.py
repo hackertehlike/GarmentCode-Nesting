@@ -258,6 +258,12 @@ PARAMETER_HIERARCHY: Dict[str, List[Tuple[str, Optional[bool]]]] = {
     ("left.sleeve.cuff.skirt_flare", False),
     ("left.sleeve.cuff.skirt_ruffle", False),
     ],
+
+    "flare-skirt.cut.add": [
+        ("flare-skirt.cut.depth", False),
+        ("flare-skirt.cut.width", False),
+        ("flare-skirt.cut.place", False),
+    ],
 }
 
 

@@ -480,7 +480,7 @@ class Panel(BaseComponent):
         if nesting_path not in sys.path:
             sys.path.append(nesting_path)
         
-        from utils import polygon_split
+        from utils import polygon_split, clean_polygon_coordinates
 
         # Convert current edges into a Shapely polygon using linear approximation
         lin_edges = EdgeSequence([e.linearize() for e in self.edges])
@@ -498,23 +498,31 @@ class Panel(BaseComponent):
             epsilon=epsilon
         )
 
+        # clean up the polygons again
+        left_coords = clean_polygon_coordinates(left_coords, close=False)
+        right_coords = clean_polygon_coordinates(right_coords, close=False)
+
         def _coords_to_panel(coords, suffix):
             """Convert split coordinates back to a Panel object."""
             # Normalize coordinates to start from (0,0)
             min_x = min(x for x, y in coords)
             min_y = min(y for x, y in coords)
             coords_local = [[x - min_x, y - min_y] for x, y in coords]
-            
+            # coords_local = [[x, y] for x, y in coords]
+
             # Create new panel
             p = Panel(f"{self.name}_split_{suffix}")
             p.label = ""
             p.rotation = self.rotation
             
-            # Apply translation offset for the split piece
-            offset_3d = self.rotation.apply([min_x, min_y, 0])
-            p.translation = self.translation + offset_3d
+            # # Apply translation offset for the split piece
+            # offset_3d = self.rotation.apply([min_x, min_y, 0])
+            # p.translation = self.translation + offset_3d
             
             # Create edges from coordinates
+            # print vertices
+            print(f"[CircleArcPanel.split] Left panel vertices: {left_coords}")
+            print(f"[CircleArcPanel.split] Right panel vertices: {right_coords}")
             p.edges = EdgeSeqFactory.from_verts(*coords_local, loop=True)
             return p
 

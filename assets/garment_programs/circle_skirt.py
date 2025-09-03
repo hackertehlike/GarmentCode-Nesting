@@ -140,130 +140,136 @@ class CircleArcPanel(pyg.Panel):
     #     return edges
 
     
-    def split(self, proportion=0.5):
+    # def split(self, proportion=0.5):
 
-        from assets.garment_programs import split_utils
-        """Splits the panel into two new panels at a specified proportion"""
+    #     from assets.garment_programs import split_utils
+    #     """Splits the panel into two new panels at a specified proportion"""
         
-        #self._verify_edge_labels()  # Ensure edge labels are verified before splitting
+    #     #self._verify_edge_labels()  # Ensure edge labels are verified before splitting
 
-        # Check if the panel EdgeSequence is clockwise or counter-clockwise
-        clockwise = self.edges.is_clockwise()
+    #     # Check if the panel EdgeSequence is clockwise or counter-clockwise
+    #     clockwise = self.edges.is_clockwise()
 
-        if not clockwise:
-        #    print(f"[CircleArcPanel.split] Warning: Panel {self.name} is not clockwise, reversing edges.")
-            self.edges.reverse()
+    #     if not clockwise:
+    #     #    print(f"[CircleArcPanel.split] Warning: Panel {self.name} is not clockwise, reversing edges.")
+    #         self.edges.reverse()
 
-        # Get all edges by label
-        bottom_edges = split_utils.collect_edges_by_label(self, labels=['bottom'])
-        top_edges = split_utils.collect_edges_by_label(self, labels=['top'])
-        left_edges = split_utils.collect_edges_by_label(self, labels=['left'])
-        right_edges = split_utils.collect_edges_by_label(self, labels=['right'])
+    #     # Get all edges by label
+    #     bottom_edges = split_utils.collect_edges_by_label(self, labels=['bottom'])
+    #     top_edges = split_utils.collect_edges_by_label(self, labels=['top'])
+    #     left_edges = split_utils.collect_edges_by_label(self, labels=['left'])
+    #     right_edges = split_utils.collect_edges_by_label(self, labels=['right'])
 
-        # Check for cuts and find their tips (similar to how darts are handled in pant panels)
-        # Look for cut edges in ALL panel edges, not just bottom_edges
-        all_edges = list(self.edges)
-        cut_nums = {
-            split_utils.cut_number(lbl)
-            for e in all_edges
-            for lbl in e.semantic_labels
-            if lbl.startswith("cut_") and split_utils.cut_number(lbl) is not None
-        }
-        cut_tips = split_utils.find_cut_tips(all_edges, cut_nums) if cut_nums else {}
+    #     # Check for cuts and find their tips (similar to how darts are handled in pant panels)
+    #     # Look for cut edges in ALL panel edges, not just bottom_edges
+    #     all_edges = list(self.edges)
+    #     cut_nums = {
+    #         split_utils.cut_number(lbl)
+    #         for e in all_edges
+    #         for lbl in e.semantic_labels
+    #         if lbl.startswith("cut_") and split_utils.cut_number(lbl) is not None
+    #     }
+    #     cut_tips = split_utils.find_cut_tips(all_edges, cut_nums) if cut_nums else {}
 
-        # debug print statements to check edge labels
-        print(f"[CircleArcPanel.split] Bottom edges: {bottom_edges}, Top edges: {top_edges}, Left edges: {left_edges}, Right edges: {right_edges}")
-        print(f"[CircleArcPanel.split] All edges labels: {[(i, e.semantic_labels) for i, e in enumerate(self.edges)]}")
-        print(f"[CircleArcPanel.split] Found cuts: {cut_nums}, Cut tips: {cut_tips}")
+    #     # debug print statements to check edge labels
+    #     print(f"[CircleArcPanel.split] Bottom edges: {bottom_edges}, Top edges: {top_edges}, Left edges: {left_edges}, Right edges: {right_edges}")
+    #     print(f"[CircleArcPanel.split] All edges labels: {[(i, e.semantic_labels) for i, e in enumerate(self.edges)]}")
+    #     print(f"[CircleArcPanel.split] Found cuts: {cut_nums}, Cut tips: {cut_tips}")
 
-        # Get split points, considering cut tips for alignment
-        split_pt_top, split_edge_top = split_utils.split_point(
-            top_edges, proportion, bottom_edges=bottom_edges, cut_tips=cut_tips
-        )
-        split_pt_bottom, split_edge_bottom = split_utils.split_point(
-            bottom_edges, 1-proportion, bottom_edges=bottom_edges, cut_tips=cut_tips
-        )
+    #     # Get split points, considering cut tips for alignment
+    #     split_pt_top, split_edge_top = split_utils.split_point(
+    #         top_edges, proportion, bottom_edges=bottom_edges, cut_tips=cut_tips
+    #     )
+    #     split_pt_bottom, split_edge_bottom = split_utils.split_point(
+    #         bottom_edges, 1-proportion, bottom_edges=bottom_edges, cut_tips=cut_tips
+    #     )
 
-        # debug all of the edge labels
-        # print(f"[CircleArcPanel.split] Edge labels before split:")
-        # for edge in self.edges:
-        #    print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
+    #     # debug all of the edge labels
+    #     # print(f"[CircleArcPanel.split] Edge labels before split:")
+    #     # for edge in self.edges:
+    #     #    print(f"  Edge: {edge}, label={getattr(edge, 'label', 'None')}, semantic_labels={getattr(edge, 'semantic_labels', [])}")
 
         
-        # # Validate all edges are found
-        # if bottom_edge is None:
-        #     raise ValueError(f"Panel {self.name} does not have a bottom edge to split.")
-        # if top_edge is None:
-        #     raise ValueError(f"Panel {self.name} does not have a top edge to split.")
-        # if left_edge is None:
-        #     raise ValueError(f"Panel {self.name} does not have a left edge to split.")
-        # if right_edge is None:
-        #     raise ValueError(f"Panel {self.name} does not have a right edge to split.")
+    #     # # Validate all edges are found
+    #     # if bottom_edge is None:
+    #     #     raise ValueError(f"Panel {self.name} does not have a bottom edge to split.")
+    #     # if top_edge is None:
+    #     #     raise ValueError(f"Panel {self.name} does not have a top edge to split.")
+    #     # if left_edge is None:
+    #     #     raise ValueError(f"Panel {self.name} does not have a left edge to split.")
+    #     # if right_edge is None:
+    #     #     raise ValueError(f"Panel {self.name} does not have a right edge to split.")
 
-        # Get split points using the local proportion for each edge
-        # split_point_bottom = bottom_edge.point_at(bottom_prop)
-        # split_point_top = top_edge.point_at(top_prop)
+    #     # Get split points using the local proportion for each edge
+    #     # split_point_bottom = bottom_edge.point_at(bottom_prop)
+    #     # split_point_top = top_edge.point_at(top_prop)
 
-        #print(f"[CircleArcPanel.split] Split points: "f"bottom={split_point_bottom}, top={split_point_top}")
+    #     #print(f"[CircleArcPanel.split] Split points: "f"bottom={split_point_bottom}, top={split_point_top}")
 
-        # Split edges
+    #     # Split edges
 
-        #print the split_edge_top and bottom_edge
-        print(f"[CircleArcPanel.split] Split edge top: {split_edge_top}, Split edge bottom: {split_edge_bottom}")
-        # Using split_edge_bottom instead of bottom_edge since collect_edges_by_label returns a list
-        bottom1, bottom2 = split_edge_bottom.split_at_point(split_pt_bottom)
-        top1, top2 = split_edge_top.split_at_point(split_pt_top)
+    #     #print the split_edge_top and bottom_edge
+    #     print(f"[CircleArcPanel.split] Split edge top: {split_edge_top}, Split edge bottom: {split_edge_bottom}")
+    #     # Using split_edge_bottom instead of bottom_edge since collect_edges_by_label returns a list
+    #     bottom1, bottom2 = split_edge_bottom.split_at_point(split_pt_bottom)
+    #     top1, top2 = split_edge_top.split_at_point(split_pt_top)
 
-        # Create new split edges for each panel with copied vertices to avoid shared references
-        # Make copies of the vertices to ensure they're not shared between panels
-        split_point_top_copy1 = split_pt_top.copy()
-        split_point_bottom_copy1 = split_pt_bottom.copy()
-        split_point_top_copy2 = split_pt_top.copy()
-        split_point_bottom_copy2 = split_pt_bottom.copy()
+    #     # Create new split edges for each panel with copied vertices to avoid shared references
+    #     # Make copies of the vertices to ensure they're not shared between panels
+    #     split_point_top_copy1 = split_pt_top.copy()
+    #     split_point_bottom_copy1 = split_pt_bottom.copy()
+    #     split_point_top_copy2 = split_pt_top.copy()
+    #     split_point_bottom_copy2 = split_pt_bottom.copy()
 
-        # Create edges with the copied vertices - these will be the connecting edges between top and bottom
-        split_edge1 = pyg.Edge(split_point_top_copy1, split_point_bottom_copy1)
-        split_edge1.add_semantic_label('left')
+    #     # Create edges with the copied vertices - these will be the connecting edges between top and bottom
+    #     split_edge1 = pyg.Edge(split_point_top_copy1, split_point_bottom_copy1)
+    #     split_edge1.add_semantic_label('left')
             
-        split_edge2 = pyg.Edge(split_point_bottom_copy2, split_point_top_copy2)
-        split_edge2.add_semantic_label('right')
+    #     split_edge2 = pyg.Edge(split_point_bottom_copy2, split_point_top_copy2)
+    #     split_edge2.add_semantic_label('right')
     
         
-        # Create new panels
-        panel1 = pyg.Panel(f'{self.name}_split_left')
+    #     # Create new panels
+    #     panel1 = pyg.Panel(f'{self.name}_split_left')
         
-        # Ensure consistent edge orientations for the left panel:
-        # - top edge: left to right
-        # - split edge: top to bottom 
-        # - bottom edge: right to left (reverse of left to right)
-        # - left edge: bottom to top (reverse of top to bottom)
-        panel1.edges = pyg.EdgeSequence([
-            copy.deepcopy(top1),
-            split_edge1,
-            copy.deepcopy(bottom2),
-            copy.deepcopy(left_edges[0]) if left_edges else None  # Take first left edge
-        ])
+    #     # Ensure consistent edge orientations for the left panel:
+    #     # - top edge: left to right
+    #     # - split edge: top to bottom 
+    #     # - bottom edge: right to left (reverse of left to right)
+    #     # - left edge: bottom to top (reverse of top to bottom)
+    #     panel1.edges = pyg.EdgeSequence([
+    #         copy.deepcopy(top1),
+    #         split_edge1,
+    #         copy.deepcopy(bottom2),
+    #         copy.deepcopy(left_edges[0]) if left_edges else None  # Take first left edge
+    #     ])
 
-        #print(f"[CircleArcPanel.split] Created panel1")
+    #     #print(f"[CircleArcPanel.split] Created panel1")
 
-        panel2 = pyg.Panel(f'{self.name}_split_right')
+    #     panel2 = pyg.Panel(f'{self.name}_split_right')
         
-        # Ensure consistent edge orientations for the right panel:
-        # - top edge (top2): left to right
-        # - right edge: top to bottom
-        # - bottom edge (bottom2): right to left (reverse of left to right)
-        # - split edge: bottom to top (reverse of top to bottom)
-        panel2.edges = pyg.EdgeSequence([
-            copy.deepcopy(top2),
-            copy.deepcopy(right_edges[0]) if right_edges else None,  # Take first right edge
-            copy.deepcopy(bottom1),
-            split_edge2
-        ])
+    #     # Ensure consistent edge orientations for the right panel:
+    #     # - top edge (top2): left to right
+    #     # - right edge: top to bottom
+    #     # - bottom edge (bottom2): right to left (reverse of left to right)
+    #     # - split edge: bottom to top (reverse of top to bottom)
+    #     panel2.edges = pyg.EdgeSequence([
+    #         copy.deepcopy(top2),
+    #         copy.deepcopy(right_edges[0]) if right_edges else None,  # Take first right edge
+    #         copy.deepcopy(bottom1),
+    #         split_edge2
+    #     ])
         
-        # Return the new panels
-        print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")
+    #     # Return the new panels
+    #     print(f"[CircleArcPanel.split] Returning new panels: {panel1.name}, {panel2.name}")
         
-        return panel1, panel2
+    #     return panel1, panel2
+
+    def split(self, proportion=0.5):
+        # TODO: fix this
+
+        # force middle split for now
+        return super().split(proportion=0.5)
 class AsymHalfCirclePanel(pyg.Panel):
     """Panel for a asymmetrci circle skirt"""
 

@@ -270,7 +270,7 @@ def compute_offset_path(contour: list[tuple[float, float]],
     return offset_paths
 
 
-def clean_polygon_coordinates(coordinates: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
+def clean_polygon_coordinates(coordinates: List[Tuple[float, float]], close=True) -> List[Tuple[float, float]]:
     """
     Clean polygon coordinates by removing duplicate consecutive points and ensuring closure.
     
@@ -280,15 +280,25 @@ def clean_polygon_coordinates(coordinates: List[Tuple[float, float]]) -> List[Tu
     Returns:
         Cleaned list of coordinates with duplicates removed and polygon closed
     """
-    # Remove duplicate consecutive points
-    cleaned_coords = []
+    from garmentcode.utils import close_enough
+
+    tol = 1e-9
+    cleaned_coords: List[Tuple[float, float]] = []
     for i, coord in enumerate(coordinates):
-        if i == 0 or coord != coordinates[i-1]:
+        if i == 0:
+            cleaned_coords.append(coord)
+            continue
+
+        prev = coordinates[i - 1]
+        if not (close_enough(coord[0] - prev[0], tol=tol) and close_enough(coord[1] - prev[1], tol=tol)):
             cleaned_coords.append(coord)
     
-    # Ensure polygon is closed (first == last)
-    if len(cleaned_coords) > 0 and cleaned_coords[0] != cleaned_coords[-1]:
-        cleaned_coords.append(cleaned_coords[0])
+    # Ensure polygon is closed (first == last) using tolerance
+    if len(cleaned_coords) > 0 and close:
+        first = cleaned_coords[0]
+        last = cleaned_coords[-1]
+        if not (close_enough(first[0] - last[0], tol=tol) and close_enough(first[1] - last[1], tol=tol)):
+            cleaned_coords.append(first)
         
     return cleaned_coords
 

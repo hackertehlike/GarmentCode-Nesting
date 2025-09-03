@@ -34,6 +34,11 @@ class Edge:
             start = [0, 0]
         if end is None:
             end = [0, 0]
+
+        # print out the edges for debug
+        # for s, e in zip(start, end):
+        #     if close_enough(s, e):
+        #         print(f"[split] Zero-length edge: {s} -> {e}")
         assert not all(close_enough(s, e) for s, e in zip(start, end)), 'Start and end of an edge should differ'
 
         self.start = start  # NOTE: careful with references to vertex objects

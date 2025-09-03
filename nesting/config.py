@@ -18,11 +18,11 @@ VERBOSE: bool = True
 # DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_design_params.yaml"
 # DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_body_measurements.yaml"
 
-DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_specification.json"
-DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_design_params.yaml"
-# DEFAULT_DESIGN_PARAM_PATH: str = ""
-DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_05V1M7JE75/rand_05V1M7JE75_body_measurements.yaml"
-# DEFAULT_BODY_PARAM_PATH: str = ""
+DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_specification.json"
+# DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_design_params.yaml"
+DEFAULT_DESIGN_PARAM_PATH: str = ""
+# DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_body_measurements.yaml"
+DEFAULT_BODY_PARAM_PATH: str = ""
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"]
@@ -50,7 +50,7 @@ SPLIT_UPPER_BOUND = 0.7  # upper bound for split proportion
 # ——— decoder settings —————————————————————————————————————
 # BL
 GRAVITATE_ONCE: bool = False  # whether to gravitate the pattern once or continuously
-GRAVITATE_STEP = 2
+GRAVITATE_STEP = 1
 # Greedy
 SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
 REST_PENALTY = 0.01  # penalty for rest length, since rest length is in centimeters and cc is in percentage, this should be a small value
