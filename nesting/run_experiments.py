@@ -52,9 +52,17 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
 
     # Use a short, directory-safe run tag for readability
     run_tag = MetaStatistics._get_default_run_tag()
-    config_hash = hashlib.md5(
-        json.dumps(_serialize_config(config), sort_keys=True).encode("utf-8")
-    ).hexdigest()[:8]  # Truncate to first 8 chars
+
+    # Use a stable hash derived from config.as_dict(), consistent across runs
+    try:
+        config_hash = config.stable_config_hash()[:8]  # short tag for dirs/labels
+    except Exception:
+        # Fallback to previous method if helpers are unavailable
+        config_hash = hashlib.md5(
+            json.dumps(_serialize_config(config), sort_keys=True).encode("utf-8")
+        ).hexdigest()[:8]
+
+    print(f"Run tag: {run_tag}, Config hash: {config_hash}")
 
     all_results = []
 
