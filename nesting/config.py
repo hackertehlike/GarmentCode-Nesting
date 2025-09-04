@@ -1,6 +1,8 @@
 # nesting/config.py
 
 import math
+import json
+import hashlib
 from typing import Literal, Mapping
 
 # GUI STUFF
@@ -238,3 +240,17 @@ def as_dict() -> dict:
 
 def __dict__() -> dict:
     return as_dict()
+
+
+# Stable JSON and hash helpers for config
+def stable_config_json() -> str:
+    """Return a deterministic JSON string of the exported config (uses as_dict()).
+
+    Keys are sorted and compact separators are used for stable output.
+    """
+    return json.dumps(as_dict(), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def stable_config_hash() -> str:
+    """Return a stable SHA256 hex digest for the exported config values."""
+    return hashlib.sha256(stable_config_json().encode("utf-8")).hexdigest()
