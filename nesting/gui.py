@@ -1263,24 +1263,7 @@ class NestingGUI:
                     ui.notify("No valid solution found by the Genetic Algorithm", type="negative")
                     return
 
-                # evaluate the other metrics of the best chromosome
-
-                from chromosome import rest_length, fitness_bb_cc_area, usage_bb, cc_area, concave_hull
-
-                rest_length_val = rest_length(best)
-                usage_bb_val = usage_bb(best)
-                cc_area_val = cc_area(best)
-                fitness_bb_cc_area_val = fitness_bb_cc_area(best)
-                concave_hull_val = concave_hull(best)
-
-                print(f"Best chromosome metrics:")
-                print(f"  Rest Length: {rest_length_val:.2f} cm")
-                print(f"  Usage BB: {usage_bb_val:.2%}")
-                print(f"  Concave Hull: {concave_hull_val:.2%}")
-                print(f"  CC Area: {cc_area_val:.2f} cm²")
-                print(f"  Fitness (BB + CC Area): {fitness_bb_cc_area_val:.4f}")
-
-                # Removed aggregate master statistics update for GUI-driven runs
+                print("Genetic Algorithm completed")
                 
                 self.pieces = {p.id: copy.deepcopy(p) for p in best_chromosome.genes}
                 self.layout = Layout(self.pieces)          # keep layout in sync
@@ -1305,26 +1288,6 @@ class NestingGUI:
             print("Now decoding...")
             placements = decoder.decode()  # [(name, dx, dy)]
             print("Decoding done")
-
-            utilization = decoder.usage_BB()
-
-            print(f"Utilization: {utilization:.2%}")
-            rest_length = decoder.rest_length()
-            print(f"Rest length: {rest_length:.2f} cm")
-
-            rest_height = decoder.rest_height()
-            print(f"Rest height: {rest_height:.2f} cm")
-
-            # print(f"Concave hull utilization: {concave_hull_usage:.2%}")
-
-            # print(f"Auto placement ({method}) usage:")
-            
-            self.utilization_label.text = f"Utilization: {utilization:.2%}"
-            self.rest_length_label.text = f"Rest length: {rest_length:.2f} cm"
-            self.rest_height_label.text = f"Rest height: {rest_height:.2f} cm"
-
-            print(f"Auto placement ({method}) usage: {utilization:.2%}")
-            print(f"Rest length: {rest_length:.2f} cm")
 
             # print placements
             # for name, dx, dy, rot in placements:

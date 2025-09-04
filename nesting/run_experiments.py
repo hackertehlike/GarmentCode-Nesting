@@ -207,14 +207,14 @@ def run_ga_on_patterns(pattern_paths, output_dir="results") -> None:
             with open(log_path, "w") as f:
                 f.write("\n".join(evo.log_lines))
 
-            try:
-                print(f"Updating master statistics for {pattern_name}...")
-                MetaStatistics.save_run_statistics(
-                    evo, elapsed_time, run_tag=run_tag, config_hash=config_hash
-                )
-            except Exception as e:
-                print(f"Failed to update master statistics: {e}")
-                traceback.print_exc()
+            # try:
+            #     print(f"Updating master statistics for {pattern_name}...")
+            #     MetaStatistics.save_run_statistics(
+            #         evo, elapsed_time, run_tag=run_tag, config_hash=config_hash
+            #     )
+            # except Exception as e:
+            #     print(f"Failed to update master statistics: {e}")
+            #     traceback.print_exc()
 
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(range(1, len(evo.best_fitness_history)), [evo.best_fitness_history[g] for g in range(1, len(evo.best_fitness_history))], marker='o', label='Best Fitness')

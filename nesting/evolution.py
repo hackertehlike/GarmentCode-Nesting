@@ -14,7 +14,15 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 from .layout import Piece, Container, LayoutView
 from .placement_engine import DECODER_REGISTRY
-from .chromosome import Chromosome
+from .chromosome import (
+    Chromosome,
+    fitness_rest_length,
+    fitness_bb_cc_area,
+    fitness_usage_bb,
+    fitness_concave_hull_area,
+    fitness_concave_hull,
+    fitness_bb_area,
+)
 import nesting.config as config
 
 # evolution.py
@@ -945,8 +953,89 @@ class Evolution:
         # Return the best chromosome from the population
         if self.population:
             best = max(self.population, key=lambda c: c.fitness)
+            # Write final metrics CSV alongside the evolution log
+            try:
+                self._log(f"Writing final metrics CSV with run identifiers…")
+                self._write_final_metrics(best)
+            except Exception as exc:
+                import traceback
+                self._log("Failed writing final metrics CSV (exception follows):")
+                traceback.print_exc()
             return best
         return None
+
+    def _write_final_metrics(self, best_chromosome: Chromosome) -> None:
+        """Append a shared final_metrics row with identifiers and metrics.
+
+        Writes to `config.AGGREGATE_DIR/final_metrics.csv` with columns:
+        config_hash, run_tag, pattern_name, rest_length_cm, usage_bb,
+        concave_hull_area, concave_hull_utilization, bb_area, bb_cc_area.
+        If an older file exists with a different header, it is renamed to a
+        legacy filename and a fresh header is written.
+        """
+        # Shared aggregate directory
+        agg_dir = Path(config.AGGREGATE_DIR)
+        agg_dir.mkdir(parents=True, exist_ok=True)
+
+        csv_path = agg_dir / "final_metrics.csv"
+        fieldnames = [
+            "config_hash",
+            "run_tag",
+            "pattern_name",
+            "rest_length_cm",
+            "usage_bb",
+            "concave_hull_area",
+            "concave_hull_utilization",
+            "bb_area",
+            "bb_cc_area",
+        ]
+
+        # Ensure header compatibility: if existing header differs, rotate it out
+        write_header = not csv_path.exists()
+        if csv_path.exists():
+            try:
+                with csv_path.open("r", encoding="utf-8") as f:
+                    first_line = f.readline().strip()
+                existing_cols = [c.strip() for c in first_line.split(",") if c.strip()]
+                if existing_cols != fieldnames:
+                    legacy = csv_path.with_name(f"final_metrics_legacy_{time.strftime('%Y%m%d_%H%M%S')}.csv")
+                    csv_path.rename(legacy)
+                    self._log(f"Rotated incompatible final_metrics.csv to {legacy.name}")
+                    write_header = True
+            except Exception as e:
+                self._log(f"Could not inspect existing final_metrics header: {e}")
+
+        # Compute metrics
+        decoder_key = config.SELECTED_DECODER
+        rest_length_val = fitness_rest_length(best_chromosome, decoder_key)
+        usage_bb_val = fitness_usage_bb(best_chromosome, decoder_key)
+        fh_cc_area = fitness_concave_hull_area(best_chromosome, decoder_key)
+        cc_area_val = 10000 / fh_cc_area if fh_cc_area != 0 else 0
+        concave_hull_val = fitness_concave_hull(best_chromosome, decoder_key)
+        fh_bb_area = fitness_bb_area(best_chromosome, decoder_key)
+        bb_area_val = 10000 / fh_bb_area if fh_bb_area != 0 else 0
+        fh_bb_cc_area = fitness_bb_cc_area(best_chromosome, decoder_key)
+        bb_cc_area_val = 10000 / fh_bb_cc_area if fh_bb_cc_area != 0 else 0
+
+        row = {
+            "config_hash": self.config_hash or "",
+            "run_tag": self.run_tag or "",
+            "pattern_name": self.pattern_name or "",
+            "rest_length_cm": round(float(rest_length_val), 6) if rest_length_val is not None else "",
+            "usage_bb": round(float(usage_bb_val), 6) if usage_bb_val is not None else "",
+            "concave_hull_area": round(float(cc_area_val), 6) if cc_area_val is not None else "",
+            "concave_hull_utilization": round(float(concave_hull_val), 6) if concave_hull_val is not None else "",
+            "bb_area": round(float(bb_area_val), 6) if bb_area_val is not None else "",
+            "bb_cc_area": round(float(bb_cc_area_val), 6) if bb_cc_area_val is not None else "",
+        }
+
+        # Write header as needed, then row
+        with csv_path.open("a", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+            if write_header:
+                writer.writeheader()
+            writer.writerow(row)
+        self._log(f"Final metrics appended to shared {csv_path}")
 
     def _flush_log(self) -> None:
         """Write accumulated log lines to disk (append or create)."""
