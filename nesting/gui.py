@@ -1262,6 +1262,24 @@ class NestingGUI:
                 if best_chromosome is None:
                     ui.notify("No valid solution found by the Genetic Algorithm", type="negative")
                     return
+
+                # evaluate the other metrics of the best chromosome
+
+                from chromosome import rest_length, fitness_bb_cc_area, usage_bb, cc_area, concave_hull
+
+                rest_length_val = rest_length(best)
+                usage_bb_val = usage_bb(best)
+                cc_area_val = cc_area(best)
+                fitness_bb_cc_area_val = fitness_bb_cc_area(best)
+                concave_hull_val = concave_hull(best)
+
+                print(f"Best chromosome metrics:")
+                print(f"  Rest Length: {rest_length_val:.2f} cm")
+                print(f"  Usage BB: {usage_bb_val:.2%}")
+                print(f"  Concave Hull: {concave_hull_val:.2%}")
+                print(f"  CC Area: {cc_area_val:.2f} cm²")
+                print(f"  Fitness (BB + CC Area): {fitness_bb_cc_area_val:.4f}")
+
                 # Removed aggregate master statistics update for GUI-driven runs
                 
                 self.pieces = {p.id: copy.deepcopy(p) for p in best_chromosome.genes}
