@@ -8,7 +8,7 @@ from typing import Literal, Mapping
 # GUI STUFF
 NUM_COPIES = 0
 
-CONTAINER_WIDTH_CM  = 1000
+CONTAINER_WIDTH_CM  = 800
 CONTAINER_HEIGHT_CM = 140
 
 SEAM_ALLOWANCE_CM = 1
@@ -37,7 +37,7 @@ CrossStitchMode = Literal["sticky", "lexicographic"]
 # ——— algorithm settings —————————————————————————————————————
 SELECTED_DECODER       : DecoderName = "NFP"
 PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
-SELECTED_FITNESS_METRIC: MetricName  = "bb_cc"  # can be "usage_bb", "concave_hull", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc"
+SELECTED_FITNESS_METRIC: MetricName  = "usage_bb"
 SELECTED_CROSSOVER      : CrossoverName = "cross_stitch_oxk"  # can be "pmx" or "ox1" or "oxk" or "cross_stitch_oxk"
 # When True, crossover operations will produce only one child per mating.
 # When False, crossover can return two children and the GA will consume both.
@@ -137,7 +137,7 @@ MUTATION_WEIGHTS = {
 ENABLE_DYNAMIC_STOPPING: bool = True
 EARLY_STOP_WINDOW: int         = 10
 EARLY_STOP_TOLERANCE: float    = 0.01
-ENABLE_EXTENSION: bool         = True
+ENABLE_EXTENSION: bool         = False
 EXTEND_WINDOW: int             = 10
 EXTEND_THRESHOLD: float        = 0.1
 MAX_GENERATIONS: int    = 20

@@ -58,7 +58,7 @@ PHASE_LABELS = ["Early (1-5)", "Middle (6-10)", "Late (10+)"]
 
 # ---------------- IO & CLEANING ----------------
 
-def read_runs(paths: List[str]) -> pd.DataFrame:
+def read_runs(paths: List[str], config_hash=None) -> pd.DataFrame:
     files: List[str] = []
     for p in paths:
         ex = glob.glob(p)
@@ -72,6 +72,10 @@ def read_runs(paths: List[str]) -> pd.DataFrame:
         missing = [c for c in REQUIRED_COLS if c not in df.columns]
         if missing:
             raise ValueError(f"{f} missing required columns: {missing}")
+        if config_hash is not None:
+            df = df[df["config_hash"] == config_hash]
+            if df.empty:
+                continue
         dfs.append(df)
     data = pd.concat(dfs, ignore_index=True)
 
@@ -443,9 +447,12 @@ def main(argv: Optional[List[str]] = None):
     parser = argparse.ArgumentParser(description="GA mutation effectiveness plots per config (per-run stats, aggregated across runs).")
     parser.add_argument("--input", nargs="+", required=True, help='CSV paths/globs, e.g. "nesting/experiments/runs/*.csv"')
     parser.add_argument("--outdir", default="plots_out", help="Root output directory")
+    # accept both --config-hash (common CLI style) and --config_hash (legacy)
+    parser.add_argument("--config-hash", "--config_hash", dest="config_hash", default=None,
+                        help="If set, only process this config hash (otherwise all found in input)")
     args = parser.parse_args(argv)
 
-    data = read_runs(args.input)
+    data = read_runs(args.input, args.config_hash)
     data = compute_fitness_gain(data)
 
     # per config_hash
