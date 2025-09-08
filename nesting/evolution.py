@@ -1007,6 +1007,7 @@ class Evolution:
             "concave_hull_utilization",
             "bb_area",
             "bb_cc_area",
+            "timestamp",
         ]
 
         # Ensure header compatibility: if existing header differs, rotate it out
@@ -1046,6 +1047,7 @@ class Evolution:
             "concave_hull_utilization": round(float(concave_hull_val), 6) if concave_hull_val is not None else "",
             "bb_area": round(float(bb_area_val), 6) if bb_area_val is not None else "",
             "bb_cc_area": round(float(bb_cc_area_val), 6) if bb_cc_area_val is not None else "",
+            "timestamp": time.strftime('%m%d_%H%M'),
         }
 
         # Write header as needed, then row

@@ -254,6 +254,21 @@ def fitness_cc_height_combined(chromosome: Chromosome, decoder: str):
         return 0
     return cc + config.REST_PENALTY * rest_height
 
+@register_metric("bb_with_rest_length")
+def fitness_bb_length_combined(chromosome: Chromosome, decoder: str):
+    """
+    Combined fitness metric for bounding box length and rest length.
+    
+    This metric returns the sum of the bounding box length and the rest length.
+    It is useful for evaluating the overall vertical space utilization of the layout.
+    """
+    dec = _run_decoder(chromosome, decoder)
+    bb = dec.usage_BB()
+    rest_length = dec.rest_length()
+    if bb == 0:
+        return 0
+    return bb + config.REST_PENALTY * rest_length
+
 @register_metric("cc_with_rest_length")
 def fitness_cc_length_combined(chromosome: Chromosome, decoder: str):
     """

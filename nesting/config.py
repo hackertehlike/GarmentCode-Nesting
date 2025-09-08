@@ -27,7 +27,7 @@ DEFAULT_DESIGN_PARAM_PATH: str = ""
 DEFAULT_BODY_PARAM_PATH: str = ""
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
-MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc", "bb_cc_area"]
+MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc", "bb_cc_area", "bb_with_rest_length"]
 #CrossoverName = Literal["pmx", "ox1"]
 CrossoverName = Literal["oxk", "cross_stitch_oxk"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
@@ -42,7 +42,7 @@ SELECTED_CROSSOVER      : CrossoverName = "cross_stitch_oxk"  # can be "pmx" or 
 # When True, crossover operations will produce only one child per mating.
 # When False, crossover can return two children and the GA will consume both.
 #SINGLE_CHILD_CROSSOVER: bool = True
-CROSS_STITCH_MODE = "sticky"
+CROSS_STITCH_MODE = "lexicographic"
 OX_K = 1
 NUM_SPLITS = 1  # number of splits for the split mutation operator
 SPLIT_LOWER_BOUND = 0.3  # lower bound for split proportion
