@@ -47,6 +47,7 @@ class GAAnalyzer:
         self.mutation_analysis: pd.DataFrame = pd.DataFrame()
         
     def _filter_csv_files_by_config(self) -> List[Path]:
+        
         """Pre-filter CSV files by config hash from filename"""
         csv_files = list(self.runs_dir.glob("*.csv"))
         
