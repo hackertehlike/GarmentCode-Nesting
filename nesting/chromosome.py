@@ -17,21 +17,15 @@ from typing import List, Set
 
 from .layout import Piece, Container, Layout, LayoutView
 from .placement_engine import DECODER_REGISTRY
+from .operations import METRIC_REGISTRY, Operators, weighted_choice
 #from pygarment.garmentcode.params import DesignSampler
 from pygarment.garmentcode.utils import nested_get, nested_set, nested_del
 import nesting.config as config
 from nesting.panel_mapping import affected_panels
 
 
-# ── Metric Registration ─────────────────────────────────────────────────────────
-
-METRIC_REGISTRY: dict[str, Callable] = {}
-
-def register_metric(name: str):
-    def deco(fn):
-        METRIC_REGISTRY[name] = fn
-        return fn
-    return deco
+# ---------------------------------- FITNESS METRICS --------------------------------- #
+# Metrics moved to operations.py for shared use
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Utility helpers
@@ -51,20 +45,6 @@ def track_roots(fn: Callable):
         return result
     return wrapper
 
-
-def _run_decoder(chrom: "Chromosome", decoder_name: str):
-    """Helper to instantiate & run the placement decoder."""
-    view = LayoutView(chrom.genes)
-    Decoder = DECODER_REGISTRY[decoder_name]
-    dec = Decoder(view, chrom.container)
-    dec.decode()
-    return dec
-
-
-def _weighted_choice(options: dict[str, float]) -> str:
-    """Return a key from *options* using their values as weights."""
-    choices, weights = zip(*options.items())
-    return random.choices(choices, weights)[0]
 
 
 def _next_owned_run(
@@ -209,106 +189,10 @@ def _collect_mutatable_params(
 
     return mutatable
 
-@register_metric("usage_bb")
-def fitness_usage_bb(chromosome: Chromosome, decoder: str):
-    dec = _run_decoder(chromosome, decoder)
-    return dec.usage_BB()
-
-@register_metric("concave_hull")
-def fitness_concave_hull(chromosome: Chromosome, decoder: str):
-    dec = _run_decoder(chromosome, decoder)
-    return dec.concave_hull_utilization()
-
-@register_metric("concave_hull_area")
-def fitness_concave_hull_area(chromosome: Chromosome, decoder: str):
-    dec = _run_decoder(chromosome, decoder)
-    area = dec.concave_hull_area()
-
-    if area < 1e-6:
-        return 0
-    
-    return 10000/dec.concave_hull_area()
-
-@register_metric("rest_length")
-def fitness_rest_length(chromosome: Chromosome, decoder: str):
-    dec = _run_decoder(chromosome, decoder)
-    return dec.rest_length()
-
-@register_metric("rest_height")
-def fitness_rest_height(chromosome: Chromosome, decoder: str):
-    dec = _run_decoder(chromosome, decoder)
-    return dec.rest_height()
-
-@register_metric("cc_with_rest_height")
-def fitness_cc_height_combined(chromosome: Chromosome, decoder: str):
-    """
-    Combined fitness metric for concave hull height and rest height.
-    
-    This metric returns the sum of the concave hull height and the rest height.
-    It is useful for evaluating the overall vertical space utilization of the layout.
-    """
-    dec = _run_decoder(chromosome, decoder)
-    cc = dec.concave_hull_utilization()
-    rest_height = dec.rest_height()
-    if cc == 0:
-        return 0
-    return cc + config.REST_PENALTY * rest_height
-
-@register_metric("cc_with_rest_length")
-def fitness_cc_length_combined(chromosome: Chromosome, decoder: str):
-    """
-    Combined fitness metric for concave hull length and rest length.
-    
-    This metric returns the sum of the concave hull length and the rest length.
-    It is useful for evaluating the overall horizontal space utilization of the layout.
-    """
-    dec = _run_decoder(chromosome, decoder)
-    cc = dec.concave_hull_utilization()
-    rest_length = dec.rest_length()
-    if cc == 0:
-        return 0
-    return cc + config.REST_PENALTY * rest_length
-
-@register_metric("bb_cc")
-def fitness_bb_cc(chromosome: Chromosome, decoder: str):
-    """
-    Combined fitness metric for bounding box area and concave hull area.
-    
-    This metric returns the sum of the bounding box area and the concave hull area.
-    It is useful for evaluating the overall space utilization of the layout.
-    """
-    dec = _run_decoder(chromosome, decoder)
-    bb_area = dec.usage_BB()
-    cc_area = dec.concave_hull_utilization()
-
-    if bb_area == 0 or cc_area == 0:
-        return 0
-    return config.BB_WEIGHT * bb_area + config.CC_WEIGHT * cc_area
-
-@register_metric("bb_area")
-def fitness_bb_area(chromosome: Chromosome, decoder: str):
-    dec = _run_decoder(chromosome, decoder)
-    bb_area = dec.bbox_area()
-    # cc_area = dec.concave_hull_area()
-
-    if bb_area == 0:
-        return 0
-    return 10000 / bb_area
 
 
-@register_metric("bb_cc_area")
-def fitness_bb_cc_area(chromosome: Chromosome, decoder: str):
-    dec = _run_decoder(chromosome, decoder)
-    bb_area = dec.bbox_area()
-    cc_area = dec.concave_hull_area()
-
-    if bb_area == 0 or cc_area == 0:
-        return 0
-    return 10000 / (config.BB_WEIGHT * bb_area + config.CC_WEIGHT * cc_area)
-
-# ── Chromosome Definition ───────────────────────────────────────────────────────
-
-class Chromosome(Layout):
+# ----------------------------- CHROMOSOME CLASS ----------------------------- #
+class Chromosome():
 
     def __init__(
         self,
@@ -371,12 +255,12 @@ class Chromosome(Layout):
     def calculate_fitness(self) -> None:
         """Compute fitness via the registered metric and decoder."""
         metric_fn = METRIC_REGISTRY[config.SELECTED_FITNESS_METRIC]
-        self.fitness = metric_fn(self, config.SELECTED_DECODER)
+        self.fitness = metric_fn(self.genes, config.SELECTED_DECODER, self.container)
 
     def mutate(self) -> "Chromosome":
         """Pick a mutation based on config.MUTATION_WEIGHTS and apply it."""
         start = time.time()
-        self.last_mutation = mutation = _weighted_choice(config.MUTATION_WEIGHTS)
+        self.last_mutation = mutation = weighted_choice(config.MUTATION_WEIGHTS)
 
         # Clear the parameter changes tracking for this generation
         self.param_changes_this_gen = []
@@ -575,85 +459,25 @@ class Chromosome(Layout):
 
     @track_roots
     def _mutate_rotate(self):
-        for _ in range(random.randint(1, len(self.genes))):
-            idx = random.randrange(len(self.genes))
-            self.genes[idx].rotate(random.choice(config.ALLOWED_ROTATIONS))
+        self.genes = Operators.rotate(self.genes)
 
     @track_roots
-    def _mutate_swap(self, k=config.SWAP_MUTATION_K):
-        """
-        Swap two non-overlapping contiguous blocks of length k.
-        If k is None, choose a random valid k in [1, floor(n/2)].
-        """
-
-        n = len(self.genes)
-        if n < 2:
-            return
-
-        # Determine a suitable k
-        max_k = n // 2  # must allow two non-overlapping blocks
-        if max_k < 1:
-            return
-        if k is None:
-            k = random.randint(1, max_k)
-
-        print(f"[DEBUG] k: {k}, max_k: {max_k}")
-
-    # roots tracked by decorator
-
-        # Build all valid non-overlapping (i, j) with i < j and j >= i + k
-        pairs: list[tuple[int, int]] = []
-        last_start = n - k
-        for i in range(0, n - 2 * k + 1):
-            for j in range(i + k, last_start + 1):
-                pairs.append((i, j))
-
-        if not pairs:
-            # No valid non-overlapping blocks (shouldn't happen with k <= n//2)
-            return
-
-        i, j = random.choice(pairs)
-
-        # Splice: genes = pre + B + mid + A + post
-        pre = self.genes[:i]
-        A = self.genes[i:i + k]
-        mid = self.genes[i + k:j]
-        B = self.genes[j:j + k]
-        post = self.genes[j + k:]
-        self.genes = pre + B + mid + A + post
-
-    # post-check is handled by decorator
+    def _mutate_swap(self, k=None):
+        """Swap two non-overlapping contiguous blocks of length k."""
+        k = k or getattr(config, 'SWAP_MUTATION_K', None)
+        self.genes = Operators.swap(self.genes, k)
 
     @track_roots
     def _mutate_inversion(self):
-        i, j = sorted(random.sample(range(len(self.genes)), 2))
-        self.genes[i:j + 1] = reversed(self.genes[i:j + 1])
+        self.genes = Operators.inversion(self.genes)
 
     @track_roots
-    def _mutate_insertion(self, k = 1):
-        if len(self.genes) < 2:
-            return
-        
-        n = len(self.genes)
-
-        if k > n:
-            raise ValueError("Invalid insertion operation: k too big for n")
-        
-    # roots tracked by decorator
-        
-        i = random.randrange(len(self.genes))
-        insert_at = random.randrange(len(self.genes) + 1)
-        gene = self.genes.pop(i)
-        self.genes.insert(insert_at, gene)
-    # post-check is handled by decorator
+    def _mutate_insertion(self):
+        self.genes = Operators.insertion(self.genes)
 
     @track_roots
     def _mutate_scramble(self):
-        i, j = sorted(random.sample(range(len(self.genes)), 2))
-        subset = self.genes[i:j + 1]
-        random.shuffle(subset)
-        self.genes[i:j + 1] = subset
-        # post-check is handled by decorator
+        self.genes = Operators.scramble(self.genes)
 
     # ── design‑parameter mutation ──────────────────────────
 
@@ -725,24 +549,28 @@ class Chromosome(Layout):
                 print("[Chromosome] design‑param mutation skipped - missing design or body params")
             return
 
-        # roots tracked by decorator
+        # Create fitness function for the shared operation
+        def fitness_fn(pieces):
+            metric_fn = METRIC_REGISTRY[config.SELECTED_FITNESS_METRIC]
+            return metric_fn(pieces, config.SELECTED_DECODER, self.container)
 
-        if self.fitness is None:
-            self.calculate_fitness()
-        original_fitness = self.fitness
-
-        original_design_params = copy.deepcopy(self.design_params)
-        original_genes = copy.deepcopy(self.genes)
-
-        for param in self._select_candidate_params():
-            if self._apply_single_param_change(
-                param, original_design_params, original_genes, original_fitness
-            ):
-                return True
-
-        self._restore_state_after_failure(
-            original_design_params, original_genes, original_fitness
+        new_genes, new_design_params, success = Operators.design_params(
+            self.genes,
+            self.design_params,
+            self.body_params,
+            self.initial_design_params,
+            getattr(self, 'split_history', []),
+            fitness_fn
         )
+
+        if success:
+            self.genes = new_genes
+            self.design_params = new_design_params
+            self.calculate_fitness()
+            return True
+        
+        if config.VERBOSE:
+            print("[Chromosome] No design param mutation resulted in a fitness change.")
         return False
 
     def _apply_design_param_change(self, path: str, old_val: Any, new_val: Any) -> bool:

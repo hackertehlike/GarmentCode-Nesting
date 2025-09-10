@@ -358,8 +358,12 @@ class Layout:
                     raise ValueError(f"Translation for piece {piece_id} not found in layout.")
         
 
+#TODOLOW: Maybe do away with this and use Layout directly?
 class LayoutView:
-    """Expose .order for decoders without copying geometry or mutating state."""
+    """
+    Expose .order for decoders without copying geometry or mutating state.
+    This class serves as a read-only adapter to use a list of Pieces (like genes in Chromosome) as input for decoders (instead of a Layout object / OrderedDict).
+    """
     def __init__(self, pieces: list[Piece]):
         tmp = OrderedDict((p.id, p) for p in pieces)
         self.order = MappingProxyType(tmp)

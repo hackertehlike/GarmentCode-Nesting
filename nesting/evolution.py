@@ -14,14 +14,14 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 from .layout import Piece, Container, LayoutView
 from .placement_engine import DECODER_REGISTRY
-from .chromosome import (
-    Chromosome,
-    fitness_rest_length,
-    fitness_bb_cc_area,
-    fitness_usage_bb,
-    fitness_concave_hull_area,
-    fitness_concave_hull,
-    fitness_bb_area,
+from .chromosome import Chromosome
+from .operations import (
+    fitness_rest_length_chromosome as fitness_rest_length,
+    fitness_bb_cc_area_chromosome as fitness_bb_cc_area,
+    fitness_usage_bb_chromosome as fitness_usage_bb,
+    fitness_concave_hull_area_chromosome as fitness_concave_hull_area,
+    fitness_concave_hull_chromosome as fitness_concave_hull,
+    fitness_bb_area_chromosome as fitness_bb_area,
 )
 import nesting.config as config
 

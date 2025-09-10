@@ -21,10 +21,10 @@ VERBOSE: bool = True
 # DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_body_measurements.yaml"
 
 DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_specification.json"
-# DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_design_params.yaml"
-DEFAULT_DESIGN_PARAM_PATH: str = ""
-# DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_body_measurements.yaml"
-DEFAULT_BODY_PARAM_PATH: str = ""
+DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_design_params.yaml"
+# DEFAULT_DESIGN_PARAM_PATH: str = ""
+DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_body_measurements.yaml"
+# DEFAULT_BODY_PARAM_PATH: str = ""
 
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
 MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc", "bb_cc_area"]
