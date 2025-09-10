@@ -140,7 +140,6 @@ class Evolution:
             "origin",
             "parent1_fitness",
             "parent2_fitness",
-            "pre_mutation_fitness",
             "self_fitness",
             "last_mutation",
         ]
@@ -499,22 +498,7 @@ class Evolution:
 
                 out_children = []
                 for child in children:
-                    # Track pre-mutation fitness if a random mutation is applied
-                    pre_mut_fit = None
-                    # Ensure child has fitness from crossover
-                    # (crossovers usually compute it, but guard just in case)
-                    if child.fitness is None:
-                        try:
-                            child.calculate_fitness()
-                        except Exception:
-                            pass
                     if random.random() < self.mutation_rate:
-                        # Capture fitness prior to random mutation
-                        try:
-                            pre_mut_fit = float(child.fitness) if child.fitness is not None else None
-                        except Exception:
-                            pre_mut_fit = None
-                        child.pre_mutation_fitness = pre_mut_fit
                         child.mutate()
                     child.calculate_fitness()
                     if config.VERBOSE:
@@ -570,7 +554,6 @@ class Evolution:
                         "origin": child.origin or "offspring",
                         "parent1_fitness": p1f,
                         "parent2_fitness": p2f,
-                        "pre_mutation_fitness": getattr(child, 'pre_mutation_fitness', None),
                         "self_fitness": float(child.fitness or 0.0),
                         "last_mutation": getattr(child, 'last_mutation', None),
                     }]
@@ -597,7 +580,6 @@ class Evolution:
                         "origin": child.origin or "offspring",
                         "parent1_fitness": p1f,
                         "parent2_fitness": p2f,
-                        "pre_mutation_fitness": getattr(child, 'pre_mutation_fitness', None),
                         "self_fitness": float(child.fitness or 0.0),
                         "last_mutation": getattr(child, 'last_mutation', None),
                     }]
@@ -624,7 +606,6 @@ class Evolution:
                         "origin": child.origin or "offspring",
                         "parent1_fitness": p1f,
                         "parent2_fitness": p2f,
-                        "pre_mutation_fitness": getattr(child, 'pre_mutation_fitness', None),
                         "self_fitness": float(child.fitness or 0.0),
                         "last_mutation": getattr(child, 'last_mutation', None),
                     }]
