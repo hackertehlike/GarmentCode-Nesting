@@ -1,256 +1,449 @@
 # nesting/config.py
+"""
+Organized configuration system for nesting algorithms.
+
+Key improvements:
+- Stable hashing based only on active configuration
+- Clear separation between algorithmic vs system settings
+- Profile-based configurations
+- Backward compatibility maintained
+"""
 
 import math
 import json
 import hashlib
-from typing import Literal, Mapping
+import os
+from dataclasses import dataclass, asdict, field
+from typing import Literal, Mapping, Dict, Any, Optional, List
+from enum import Enum
 
-# GUI STUFF
-NUM_COPIES = 0
-
-CONTAINER_WIDTH_CM  = 800
-CONTAINER_HEIGHT_CM = 140
-
-SEAM_ALLOWANCE_CM = 1
-
-# ——— general settings —————————————————————————————————————
-MULTITHREADING: bool = True
-VERBOSE: bool = True
-# DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_specification.json"
-# DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_design_params.yaml"
-# DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/circle_skirt/circle_skirt_body_measurements.yaml"
-
-DEFAULT_PATTERN_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_specification.json"
-DEFAULT_DESIGN_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_design_params.yaml"
-# DEFAULT_DESIGN_PARAM_PATH: str = ""
-DEFAULT_BODY_PARAM_PATH: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_body_measurements.yaml"
-# DEFAULT_BODY_PARAM_PATH: str = ""
-
+# ——— Type Definitions ————————————————————————————————————————————————
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
-MetricName  = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc", "bb_cc_area"]
-#CrossoverName = Literal["pmx", "ox1"]
+MetricName = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc", "bb_cc_area"]
 CrossoverName = Literal["oxk", "cross_stitch_oxk"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 CrossStitchMode = Literal["sticky", "lexicographic"]
 
+class Environment(Enum):
+    DEV = "development"
+    TEST = "testing" 
+    PROD = "production"
 
-# ——— algorithm settings —————————————————————————————————————
-SELECTED_DECODER       : DecoderName = "NFP"
-PRESERVE_HOLES: bool = True  # whether to preserve holes in the layout
-SELECTED_FITNESS_METRIC: MetricName  = "usage_bb"
-SELECTED_CROSSOVER      : CrossoverName = "cross_stitch_oxk"  # can be "pmx" or "ox1" or "oxk" or "cross_stitch_oxk"
-# When True, crossover operations will produce only one child per mating.
-# When False, crossover can return two children and the GA will consume both.
-#SINGLE_CHILD_CROSSOVER: bool = True
-CROSS_STITCH_MODE = "sticky"
-OX_K = 1
-NUM_SPLITS = 1  # number of splits for the split mutation operator
-SPLIT_LOWER_BOUND = 0.3  # lower bound for split proportion
-SPLIT_UPPER_BOUND = 0.7  # upper bound for split proportion
+# ——— Configuration Classes ————————————————————————————————————————————
 
+@dataclass
+class ActiveConfig:
+    """Configuration that affects algorithm behavior and reproducibility.
+    
+    Only these settings influence the stable hash. Changes here require
+    new experiment runs for proper comparison.
+    """
+    # Core algorithm settings
+    selected_decoder: DecoderName = "NFP"
+    selected_fitness_metric: MetricName = "usage_bb" 
+    selected_crossover: CrossoverName = "cross_stitch_oxk"
+    cross_stitch_mode: CrossStitchMode = "sticky"
+    
+    # Container & physical constraints  
+    container_width_cm: float = 800
+    container_height_cm: float = 140
+    seam_allowance_cm: float = 1.0
+    samples_per_edge: int = 7
+    
+    # Genetic algorithm parameters
+    population_size: int = 100
+    num_generations: int = 20
+    mutation_rate: float = 0.2
+    force_mutation_on_crossover: bool = False
+    
+    # Population composition weights
+    population_weights: Dict[str, float] = field(default_factory=lambda: {
+        "elites": 0.25, "offspring": 0.25, "mutants": 0.25, "randoms": 0.25
+    })
+    
+    # Mutation operation weights
+    mutation_weights: Dict[str, float] = field(default_factory=lambda: {
+        "rotate": 0.14, "swap": 0.14, "inversion": 0.14, "insertion": 0.14,
+        "scramble": 0.14, "split": 0.15, "design_params": 0.15
+    })
+    
+    # Decoder-specific settings
+    preserve_holes: bool = True
+    nfp_gravitate_on: bool = True
+    gravitate_once: bool = False
+    gravitate_step: int = 1
+    sort_by: SortKey = "hull_area"
+    
+    # Fitness metric weights & penalties
+    rest_penalty: float = 0.01
+    bb_weight: float = 0.5 
+    cc_weight: float = 0.5
+    
+    # Split & design parameter settings
+    ox_k: int = 1
+    num_splits: int = 1
+    split_lower_bound: float = 0.3
+    split_upper_bound: float = 0.7
+    symmetric_splits: bool = False
+    allow_recursive_splits: bool = False
+    weight_by_bbox: bool = False
+    param_change_margin: float = 0.2
+    swap_mutation_k: Optional[int] = None
+    
+    # Dynamic stopping criteria
+    enable_dynamic_stopping: bool = True
+    early_stop_window: int = 10
+    early_stop_tolerance: float = 0.01
+    enable_extension: bool = False
+    extend_window: int = 10
+    extend_threshold: float = 0.1
+    max_generations: int = 20
+    
+    # Concave hull parameters
+    hull_trim_ratio: int = 10
+    interior_sample_spacing: int = 5
+    boundary_sample_spacing: int = 3
+    snap: bool = False
+    snap_tolerance: float = 0.1
+    
+    # Rotation settings
+    enable_rotations: bool = True
+    allowed_rotations: List[int] = field(default_factory=lambda: [0, 180])
+    
+    # Parameter exclusions for mutations
+    excluded_param_paths: List[str] = field(default_factory=lambda: [
+        "*meta*", "*.base", "*.level", "*_collar", "*.component.style", 
+        "*.cuff.type", "*.panel_curve", "*.num_inserts", "*style_side_cut*",
+        "*strapless*", "*sleeveless*", "*enable_asym*", "*flip*", 
+        "*standing_shoulder*", "*lapel_standing*", "*sleeve.armhole_shape*",
+        "*cut.add*", "*.n_panels", "*panel_curve*"
+    ])
+    
+    def get_stable_hash(self) -> str:
+        """Generate reproducible hash based only on algorithmic settings."""
+        config_dict = asdict(self)
+        # Sort nested dicts for consistency
+        for key, value in config_dict.items():
+            if isinstance(value, dict):
+                config_dict[key] = dict(sorted(value.items()))
+        
+        config_str = json.dumps(config_dict, sort_keys=True, separators=(',', ':'))
+        return hashlib.sha256(config_str.encode()).hexdigest()[:16]
 
-# ——— decoder settings —————————————————————————————————————
-# BL
-GRAVITATE_ONCE: bool = False  # whether to gravitate the pattern once or continuously
-GRAVITATE_STEP = 1
-# Greedy
-SORT_BY = "hull_area"  # can be "bbox_area", "hull_area", or "aspect_ratio"
-REST_PENALTY = 0.01  # penalty for rest length, since rest length is in centimeters and cc is in percentage, this should be a small value
-BB_WEIGHT = 0.5  # weight for bounding box utilization in combined fitness metric
-CC_WEIGHT = 0.5  # weight for concave hull utilization in combined fitness metric
+@dataclass
+class SystemConfig:
+    """System-level settings that don't affect algorithm results."""
+    # System & performance
+    multithreading: bool = True
+    verbose: bool = True
+    
+    # File paths
+    default_pattern_path: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_specification.json"
+    default_design_param_path: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_design_params.yaml"  
+    default_body_param_path: str = "nesting-assets/pattern_files/rand_04ANOD2PBA/rand_04ANOD2PBA_body_measurements.yaml"
+    
+    # Logging & experiments
+    save_logs: bool = True
+    experiments_root: str = "nesting/experiments"
+    log_time: bool = True
+    log_design_param_paths: bool = False
+    save_generation_svgs: bool = True
+    
+    # GUI
+    num_copies: int = 0
 
-# NFP
-NFP_GRAVITATE_ON: bool = True  # whether to gravitate after NFP placement
+# ——— Global Configuration Instances ——————————————————————————————————————
 
-# ——— genetic algorithm —————————————————————————————————————
-POPULATION_SIZE       = 100
-NUM_GENERATIONS       = 20
-MUTATION_RATE         = 0.2
-FORCE_MUTATION_ON_CROSSOVER: bool = False  # force mutation if offspring has same fitness as a parent
-SWAP_MUTATION_K = None
+ACTIVE = ActiveConfig()
+SYSTEM = SystemConfig()
 
-POPULATION_WEIGHTS: Mapping[str, float] = {
-    "elites": 0.25,  # weight for elite population
-    "offspring": 0.25,  # weight for offspring population
-    "mutants": 0.25,  # weight for mutants population
-    "randoms": 0.25,  # weight for random population
+# ——— Configuration Management Functions ——————————————————————————————————
+
+def load_config(env: Environment = Environment.DEV, **overrides) -> ActiveConfig:
+    """Load configuration based on environment with optional overrides."""
+    global ACTIVE, SYSTEM
+    
+    if env == Environment.TEST:
+        ACTIVE.population_size = 10
+        ACTIVE.num_generations = 5
+        SYSTEM.save_logs = False
+        
+    elif env == Environment.PROD:
+        ACTIVE.population_size = 200
+        ACTIVE.num_generations = 500
+        ACTIVE.enable_dynamic_stopping = True
+        
+    # Apply environment variables
+    if metric := os.getenv('NESTING_FITNESS_METRIC'):
+        ACTIVE.selected_fitness_metric = metric
+    if decoder := os.getenv('NESTING_DECODER'):
+        ACTIVE.selected_decoder = decoder
+    if pop_size := os.getenv('NESTING_POPULATION_SIZE'):
+        ACTIVE.population_size = int(pop_size)
+    if generations := os.getenv('NESTING_GENERATIONS'):
+        ACTIVE.num_generations = int(generations)
+    
+    # Apply direct overrides
+    for key, value in overrides.items():
+        if hasattr(ACTIVE, key):
+            setattr(ACTIVE, key, value)
+        elif hasattr(SYSTEM, key):
+            setattr(SYSTEM, key, value)
+        else:
+            raise ValueError(f"Unknown configuration setting: {key}")
+    
+    # Update all backward compatibility variables
+    _update_backward_compatibility_vars()
+    
+    return ACTIVE
+
+def get_stable_hash() -> str:
+    """Get stable hash of current active configuration."""
+    return ACTIVE.get_stable_hash()
+
+def get_stable_json() -> str:
+    """Get stable JSON of current active configuration."""
+    config_dict = asdict(ACTIVE)
+    return json.dumps(config_dict, sort_keys=True, separators=(',', ':'))
+
+# ——— Configuration Profiles ——————————————————————————————————————————————
+
+def create_profile(**settings) -> ActiveConfig:
+    """Create a configuration profile with custom settings."""
+    profile = ActiveConfig()
+    for key, value in settings.items():
+        if hasattr(profile, key):
+            setattr(profile, key, value)
+        else:
+            raise ValueError(f"Unknown configuration setting: {key}")
+    return profile
+
+# Pre-defined profiles
+PROFILES = {
+    "test": create_profile(
+        population_size=20,
+        num_generations=2
+    ),
+    
+    "rest_length": create_profile(
+        population_size=100,
+        num_generations=20,
+        selected_fitness_metric="rest_length"
+    ),
+    
+    "usage_bb": create_profile(
+        population_size=100,
+        num_generations=20,
+        selected_fitness_metric="usage_bb"
+    ),
+    
+    "bb_with_rest_length": create_profile(
+        population_size=100,
+        num_generations=20,
+        selected_fitness_metric="bb_with_rest_length"
+    )
 }
 
+def load_profile(name: str) -> ActiveConfig:
+    """Load a pre-defined configuration profile."""
+    if name not in PROFILES:
+        available = ", ".join(PROFILES.keys())
+        raise ValueError(f"Unknown profile '{name}'. Available: {available}")
+    
+    global ACTIVE
+    ACTIVE = PROFILES[name]
+    _update_backward_compatibility_vars()
+    return ACTIVE
 
-# Parameters that should be excluded from design parameter mutations
-EXCLUDED_PARAM_PATHS = [
-    # ─── high-level garment selectors ──────────────────────────────────────
-    "*meta*",                # meta.upper / meta.wb / meta.bottom
-    "*.base",                # levels-skirt.base, godet-skirt.base
-    "*.level",               # levels-skirt.level
+def _update_backward_compatibility_vars():
+    """Update all backward compatibility variables after config changes."""
+    global SELECTED_DECODER, SELECTED_FITNESS_METRIC, SELECTED_CROSSOVER, CROSS_STITCH_MODE
+    global OX_K, NUM_SPLITS, SPLIT_LOWER_BOUND, SPLIT_UPPER_BOUND, PRESERVE_HOLES
+    global CONTAINER_WIDTH_CM, CONTAINER_HEIGHT_CM, SEAM_ALLOWANCE_CM, SAMPLES_PER_EDGE
+    global POPULATION_SIZE, NUM_GENERATIONS, MUTATION_RATE, FORCE_MUTATION_ON_CROSSOVER
+    global SWAP_MUTATION_K, POPULATION_WEIGHTS, MUTATION_WEIGHTS
+    global GRAVITATE_ONCE, GRAVITATE_STEP, SORT_BY, REST_PENALTY, BB_WEIGHT, CC_WEIGHT
+    global NFP_GRAVITATE_ON, EXCLUDED_PARAM_PATHS, PARAM_CHANGE_MARGIN
+    global SYMMETRIC_SPLITS, ALLOW_RECURSIVE_SPLITS, WEIGHT_BY_BBOX
+    global ENABLE_DYNAMIC_STOPPING, EARLY_STOP_WINDOW, EARLY_STOP_TOLERANCE
+    global ENABLE_EXTENSION, EXTEND_WINDOW, EXTEND_THRESHOLD, MAX_GENERATIONS
+    global HULL_TRIM_RATIO, INTERIOR_SAMPLE_SPACING, BOUNDARY_SAMPLE_SPACING
+    global SNAP, SNAP_TOLERANCE, ENABLE_ROTATIONS, ALLOWED_ROTATIONS
+    global GENERATION_PER_FLUSH, LOG_FLUSH_INTERVAL
+    
+    # Algorithm settings
+    SELECTED_DECODER = ACTIVE.selected_decoder
+    SELECTED_FITNESS_METRIC = ACTIVE.selected_fitness_metric  
+    SELECTED_CROSSOVER = ACTIVE.selected_crossover
+    CROSS_STITCH_MODE = ACTIVE.cross_stitch_mode
+    OX_K = ACTIVE.ox_k
+    NUM_SPLITS = ACTIVE.num_splits
+    SPLIT_LOWER_BOUND = ACTIVE.split_lower_bound
+    SPLIT_UPPER_BOUND = ACTIVE.split_upper_bound
+    PRESERVE_HOLES = ACTIVE.preserve_holes
+    
+    # Container & Physical
+    CONTAINER_WIDTH_CM = ACTIVE.container_width_cm
+    CONTAINER_HEIGHT_CM = ACTIVE.container_height_cm
+    SEAM_ALLOWANCE_CM = ACTIVE.seam_allowance_cm
+    SAMPLES_PER_EDGE = ACTIVE.samples_per_edge
+    
+    # Genetic Algorithm
+    POPULATION_SIZE = ACTIVE.population_size
+    NUM_GENERATIONS = ACTIVE.num_generations
+    MUTATION_RATE = ACTIVE.mutation_rate
+    FORCE_MUTATION_ON_CROSSOVER = ACTIVE.force_mutation_on_crossover
+    SWAP_MUTATION_K = ACTIVE.swap_mutation_k
+    POPULATION_WEIGHTS = ACTIVE.population_weights
+    MUTATION_WEIGHTS = ACTIVE.mutation_weights
+    
+    # Decoder settings
+    GRAVITATE_ONCE = ACTIVE.gravitate_once
+    GRAVITATE_STEP = ACTIVE.gravitate_step
+    SORT_BY = ACTIVE.sort_by
+    REST_PENALTY = ACTIVE.rest_penalty
+    BB_WEIGHT = ACTIVE.bb_weight
+    CC_WEIGHT = ACTIVE.cc_weight
+    NFP_GRAVITATE_ON = ACTIVE.nfp_gravitate_on
+    
+    # Design parameters
+    EXCLUDED_PARAM_PATHS = ACTIVE.excluded_param_paths
+    PARAM_CHANGE_MARGIN = ACTIVE.param_change_margin
+    SYMMETRIC_SPLITS = ACTIVE.symmetric_splits
+    ALLOW_RECURSIVE_SPLITS = ACTIVE.allow_recursive_splits
+    WEIGHT_BY_BBOX = ACTIVE.weight_by_bbox
+    
+    # Dynamic stopping
+    ENABLE_DYNAMIC_STOPPING = ACTIVE.enable_dynamic_stopping
+    EARLY_STOP_WINDOW = ACTIVE.early_stop_window
+    EARLY_STOP_TOLERANCE = ACTIVE.early_stop_tolerance
+    ENABLE_EXTENSION = ACTIVE.enable_extension
+    EXTEND_WINDOW = ACTIVE.extend_window
+    EXTEND_THRESHOLD = ACTIVE.extend_threshold
+    MAX_GENERATIONS = ACTIVE.max_generations
+    
+    # Concave hull & sampling
+    HULL_TRIM_RATIO = ACTIVE.hull_trim_ratio
+    INTERIOR_SAMPLE_SPACING = ACTIVE.interior_sample_spacing
+    BOUNDARY_SAMPLE_SPACING = ACTIVE.boundary_sample_spacing
+    SNAP = ACTIVE.snap
+    SNAP_TOLERANCE = ACTIVE.snap_tolerance
+    ENABLE_ROTATIONS = ACTIVE.enable_rotations
+    ALLOWED_ROTATIONS = ACTIVE.allowed_rotations
+    
+    # Calculated values
+    GENERATION_PER_FLUSH = max(1, min(math.ceil(100 / ACTIVE.population_size), 10))
+    LOG_FLUSH_INTERVAL = GENERATION_PER_FLUSH
 
-    # ─── categorical style picks (select / select_null) ───────────────────
-    "*_collar",              # collar.{f_,b_}collar  (+ left.* equivalents)
-    "*.component.style",     # collar.component.style
-    "*.cuff.type",           # sleeve / pants cuff style
-    "*.panel_curve",         # flare-skirt.skirt-many-panels.panel_curve
-    "*.num_inserts",         # godet-skirt.num_inserts
-    "*style_side_cut*",      # pencil-skirt.style_side_cut
+# ——— Backward Compatibility Layer ————————————————————————————————————————
+# These maintain compatibility with existing code that imports variables directly
 
-    # ─── boolean feature toggles / flags ───────────────────────────────────
-    "*strapless*",           # shirt & left.shirt strapless flags
-    "*sleeveless*",          # sleeve & left.sleeve
-    "*enable_asym*",         # left.enable_asym
-    "*flip*",                # collar & left.collar flip curve flags
-    "*standing_shoulder*",   # sleeve + left.sleeve standing shoulder flags
-    "*lapel_standing*",      # collar.component.lapel_standing
-    "*sleeve.armhole_shape*",# armhole shape selector
-    "*cut.add*",             # flare-skirt.cut.add boolean
+# Algorithm settings
+SELECTED_DECODER = ACTIVE.selected_decoder
+PRESERVE_HOLES = ACTIVE.preserve_holes
+SELECTED_FITNESS_METRIC = ACTIVE.selected_fitness_metric
+SELECTED_CROSSOVER = ACTIVE.selected_crossover
+CROSS_STITCH_MODE = ACTIVE.cross_stitch_mode
+OX_K = ACTIVE.ox_k
+NUM_SPLITS = ACTIVE.num_splits
+SPLIT_LOWER_BOUND = ACTIVE.split_lower_bound
+SPLIT_UPPER_BOUND = ACTIVE.split_upper_bound
 
-    # ─── misc. discrete counts / selectors that drive structure ───────────
-    "*.n_panels",            # number of panels (discrete structural change)
-    "*panel_curve*",         # shape of each panel (categorical)
-]
+# Container & Physical
+CONTAINER_WIDTH_CM = ACTIVE.container_width_cm
+CONTAINER_HEIGHT_CM = ACTIVE.container_height_cm
+SEAM_ALLOWANCE_CM = ACTIVE.seam_allowance_cm
+SAMPLES_PER_EDGE = ACTIVE.samples_per_edge
 
-
-# Parameter change margin for design parameter mutations (percentage)
-# Can be a single number (symmetric margin) or a tuple/list of (min_change, max_change)
-# Example: 0.2 means parameter can change by up to ±20% of its value/range
-# Example: (-0.1, 0.3) means parameter can decrease by up to 10% and increase by up to 30%
-# Note: For parameters that can be both positive and negative (like opening_dir_mix),
-# special handling is applied to prevent excessive changes when values are close to zero
-PARAM_CHANGE_MARGIN = 0.2
-
-SYMMETRIC_SPLITS: bool = False  # whether to split the pattern symmetrically (e.g., left and right halves of a skirt)
-ALLOW_RECURSIVE_SPLITS: bool = False  # whether to allow recursive splits (e.g., splitting a split pattern again)
-WEIGHT_BY_BBOX: bool = False  # whether to weight the split selection by bounding box area
+# System settings
+MULTITHREADING = SYSTEM.multithreading
+VERBOSE = SYSTEM.verbose
+DEFAULT_PATTERN_PATH = SYSTEM.default_pattern_path
+DEFAULT_DESIGN_PARAM_PATH = SYSTEM.default_design_param_path
+DEFAULT_BODY_PARAM_PATH = SYSTEM.default_body_param_path
+NUM_COPIES = SYSTEM.num_copies
 
 
-# mutation weights
-MUTATION_WEIGHTS = {
-    "rotate":    0.14,
-    "swap":      0.14,
-    "inversion": 0.14,
-    "insertion": 0.14,
-    "scramble":  0.14,
-    "split":     0.15,
-    "design_params": 0.15
-}
+# More backward compatibility assignments
+GRAVITATE_ONCE = ACTIVE.gravitate_once
+GRAVITATE_STEP = ACTIVE.gravitate_step
+SORT_BY = ACTIVE.sort_by
+REST_PENALTY = ACTIVE.rest_penalty
+BB_WEIGHT = ACTIVE.bb_weight
+CC_WEIGHT = ACTIVE.cc_weight
+NFP_GRAVITATE_ON = ACTIVE.nfp_gravitate_on
+
+POPULATION_SIZE = ACTIVE.population_size
+NUM_GENERATIONS = ACTIVE.num_generations
+MUTATION_RATE = ACTIVE.mutation_rate
+FORCE_MUTATION_ON_CROSSOVER = ACTIVE.force_mutation_on_crossover
+SWAP_MUTATION_K = ACTIVE.swap_mutation_k
+POPULATION_WEIGHTS = ACTIVE.population_weights
 
 
-# dynamic stopping and extension for GA
-ENABLE_DYNAMIC_STOPPING: bool = True
-EARLY_STOP_WINDOW: int         = 10
-EARLY_STOP_TOLERANCE: float    = 0.01
-ENABLE_EXTENSION: bool         = False
-EXTEND_WINDOW: int             = 10
-EXTEND_THRESHOLD: float        = 0.1
-MAX_GENERATIONS: int    = 20
-GENERATION_PER_FLUSH: int = max(1, min(math.ceil(100 / POPULATION_SIZE), 10))
+# More backward compatibility
+EXCLUDED_PARAM_PATHS = ACTIVE.excluded_param_paths
+PARAM_CHANGE_MARGIN = ACTIVE.param_change_margin
+SYMMETRIC_SPLITS = ACTIVE.symmetric_splits
+ALLOW_RECURSIVE_SPLITS = ACTIVE.allow_recursive_splits
+WEIGHT_BY_BBOX = ACTIVE.weight_by_bbox
+MUTATION_WEIGHTS = ACTIVE.mutation_weights
 
-# How often to flush log lines to disk (in generations)
-LOG_FLUSH_INTERVAL: int = GENERATION_PER_FLUSH
+ENABLE_DYNAMIC_STOPPING = ACTIVE.enable_dynamic_stopping
+EARLY_STOP_WINDOW = ACTIVE.early_stop_window
+EARLY_STOP_TOLERANCE = ACTIVE.early_stop_tolerance
+ENABLE_EXTENSION = ACTIVE.enable_extension
+EXTEND_WINDOW = ACTIVE.extend_window
+EXTEND_THRESHOLD = ACTIVE.extend_threshold
+MAX_GENERATIONS = ACTIVE.max_generations
 
-# log
-SAVE_LOGS = True
-# Unified experiments directory structure (replaces separate run_logs/results/aggregate_stats)
-EXPERIMENTS_ROOT = "nesting/experiments"
-RUNS_DIR = f"{EXPERIMENTS_ROOT}/runs"
-AGGREGATE_DIR = f"{EXPERIMENTS_ROOT}/aggregate"
-# Primary logs & per-run artifacts directory
+# Calculated values
+GENERATION_PER_FLUSH = max(1, min(math.ceil(100 / ACTIVE.population_size), 10))
+LOG_FLUSH_INTERVAL = GENERATION_PER_FLUSH
+
+# System settings
+SAVE_LOGS = SYSTEM.save_logs
+EXPERIMENTS_ROOT = SYSTEM.experiments_root
+RUNS_DIR = f"{SYSTEM.experiments_root}/runs"
+AGGREGATE_DIR = f"{SYSTEM.experiments_root}/aggregate"
 SAVE_LOGS_PATH = f"{RUNS_DIR}/"
-LOG_TIME = True
-LOG_DESIGN_PARAM_PATHS = False
-SAVE_GENERATION_SVGS = True
+LOG_TIME = SYSTEM.log_time
+LOG_DESIGN_PARAM_PATHS = SYSTEM.log_design_param_paths
+SAVE_GENERATION_SVGS = SYSTEM.save_generation_svgs
 
-# ——— concave hull —————————————————————————————————————
-HULL_TRIM_RATIO = 10 # higher number -> more convex
-INTERIOR_SAMPLE_SPACING = 5 # how many cm between sampled interior points, tradeoff between speed and accuracy of the hull
-BOUNDARY_SAMPLE_SPACING = 3 # how many cm between sampled boundary points, tradeoff between speed and accuracy of the hull
-SNAP = False
-SNAP_TOLERANCE = 0.1 # how close points must be to snap to the hull, in percentage of the container size
-
-
-# ——— sampling (path extractor) —————————————————————————————————————
-SAMPLES_PER_EDGE  = 7
-ENABLE_ROTATIONS  = True
-ALLOWED_ROTATIONS = [0, 180]  # allowed rotations in degrees, if ENABLE_ROTATIONS is True
+# Concave hull & sampling
+HULL_TRIM_RATIO = ACTIVE.hull_trim_ratio
+INTERIOR_SAMPLE_SPACING = ACTIVE.interior_sample_spacing
+BOUNDARY_SAMPLE_SPACING = ACTIVE.boundary_sample_spacing
+SNAP = ACTIVE.snap
+SNAP_TOLERANCE = ACTIVE.snap_tolerance
+ENABLE_ROTATIONS = ACTIVE.enable_rotations
+ALLOWED_ROTATIONS = ACTIVE.allowed_rotations
 
 
-_EXPORT_KEYS = [
-    # general / algorithm
-    "MULTITHREADING",
-    "SELECTED_DECODER",
-    "SELECTED_FITNESS_METRIC",
-    "SELECTED_CROSSOVER",
-    "CROSS_STITCH_MODE",
-
-    # container / sampling
-    "CONTAINER_WIDTH_CM",
-    "CONTAINER_HEIGHT_CM",
-    "SEAM_ALLOWANCE_CM",
-    "SAMPLES_PER_EDGE",
-    "ENABLE_ROTATIONS",
-    "ALLOWED_ROTATIONS",
-    "GRAVITATE_STEP",
-
-    # GA
-    "POPULATION_SIZE",
-    "NUM_GENERATIONS",
-    "MUTATION_RATE",
-    "ENABLE_DYNAMIC_STOPPING",
-    "EARLY_STOP_WINDOW",
-    "EARLY_STOP_TOLERANCE",
-    "ENABLE_EXTENSION",
-    "EXTEND_WINDOW",
-    "EXTEND_THRESHOLD",
-    "MAX_GENERATIONS",
-    "MUTATION_WEIGHTS",
-    "POPULATION_WEIGHTS",
-
-    # logging / experiments
-    "SAVE_LOGS",
-    "LOG_FLUSH_INTERVAL",
-    "SAVE_LOGS_PATH",
-    "LOG_TIME",
-    "LOG_DESIGN_PARAM_PATHS",
-    "EXPERIMENTS_ROOT",
-    "RUNS_DIR",
-    "AGGREGATE_DIR",
-
-    # geometry / hull
-    "HULL_TRIM_RATIO",
-    "INTERIOR_SAMPLE_SPACING",
-    "BOUNDARY_SAMPLE_SPACING",
-    "SNAP",
-    "SNAP_TOLERANCE",
-
-    # UI / misc
-    "NUM_COPIES",
-    "NUM_SPLITS",
-    "OX_K",
-    "PRESERVE_HOLES",
-    "EXCLUDED_PARAM_PATHS",
-    "PARAM_CHANGE_MARGIN",
-]
+# ——— Legacy Functions (Updated to use new system) ————————————————————————
 
 def as_dict() -> dict:
-    """Return the selected configuration values as a dictionary.
-
-    Uses an explicit allow-list of keys for clarity and stability.
+    """Return the active configuration values as a dictionary.
+    
+    Updated to use the new stable configuration system.
     """
-    g = globals()
-    return {k: g[k] for k in _EXPORT_KEYS}
-
+    return asdict(ACTIVE)
 
 def __dict__() -> dict:
+    """Backward compatibility alias."""
     return as_dict()
 
-
-# Stable JSON and hash helpers for config
 def stable_config_json() -> str:
-    """Return a deterministic JSON string of the exported config (uses as_dict()).
-
-    Keys are sorted and compact separators are used for stable output.
+    """Return a deterministic JSON string of the active config.
+    
+    Updated to use new stable configuration system instead of exported keys.
     """
-    return json.dumps(as_dict(), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-
+    return get_stable_json()
 
 def stable_config_hash() -> str:
-    """Return a stable SHA256 hex digest for the exported config values."""
-    return hashlib.sha256(stable_config_json().encode("utf-8")).hexdigest()
+    """Return a stable hash digest for the active config values.
+    
+    Updated to use the new stable hashing system.
+    """
+    return get_stable_hash()
