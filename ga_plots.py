@@ -482,7 +482,7 @@ def plot_config_comparison(agg_df: pd.DataFrame, outdir: Path):
     n_cols = min(3, n_metrics)
     n_rows = (n_metrics + n_cols - 1) // n_cols
     
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 4*n_rows))
+    _, axes = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 4*n_rows))
     if n_metrics == 1:
         axes = [axes]
     elif n_rows == 1:
@@ -514,6 +514,33 @@ def plot_config_comparison(agg_df: pd.DataFrame, outdir: Path):
     plt.savefig(outdir / "config_comparison.png", dpi=300, bbox_inches="tight")
     plt.close()
 
+def plot_metrics_correlation(df: pd.DataFrame, outdir: Path):
+    """Plot correlation heatmap of all metrics."""
+    outdir.mkdir(parents=True, exist_ok=True)
+    
+    # Get only numeric columns (exclude config_hash)
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    numeric_cols = [col for col in numeric_cols if col != 'config_hash']
+    
+    if len(numeric_cols) < 2:
+        return
+    
+    # Compute correlation matrix
+    corr_matrix = df[numeric_cols].corr()
+    
+    # Create correlation heatmap
+    plt.figure(figsize=(max(8, len(numeric_cols) * 0.8), max(8, len(numeric_cols) * 0.8)))
+    mask = np.triu(np.ones_like(corr_matrix, dtype=bool))  # Only show lower triangle
+    
+    sns.heatmap(corr_matrix, mask=mask, annot=True, fmt='.2f', 
+                cmap='RdBu_r', center=0, square=True,
+                cbar_kws={'label': 'Correlation Coefficient'})
+    
+    plt.title('Metrics Correlation Matrix')
+    plt.tight_layout()
+    plt.savefig(outdir / "metrics_correlation.png", dpi=300, bbox_inches="tight")
+    plt.close()
+
 def main(argv: Optional[List[str]] = None):
     parser = argparse.ArgumentParser(description="GA mutation effectiveness plots per config (per-run stats, aggregated across runs).")
     parser.add_argument("--input", nargs="+", required=True, help='CSV paths/globs, e.g. "nesting/experiments/runs/*.csv"')
@@ -536,8 +563,10 @@ def main(argv: Optional[List[str]] = None):
         final_metrics = read_final_metrics()
         agg_metrics = aggregate_metrics_by_config(final_metrics)
         plot_config_comparison(agg_metrics, Path(args.outdir))
+        plot_metrics_correlation(final_metrics, Path(args.outdir))
         agg_metrics.to_csv(Path(args.outdir) / "config_aggregated_metrics.csv", index=False)
         print(f"Config comparison saved to: {Path(args.outdir) / 'config_comparison.png'}")
+        print(f"Metrics correlation saved to: {Path(args.outdir) / 'metrics_correlation.png'}")
     except Exception as e:
         print(f"Could not process final_metrics.csv: {e}")
 
