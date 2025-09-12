@@ -443,6 +443,77 @@ def process_config(cfg_df: pd.DataFrame, outdir: Path):
 
 # ---------------- MAIN ----------------
 
+def read_final_metrics() -> pd.DataFrame:
+    """Read final_metrics.csv and return DataFrame."""
+    path = "nesting/experiments/aggregate/final_metrics.csv"
+    df = pd.read_csv(path)
+    return df
+
+def aggregate_metrics_by_config(df: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate metrics by config_hash: compute mean, median, std for each metric."""
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    # exclude config_hash if it's numeric
+    numeric_cols = [col for col in numeric_cols if col != 'config_hash']
+    
+    agg_dict = {}
+    for col in numeric_cols:
+        agg_dict[f'{col}_mean'] = (col, 'mean')
+        agg_dict[f'{col}_median'] = (col, 'median')
+        agg_dict[f'{col}_std'] = (col, 'std')
+    
+    result = df.groupby('config_hash').agg(**agg_dict).reset_index()
+    return result
+
+def plot_config_comparison(agg_df: pd.DataFrame, outdir: Path):
+    """Plot comparison of configurations for all metrics."""
+    outdir.mkdir(parents=True, exist_ok=True)
+    
+    # Get unique metric names (without _mean, _median, _std suffix)
+    metric_names = set()
+    for col in agg_df.columns:
+        if col.endswith(('_mean', '_median', '_std')) and col != 'config_hash':
+            metric_name = col.rsplit('_', 1)[0]
+            metric_names.add(metric_name)
+    
+    metric_names = sorted(list(metric_names))
+    
+    # Create subplots for each metric
+    n_metrics = len(metric_names)
+    n_cols = min(3, n_metrics)
+    n_rows = (n_metrics + n_cols - 1) // n_cols
+    
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 4*n_rows))
+    if n_metrics == 1:
+        axes = [axes]
+    elif n_rows == 1:
+        axes = [axes]
+    else:
+        axes = axes.flatten()
+    
+    for i, metric in enumerate(metric_names):
+        ax = axes[i] if n_metrics > 1 else axes[0]
+        
+        # Plot mean with std error bars
+        x_pos = range(len(agg_df))
+        means = agg_df[f'{metric}_mean']
+        stds = agg_df[f'{metric}_std'].fillna(0)
+        
+        ax.bar(x_pos, means, yerr=stds, capsize=5, alpha=0.7)
+        ax.set_xlabel('Config Hash')
+        ax.set_ylabel(f'{metric}')
+        ax.set_title(f'{metric} by Configuration (mean ± std)')
+        ax.set_xticks(x_pos)
+        ax.set_xticklabels(agg_df['config_hash'], rotation=45)
+        ax.grid(True, alpha=0.3)
+    
+    # Hide extra subplots
+    for i in range(n_metrics, len(axes)):
+        axes[i].set_visible(False)
+    
+    plt.tight_layout()
+    plt.savefig(outdir / "config_comparison.png", dpi=300, bbox_inches="tight")
+    plt.close()
+
 def main(argv: Optional[List[str]] = None):
     parser = argparse.ArgumentParser(description="GA mutation effectiveness plots per config (per-run stats, aggregated across runs).")
     parser.add_argument("--input", nargs="+", required=True, help='CSV paths/globs, e.g. "nesting/experiments/runs/*.csv"')
@@ -459,6 +530,16 @@ def main(argv: Optional[List[str]] = None):
     for cfg, cfg_df in data.groupby("config_hash"):
         cfg_out = Path(args.outdir) / cfg
         process_config(cfg_df, cfg_out)
+
+    # Config comparison from final_metrics.csv
+    try:
+        final_metrics = read_final_metrics()
+        agg_metrics = aggregate_metrics_by_config(final_metrics)
+        plot_config_comparison(agg_metrics, Path(args.outdir))
+        agg_metrics.to_csv(Path(args.outdir) / "config_aggregated_metrics.csv", index=False)
+        print(f"Config comparison saved to: {Path(args.outdir) / 'config_comparison.png'}")
+    except Exception as e:
+        print(f"Could not process final_metrics.csv: {e}")
 
     print(f"Done. Plots & CSVs saved under: {Path(args.outdir).resolve()}")
 
