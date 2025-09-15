@@ -13,6 +13,7 @@ from nicegui import ui, events
 from nicegui.events import KeyEventArguments
 from nesting import utils
 from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap, etc.
+from nesting.simulated_annealing import SimulatedAnnealing
 import matplotlib.pyplot as plt
 # import io
 # import base64
@@ -228,6 +229,7 @@ class NestingGUI:
                 ui.button("Random BL", on_click=lambda _: self._auto_place("RandomBL")).classes("w-full")
                 ui.button("Random NFP", on_click=lambda _: self._auto_place("RandomNFP")).classes("w-full")
                 ui.button("Genetic Algorithm", on_click=lambda _: self._auto_place("Genetic Algorithm")).classes("w-full")
+                ui.button("Simulated Annealing", on_click=lambda _: self._run_simulated_annealing()).classes("w-full")
         
         # Piece Operations
         with ui.card().classes("w-full mb-4 p-2"):
@@ -1382,6 +1384,82 @@ class NestingGUI:
 
         print(f'Run heuristics: plot saved to {output_path} (timestamp: {ts})')
         ui.notify(f'Heuristics run complete. Plot saved to: {output_path} (timestamp: {ts})', type='positive')
+
+    def _run_simulated_annealing(self):
+        """Run simulated annealing optimization with current pieces and parameters."""
+        if not self.pattern_loaded:
+            ui.notify("Please load a pattern first", type="warning")
+            return
+            
+        ui.notify("Starting simulated annealing optimization...", type="info")
+        
+        try:
+            # Prepare pieces for simulated annealing
+            pieces_list = list(self.pieces.values())
+            if not pieces_list:
+                ui.notify("No pieces available for optimization", type="warning")
+                return
+            
+            # Create copies of pieces to avoid modifying the originals
+            pieces_copy = [copy.deepcopy(piece) for piece in pieces_list]
+            
+            # Configure simulated annealing parameters
+            # These could be made configurable via GUI inputs in the future
+            cooling_rate = 0.95
+            initial_temperature = 100.0
+            
+            # Create simulated annealing instance
+            sa = SimulatedAnnealing(
+                pieces=pieces_copy,
+                cooling_rate=cooling_rate,
+                initial_temperature=initial_temperature,
+                design_params=copy.deepcopy(self.design_params) if hasattr(self, 'design_params') else None,
+                body_params=self.body_params if hasattr(self, 'body_params') else None
+            )
+            
+            # Get initial fitness
+            initial_fitness = sa.fitness(sa.current_state)
+            print(f"Initial fitness: {initial_fitness:.4f}")
+            
+            # Run optimization
+            print("Running simulated annealing optimization...")
+            sa.run()
+            
+            # Get final results
+            final_fitness = sa.best_fitness
+            improvement = final_fitness - initial_fitness
+            
+            print(f"Final fitness: {final_fitness:.4f}")
+            print(f"Improvement: {improvement:.4f}")
+            
+            # Update the GUI with the optimized layout
+            if sa.best_state:
+                # Update pieces with the best state found
+                self.pieces.clear()
+                for piece in sa.best_state:
+                    self.pieces[piece.id] = piece
+                
+                # Rebuild the layout and redraw
+                self.layout = Layout(self.pieces)
+                self._rebuild_panel_outlines()
+                self._draw_outlines()
+                
+                # Recalculate and display metrics
+                self._calculate_usage()
+                
+                ui.notify(
+                    f"Simulated annealing complete! Fitness improved by {improvement:.4f} "
+                    f"(from {initial_fitness:.4f} to {final_fitness:.4f})",
+                    type="positive"
+                )
+            else:
+                ui.notify("Simulated annealing completed but no improvement found", type="info")
+                
+        except Exception as exc:
+            print(f"Simulated annealing error: {exc}")
+            import traceback
+            traceback.print_exc()
+            ui.notify(f"Simulated annealing failed: {exc}", type="negative")
 
 
     def _enable_selection_mode(self):
