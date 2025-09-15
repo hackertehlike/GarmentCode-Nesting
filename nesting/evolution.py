@@ -534,10 +534,6 @@ class Evolution:
             self._log("Warning: Not enough parents with non-zero fitness. Using all elite chromosomes.")
             viable_parents = old_elite
             
-        # Select two different parents
-        p1, p2 = random.sample(viable_parents, 2)
-        parent_f = max(p1.fitness, p2.fitness)
-
         # Create offspring using cross-stitch crossover
         target_offspring = self.n_offspring
         if config.MULTITHREADING:
@@ -545,6 +541,8 @@ class Evolution:
             with ThreadPoolExecutor() as ex:
                 # Submit one mating per job; each job may return up to 2 kids
                 for _ in range(max(1, (target_offspring + 1) // 2)):
+                    # Select new parent pair for each offspring generation
+                    p1, p2 = random.sample(viable_parents, 2)
                     fut = ex.submit(do_offspring, p1, p2)
                     offspring_jobs[fut] = None
             for fut in as_completed(offspring_jobs):
@@ -577,6 +575,8 @@ class Evolution:
                     self._append_raw_rows(raw_rows)
             # If still short (e.g., single-child mode), top up with extra matings
             while len(offspring) < target_offspring:
+                # Select new parent pair for each additional offspring generation
+                p1, p2 = random.sample(viable_parents, 2)
                 kids, p1f, p2f, err = do_offspring(p1, p2)
                 if err:
                     self._log(f"offspring task failed: {err}")
@@ -604,6 +604,8 @@ class Evolution:
                     self._append_raw_rows(raw_rows)
         else:  # single-threaded fallback
             while len(offspring) < target_offspring:
+                # Select new parent pair for each offspring generation
+                p1, p2 = random.sample(viable_parents, 2)
                 kids, p1f, p2f, err = do_offspring(p1, p2)
                 if err:
                     self._log(f"offspring task failed: {err}")
