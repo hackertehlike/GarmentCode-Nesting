@@ -327,13 +327,40 @@ def _apply_design_param_change(
                 print(f"[DesignParams] No affected panels for {path}")
             return False, pieces
 
+        # Debug: Log MetaGarment initialization parameters
+        print(f"[DesignParams] DEBUG: Creating MetaGarment with body_params type: {type(body_params)}")
+        print(f"[DesignParams] DEBUG: design_params keys: {list(design_params.keys()) if design_params else None}")
+        if design_params and 'meta' in design_params:
+            meta_params = design_params['meta']
+            print(f"[DesignParams] DEBUG: meta params: upper={meta_params.get('upper', {}).get('v')}, bottom={meta_params.get('bottom', {}).get('v')}, wb={meta_params.get('wb', {}).get('v')}")
+        
         mg = MetaGarment("design_mut", body_params, design_params)
+        
+        # Debug: Check MetaGarment composition after creation
+        print(f"[DesignParams] DEBUG: MetaGarment created - upper_name: {getattr(mg, 'upper_name', 'MISSING')}, lower_name: {getattr(mg, 'lower_name', 'MISSING')}, belt_name: {getattr(mg, 'belt_name', 'MISSING')}")
+        print(f"[DesignParams] DEBUG: MetaGarment subs count: {len(getattr(mg, 'subs', []))}")
+
+        # Debug: Check what panels exist in regenerated MetaGarment BEFORE reapplying splits
+        try:
+            temp_pattern = mg.assembly()
+            available_panels = list(temp_pattern.pattern['panels'].keys())
+            print(f"[DesignParams] DEBUG: Panels in regenerated MetaGarment: {available_panels}")
+            print(f"[DesignParams] DEBUG: Split history to reapply: {split_history}")
+        except Exception as debug_e:
+            print(f"[DesignParams] DEBUG: Could not get panel list from regenerated MetaGarment: {debug_e}")
+            print(f"[DesignParams] DEBUG: Exception type: {type(debug_e)}, message: {str(debug_e)}")
 
         # Restore splits from history
         for panel_name, proportion in split_history:
             if config.VERBOSE:
                 print(f"[DesignParams] Reapplying split for {panel_name} with proportion {proportion}")
-            mg.split_panel(panel_name, proportion)
+            try:
+                mg.split_panel(panel_name, proportion)
+                print(f"[DesignParams] DEBUG: Successfully split {panel_name}")
+            except Exception as split_error:
+                print(f"[DesignParams] DEBUG: Failed to split {panel_name}: {split_error}")
+                # Continue trying other splits rather than failing completely
+                continue
 
         pattern = mg.assembly()
         with tempfile.TemporaryDirectory() as td:

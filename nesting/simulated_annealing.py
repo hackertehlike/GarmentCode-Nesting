@@ -3,6 +3,8 @@ import time
 import random
 import copy
 from typing import Optional, Union, List
+from pathlib import Path
+import threading
 
 from .layout import Piece, Container, Layout
 from .operations import METRIC_REGISTRY, Operators, weighted_choice
@@ -45,11 +47,29 @@ class SimulatedAnnealing:
         self.initial_design_params = copy.deepcopy(design_params) if design_params else None
 
         self.last_operation = None
-        self.best_state = pieces
+        
+        # best snapshot (deep copies)
         self.best_fitness = float('-inf')
-
+        self.best_state = copy.deepcopy(self.current_state)
         self.split_history = []
         self.split_set = set()  # Track IDs of split pieces, not objects
+        self.best_split_history = list(self.split_history)
+        self.best_split_set = set(self.split_set)
+        self.best_design_params = copy.deepcopy(self.design_params)
+
+        # Initialize logging
+        self.log_lines = []
+        self._log_lock = threading.Lock()
+
+        # Setup log file
+        ts = time.strftime("%Y%m%d_%H%M%S")
+        log_dir = getattr(config, 'SAVE_LOGS_PATH', './logs')
+        if hasattr(config, 'PATTERN_NAME') and config.PATTERN_NAME:
+            log_dir = Path(log_dir) / config.PATTERN_NAME
+        log_dir = f"{log_dir}_sa_{ts}"
+        if getattr(config, 'SAVE_LOGS', True):
+            Path(log_dir).mkdir(parents=True, exist_ok=True)
+        self.log_path = Path(log_dir) / f"simulated_annealing_log_{ts}.txt"
 
         self.meta_garment = None
         if self.design_params and self.body_params:
@@ -57,7 +77,40 @@ class SimulatedAnnealing:
                 from assets.garment_programs.meta_garment import MetaGarment
                 self.meta_garment = MetaGarment("metagarment", self.body_params, self.design_params)
             except Exception as exc:
-                print(f"[Chromosome] Failed to create MetaGarment: {exc}")
+                self.log(f"[SimulatedAnnealing] Failed to create MetaGarment: {exc}")
+
+    def log(self, msg: str = "", divider: bool = False):
+        """Log message to both console and file"""
+        lines_to_write = []
+        if divider:
+            line = "-" * 60
+            print(line)
+            self.log_lines.append(line)
+            lines_to_write.append(line)
+        if msg:
+            print(msg)
+            self.log_lines.append(msg)
+            lines_to_write.append(msg)
+
+        # Continuous flush to disk for each log call
+        if getattr(config, 'SAVE_LOGS', True) and lines_to_write:
+            with self._log_lock:
+                with self.log_path.open("a", encoding="utf-8") as f:
+                    for ln in lines_to_write:
+                        f.write(ln + "\n")
+
+    def _flush_log(self) -> None:
+        """Write accumulated log lines to disk (append or create)."""
+        # Ensure the log directory exists before writing
+        if not self.log_path.parent.exists():
+            self.log_path.parent.mkdir(parents=True, exist_ok=True)
+        if not self.log_path.exists():
+            self.log_path.touch()
+
+        with self._log_lock:
+            with self.log_path.open("w", encoding="utf-8") as f:
+                for line in self.log_lines:
+                    f.write(line + "\n")
 
     # evaluate fitness of a state
     def fitness(self, state: List[Piece]) -> float:
@@ -100,14 +153,18 @@ class SimulatedAnnealing:
             self.current_state = generated_neighbor
             if new_fitness > self.best_fitness:
                 self.best_fitness = new_fitness
-                self.best_state = self.current_state
+                self.best_state = copy.deepcopy(self.current_state)
+                self.best_split_history = list(self.split_history)
+                self.best_split_set = set(self.split_set)
+                self.best_design_params = copy.deepcopy(self.design_params)
+                self.log(f"[BEST] {self.best_fitness:.4f} with split roots: {sorted(self.best_split_set)}")
 
             # Apply tracking changes only after acceptance
             self._apply_tracking_changes(tracking_changes)
         else:
             # Neighbor rejected - restore original MetaGarment state if it was mutated
             if original_design_params is not None and self.design_params != original_design_params:
-                print(f"[TRACKING DEBUG] Restoring original design params after rejection")
+                self.log(f"[TRACKING DEBUG] Restoring original design params after rejection")
                 self.design_params = original_design_params
                 # Recreate MetaGarment with original parameters and regenerate pieces
                 if self.design_params and self.body_params:
@@ -123,7 +180,7 @@ class SimulatedAnnealing:
                             try:
                                 self.meta_garment.split_panel(panel_name, proportion)
                             except Exception as e:
-                                print(f"[TRACKING DEBUG] Warning: Could not restore split {panel_name}: {e}")
+                                self.log(f"[TRACKING DEBUG] Warning: Could not restore split {panel_name}: {e}")
 
                         # CRITICAL: Regenerate pieces from the restored MetaGarment to match its state
                         pattern = self.meta_garment.assembly()
@@ -152,19 +209,19 @@ class SimulatedAnnealing:
                             new_pieces.append(piece)
 
                         self.current_state = new_pieces
-                        print(f"[TRACKING DEBUG] Restored {len(new_pieces)} pieces to match MetaGarment state")
+                        self.log(f"[TRACKING DEBUG] Restored {len(new_pieces)} pieces to match MetaGarment state")
 
                     except Exception as exc:
-                        print(f"[TRACKING DEBUG] Failed to restore MetaGarment: {exc}")
+                        self.log(f"[TRACKING DEBUG] Failed to restore MetaGarment: {exc}")
 
         if config.LOG_TIME:
             end = time.time()
             elapsed = end - start
-            print(f"Neighbor generation ({chosen_operation}) took {elapsed:.6f} seconds")
+            self.log(f"Neighbor generation ({chosen_operation}) took {elapsed:.6f} seconds")
 
     def accept(self, old_fitness, new_fitness):
         ap = self._acceptance_probability(old_fitness, new_fitness)
-        print(f"Old fitness: {old_fitness:.4f}, New fitness: {new_fitness:.4f}, Temp: {self.temperature:.4f}, Acceptance Probability: {ap:.4f}")
+        self.log(f"Old fitness: {old_fitness:.4f}, New fitness: {new_fitness:.4f}, Temp: {self.temperature:.4f}, Acceptance Probability: {ap:.4f}")
         return ap > random.random()
 
     # acceptance probability
@@ -179,21 +236,21 @@ class SimulatedAnnealing:
         if not tracking_changes:
             return
 
-        print(f"[TRACKING DEBUG] Applying tracking changes: {tracking_changes}")
-        print(f"[TRACKING DEBUG] Before changes - split_set: {self.split_set}")
+        self.log(f"[TRACKING DEBUG] Applying tracking changes: {tracking_changes}")
+        self.log(f"[TRACKING DEBUG] Before changes - split_set: {self.split_set}")
 
         # Handle split_set additions
         if 'split_set_additions' in tracking_changes:
             for piece_id in tracking_changes['split_set_additions']:
-                print(f"[TRACKING DEBUG] Adding {piece_id} to split_set")
+                self.log(f"[TRACKING DEBUG] Adding {piece_id} to split_set")
                 self.split_set.add(piece_id)
 
         # Handle split_set replacement (used by design_params)
         if 'split_set_replacement' in tracking_changes:
             old_split_set = self.split_set.copy()
-            print(f"[TRACKING DEBUG] REPLACING split_set entirely")
-            print(f"[TRACKING DEBUG] Old split_set: {old_split_set}")
-            print(f"[TRACKING DEBUG] New split_set will be: {tracking_changes['split_set_replacement']}")
+            self.log(f"[TRACKING DEBUG] REPLACING split_set entirely")
+            self.log(f"[TRACKING DEBUG] Old split_set: {old_split_set}")
+            self.log(f"[TRACKING DEBUG] New split_set will be: {tracking_changes['split_set_replacement']}")
 
             self.split_set.clear()
             for piece_id in tracking_changes['split_set_replacement']:
@@ -202,47 +259,47 @@ class SimulatedAnnealing:
             lost_items = old_split_set - self.split_set
             gained_items = self.split_set - old_split_set
             if lost_items:
-                print(f"[TRACKING DEBUG] WARNING: Lost items in replacement: {lost_items}")
+                self.log(f"[TRACKING DEBUG] WARNING: Lost items in replacement: {lost_items}")
             if gained_items:
-                print(f"[TRACKING DEBUG] INFO: Gained items in replacement: {gained_items}")
+                self.log(f"[TRACKING DEBUG] INFO: Gained items in replacement: {gained_items}")
 
         # Handle split_history additions
         if 'split_history_additions' in tracking_changes:
             for entry in tracking_changes['split_history_additions']:
-                print(f"[TRACKING DEBUG] Adding to split_history: {entry}")
+                self.log(f"[TRACKING DEBUG] Adding to split_history: {entry}")
                 self.split_history.append(entry)
 
         # Handle pending MetaGarment splits - apply them to the live MetaGarment on acceptance
         if 'pending_mg_splits' in tracking_changes and self.meta_garment:
-            print(f"[TRACKING DEBUG] Applying {len(tracking_changes['pending_mg_splits'])} splits to live MetaGarment")
+            self.log(f"[TRACKING DEBUG] Applying {len(tracking_changes['pending_mg_splits'])} splits to live MetaGarment")
             for piece_id, root_id, proportion in tracking_changes['pending_mg_splits']:
                 try:
-                    print(f"[TRACKING DEBUG] Applying split: {piece_id} (root: {root_id}) with proportion {proportion}")
+                    self.log(f"[TRACKING DEBUG] Applying split: {piece_id} (root: {root_id}) with proportion {proportion}")
                     # Try to split using the piece.id first, then root_id if that fails
                     try:
                         self.meta_garment.split_panel(piece_id, proportion=proportion)
-                        print(f"[TRACKING DEBUG] Successfully applied split using piece_id: {piece_id}")
+                        self.log(f"[TRACKING DEBUG] Successfully applied split using piece_id: {piece_id}")
                     except Exception as e1:
-                        print(f"[TRACKING DEBUG] Split failed with piece_id '{piece_id}': {e1}")
+                        self.log(f"[TRACKING DEBUG] Split failed with piece_id '{piece_id}': {e1}")
                         try:
                             self.meta_garment.split_panel(root_id, proportion=proportion)
-                            print(f"[TRACKING DEBUG] Successfully applied split using root_id: {root_id}")
+                            self.log(f"[TRACKING DEBUG] Successfully applied split using root_id: {root_id}")
                         except Exception as e2:
-                            print(f"[TRACKING DEBUG] Split also failed with root_id '{root_id}': {e2}")
+                            self.log(f"[TRACKING DEBUG] Split also failed with root_id '{root_id}': {e2}")
                             # Don't fail the entire operation - just log and continue
                 except Exception as e:
-                    print(f"[TRACKING DEBUG] Error applying split {piece_id}: {e}")
+                    self.log(f"[TRACKING DEBUG] Error applying split {piece_id}: {e}")
 
-        print(f"[TRACKING DEBUG] After changes - split_set: {self.split_set}")
-        print(f"[TRACKING DEBUG] After changes - split_history length: {len(self.split_history)}")
+        self.log(f"[TRACKING DEBUG] After changes - split_set: {self.split_set}")
+        self.log(f"[TRACKING DEBUG] After changes - split_history length: {len(self.split_history)}")
     
     def termination_condition(self):
         return self.temperature < 1e-3
     
     def cool_down(self):
-        print(f"Cooling down: Temp {self.temperature:.4f} -> ", end="")
+        old_temp = self.temperature
         self.temperature *= self.cooling_rate
-        print(f"{self.temperature:.4f}")
+        self.log(f"Cooling down: Temp {old_temp:.4f} -> {self.temperature:.4f}")
 
     # operations to generate neighbors
 
@@ -262,16 +319,16 @@ class SimulatedAnnealing:
                          if g.parent_id is None
                          and g.id not in self.split_set
                          and "_split_" not in g.id]
-            print(f"[SimulatedAnnealing] DEBUG: Split candidates: {[c.id for c in candidates]}")
-            print(f"[SimulatedAnnealing] DEBUG: Split_set has {len(self.split_set)} piece IDs: {self.split_set}")
+            self.log(f"[SimulatedAnnealing] DEBUG: Split candidates: {[c.id for c in candidates]}")
+            self.log(f"[SimulatedAnnealing] DEBUG: Split_set has {len(self.split_set)} piece IDs: {self.split_set}")
 
             # Debug candidate selection
             all_root_pieces = [g for g in new_state if g.parent_id is None]
-            print(f"[TRACKING DEBUG] All root pieces: {[g.id for g in all_root_pieces]}")
+            self.log(f"[TRACKING DEBUG] All root pieces: {[g.id for g in all_root_pieces]}")
             for g in all_root_pieces:
                 in_split_set = g.id in self.split_set
                 has_split_in_id = "_split_" in g.id
-                print(f"[TRACKING DEBUG] Piece {g.id}: in_split_set={in_split_set}, has_split_in_id={has_split_in_id}, root_id={getattr(g, 'root_id', 'NO_ROOT_ID')}")
+                self.log(f"[TRACKING DEBUG] Piece {g.id}: in_split_set={in_split_set}, has_split_in_id={has_split_in_id}, root_id={getattr(g, 'root_id', 'NO_ROOT_ID')}")
 
             return candidates
         
@@ -293,8 +350,8 @@ class SimulatedAnnealing:
 
         # Track changes to return instead of applying directly
         tracking_changes = {'split_set_additions': [piece.id], 'split_history_additions': []}
-        print(f"[TRACKING DEBUG] Regular split will add to split_set: {piece.id}")
-        print(f"[TRACKING DEBUG] piece.id={piece.id}, piece.root_id={getattr(piece, 'root_id', 'NO_ROOT_ID')}")
+        self.log(f"[TRACKING DEBUG] Regular split will add to split_set: {piece.id}")
+        self.log(f"[TRACKING DEBUG] piece.id={piece.id}, piece.root_id={getattr(piece, 'root_id', 'NO_ROOT_ID')}")
         
         # Mirror lookup (basic left/right root swap)
         piece_mirror = next((p for p in new_state
@@ -318,7 +375,7 @@ class SimulatedAnnealing:
                 tracking_changes['split_history_additions'].extend(meta_tracking.get('split_history_additions', []))
                 tracking_changes['split_set_additions'].extend(meta_tracking.get('split_set_additions', []))
             except Exception as e:
-                print(f"[SimulatedAnnealing] MetaGarment split failed for {piece.id}: {e}")
+                self.log(f"[SimulatedAnnealing] MetaGarment split failed for {piece.id}: {e}")
                 return self.current_state, {}
         
         return new_state, tracking_changes
@@ -347,8 +404,8 @@ class SimulatedAnnealing:
         # choose split proportion and perform
         proportion = random.uniform(getattr(config, 'SPLIT_LOWER_BOUND', 0.3), getattr(config, 'SPLIT_UPPER_BOUND', 0.7))
         
-        print(f"[SimulatedAnnealing] Attempting to split panel ID: '{piece.id}' with proportion {proportion}")
-        print(f"[SimulatedAnnealing] Piece root_id: '{piece.root_id}'")
+        self.log(f"[SimulatedAnnealing] Attempting to split panel ID: '{piece.id}' with proportion {proportion}")
+        self.log(f"[SimulatedAnnealing] Piece root_id: '{piece.root_id}'")
 
         # Defensive validation - check if panel already appears to be split
         try:
@@ -356,36 +413,36 @@ class SimulatedAnnealing:
             panel_names = list(current_pattern.pattern['panels'].keys()) if hasattr(current_pattern, 'pattern') else []
             already_split_variants = [p for p in panel_names if p.startswith(f"{piece.id}_split_") or p.startswith(f"{piece.root_id}_split_")]
             if already_split_variants:
-                print(f"[TRACKING DEBUG] WARNING: Panel appears already split in MetaGarment: {already_split_variants}")
-                print(f"[TRACKING DEBUG] But piece.id={piece.id} not in split_set: {self.split_set}")
-                print(f"[TRACKING DEBUG] This suggests a tracking sync issue!")
+                self.log(f"[TRACKING DEBUG] WARNING: Panel appears already split in MetaGarment: {already_split_variants}")
+                self.log(f"[TRACKING DEBUG] But piece.id={piece.id} not in split_set: {self.split_set}")
+                self.log(f"[TRACKING DEBUG] This suggests a tracking sync issue!")
         except Exception as debug_e:
-            print(f"[TRACKING DEBUG] Could not check for existing splits: {debug_e}")
+            self.log(f"[TRACKING DEBUG] Could not check for existing splits: {debug_e}")
 
         # Debug: Check what panels are available in the MetaGarment
         try:
             # Get the pattern to see what panels exist
             current_pattern = temp_mg.assembly()
             panel_names = list(current_pattern.pattern['panels'].keys()) if hasattr(current_pattern, 'pattern') else []
-            print(f"[SimulatedAnnealing] Available panels in MetaGarment: {panel_names}")
+            self.log(f"[SimulatedAnnealing] Available panels in MetaGarment: {panel_names}")
         except Exception as debug_e:
-            print(f"[SimulatedAnnealing] Could not get panel list: {debug_e}")
+            self.log(f"[SimulatedAnnealing] Could not get panel list: {debug_e}")
 
         # Try to split using the piece.id first
         try:
             new_panel_names = temp_mg.split_panel(piece.id, proportion=proportion)
         except Exception as e:
-            print(f"[SimulatedAnnealing] Split failed with piece.id '{piece.id}': {e}")
+            self.log(f"[SimulatedAnnealing] Split failed with piece.id '{piece.id}': {e}")
             # If that fails, try with root_id
             try:
-                print(f"[SimulatedAnnealing] Retrying split with root_id '{piece.root_id}'")
+                self.log(f"[SimulatedAnnealing] Retrying split with root_id '{piece.root_id}'")
                 new_panel_names = temp_mg.split_panel(piece.root_id, proportion=proportion)
             except Exception as e2:
-                print(f"[SimulatedAnnealing] Split also failed with root_id '{piece.root_id}': {e2}")
+                self.log(f"[SimulatedAnnealing] Split also failed with root_id '{piece.root_id}': {e2}")
                 return False, {}
         
         if not new_panel_names:
-            print(f"[SimulatedAnnealing] MetaGarment split failed for {piece.id}: no new panels returned")
+            self.log(f"[SimulatedAnnealing] MetaGarment split failed for {piece.id}: no new panels returned")
             return False, {}
         
         # Track changes to return instead of applying directly
@@ -396,23 +453,9 @@ class SimulatedAnnealing:
             'split_set_additions': [],
             'pending_mg_splits': pending_splits  # New field for MetaGarment operations
         }
-        print(f"[SimulatedAnnealing] Split {piece.id} into {new_panel_names} with proportion {proportion}")
-        print(f"[TRACKING DEBUG] Will add to split_history: ({piece.root_id}, {proportion})")
-        print(f"[TRACKING DEBUG] piece.id={piece.id}, piece.root_id={piece.root_id}")
-
-        new_panel_names_mirror = None
-        if piece_mirror and getattr(config, 'SYMMETRIC_SPLITS', False):
-            # If there's a mirror piece, also split it with complementary proportion
-            mirror_proportion = 1 - proportion
-            new_panel_names_mirror = temp_mg.split_panel(piece_mirror.id, proportion=mirror_proportion)
-            tracking_changes['split_set_additions'].append(piece_mirror.id)  # track mirror piece as split
-            if not new_panel_names_mirror:
-                print(f"[SimulatedAnnealing] MetaGarment split failed for mirror {piece_mirror.id}")
-            else:
-                # record mirror split using ROOT id
-                tracking_changes['split_history_additions'].append((piece_mirror.root_id, mirror_proportion))
-                tracking_changes['pending_mg_splits'].append((piece_mirror.id, piece_mirror.root_id, mirror_proportion))
-                print(f"[SimulatedAnnealing] Split {piece_mirror.id} into {new_panel_names_mirror} with proportion {mirror_proportion}")
+        self.log(f"[SimulatedAnnealing] Split {piece.id} into {new_panel_names} with proportion {proportion}")
+        self.log(f"[TRACKING DEBUG] Will add to split_history: ({piece.root_id}, {proportion})")
+        self.log(f"[TRACKING DEBUG] piece.id={piece.id}, piece.root_id={piece.root_id}")
 
         # Rebuild pattern and extract pieces from temporary MetaGarment
         pattern = temp_mg.assembly()
@@ -430,7 +473,7 @@ class SimulatedAnnealing:
         right_piece = all_pieces.get(new_panel_names[1]) if new_panel_names else None
 
         if left_piece is None or right_piece is None:
-            print(f"[SimulatedAnnealing] Split pieces not found for {piece.id} in regenerated pattern")
+            self.log(f"[SimulatedAnnealing] Split pieces not found for {piece.id} in regenerated pattern")
             return False, {}
 
         # CRITICAL FIX: Set parent_id and root_id correctly for split pieces
@@ -443,28 +486,11 @@ class SimulatedAnnealing:
         right_piece.parent_id = original_piece_id
         left_piece.root_id = original_root_id
         right_piece.root_id = original_root_id
-        print(f"[TRACKING DEBUG] Set parent_id={original_piece_id}, root_id={original_root_id} for split pieces {left_piece.id} and {right_piece.id}")
+        self.log(f"[TRACKING DEBUG] Set parent_id={original_piece_id}, root_id={original_root_id} for split pieces {left_piece.id} and {right_piece.id}")
 
         # Replace the original piece with the split pieces
         new_pieces = [left_piece, right_piece]
         state[:] = self._replace_piece(piece, new_pieces, state)
-        
-        # Handle mirror piece if it exists
-        if piece_mirror and new_panel_names_mirror:
-            left_piece_mirror = all_pieces.get(new_panel_names_mirror[0])
-            right_piece_mirror = all_pieces.get(new_panel_names_mirror[1])
-            if left_piece_mirror and right_piece_mirror:
-                # Set parent_id and root_id for mirror pieces too
-                original_mirror_piece_id = piece_mirror.id
-                original_mirror_root_id = piece_mirror.root_id if piece_mirror.root_id else piece_mirror.id
-                left_piece_mirror.parent_id = original_mirror_piece_id
-                right_piece_mirror.parent_id = original_mirror_piece_id
-                left_piece_mirror.root_id = original_mirror_root_id
-                right_piece_mirror.root_id = original_mirror_root_id
-                print(f"[TRACKING DEBUG] Set parent_id={original_mirror_piece_id}, root_id={original_mirror_root_id} for mirror split pieces {left_piece_mirror.id} and {right_piece_mirror.id}")
-
-                new_pieces_mirror = [left_piece_mirror, right_piece_mirror]
-                state[:] = self._replace_piece(piece_mirror, new_pieces_mirror, state)
         
         return True, tracking_changes
 
@@ -488,7 +514,7 @@ class SimulatedAnnealing:
         if not (self.design_params and self.body_params):
             return self.current_state, {}
 
-        print(f"[SimulatedAnnealing] Starting design parameter mutation")
+        self.log(f"[SimulatedAnnealing] Starting design parameter mutation")
         
         # # Debug: Check current MetaGarment state before design param change
         # if self.meta_garment:
@@ -532,43 +558,43 @@ class SimulatedAnnealing:
                         try:
                             self.meta_garment.split_panel(panel_name, proportion)
                         except Exception as e:
-                            print(f"[SimulatedAnnealing] Warning: Could not sync split {panel_name}: {e}")
+                            self.log(f"[SimulatedAnnealing] Warning: Could not sync split {panel_name}: {e}")
                     
                     # Prepare tracking changes for split_set update
                     split_panel_names = {panel_name for panel_name, _ in self.split_history}
 
-                    print(f"[TRACKING DEBUG] Building split_set_replacement from split_history")
-                    print(f"[TRACKING DEBUG] Current split_history: {self.split_history}")
-                    print(f"[TRACKING DEBUG] Extracted panel names: {split_panel_names}")
-                    print(f"[TRACKING DEBUG] Current split_set before replacement: {self.split_set}")
+                    self.log(f"[TRACKING DEBUG] Building split_set_replacement from split_history")
+                    self.log(f"[TRACKING DEBUG] Current split_history: {self.split_history}")
+                    self.log(f"[TRACKING DEBUG] Extracted panel names: {split_panel_names}")
+                    self.log(f"[TRACKING DEBUG] Current split_set before replacement: {self.split_set}")
 
                     # Check what pieces we actually have
                     piece_ids = {p.id for p in new_pieces}
                     split_piece_ids = {pid for pid in piece_ids if "_split_" in pid}
-                    print(f"[TRACKING DEBUG] Actual split pieces in new_pieces: {split_piece_ids}")
+                    self.log(f"[TRACKING DEBUG] Actual split pieces in new_pieces: {split_piece_ids}")
 
                     # Check which root panels actually have splits
                     actually_split_roots = set()
                     for panel_name in split_panel_names:
                         has_splits = any(pid.startswith(f"{panel_name}_split_") for pid in piece_ids)
-                        print(f"[TRACKING DEBUG] Panel {panel_name} has splits: {has_splits}")
+                        self.log(f"[TRACKING DEBUG] Panel {panel_name} has splits: {has_splits}")
                         if has_splits:
                             actually_split_roots.add(panel_name)
 
                     tracking_changes = {'split_set_replacement': list(split_panel_names)}
 
-                    print(f"[TRACKING DEBUG] Would track {len(split_panel_names)} split root panel IDs: {split_panel_names}")
-                    print(f"[TRACKING DEBUG] Actually split roots found in pieces: {actually_split_roots}")
-                    print(f"[TRACKING DEBUG] All pieces after sync: {[p.id for p in new_pieces]}")
+                    self.log(f"[TRACKING DEBUG] Would track {len(split_panel_names)} split root panel IDs: {split_panel_names}")
+                    self.log(f"[TRACKING DEBUG] Actually split roots found in pieces: {actually_split_roots}")
+                    self.log(f"[TRACKING DEBUG] All pieces after sync: {[p.id for p in new_pieces]}")
                     
                     # Debug: Check final state
                     final_pattern = self.meta_garment.assembly()
                     final_panels = list(final_pattern.pattern['panels'].keys())
                     split_panels = [p for p in final_panels if "_split_" in p]
-                    print(f"[SimulatedAnnealing] Synced MetaGarment with current structure ({len(self.split_history)} splits applied)")
-                    print(f"[SimulatedAnnealing] DEBUG: Final MetaGarment has {len(split_panels)} split panels: {split_panels}")
+                    self.log(f"[SimulatedAnnealing] Synced MetaGarment with current structure ({len(self.split_history)} splits applied)")
+                    self.log(f"[SimulatedAnnealing] DEBUG: Final MetaGarment has {len(split_panels)} split panels: {split_panels}")
                 except Exception as exc:
-                    print(f"[SimulatedAnnealing] Warning: Could not sync MetaGarment: {exc}")
+                    self.log(f"[SimulatedAnnealing] Warning: Could not sync MetaGarment: {exc}")
 
             # CRITICAL: Normalize parent_id and root_id for all pieces from design_params
             for piece in new_pieces:
@@ -586,6 +612,60 @@ class SimulatedAnnealing:
 
         return self.current_state, {}
 
+    def apply_best(self):
+        # Restore trackers
+        self.current_state = copy.deepcopy(getattr(self, "best_state", self.current_state))
+        self.split_history = list(getattr(self, "best_split_history", self.split_history))
+        self.split_set = set(getattr(self, "best_split_set", self.split_set))
+        self.design_params = copy.deepcopy(getattr(self, "best_design_params", self.design_params))
+
+        self.log(f"[BEST RESTORE] Restoring best state with {len(self.split_history)} splits")
+        self.log(f"[BEST RESTORE] Split history: {self.split_history}")
+        self.log(f"[BEST RESTORE] Split set: {self.split_set}")
+
+        # Rebuild MetaGarment from the best snapshot
+        if self.design_params and self.body_params:
+            from assets.garment_programs.meta_garment import MetaGarment
+            from nesting.path_extractor import PatternPathExtractor
+            from pathlib import Path
+            import tempfile
+
+            mg = MetaGarment("best", self.body_params, self.design_params)
+            self.log(f"[BEST RESTORE] Applying {len(self.split_history)} splits: {self.split_history}")
+            for i, (root, prop) in enumerate(self.split_history):
+                try:
+                    self.log(f"[BEST RESTORE] Split {i+1}/{len(self.split_history)}: {root} with proportion {prop}")
+                    mg.split_panel(root, prop)
+                    self.log(f"[BEST RESTORE] Successfully applied split {root}")
+                except Exception as e:
+                    self.log(f"[BEST RESTORE] Could not reapply split {root}: {e}")
+                    # Continue with remaining splits even if one fails
+            self.meta_garment = mg
+
+            # Re-extract pieces to ensure perfect consistency with MG
+            pattern = mg.assembly()
+            with tempfile.TemporaryDirectory() as td:
+                spec = Path(td) / f"{pattern.name}_specification.json"
+                pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
+                                  with_text=False, view_ids=False)
+                extractor = PatternPathExtractor(spec)
+                all_pieces = extractor.get_all_panel_pieces(
+                    samples_per_edge=getattr(config, 'SAMPLES_PER_EDGE', 10)
+                )
+
+            # Normalize metadata
+            restored = []
+            for pid, p in all_pieces.items():
+                if "_split_" in pid:
+                    base = pid.split("_split_")[0]
+                    p.root_id = base
+                    p.parent_id = base
+                else:
+                    p.root_id = pid
+                    p.parent_id = None
+                restored.append(p)
+            self.current_state = restored
+
     def run(self):
         while not self.termination_condition():
             # Run multiple iterations at current temperature
@@ -596,3 +676,9 @@ class SimulatedAnnealing:
                     break
             # Cool down after all iterations at this temperature
             self.cool_down()
+        
+        self.log(f"Final fitness: {self.best_fitness:.4f}")
+        self.apply_best()   # <— make best the live state shown to GUI
+        
+        # Final log flush to ensure all logs are written to disk
+        self._flush_log()
