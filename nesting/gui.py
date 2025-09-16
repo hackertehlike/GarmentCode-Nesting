@@ -1385,7 +1385,7 @@ class NestingGUI:
         print(f'Run heuristics: plot saved to {output_path} (timestamp: {ts})')
         ui.notify(f'Heuristics run complete. Plot saved to: {output_path} (timestamp: {ts})', type='positive')
 
-    def _run_simulated_annealing(self):
+    async def _run_simulated_annealing(self):
         """Run simulated annealing optimization with current pieces and parameters."""
         if not self.pattern_loaded:
             ui.notify("Please load a pattern first", type="warning")
@@ -1405,14 +1405,17 @@ class NestingGUI:
             
             # Configure simulated annealing parameters
             # These could be made configurable via GUI inputs in the future
-            cooling_rate = 0.95
-            initial_temperature = 100.0
-            
+            initial_temperature = 0.05
+            cooling_rate = 0.9
+            iterations_per_temp = 5
+
             # Create simulated annealing instance
             sa = SimulatedAnnealing(
                 pieces=pieces_copy,
+                container=self.container,
                 cooling_rate=cooling_rate,
                 initial_temperature=initial_temperature,
+                iterations_per_temp=iterations_per_temp,
                 design_params=copy.deepcopy(self.design_params) if hasattr(self, 'design_params') else None,
                 body_params=self.body_params if hasattr(self, 'body_params') else None
             )
@@ -1434,18 +1437,33 @@ class NestingGUI:
             
             # Update the GUI with the optimized layout
             if sa.best_state:
+                print("Simulated Annealing completed, applying best solution...")
+                
+                # Debug: Check what's in the best state
+                best_piece_ids = [p.id for p in sa.best_state]
+                split_pieces_in_best = [pid for pid in best_piece_ids if "_split_" in pid]
+                print(f"[GUI] DEBUG: Best state has {len(split_pieces_in_best)} split pieces out of {len(best_piece_ids)} total: {split_pieces_in_best}")
+                
                 # Update pieces with the best state found
-                self.pieces.clear()
-                for piece in sa.best_state:
-                    self.pieces[piece.id] = piece
+                self.pieces = {p.id: copy.deepcopy(p) for p in sa.best_state}
+                self.layout = Layout(self.pieces)          # keep layout in sync
+                self._rebuild_panel_outlines()             # add seam allowance etc.
+                self._draw_outlines()                      # paint them on the canvas
                 
-                # Rebuild the layout and redraw
-                self.layout = Layout(self.pieces)
-                self._rebuild_panel_outlines()
-                self._draw_outlines()
+                # Decode the best solution to get actual placements
+                view = LayoutView(sa.best_state)
+                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, self.container, step=config.GRAVITATE_STEP)
                 
-                # Recalculate and display metrics
-                self._calculate_usage()
+                print("Now decoding best SA solution...")
+                placements = decoder.decode()  # [(name, dx, dy)]
+                print("Decoding done")
+                
+                # Apply the placements to update piece positions on canvas
+                await self._apply_placements(placements)
+                concave_hull_usage = decoder.concave_hull_utilization()
+                self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
+                
+                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
                 
                 ui.notify(
                     f"Simulated annealing complete! Fitness improved by {improvement:.4f} "
