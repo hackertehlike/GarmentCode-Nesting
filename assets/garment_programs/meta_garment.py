@@ -98,7 +98,6 @@ class MetaGarment(pyg.Component):
 
 
     def get_panel_by_name(self, panel_name):
-        # TODO: fix... its not working
         """Retrieve a panel by its name
         
         This method searches for a panel with the given name in the following order:
@@ -210,6 +209,7 @@ class MetaGarment(pyg.Component):
 
 
     # TODO: make it work downstream with the 3D assembly
+    # if you call this outside of nesting, it might break stuff on the GarmentCode side
     def split_panel(self, panel_name, proportion=0.5):
         """Split a panel into two subpieces and replace it in the component hierarchy.
         

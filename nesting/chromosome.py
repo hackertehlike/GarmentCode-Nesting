@@ -421,6 +421,9 @@ class Chromosome():
         # TODO: allow recursive splits
         # DO NOT TURN THIS ON, 
         # IT DOES NOT CURRENTLY WORK
+        if config.ALLOW_RECURSIVE_SPLITS:
+            raise NotImplementedError("Recursive splits are not implemented yet.")
+
         if not candidates and not config.ALLOW_RECURSIVE_SPLITS:
             return False
 

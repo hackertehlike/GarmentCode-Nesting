@@ -521,8 +521,8 @@ class Panel(BaseComponent):
             
             # Create edges from coordinates
             # print vertices
-            print(f"[CircleArcPanel.split] Left panel vertices: {left_coords}")
-            print(f"[CircleArcPanel.split] Right panel vertices: {right_coords}")
+            # print(f"[CircleArcPanel.split] Left panel vertices: {left_coords}")
+            # print(f"[CircleArcPanel.split] Right panel vertices: {right_coords}")
             p.edges = EdgeSeqFactory.from_verts(*coords_local, loop=True)
             return p
 
