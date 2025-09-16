@@ -212,6 +212,27 @@ class SimulatedAnnealing:
                 print(f"[TRACKING DEBUG] Adding to split_history: {entry}")
                 self.split_history.append(entry)
 
+        # Handle pending MetaGarment splits - apply them to the live MetaGarment on acceptance
+        if 'pending_mg_splits' in tracking_changes and self.meta_garment:
+            print(f"[TRACKING DEBUG] Applying {len(tracking_changes['pending_mg_splits'])} splits to live MetaGarment")
+            for piece_id, root_id, proportion in tracking_changes['pending_mg_splits']:
+                try:
+                    print(f"[TRACKING DEBUG] Applying split: {piece_id} (root: {root_id}) with proportion {proportion}")
+                    # Try to split using the piece.id first, then root_id if that fails
+                    try:
+                        self.meta_garment.split_panel(piece_id, proportion=proportion)
+                        print(f"[TRACKING DEBUG] Successfully applied split using piece_id: {piece_id}")
+                    except Exception as e1:
+                        print(f"[TRACKING DEBUG] Split failed with piece_id '{piece_id}': {e1}")
+                        try:
+                            self.meta_garment.split_panel(root_id, proportion=proportion)
+                            print(f"[TRACKING DEBUG] Successfully applied split using root_id: {root_id}")
+                        except Exception as e2:
+                            print(f"[TRACKING DEBUG] Split also failed with root_id '{root_id}': {e2}")
+                            # Don't fail the entire operation - just log and continue
+                except Exception as e:
+                    print(f"[TRACKING DEBUG] Error applying split {piece_id}: {e}")
+
         print(f"[TRACKING DEBUG] After changes - split_set: {self.split_set}")
         print(f"[TRACKING DEBUG] After changes - split_history length: {len(self.split_history)}")
     
@@ -317,8 +338,11 @@ class SimulatedAnnealing:
         from pathlib import Path
         import tempfile
         import random
-        
-        mg = self.meta_garment
+        import copy
+
+        # Create temporary MetaGarment for proposal - don't mutate the live one
+        temp_design_params = copy.deepcopy(self.design_params)
+        temp_mg = MetaGarment('temp_meta_garment', self.body_params, temp_design_params)
         
         # choose split proportion and perform
         proportion = random.uniform(getattr(config, 'SPLIT_LOWER_BOUND', 0.3), getattr(config, 'SPLIT_UPPER_BOUND', 0.7))
@@ -328,7 +352,7 @@ class SimulatedAnnealing:
 
         # Defensive validation - check if panel already appears to be split
         try:
-            current_pattern = mg.assembly()
+            current_pattern = temp_mg.assembly()
             panel_names = list(current_pattern.pattern['panels'].keys()) if hasattr(current_pattern, 'pattern') else []
             already_split_variants = [p for p in panel_names if p.startswith(f"{piece.id}_split_") or p.startswith(f"{piece.root_id}_split_")]
             if already_split_variants:
@@ -337,25 +361,25 @@ class SimulatedAnnealing:
                 print(f"[TRACKING DEBUG] This suggests a tracking sync issue!")
         except Exception as debug_e:
             print(f"[TRACKING DEBUG] Could not check for existing splits: {debug_e}")
-        
+
         # Debug: Check what panels are available in the MetaGarment
         try:
             # Get the pattern to see what panels exist
-            current_pattern = mg.assembly()
+            current_pattern = temp_mg.assembly()
             panel_names = list(current_pattern.pattern['panels'].keys()) if hasattr(current_pattern, 'pattern') else []
             print(f"[SimulatedAnnealing] Available panels in MetaGarment: {panel_names}")
         except Exception as debug_e:
             print(f"[SimulatedAnnealing] Could not get panel list: {debug_e}")
-        
+
         # Try to split using the piece.id first
         try:
-            new_panel_names = mg.split_panel(piece.id, proportion=proportion)
+            new_panel_names = temp_mg.split_panel(piece.id, proportion=proportion)
         except Exception as e:
             print(f"[SimulatedAnnealing] Split failed with piece.id '{piece.id}': {e}")
             # If that fails, try with root_id
             try:
                 print(f"[SimulatedAnnealing] Retrying split with root_id '{piece.root_id}'")
-                new_panel_names = mg.split_panel(piece.root_id, proportion=proportion)
+                new_panel_names = temp_mg.split_panel(piece.root_id, proportion=proportion)
             except Exception as e2:
                 print(f"[SimulatedAnnealing] Split also failed with root_id '{piece.root_id}': {e2}")
                 return False, {}
@@ -365,26 +389,33 @@ class SimulatedAnnealing:
             return False, {}
         
         # Track changes to return instead of applying directly
-        tracking_changes = {'split_history_additions': [(piece.root_id, proportion)], 'split_set_additions': []}
+        # Include the split operations so they can be applied to live MetaGarment on acceptance
+        pending_splits = [(piece.id, piece.root_id, proportion)]
+        tracking_changes = {
+            'split_history_additions': [(piece.root_id, proportion)],
+            'split_set_additions': [],
+            'pending_mg_splits': pending_splits  # New field for MetaGarment operations
+        }
         print(f"[SimulatedAnnealing] Split {piece.id} into {new_panel_names} with proportion {proportion}")
         print(f"[TRACKING DEBUG] Will add to split_history: ({piece.root_id}, {proportion})")
         print(f"[TRACKING DEBUG] piece.id={piece.id}, piece.root_id={piece.root_id}")
-        
+
         new_panel_names_mirror = None
         if piece_mirror and getattr(config, 'SYMMETRIC_SPLITS', False):
             # If there's a mirror piece, also split it with complementary proportion
             mirror_proportion = 1 - proportion
-            new_panel_names_mirror = mg.split_panel(piece_mirror.id, proportion=mirror_proportion)
+            new_panel_names_mirror = temp_mg.split_panel(piece_mirror.id, proportion=mirror_proportion)
             tracking_changes['split_set_additions'].append(piece_mirror.id)  # track mirror piece as split
             if not new_panel_names_mirror:
                 print(f"[SimulatedAnnealing] MetaGarment split failed for mirror {piece_mirror.id}")
             else:
                 # record mirror split using ROOT id
                 tracking_changes['split_history_additions'].append((piece_mirror.root_id, mirror_proportion))
+                tracking_changes['pending_mg_splits'].append((piece_mirror.id, piece_mirror.root_id, mirror_proportion))
                 print(f"[SimulatedAnnealing] Split {piece_mirror.id} into {new_panel_names_mirror} with proportion {mirror_proportion}")
-        
-        # Rebuild pattern and extract pieces
-        pattern = mg.assembly()
+
+        # Rebuild pattern and extract pieces from temporary MetaGarment
+        pattern = temp_mg.assembly()
         with tempfile.TemporaryDirectory() as td:
             spec_file = Path(td) / f"{pattern.name}_specification.json"
             pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
