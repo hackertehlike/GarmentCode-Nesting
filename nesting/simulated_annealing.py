@@ -71,6 +71,10 @@ class SimulatedAnnealing:
             Path(log_dir).mkdir(parents=True, exist_ok=True)
         self.log_path = Path(log_dir) / f"simulated_annealing_log_{ts}.txt"
 
+        # Auto-calibrate temperature and cooling rate based on fitness metric
+        # (Must be called AFTER logging setup)
+        self._calibrate_temperature_parameters()
+
         self.meta_garment = None
         if self.design_params and self.body_params:
             try:
@@ -111,6 +115,80 @@ class SimulatedAnnealing:
             with self.log_path.open("w", encoding="utf-8") as f:
                 for line in self.log_lines:
                     f.write(line + "\n")
+
+    def _calibrate_temperature_parameters(self):
+        """Auto-calibrate temperature and cooling rate based on fitness metric scale."""
+        metric_name = config.SELECTED_FITNESS_METRIC
+        current_fitness = self.fitness(self.current_state)
+        
+        # Define metric characteristics and suggested parameters
+        metric_configs = {
+            # Percentage-based metrics (0-1 range)
+            "usage_bb": {"scale": "percentage", "temp_factor": 0.1, "cooling": 0.95},
+            "concave_hull": {"scale": "percentage", "temp_factor": 0.1, "cooling": 0.95},
+            "bb_cc": {"scale": "percentage", "temp_factor": 0.1, "cooling": 0.95},
+            
+            # Area-based metrics (large values, inverted)
+            "concave_hull_area": {"scale": "area_inverted", "temp_factor": 1000, "cooling": 0.98},
+            "bb_area": {"scale": "area_inverted", "temp_factor": 1000, "cooling": 0.98},
+            "bb_cc_area": {"scale": "area_inverted", "temp_factor": 1000, "cooling": 0.98},
+            
+            # Length-based metrics (cm scale)
+            "rest_length": {"scale": "length", "temp_factor": 10, "cooling": 0.97},
+            "rest_height": {"scale": "length", "temp_factor": 10, "cooling": 0.97},
+            
+            # Combined metrics (mixed scales)
+            "cc_with_rest_height": {"scale": "combined", "temp_factor": 1, "cooling": 0.96},
+            "cc_with_rest_length": {"scale": "combined", "temp_factor": 1, "cooling": 0.96},
+            "bb_with_rest_length": {"scale": "combined", "temp_factor": 1, "cooling": 0.96},
+        }
+        
+        # Get config for current metric or use defaults
+        config_data = metric_configs.get(metric_name, {"scale": "unknown", "temp_factor": 1, "cooling": 0.95})
+        
+        # Sample a few random mutations to estimate fitness variance
+        sample_deltas = []
+        original_state = copy.deepcopy(self.current_state)
+        
+        for _ in range(5):  # Sample 5 mutations
+            try:
+                # Apply a simple rotation mutation for sampling
+                mutated_state = Operators.rotate(self.current_state)
+                mutated_fitness = self.fitness(mutated_state)
+                delta = abs(mutated_fitness - current_fitness)
+                if delta > 0:  # Only consider actual changes
+                    sample_deltas.append(delta)
+            except Exception:
+                continue  # Skip failed mutations
+        
+        # Restore original state
+        self.current_state = original_state
+        
+        # Calculate calibrated parameters
+        if sample_deltas:
+            avg_delta = sum(sample_deltas) / len(sample_deltas)
+            # Temperature should be roughly 2-5x the average fitness change for good acceptance
+            calibrated_temp = max(avg_delta * 3, config_data["temp_factor"] * 0.1)
+        else:
+            # Fallback if no deltas found
+            calibrated_temp = config_data["temp_factor"]
+        
+        calibrated_cooling = config_data["cooling"]
+        
+        # Apply calibration
+        original_temp = self.temperature
+        original_cooling = self.cooling_rate
+        
+        self.temperature = calibrated_temp
+        self.cooling_rate = calibrated_cooling
+        
+        self.log(f"[CALIBRATION] Metric: {metric_name} (scale: {config_data['scale']})")
+        self.log(f"[CALIBRATION] Current fitness: {current_fitness:.6f}")
+        if sample_deltas:
+            self.log(f"[CALIBRATION] Sample fitness deltas: {sample_deltas}")
+            self.log(f"[CALIBRATION] Average delta: {avg_delta:.6f}")
+        self.log(f"[CALIBRATION] Temperature: {original_temp:.4f} -> {self.temperature:.4f}")
+        self.log(f"[CALIBRATION] Cooling rate: {original_cooling:.4f} -> {self.cooling_rate:.4f}")
 
     # evaluate fitness of a state
     def fitness(self, state: List[Piece]) -> float:
