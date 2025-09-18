@@ -3,6 +3,7 @@ import itertools
 import tempfile
 import json
 import copy
+import traceback
 # import yaml
 # from typing import Dict, List, Tuple, Set, Optional
 from typing import Dict, Tuple, Optional, List
@@ -12,6 +13,7 @@ from datetime import datetime
 from nicegui import ui, events
 from nicegui.events import KeyEventArguments
 from nesting import utils
+from nesting import config
 from nesting.evolution import Evolution  # add_seam_allowance, polygons_overlap, etc.
 from nesting.simulated_annealing import SimulatedAnnealing
 import matplotlib.pyplot as plt
@@ -22,7 +24,6 @@ from pygarment.garmentcode.params import DesignSampler
 from .path_extractor import *
 from .layout import *
 from .placement_engine import *
-import nesting.config as config
 # from .pattern_loader import load_pattern_bundle  # added import
 from nesting.metastatistics import MetaStatistics
 
@@ -87,6 +88,15 @@ class NestingGUI:
 
         self.hull_path: ui.element | None = None
 
+        # GA parameters (initialize with config defaults)
+        self.ga_population_size = config.POPULATION_SIZE
+        self.ga_num_generations = config.NUM_GENERATIONS
+        self.ga_mutation_rate = config.MUTATION_RATE
+        # Initialize population weights with config defaults
+        self.ga_population_weights = config.POPULATION_WEIGHTS.copy()
+        # Initialize allowed rotations with config defaults
+        self.ga_allowed_rotations = config.ALLOWED_ROTATIONS.copy()
+
         self._build_layout()
 
         if pattern_path is not None:
@@ -139,6 +149,12 @@ class NestingGUI:
 
         with self.sidebar:
             ui.label("Style Parameters").classes("text-xl font-bold mb-4")
+            
+            # Only build sidebar content if we have design parameters or pieces loaded
+            if not self.design_params and not self.pieces:
+                ui.label("Load a pattern to see parameters").classes("text-gray-500 italic")
+                return
+                
             filtered = self._filtered_design_tree()  # filter out irrelevant blocks
 
             # Display read-only meta parameters
@@ -228,8 +244,41 @@ class NestingGUI:
                 ui.button("TOPOS", on_click=lambda _: self._auto_place("TOPOS")).classes("w-full")
                 ui.button("Random BL", on_click=lambda _: self._auto_place("RandomBL")).classes("w-full")
                 ui.button("Random NFP", on_click=lambda _: self._auto_place("RandomNFP")).classes("w-full")
-                ui.button("Genetic Algorithm", on_click=lambda _: self._auto_place("Genetic Algorithm")).classes("w-full")
+                ui.button("Genetic Algorithm", on_click=lambda _: self._run_genetic_algorithm()).classes("w-full")
                 ui.button("Simulated Annealing", on_click=lambda _: self._run_simulated_annealing()).classes("w-full")
+        
+        # GA Parameters
+        with ui.card().classes("w-full mb-4 p-2"):
+            ui.label("GA Parameters").classes("font-bold mb-2")
+            with ui.column().classes("gap-2"):
+                self.ga_pop_size_input = ui.number("Population Size", value=self.ga_population_size, 
+                                                   on_change=self._update_ga_params).classes("w-full")
+                self.ga_generations_input = ui.number("Generations", value=self.ga_num_generations, 
+                                                      on_change=self._update_ga_params).classes("w-full")
+                self.ga_mutation_rate_input = ui.number("Mutation Rate", value=self.ga_mutation_rate, 
+                                                        min=0.0, max=1.0, step=0.01,
+                                                        on_change=self._update_ga_params).classes("w-full")
+                
+                # Population composition weights
+                ui.label("Population Weights").classes("font-semibold mt-2")
+                self.ga_elite_weight = ui.number("Elites", value=self.ga_population_weights['elites'], 
+                                                 min=0.0, max=1.0, step=0.05,
+                                                 on_change=self._update_ga_weights).classes("w-full")
+                self.ga_offspring_weight = ui.number("Offspring", value=self.ga_population_weights['offspring'], 
+                                                     min=0.0, max=1.0, step=0.05,
+                                                     on_change=self._update_ga_weights).classes("w-full")
+                self.ga_mutant_weight = ui.number("Mutants", value=self.ga_population_weights['mutants'], 
+                                                  min=0.0, max=1.0, step=0.05,
+                                                  on_change=self._update_ga_weights).classes("w-full")
+                self.ga_random_weight = ui.number("Randoms", value=self.ga_population_weights['randoms'], 
+                                                  min=0.0, max=1.0, step=0.05,
+                                                  on_change=self._update_ga_weights).classes("w-full")
+                
+                # Allowed rotations
+                ui.label("Allowed Rotations (comma-separated)").classes("font-semibold mt-2")
+                rotations_str = ",".join(map(str, self.ga_allowed_rotations))
+                self.ga_rotations_input = ui.input("Rotations", value=rotations_str, 
+                                                   on_change=self._update_ga_rotations).classes("w-full")
         
         # Piece Operations
         with ui.card().classes("w-full mb-4 p-2"):
@@ -565,6 +614,48 @@ class NestingGUI:
             self._rebuild_panel_outlines()
             self._draw_outlines()
 
+    def _update_ga_params(self, _):
+        """Update basic GA parameters."""
+        self.ga_population_size = int(self.ga_pop_size_input.value or config.POPULATION_SIZE)
+        self.ga_num_generations = int(self.ga_generations_input.value or config.NUM_GENERATIONS)
+        self.ga_mutation_rate = float(self.ga_mutation_rate_input.value or config.MUTATION_RATE)
+
+    def _update_ga_weights(self, _):
+        """Update population composition weights and normalize them."""
+        # Get current values
+        elites = float(self.ga_elite_weight.value or 0.25)
+        offspring = float(self.ga_offspring_weight.value or 0.25)
+        mutants = float(self.ga_mutant_weight.value or 0.25)
+        randoms = float(self.ga_random_weight.value or 0.25)
+        
+        # Normalize to sum to 1.0
+        total = elites + offspring + mutants + randoms
+        if total > 0:
+            self.ga_population_weights = {
+                'elites': elites / total,
+                'offspring': offspring / total,
+                'mutants': mutants / total,
+                'randoms': randoms / total,
+            }
+            
+            # Update the UI inputs to show normalized values
+            self.ga_elite_weight.value = self.ga_population_weights['elites']
+            self.ga_offspring_weight.value = self.ga_population_weights['offspring']
+            self.ga_mutant_weight.value = self.ga_population_weights['mutants']
+            self.ga_random_weight.value = self.ga_population_weights['randoms']
+
+    def _update_ga_rotations(self, _):
+        """Update allowed rotations from comma-separated input."""
+        try:
+            rotations_str = self.ga_rotations_input.value or "0,180"
+            self.ga_allowed_rotations = [int(x.strip()) for x in rotations_str.split(',') if x.strip()]
+            if not self.ga_allowed_rotations:
+                self.ga_allowed_rotations = [0, 180]  # fallback
+        except ValueError:
+            ui.notify("Invalid rotation values. Using default: 0,180", type="warning")
+            self.ga_allowed_rotations = [0, 180]
+            self.ga_rotations_input.value = "0,180"
+
     # ---------------------------------------------------------------------------- #
     #                                PATTERN LOADERS                               #
     # ---------------------------------------------------------------------------- #
@@ -837,7 +928,19 @@ class NestingGUI:
             tmp_path = Path(tmp.name)
 
         try:
-            self._load_pattern_core(tmp_path)
+            # Clear all previous parameters when uploading a new JSON file
+            self.design_params = {}
+            self.body_params = None
+            self.design_sampler = None
+            self.meta_garment = None
+            self.use_default_params = False
+            
+            # Load only the pattern geometry, don't update parameters from non-existent files
+            self._load_pattern_core(tmp_path, update_params=False)
+            
+            # Rebuild the sidebar to reflect the cleared parameters
+            self._build_sidebar()
+            
             ui.notify("Pattern loaded ✓", type="positive")
         except Exception as exc:
             ui.notify(f"Could not load pattern: {exc}", type="negative")
@@ -1478,6 +1581,122 @@ class NestingGUI:
             import traceback
             traceback.print_exc()
             ui.notify(f"Simulated annealing failed: {exc}", type="negative")
+
+    async def _run_genetic_algorithm(self):
+        """Run genetic algorithm with GUI-configured parameters."""
+        if not self.pattern_loaded:
+            ui.notify("Please load a pattern first", type="warning")
+            return
+            
+        ui.notify("Starting genetic algorithm optimization...", type="info")
+        
+        try:
+            # Prepare a copy of the layout for GA
+            layout = copy.deepcopy(self.layout)
+            container = self.container
+            
+            print(f"Running GA with parameters:")
+            print(f"  Population size: {self.ga_population_size}")
+            print(f"  Generations: {self.ga_num_generations}")
+            print(f"  Mutation rate: {self.ga_mutation_rate}")
+            print(f"  Population weights: {self.ga_population_weights}")
+            print(f"  Allowed rotations: {self.ga_allowed_rotations}")
+            
+            # Temporarily override config values with GUI parameters
+            import nesting.config as config
+            original_population_size = config.POPULATION_SIZE
+            original_num_generations = config.NUM_GENERATIONS
+            original_mutation_rate = config.MUTATION_RATE
+            original_population_weights = config.POPULATION_WEIGHTS.copy()
+            original_allowed_rotations = config.ALLOWED_ROTATIONS.copy()
+            
+            # Set GUI parameters in config
+            config.POPULATION_SIZE = self.ga_population_size
+            config.NUM_GENERATIONS = self.ga_num_generations
+            config.MUTATION_RATE = self.ga_mutation_rate
+            config.POPULATION_WEIGHTS = self.ga_population_weights.copy()
+            config.ALLOWED_ROTATIONS = self.ga_allowed_rotations.copy()
+            
+            # Also update the ACTIVE config instance
+            config.ACTIVE.population_size = self.ga_population_size
+            config.ACTIVE.num_generations = self.ga_num_generations
+            config.ACTIVE.mutation_rate = self.ga_mutation_rate
+            config.ACTIVE.population_weights = self.ga_population_weights.copy()
+            config.ACTIVE.allowed_rotations = self.ga_allowed_rotations.copy()
+            
+            try:
+                # Get the pattern name from the current specification if available
+                pattern_name = None
+                if hasattr(self, 'pattern_path') and self.pattern_path:
+                    pattern_name = Path(self.pattern_path).stem
+                
+                # Create and run Evolution instance
+                evo = Evolution(
+                    self.pieces,
+                    container,
+                    num_generations=self.ga_num_generations,
+                    population_size=self.ga_population_size,
+                    mutation_rate=self.ga_mutation_rate,
+                    enable_dynamic_stopping=config.ENABLE_DYNAMIC_STOPPING,
+                    early_stop_window=config.EARLY_STOP_WINDOW,
+                    early_stop_tolerance=config.EARLY_STOP_TOLERANCE,
+                    enable_extension=config.ENABLE_EXTENSION,
+                    extend_window=config.EXTEND_WINDOW,
+                    extend_threshold=config.EXTEND_THRESHOLD,
+                    max_generations=config.MAX_GENERATIONS,
+                    design_params=self.design_params if hasattr(self, 'design_params') else None,
+                    body_params=self.body_params if hasattr(self, 'body_params') else None,
+                    pattern_name=pattern_name or "",
+                )
+                
+                # Run the GA
+                best_chromosome = evo.run()
+                
+                if best_chromosome is None:
+                    ui.notify("No valid solution found by the Genetic Algorithm", type="negative")
+                    return
+
+                print("Genetic Algorithm completed")
+                
+                # Update the GUI with the best solution
+                self.pieces = {p.id: copy.deepcopy(p) for p in best_chromosome.genes}
+                self.layout = Layout(self.pieces)
+                self._rebuild_panel_outlines()
+                self._draw_outlines()
+                
+                # Calculate final placement for display
+                view = LayoutView(best_chromosome.genes)
+                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, container, step=config.GRAVITATE_STEP)
+                placements = decoder.decode()
+                
+                await self._apply_placements(placements)
+                
+                # Calculate and display final metrics
+                concave_hull_usage = decoder.concave_hull_utilization()
+                self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
+                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
+                
+                ui.notify(f"GA completed: {self.ga_num_generations} generations, best fitness: {best_chromosome.fitness:.4f}", type="positive")
+                
+            finally:
+                # Restore original config values
+                config.POPULATION_SIZE = original_population_size
+                config.NUM_GENERATIONS = original_num_generations
+                config.MUTATION_RATE = original_mutation_rate
+                config.POPULATION_WEIGHTS = original_population_weights
+                config.ALLOWED_ROTATIONS = original_allowed_rotations
+                
+                config.ACTIVE.population_size = original_population_size
+                config.ACTIVE.num_generations = original_num_generations
+                config.ACTIVE.mutation_rate = original_mutation_rate
+                config.ACTIVE.population_weights = original_population_weights
+                config.ACTIVE.allowed_rotations = original_allowed_rotations
+                
+        except Exception as exc:
+            print(f"Genetic algorithm error: {exc}")
+            import traceback
+            traceback.print_exc()
+            ui.notify(f"Genetic algorithm failed: {exc}", type="negative")
 
 
     def _enable_selection_mode(self):

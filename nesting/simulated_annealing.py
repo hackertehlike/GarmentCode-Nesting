@@ -70,6 +70,36 @@ class SimulatedAnnealing:
         if getattr(config, 'SAVE_LOGS', True):
             Path(log_dir).mkdir(parents=True, exist_ok=True)
         self.log_path = Path(log_dir) / f"simulated_annealing_log_{ts}.txt"
+        
+        # Initialize CSV logging for convergence tracking
+        self.csv_path = Path(log_dir) / f"sa_convergence_{ts}.csv"
+        self.csv_data = []
+        self.iteration_count = 0
+        self.temperature_level = 0
+        
+        # Setup SVG directory for saving state visualizations
+        self.svg_dir = Path(log_dir) / "svgs"
+        if getattr(config, 'SAVE_GENERATION_SVGS', True) and getattr(config, 'SAVE_LOGS', True):
+            self.svg_dir.mkdir(exist_ok=True)
+            self.log(f"SVG state visualization directory: {self.svg_dir}")
+        else:
+            self.svg_dir = None
+        
+        # Create CSV file with header if logging is enabled
+        if getattr(config, 'SAVE_LOGS', True):
+            try:
+                with open(self.csv_path, 'w', newline='', encoding='utf-8') as csvfile:
+                    import csv
+                    writer = csv.writer(csvfile)
+                    writer.writerow([
+                        'iteration', 'temperature_level', 'temperature', 'operation', 
+                        'old_fitness', 'new_fitness', 'acceptance_probability', 
+                        'accepted', 'best_fitness_so_far', 'time_elapsed'
+                    ])
+                self.log(f"CSV convergence tracking initialized: {self.csv_path}")
+            except Exception as e:
+                self.log(f"Warning: Could not initialize CSV logging: {e}")
+                self.csv_path = None
 
         # Auto-calibrate temperature and cooling rate based on fitness metric
         # (Must be called AFTER logging setup)
@@ -82,6 +112,9 @@ class SimulatedAnnealing:
                 self.meta_garment = MetaGarment("metagarment", self.body_params, self.design_params)
             except Exception as exc:
                 self.log(f"[SimulatedAnnealing] Failed to create MetaGarment: {exc}")
+        
+        # Save initial state SVG
+        self._save_state_svg(self.current_state, 0, suffix="_initial")
 
     def log(self, msg: str = "", divider: bool = False):
         """Log message to both console and file"""
@@ -103,6 +136,38 @@ class SimulatedAnnealing:
                     for ln in lines_to_write:
                         f.write(ln + "\n")
 
+    def log_csv_data(self, operation: str, old_fitness: float, new_fitness: float, 
+                     acceptance_prob: float, accepted: bool, time_elapsed: float):
+        """Log convergence data to CSV file"""
+        if not getattr(config, 'SAVE_LOGS', True) or self.csv_path is None:
+            return
+            
+        try:
+            import csv
+            row_data = [
+                self.iteration_count,
+                self.temperature_level, 
+                self.temperature,
+                operation,
+                old_fitness,
+                new_fitness,
+                acceptance_prob,
+                accepted,
+                self.best_fitness,
+                time_elapsed
+            ]
+            
+            # Store in memory for potential batch writing
+            self.csv_data.append(row_data)
+            
+            # Write immediately to disk for real-time tracking
+            with open(self.csv_path, 'a', newline='', encoding='utf-8') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(row_data)
+                
+        except Exception as e:
+            self.log(f"Warning: Could not write CSV data: {e}")
+
     def _flush_log(self) -> None:
         """Write accumulated log lines to disk (append or create)."""
         # Ensure the log directory exists before writing
@@ -115,6 +180,111 @@ class SimulatedAnnealing:
             with self.log_path.open("w", encoding="utf-8") as f:
                 for line in self.log_lines:
                     f.write(line + "\n")
+
+    def _save_state_svg(self, state: List[Piece], iteration: int, 
+                       decoder=None, suffix: str = "") -> None:
+        """Save the current state as an SVG visualization.
+        
+        Args:
+            state: List of pieces to visualize
+            iteration: Current iteration number for filename
+            decoder: Optional pre-computed decoder to avoid redundant calculations
+            suffix: Optional suffix for filename (e.g., "_best", "_current")
+        """
+        if not (getattr(config, 'SAVE_LOGS', True) and getattr(config, 'SAVE_GENERATION_SVGS', True) and self.svg_dir is not None):
+            return
+            
+        try:
+            import copy
+            import svgwrite
+            from .layout import LayoutView
+            from .placement_engine import DECODER_REGISTRY
+            
+            # Use provided decoder or create a new one
+            if decoder is None:
+                view = LayoutView([copy.deepcopy(p) for p in state])
+                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](
+                    view, self.container, step=getattr(config, 'GRAVITATE_STEP', 1.0)
+                )
+                decoder.decode()
+            
+            # Create filename with optional suffix
+            filename = f"iter_{iteration:06d}{suffix}.svg"
+            
+            dwg = svgwrite.Drawing(
+                filename=str(self.svg_dir / filename),
+                size=(f"{self.container.width}cm", f"{self.container.height}cm"),
+                viewBox=f"0 0 {self.container.width} {self.container.height}"
+            )
+            
+            # Add container boundary
+            dwg.add(dwg.rect(
+                insert=(0, 0),
+                size=(self.container.width, self.container.height),
+                fill="none", stroke="red", stroke_width=0.2
+            ))
+            
+            # Add placed pieces
+            for piece in decoder.placed:
+                pts = [(x + piece.translation[0], y + piece.translation[1]) 
+                       for x, y in piece.get_outer_path()]
+                dwg.add(dwg.polygon(
+                    points=pts, 
+                    fill="lightblue", 
+                    fill_opacity=0.3,
+                    stroke="black", 
+                    stroke_width=0.5
+                ))
+                
+                # Add piece ID as text at center
+                if pts:
+                    center_x = sum(x for x, y in pts) / len(pts)
+                    center_y = sum(y for x, y in pts) / len(pts)
+                    dwg.add(dwg.text(
+                        piece.id,
+                        insert=(center_x, center_y),
+                        font_size="2px",
+                        text_anchor="middle",
+                        fill="black"
+                    ))
+            
+            dwg.save()
+            
+        except Exception as e:
+            self.log(f"Warning: Could not save SVG for iteration {iteration}: {e}")
+
+    def _finalize_csv_logging(self):
+        """Finalize CSV logging with summary statistics."""
+        if not getattr(config, 'SAVE_LOGS', True) or self.csv_path is None:
+            return
+            
+        try:
+            # Calculate summary statistics
+            if self.csv_data:
+                accepted_count = sum(1 for row in self.csv_data if row[7])  # accepted column
+                total_iterations = len(self.csv_data)
+                acceptance_rate = accepted_count / total_iterations if total_iterations > 0 else 0
+                
+                # Get final fitness values
+                final_fitness = self.csv_data[-1][5] if self.csv_data else 0  # new_fitness from last row
+                initial_fitness = self.csv_data[0][4] if self.csv_data else 0  # old_fitness from first row
+                improvement = self.best_fitness - initial_fitness
+                
+                # Add summary to the log
+                self.log(divider=True)
+                self.log("SIMULATED ANNEALING CONVERGENCE SUMMARY")
+                self.log(f"Total iterations: {total_iterations}")
+                self.log(f"Accepted moves: {accepted_count}")
+                self.log(f"Acceptance rate: {acceptance_rate:.3f}")
+                self.log(f"Initial fitness: {initial_fitness:.6f}")
+                self.log(f"Final fitness: {final_fitness:.6f}")
+                self.log(f"Best fitness achieved: {self.best_fitness:.6f}")
+                self.log(f"Total improvement: {improvement:.6f}")
+                self.log(f"CSV convergence data saved to: {self.csv_path}")
+                self.log(divider=True)
+                
+        except Exception as e:
+            self.log(f"Warning: Could not finalize CSV logging: {e}")
 
     def _calibrate_temperature_parameters(self):
         """Auto-calibrate temperature and cooling rate based on fitness metric scale."""
@@ -191,15 +361,39 @@ class SimulatedAnnealing:
         self.log(f"[CALIBRATION] Cooling rate: {original_cooling:.4f} -> {self.cooling_rate:.4f}")
 
     # evaluate fitness of a state
-    def fitness(self, state: List[Piece]) -> float:
+    def fitness(self, state: List[Piece], return_decoder: bool = False) -> Union[float, tuple[float, object]]:
+        """Evaluate fitness of a state, optionally returning the decoder for reuse.
+        
+        Args:
+            state: List of pieces to evaluate
+            return_decoder: If True, return (fitness, decoder) tuple for reuse
+            
+        Returns:
+            Either fitness value or (fitness, decoder) tuple
+        """
+        import copy
+        from .layout import LayoutView
+        from .placement_engine import DECODER_REGISTRY
+        
+        view = LayoutView([copy.deepcopy(p) for p in state])
+        decoder = DECODER_REGISTRY[config.SELECTED_DECODER](
+            view, self.container, step=getattr(config, 'GRAVITATE_STEP', 1.0)
+        )
+        decoder.decode()
+        
         metric_fn = METRIC_REGISTRY[config.SELECTED_FITNESS_METRIC]
-        return metric_fn(state, config.SELECTED_DECODER, self.container)
+        fitness_value = metric_fn(state, config.SELECTED_DECODER, self.container)
+        
+        if return_decoder:
+            return fitness_value, decoder
+        return fitness_value
         
     # generate a neighboring state
     # analog of mutation
     def neighbor(self):
 
         start = time.time() if config.LOG_TIME else None
+        start_time = time.time()  # Always track time for CSV logging
 
         chosen_operation = weighted_choice(config.MUTATION_WEIGHTS)
         self.last_operation = chosen_operation
@@ -225,9 +419,29 @@ class SimulatedAnnealing:
         # All handlers now return tuples (pieces, tracking_changes)
         generated_neighbor, tracking_changes = handler()
 
-        new_fitness = self.fitness(generated_neighbor)
+        # Evaluate fitness and get decoder for potential SVG saving
+        new_fitness, new_decoder = self.fitness(generated_neighbor, return_decoder=True)
         curr_fitness = self.fitness(self.current_state)
-        if self.accept(curr_fitness, new_fitness):
+        acceptance_prob = self._acceptance_probability(curr_fitness, new_fitness)
+        accepted = self.accept(curr_fitness, new_fitness)
+        
+        # Calculate elapsed time
+        elapsed_time = time.time() - start_time
+        
+        # Log convergence data to CSV
+        self.log_csv_data(
+            operation=chosen_operation,
+            old_fitness=curr_fitness,
+            new_fitness=new_fitness, 
+            acceptance_prob=acceptance_prob,
+            accepted=accepted,
+            time_elapsed=elapsed_time
+        )
+        
+        # Increment iteration counter for tracking
+        self.iteration_count += 1
+        
+        if accepted:
             self.current_state = generated_neighbor
             if new_fitness > self.best_fitness:
                 self.best_fitness = new_fitness
@@ -236,6 +450,10 @@ class SimulatedAnnealing:
                 self.best_split_set = set(self.split_set)
                 self.best_design_params = copy.deepcopy(self.design_params)
                 self.log(f"[BEST] {self.best_fitness:.4f} with split roots: {sorted(self.best_split_set)}")
+                
+                # Save SVG of new best state (reusing the decoder for efficiency)
+                self._save_state_svg(self.current_state, self.iteration_count, 
+                                   decoder=new_decoder, suffix="_best")
 
             # Apply tracking changes only after acceptance
             self._apply_tracking_changes(tracking_changes)
@@ -377,6 +595,7 @@ class SimulatedAnnealing:
     def cool_down(self):
         old_temp = self.temperature
         self.temperature *= self.cooling_rate
+        self.temperature_level += 1  # Track temperature level for CSV logging
         self.log(f"Cooling down: Temp {old_temp:.4f} -> {self.temperature:.4f}")
 
     # operations to generate neighbors
@@ -758,5 +977,11 @@ class SimulatedAnnealing:
         self.log(f"Final fitness: {self.best_fitness:.4f}")
         self.apply_best()   # <— make best the live state shown to GUI
         
+        # Save final best state SVG
+        # self._save_state_svg(self.current_state, self.iteration_count, suffix="_final")
+        
         # Final log flush to ensure all logs are written to disk
         self._flush_log()
+        
+        # Final CSV summary
+        self._finalize_csv_logging()
