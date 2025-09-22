@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from typing import Literal, Optional, List, Tuple, Union
+from enum import Enum
 
 import random
 import numpy as np
@@ -50,6 +51,14 @@ def get_piece_order_by_criteria(layout: Layout, criteria: str, reverse: bool = T
         raise ValueError(f"Unknown criteria: {criteria}")
     
     return [piece.id for piece in sorted_pieces]
+
+
+class PlacementMode(Enum):
+    """Placement mode for selecting the best position from NFP candidates."""
+    BOTTOM_LEFT = "bottom_left"          # Traditional bottom-left fill
+    MAX_OVERLAP = "max_overlap"          # Maximize overlap with existing pieces
+    MIN_BBOX_LENGTH = "min_bbox_length"  # Minimize bounding box length
+    MIN_BBOX_AREA = "min_bbox_area"      # Minimize bounding box area
 
 
 DECODER_REGISTRY: dict[str, type] = {}
@@ -637,11 +646,24 @@ class RandomDecoder(PlacementEngine):
 @register_decoder("NFP")
 class NFPDecoder(PlacementEngine):
     """
+    NFP-based placement engine with configurable placement modes.
+    Supports bottom_left, max_overlap, min_bbox_length, and min_bbox_area placement strategies.
     """
 
-    def __init__(self, layout: Layout, container: Container, *, step=None, **kwargs):
+    def __init__(self, layout: Layout, container: Container, *,
+                 placement_mode: Union[PlacementMode, str] = PlacementMode.MAX_OVERLAP,
+                 step=None, **kwargs):
         super().__init__(layout, container)
         self._nfp_cache = {}
+
+        # Handle string or enum input for placement mode
+        if isinstance(placement_mode, str):
+            try:
+                self.placement_mode = PlacementMode(placement_mode)
+            except ValueError:
+                raise ValueError(f"Invalid placement mode: {placement_mode}. Valid modes: {[m.value for m in PlacementMode]}")
+        else:
+            self.placement_mode = placement_mode
 
     def decode(self):
         return self.decode_in_order(list(self.layout.order.keys()))
@@ -706,7 +728,14 @@ class NFPDecoder(PlacementEngine):
         min_px, max_px = min(xs_placed), max(xs_placed)
         min_py, max_py = min(ys_placed), max(ys_placed)
 
-        best_score = -1.0
+        # Initialize best_score based on placement mode
+        if self.placement_mode == PlacementMode.MAX_OVERLAP:
+            best_score = -1.0  # maximize overlap
+        elif self.placement_mode == PlacementMode.BOTTOM_LEFT:
+            best_score = (float('inf'), float('inf'))  # minimize (y, x)
+        elif self.placement_mode in [PlacementMode.MIN_BBOX_LENGTH, PlacementMode.MIN_BBOX_AREA]:
+            best_score = float('inf')  # minimize bbox length or area
+
         best_x = best_y = None
 
         # 4) Evaluate each candidate
@@ -733,17 +762,64 @@ class NFPDecoder(PlacementEngine):
             cand_min_y = min(ys_cand)
             cand_max_y = max(ys_cand)
 
-            overlap_w = min(max_px, cand_max_x) - max(min_px, cand_min_x)
-            overlap_h = min(max_py, cand_max_y) - max(min_py, cand_min_y)
-            if overlap_w <= 0 or overlap_h <= 0:
-                score = 0.0
-            else:
-                score = overlap_w * overlap_h
+            # Calculate score based on placement mode
+            if self.placement_mode == PlacementMode.MAX_OVERLAP:
+                # Original max overlap logic
+                overlap_w = min(max_px, cand_max_x) - max(min_px, cand_min_x)
+                overlap_h = min(max_py, cand_max_y) - max(min_py, cand_min_y)
+                if overlap_w <= 0 or overlap_h <= 0:
+                    score = 0.0
+                else:
+                    score = overlap_w * overlap_h
 
-            if score > best_score:
-                best_score = score
-                best_x = x_cand
-                best_y = y_cand
+                if score > best_score:
+                    best_score = score
+                    best_x = x_cand
+                    best_y = y_cand
+
+            elif self.placement_mode == PlacementMode.BOTTOM_LEFT:
+                # Choose bottommost, then leftmost position
+                score = (y_cand, x_cand)  # tuple comparison: y first (higher is worse), then x (higher is worse)
+
+                if score < best_score:
+                    best_score = score
+                    best_x = x_cand
+                    best_y = y_cand
+
+            elif self.placement_mode == PlacementMode.MIN_BBOX_LENGTH:
+                # Calculate what the bounding box length would be with this placement
+                all_vertices = []
+                for p in self.placed:
+                    for x, y in p.get_outer_path():
+                        all_vertices.append((x + p.translation[0], y + p.translation[1]))
+                for x, y in piece.get_outer_path():
+                    all_vertices.append((x + x_cand, y + y_cand))
+
+                xs = [v[0] for v in all_vertices]
+                bbox_length = max(xs) - min(xs)
+
+                if bbox_length < best_score:
+                    best_score = bbox_length
+                    best_x = x_cand
+                    best_y = y_cand
+
+            elif self.placement_mode == PlacementMode.MIN_BBOX_AREA:
+                # Calculate what the bounding box area would be with this placement
+                all_vertices = []
+                for p in self.placed:
+                    for x, y in p.get_outer_path():
+                        all_vertices.append((x + p.translation[0], y + p.translation[1]))
+                for x, y in piece.get_outer_path():
+                    all_vertices.append((x + x_cand, y + y_cand))
+
+                xs = [v[0] for v in all_vertices]
+                ys = [v[1] for v in all_vertices]
+                bbox_area = (max(xs) - min(xs)) * (max(ys) - min(ys))
+
+                if bbox_area < best_score:
+                    best_score = bbox_area
+                    best_x = x_cand
+                    best_y = y_cand
 
         if best_x is None or best_y is None:
             ax, ay = self.anchor(piece)
