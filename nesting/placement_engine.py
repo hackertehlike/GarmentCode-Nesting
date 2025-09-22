@@ -22,6 +22,36 @@ from shapely.geometry import Polygon
 from .layout import Layout, Container, Piece
 
 
+# ── SIMPLE SORTING FUNCTIONS ──────────────────────────────────────────────────
+
+def sort_pieces_by_bbox_area(pieces: List[Piece], reverse: bool = True) -> List[Piece]:
+    """Sort pieces by bounding box area"""
+    return sorted(pieces, key=lambda p: p.bbox_area, reverse=reverse)
+
+def sort_pieces_by_area(pieces: List[Piece], reverse: bool = True) -> List[Piece]:
+    """Sort pieces by actual polygon area"""
+    return sorted(pieces, key=lambda p: utils.polygon_area(p.get_outer_path()), reverse=reverse)
+
+def sort_pieces_by_length(pieces: List[Piece], reverse: bool = True) -> List[Piece]:
+    """Sort pieces by width"""
+    return sorted(pieces, key=lambda p: p.width, reverse=reverse)
+
+def get_piece_order_by_criteria(layout: Layout, criteria: str, reverse: bool = True) -> List[str]:
+    """Get piece IDs sorted by criteria"""
+    pieces = list(layout.order.values())
+    
+    if criteria == 'bbox_area':
+        sorted_pieces = sort_pieces_by_bbox_area(pieces, reverse)
+    elif criteria == 'area':
+        sorted_pieces = sort_pieces_by_area(pieces, reverse)
+    elif criteria == 'length':
+        sorted_pieces = sort_pieces_by_length(pieces, reverse)
+    else:
+        raise ValueError(f"Unknown criteria: {criteria}")
+    
+    return [piece.id for piece in sorted_pieces]
+
+
 DECODER_REGISTRY: dict[str, type] = {}
 
 def register_decoder(name: str):
@@ -121,6 +151,25 @@ class PlacementEngine:
                 y += step
                 moved = True
         return x, y
+
+    def BLCompact(self, compact_order: List[str]): # -> List[Tuple[float, float]]:
+        """
+        Given the ids of pieces in `compact_order`, shift the pieces in self.placed
+        """
+        for piece_id in compact_order:
+            piece = next((p for p in self.placed if p.id == piece_id), None)
+            if piece is None:
+                raise ValueError(f"BLCompact: piece id '{piece_id}' not found in placed pieces")
+            x0, y0 = piece.translation
+            x_new, y_new = self.gravitate(piece, x0, y0)
+            piece.translation = (x_new, y_new)
+
+    def decode_in_order(self, piece_order: List[str]) -> list[Tuple[str, float, float, float]]:
+        """
+        Interface method - subclasses must implement this with their specific placement logic
+        """
+        raise NotImplementedError("Subclasses must implement decode_in_order")
+            
     
 
     def _gravitate_once(self, piece: Piece, x: float, y: float, step: float = config.GRAVITATE_STEP) -> Tuple[float, float]:
@@ -475,30 +524,27 @@ class BottomLeftDecoder(PlacementEngine):
         super().__init__(layout, container)
         self.step = step if step is not None else config.GRAVITATE_STEP
 
-    
     def decode(self) -> list[Tuple[str, float, float, float]]:
-        """
-        For each piece, compute (dx,dy) by either:
-          - Traditional BL (fully left, then fully down), if self.traditional=True
-          - Iterative gravitate otherwise.
-        Place them in order and record their translations + rotation.
-        """
-        for _, piece in self.layout.order.items():
-            # 1) Anchor against top‐right
-            x0, y0 = self.anchor(piece)
+        """Place pieces using BL heuristic"""
+        return self.decode_in_order(list(self.layout.order.keys()))
 
-            # 2) Gravitate according to selected mode
+    def decode_in_order(self, piece_order: List[str]) -> list[Tuple[str, float, float, float]]:
+        """Decode pieces in specified order using BL placement"""
+        for piece_id in piece_order:
+            if piece_id not in self.layout.order:
+                continue
+            piece = self.layout.order[piece_id]
+            x0, y0 = self.anchor(piece)
             if self.gravitate_once:
                 dx, dy = self._gravitate_once(piece, x0, y0, step=self.step)
             else:
                 dx, dy = self.gravitate(piece, x0, y0, step=self.step)
-
-            # 3) Place and record
             piece.translation = (dx, dy)
             self.placed.append(piece)
-
-        # Return a list of (id, x, y, rotation) for all placed pieces
         return [(p.id, p.translation[0], p.translation[1], p.rotation) for p in self.placed]
+
+
+@register_decoder("Random")
 
 
 @register_decoder("Greedy")
@@ -598,7 +644,15 @@ class NFPDecoder(PlacementEngine):
         self._nfp_cache = {}
 
     def decode(self):
-        for piece in self.layout.order.values():
+        return self.decode_in_order(list(self.layout.order.keys()))
+
+    def decode_in_order(self, piece_order: List[str]) -> list[Tuple[str, float, float, float]]:
+        """Decode pieces in specified order using NFP placement"""
+        for piece_id in piece_order:
+            if piece_id not in self.layout.order:
+                continue
+            piece = self.layout.order[piece_id]
+            
             best_x, best_y = self._find_best_position(piece)
             if best_x is None:
                 continue

@@ -145,6 +145,10 @@ def fitness_bb_cc_area_chromosome(chromosome, decoder: str):
     """Wrapper for backward compatibility with Chromosome objects."""
     return fitness_bb_cc_area(chromosome.genes, decoder, getattr(chromosome, 'container', None))
 
+def fitness_bb_length_combined_chromosome(chromosome, decoder: str):
+    """Wrapper for backward compatibility with Chromosome objects."""
+    return fitness_bb_length_combined(chromosome.genes, decoder, getattr(chromosome, 'container', None))
+
 # ---------------------------------- MUTATION OPERATIONS --------------------------------- #
 
 class Operators:

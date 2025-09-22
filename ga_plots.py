@@ -449,6 +449,19 @@ def read_final_metrics() -> pd.DataFrame:
     df = pd.read_csv(path)
     return df
 
+def get_valid_runs() -> set:
+    """Get set of (config_hash, run_tag) tuples that exist in final_metrics.csv."""
+    try:
+        final_metrics = read_final_metrics()
+        if 'config_hash' in final_metrics.columns and 'run_tag' in final_metrics.columns:
+            return set(zip(final_metrics['config_hash'], final_metrics['run_tag']))
+        else:
+            print("Warning: final_metrics.csv missing config_hash or run_tag columns")
+            return set()
+    except Exception as e:
+        print(f"Warning: Could not read final_metrics.csv: {e}")
+        return set()
+
 def aggregate_metrics_by_config(df: pd.DataFrame) -> pd.DataFrame:
     """Aggregate metrics by config_hash: compute mean, median, std for each metric."""
     numeric_cols = df.select_dtypes(include=[np.number]).columns
@@ -550,7 +563,21 @@ def main(argv: Optional[List[str]] = None):
                         help="If set, only process this config hash (otherwise all found in input)")
     args = parser.parse_args(argv)
 
+    # Get valid runs from final_metrics.csv
+    valid_runs = get_valid_runs()
+    
     data = read_runs(args.input, args.config_hash)
+    
+    # Filter data to only include runs that exist in final_metrics.csv
+    if valid_runs:
+        print(f"Found {len(valid_runs)} valid runs in final_metrics.csv")
+        data['run_key'] = list(zip(data['config_hash'], data['run_tag']))
+        data = data[data['run_key'].isin(valid_runs)]
+        data = data.drop('run_key', axis=1)  # Remove temporary column
+        print(f"Filtered to {len(data)} rows from valid runs")
+    else:
+        print("No valid runs found in final_metrics.csv - processing all data")
+    
     data = compute_fitness_gain(data)
 
     # per config_hash

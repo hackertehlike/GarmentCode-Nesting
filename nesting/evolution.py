@@ -22,6 +22,7 @@ from .operations import (
     fitness_concave_hull_area_chromosome as fitness_concave_hull_area,
     fitness_concave_hull_chromosome as fitness_concave_hull,
     fitness_bb_area_chromosome as fitness_bb_area,
+    fitness_bb_length_combined_chromosome as fitness_bb_with_rest_length,
 )
 import nesting.config as config
 
@@ -1009,6 +1010,7 @@ class Evolution:
             "concave_hull_utilization",
             "bb_area",
             "bb_cc_area",
+            "bb_with_rest_length",
             "timestamp",
         ]
 
@@ -1038,6 +1040,7 @@ class Evolution:
         bb_area_val = 10000 / fh_bb_area if fh_bb_area != 0 else 0
         fh_bb_cc_area = fitness_bb_cc_area(best_chromosome, decoder_key)
         bb_cc_area_val = 10000 / fh_bb_cc_area if fh_bb_cc_area != 0 else 0
+        bb_with_rest_length_val = fitness_bb_with_rest_length(best_chromosome, decoder_key)
 
         row = {
             "config_hash": self.config_hash or "",
@@ -1049,6 +1052,7 @@ class Evolution:
             "concave_hull_utilization": round(float(concave_hull_val), 6) if concave_hull_val is not None else "",
             "bb_area": round(float(bb_area_val), 6) if bb_area_val is not None else "",
             "bb_cc_area": round(float(bb_cc_area_val), 6) if bb_cc_area_val is not None else "",
+            "bb_with_rest_length": round(float(bb_with_rest_length_val), 6) if bb_with_rest_length_val is not None else "",
             "timestamp": time.strftime('%m%d_%H%M'),
         }
 

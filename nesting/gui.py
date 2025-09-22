@@ -1323,8 +1323,16 @@ class NestingGUI:
                 # Bottom-Left placement
                 decoder = BottomLeftDecoder(layout, container, gravitate_once=config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
             elif method == "Greedy":
-                # Greedy placement
-                decoder = GreedyBLDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, sort_key = config.SORT_BY, step=config.GRAVITATE_STEP)
+                # Greedy placement using sorting + BL
+                sorted_order = get_piece_order_by_criteria(layout, config.SORT_BY, reverse=True)
+                decoder = BottomLeftDecoder(layout, container, gravitate_once=config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
+                placements = decoder.decode_in_order(sorted_order)
+                await self._apply_placements(placements)
+                concave_hull_usage = decoder.concave_hull_utilization()
+                self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
+                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
+                ui.notify('Auto placement completed ', type='positive')
+                return
             elif method == "NFP":
                 decoder = NFPDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
             elif method == "RandomBL":

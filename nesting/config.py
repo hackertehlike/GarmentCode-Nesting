@@ -19,7 +19,7 @@ from enum import Enum
 
 # ——— Type Definitions ————————————————————————————————————————————————
 DecoderName = Literal["BL", "Greedy", "NFP", "Random"]
-MetricName = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc", "bb_cc_area"]
+MetricName = Literal["usage_bb", "concave_hull", "concave_hull_area", "rest_length", "rest_height", "cc_with_rest_height", "cc_with_rest_length", "bb_cc", "bb_cc_area", "bb_with_rest_length"]
 CrossoverName = Literal["oxk", "cross_stitch_oxk"]
 SortKey = Literal["bbox_area", "hull_area", "aspect_ratio"]
 CrossStitchMode = Literal["sticky", "lexicographic"]
@@ -40,7 +40,7 @@ class ActiveConfig:
     """
     # Core algorithm settings
     selected_decoder: DecoderName = "NFP"
-    selected_fitness_metric: MetricName = "usage_bb" 
+    selected_fitness_metric: MetricName = "bb_with_rest_length" 
     selected_crossover: CrossoverName = "cross_stitch_oxk"
     cross_stitch_mode: CrossStitchMode = "sticky"
     
@@ -75,7 +75,7 @@ class ActiveConfig:
     sort_by: SortKey = "hull_area"
     
     # Fitness metric weights & penalties
-    rest_penalty: float = 0.01
+    rest_penalty: float = 0.0001
     bb_weight: float = 0.5 
     cc_weight: float = 0.5
     
