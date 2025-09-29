@@ -50,11 +50,11 @@ def track_roots(fn: Callable):
 def _next_owned_run(
     seq: list["Piece"], owner: dict[str, str], take_owner: str, start: int
 ) -> tuple[int | None, int | None]:
-    """Return the start and end of the next run owned by ``take_owner``.
+    """Return the start and end of the next run owned by take_owner.
 
-    The returned tuple is ``(s, e)`` where ``seq[s:e]`` is the maximal
-    contiguous slice of ``seq`` owned by ``take_owner`` beginning at or after
-    ``start``. If no such run exists, ``(None, None)`` is returned.
+    The returned tuple is (s, e) where seq[s:e] is the maximal
+    contiguous slice of seq owned by take_owner beginning at or after
+    start. If no such run exists, (None, None) is returned.
     """
     n = len(seq)
     s = start
@@ -73,7 +73,7 @@ def _next_owned_run(
 # ──────────────────────────────────────────────────────────────────────────────
 
 def _flatten_param_paths(node: JsonDict, prefix: list[str] | None = None) -> list[str]:
-    """Return all *non‑meta* leaf‑paths that contain a ``v`` key."""
+    """Return all *non‑meta* leaf‑paths that contain a v key."""
     prefix = prefix or []
     paths: list[str] = []
     for k, v in node.items():
@@ -210,15 +210,23 @@ class Chromosome():
         self.container = container
         self.fitness: float | None = None
 
-        self.design_params = copy.deepcopy(design_params) if design_params else None
-        self.body_params = body_params
-        if initial_design_params is not None:
-            self.initial_design_params = copy.deepcopy(initial_design_params)
+        # Skip design parameter processing if mutation weight is 0
+        design_param_weight = config.MUTATION_WEIGHTS.get("design_params", 0.0)
+        if design_param_weight == 0.0:
+            self.design_params = None
+            self.body_params = None
+            self.initial_design_params = None
+            self._mutatable_params = []
         else:
-            self.initial_design_params = copy.deepcopy(design_params) if design_params else None
-        self._mutatable_params = _collect_mutatable_params(
-            self.design_params, self._genes
-        )
+            self.design_params = copy.deepcopy(design_params) if design_params else None
+            self.body_params = body_params
+            if initial_design_params is not None:
+                self.initial_design_params = copy.deepcopy(initial_design_params)
+            else:
+                self.initial_design_params = copy.deepcopy(design_params) if design_params else None
+            self._mutatable_params = _collect_mutatable_params(
+                self.design_params, self._genes
+            )
 
         # Track origin and last mutation type
         self.origin: str | None = origin
@@ -235,7 +243,7 @@ class Chromosome():
 
         # Keep a MetaGarment instance
         self.meta_garment = None
-        if self.design_params and self.body_params:
+        if self.design_params and self.body_params and design_param_weight > 0.0:
             try:
                 from assets.garment_programs.meta_garment import MetaGarment
                 self.meta_garment = MetaGarment("chromosome_base", self.body_params, self.design_params)
@@ -258,38 +266,83 @@ class Chromosome():
         self.fitness = metric_fn(self.genes, config.SELECTED_DECODER, self.container)
 
     def mutate(self) -> "Chromosome":
-        """Pick a mutation based on config.MUTATION_WEIGHTS and apply it."""
+        """Strict isolation mutation.
+
+        Each attempt:
+          1. Snapshot original state (genes, design_params, param change log)
+          2. Apply one operator to a *working* copy (by swapping in deep copies)
+          3. Compute signature; if changed (or duplicates not enforced) commit; else rollback completely
+        Repeats up to MAX_DUPLICATE_RETRIES when NO_DUPLICATES is True.
+        """
         start = time.time()
-        self.last_mutation = mutation = weighted_choice(config.MUTATION_WEIGHTS)
+        enforce_unique = config.NO_DUPLICATES
+        max_retries = getattr(config, 'MAX_DUPLICATE_RETRIES', 5) if enforce_unique else 1
+        pre_sig = self._signature() if enforce_unique else None
+        attempts = 0
 
-        # Clear the parameter changes tracking for this generation
-        self.param_changes_this_gen = []
-        
-        if config.VERBOSE:
-            print(f"[Chromosome.mutate] : {mutation}")
+        # Baseline immutable snapshots
+        base_genes = copy.deepcopy(self._genes)
+        base_design = copy.deepcopy(self.design_params) if self.design_params is not None else None
+        base_param_changes = list(self.param_changes_this_gen)
+        base_split_history = list(getattr(self, 'split_history', []))
 
-        handler = {
-            "split": self._mutate_split,
-            "rotate": self._mutate_rotate,
-            "swap": self._mutate_swap,
-            "inversion": self._mutate_inversion,
-            "insertion": self._mutate_insertion,
-            "scramble": self._mutate_scramble,
-            "design_params": self._mutate_design_params,
-        }.get(mutation)
+        # Helper: apply one operator on isolated copies
+        def _attempt_once(op_name: str):
+            handler = {
+                "split": self._mutate_split,
+                "rotate": self._mutate_rotate,
+                "swap": self._mutate_swap,
+                "inversion": self._mutate_inversion,
+                "insertion": self._mutate_insertion,
+                "scramble": self._mutate_scramble,
+                "design_params": self._mutate_design_params,
+            }.get(op_name)
+            if handler is None:
+                raise ValueError(f"Unknown mutation type: {op_name}")
 
-        if handler is None:
-            raise ValueError(f"Unknown mutation type: {mutation}")
+            # Swap in deep‑copied working state
+            self._genes = copy.deepcopy(base_genes)
+            if base_design is not None:
+                self.design_params = copy.deepcopy(base_design)
+            else:
+                # preserve None state
+                self.design_params = None
+            self.param_changes_this_gen = []
+            self.split_history = list(base_split_history)
 
-        handler()  # apply the mutation
+            handler()
+            return self._signature()
+
+        while attempts < max_retries:
+            op = weighted_choice(config.MUTATION_WEIGHTS)
+            self.last_mutation = op
+            if config.VERBOSE:
+                print(f"[Chromosome.mutate] attempt {attempts+1}/{max_retries}: {op}")
+
+            new_sig = _attempt_once(op)
+
+            if (not enforce_unique) or new_sig != pre_sig:
+                # Successful structural change OR we don't care about uniqueness
+                if config.VERBOSE and enforce_unique and new_sig == pre_sig:
+                    print("[Chromosome.mutate] uniqueness not enforced but signature unchanged (allowed).")
+                break
+
+            # Rollback (simply restore baseline snapshot; working state discarded next loop)
+            self._genes = copy.deepcopy(base_genes)
+            self.design_params = copy.deepcopy(base_design) if base_design is not None else None
+            self.param_changes_this_gen = list(base_param_changes)
+            self.split_history = list(base_split_history)
+
+            attempts += 1
+            if attempts >= max_retries:
+                if config.VERBOSE:
+                    print(f"[Chromosome.mutate] All {attempts} attempts were no-ops; retaining original state.")
+                # Ensure original baseline is restored (already is) and last_mutation marks final op tried
+                self.last_mutation = None  # signify no effective mutation
+                break
 
         if config.LOG_TIME:
-            print(f"[Chromosome.mutate] {mutation} took {time.time() - start:.3f}s")
-        
-        # Debug: Check for fitness change
-        if self.old_fitness is not None and self.new_fitness is not None and self.old_fitness == self.new_fitness:
-            print(f"[DEBUG] Mutation '{self.last_mutation}' resulted in no fitness change.")
-
+            print(f"[Chromosome.mutate] effective_op={self.last_mutation} attempts={attempts+1} elapsed={time.time()-start:.3f}s")
         return self
 
     def _warn_if_panel_lost(self, before_roots: set[str], mutation: str) -> None:
@@ -337,6 +390,7 @@ class Chromosome():
                 print(f"[Chromosome] Split {piece_mirror.id} into {new_panel_names_mirror} with proportion {mirror_proportion}")
 
         # Rebuild pattern and extract pieces
+        # TODO: do we really need to rebuild the whole pattern?
         pattern = mg.assembly()
         with tempfile.TemporaryDirectory() as td:
             spec_file = Path(td) / f"{pattern.name}_specification.json"
