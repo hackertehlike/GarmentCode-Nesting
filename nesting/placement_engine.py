@@ -535,10 +535,13 @@ class BottomLeftDecoder(PlacementEngine):
 
     def decode(self) -> list[Tuple[str, float, float, float]]:
         """Place pieces using BL heuristic"""
+        print("[DECODE]: decoding")
         return self.decode_in_order(list(self.layout.order.keys()))
 
     def decode_in_order(self, piece_order: List[str]) -> list[Tuple[str, float, float, float]]:
         """Decode pieces in specified order using BL placement"""
+        print("[DECODE IN ORDER]: decoding")
+
         for piece_id in piece_order:
             if piece_id not in self.layout.order:
                 continue
@@ -651,7 +654,7 @@ class NFPDecoder(PlacementEngine):
     """
 
     def __init__(self, layout: Layout, container: Container, *,
-                 placement_mode: Union[PlacementMode, str] = PlacementMode.MAX_OVERLAP,
+                 placement_mode: Union[PlacementMode, str] = PlacementMode.MIN_BBOX_AREA,
                  step=None, **kwargs):
         super().__init__(layout, container)
         self._nfp_cache = {}

@@ -55,10 +55,10 @@ class ActiveConfig:
     num_generations: int = 20
     mutation_rate: float = 0.2
     force_mutation_on_crossover: bool = False
-    
+
     # Population composition weights
     population_weights: Dict[str, float] = field(default_factory=lambda: {
-        "elites": 0.25, "offspring": 0.25, "mutants": 0.25, "randoms": 0.25
+        "elites": 0.25, "offspring": 0, "mutants": 0.50, "randoms": 0.25
     })
     
     # Mutation operation weights
@@ -75,7 +75,6 @@ class ActiveConfig:
     sort_by: SortKey = "hull_area"
     
     # Fitness metric weights & penalties
-    rest_penalty: float = 0.0001
     bb_weight: float = 0.5 
     cc_weight: float = 0.5
     
@@ -87,7 +86,7 @@ class ActiveConfig:
     symmetric_splits: bool = False
     allow_recursive_splits: bool = False
     weight_by_bbox: bool = False
-    param_change_margin: float = 0.2
+    param_change_margin: float = 0.6
     swap_mutation_k: Optional[int] = None
     
     # Dynamic stopping criteria
@@ -148,6 +147,9 @@ class SystemConfig:
     log_time: bool = True
     log_design_param_paths: bool = False
     save_generation_svgs: bool = True
+    
+    # Fitness metric parameters (not part of active config hash)
+    rest_penalty: float = 0.001
     
     # GUI
     num_copies: int = 0
@@ -270,6 +272,7 @@ def _update_backward_compatibility_vars():
     global HULL_TRIM_RATIO, INTERIOR_SAMPLE_SPACING, BOUNDARY_SAMPLE_SPACING
     global SNAP, SNAP_TOLERANCE, ENABLE_ROTATIONS, ALLOWED_ROTATIONS
     global GENERATION_PER_FLUSH, LOG_FLUSH_INTERVAL
+    #global MAX_DUPLICATE_RETRIES
     
     # Algorithm settings
     SELECTED_DECODER = ACTIVE.selected_decoder
@@ -296,12 +299,14 @@ def _update_backward_compatibility_vars():
     SWAP_MUTATION_K = ACTIVE.swap_mutation_k
     POPULATION_WEIGHTS = ACTIVE.population_weights
     MUTATION_WEIGHTS = ACTIVE.mutation_weights
+    # NO_DUPLICATES = ACTIVE.no_duplicates
+    # MAX_DUPLICATE_RETRIES = ACTIVE.max_duplicate_retries
     
     # Decoder settings
     GRAVITATE_ONCE = ACTIVE.gravitate_once
     GRAVITATE_STEP = ACTIVE.gravitate_step
     SORT_BY = ACTIVE.sort_by
-    REST_PENALTY = ACTIVE.rest_penalty
+    REST_PENALTY = SYSTEM.rest_penalty
     BB_WEIGHT = ACTIVE.bb_weight
     CC_WEIGHT = ACTIVE.cc_weight
     NFP_GRAVITATE_ON = ACTIVE.nfp_gravitate_on
@@ -348,6 +353,8 @@ OX_K = ACTIVE.ox_k
 NUM_SPLITS = ACTIVE.num_splits
 SPLIT_LOWER_BOUND = ACTIVE.split_lower_bound
 SPLIT_UPPER_BOUND = ACTIVE.split_upper_bound
+# NO_DUPLICATES = ACTIVE.no_duplicates
+# MAX_DUPLICATE_RETRIES = ACTIVE.max_duplicate_retries
 
 # Container & Physical
 CONTAINER_WIDTH_CM = ACTIVE.container_width_cm
@@ -368,7 +375,7 @@ NUM_COPIES = SYSTEM.num_copies
 GRAVITATE_ONCE = ACTIVE.gravitate_once
 GRAVITATE_STEP = ACTIVE.gravitate_step
 SORT_BY = ACTIVE.sort_by
-REST_PENALTY = ACTIVE.rest_penalty
+REST_PENALTY = SYSTEM.rest_penalty
 BB_WEIGHT = ACTIVE.bb_weight
 CC_WEIGHT = ACTIVE.cc_weight
 NFP_GRAVITATE_ON = ACTIVE.nfp_gravitate_on

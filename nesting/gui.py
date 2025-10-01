@@ -238,14 +238,18 @@ class NestingGUI:
             ui.label("Placement Methods").classes("font-bold mb-2")
             with ui.column().classes("gap-1 w-full"):
                 ui.button("Bottom-Left", on_click=self._auto_place).classes("w-full")
-                ui.button("Greedy", on_click=lambda _: self._auto_place("Greedy")).classes("w-full")
+                # ui.button("Greedy", on_click=lambda _: self._auto_place("Greedy")).classes("w-full")
                 ui.button("NFP", on_click=lambda _: self._auto_place("NFP")).classes("w-full")
-                ui.button("BLF", on_click=lambda _: self._auto_place("BLF")).classes("w-full")
-                ui.button("TOPOS", on_click=lambda _: self._auto_place("TOPOS")).classes("w-full")
-                ui.button("Random BL", on_click=lambda _: self._auto_place("RandomBL")).classes("w-full")
-                ui.button("Random NFP", on_click=lambda _: self._auto_place("RandomNFP")).classes("w-full")
+                # ui.button("BLF", on_click=lambda _: self._auto_place("BLF")).classes("w-full")
+                # ui.button("TOPOS", on_click=lambda _: self._auto_place("TOPOS")).classes("w-full")
+                # ui.button("Random BL", on_click=lambda _: self._auto_place("RandomBL")).classes("w-full")
+                # ui.button("Random NFP", on_click=lambda _: self._auto_place("RandomNFP")).classes("w-full")
                 ui.button("Genetic Algorithm", on_click=lambda _: self._run_genetic_algorithm()).classes("w-full")
                 ui.button("Simulated Annealing", on_click=lambda _: self._run_simulated_annealing()).classes("w-full")
+                ui.button("2-Exchange Local Search", on_click=lambda _: self._run_two_exchange()).classes("w-full")
+                ui.button("Random Search", on_click=lambda _: self._run_random_search()).classes("w-full")
+                ui.button("Random → SA", on_click=lambda _: self._run_random_then_sa()).classes("w-full")
+                ui.button("Random → 2-Exchange", on_click=lambda _: self._run_random_then_two_exchange()).classes("w-full")
         
         # GA Parameters
         with ui.card().classes("w-full mb-4 p-2"):
@@ -339,6 +343,43 @@ class NestingGUI:
         self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
 
         return util
+
+    def _update_metrics_from_decoder(self, decoder: "PlacementEngine"):
+        """Update all metric labels using a decoder after placements.
+        Safely handles failures so UI labels don't stay 'n/a'."""
+        try:
+            util = decoder.usage_BB()
+        except Exception as e:
+            print(f"[GUI][METRICS] usage_BB failed: {e}")
+            util = None
+        try:
+            rest_len = decoder.rest_length()
+        except Exception as e:
+            print(f"[GUI][METRICS] rest_length failed: {e}")
+            rest_len = None
+        try:
+            rest_ht = decoder.rest_height()
+        except Exception as e:
+            print(f"[GUI][METRICS] rest_height failed: {e}")
+            rest_ht = None
+        try:
+            hull_util = decoder.concave_hull_utilization()
+            hull = getattr(decoder, '_last_hull', None)
+        except Exception as e:
+            print(f"[GUI][METRICS] concave hull failed: {e}")
+            hull_util = None
+            hull = None
+
+        if util is not None:
+            self.utilization_label.text = f"Utilization: {util:.2%}"
+        if rest_len is not None:
+            self.rest_length_label.text = f"Rest length: {rest_len:.2f} cm"
+        if rest_ht is not None:
+            self.rest_height_label.text = f"Rest height: {rest_ht:.2f} cm"
+        if hull_util is not None:
+            self.utilization_concave_label.text = f"Concave hull utilization: {hull_util:.2%}"
+        if hull is not None:
+            self._draw_alpha_shape(hull, stroke="#ff0000")
 
 
     def _handle_key(self, e: KeyEventArguments) -> None:
@@ -1322,23 +1363,23 @@ class NestingGUI:
             if method == "BL":
                 # Bottom-Left placement
                 decoder = BottomLeftDecoder(layout, container, gravitate_once=config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
-            elif method == "Greedy":
-                # Greedy placement using sorting + BL
-                sorted_order = get_piece_order_by_criteria(layout, config.SORT_BY, reverse=True)
-                decoder = BottomLeftDecoder(layout, container, gravitate_once=config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
-                placements = decoder.decode_in_order(sorted_order)
-                await self._apply_placements(placements)
-                concave_hull_usage = decoder.concave_hull_utilization()
-                self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
-                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
-                ui.notify('Auto placement completed ', type='positive')
-                return
+                print("[GUI][AUTO_PLACE] Using BottomLeftDecoder")
+            # elif method == "Greedy":
+            #     # Greedy placement using sorting + BL
+            #     sorted_order = get_piece_order_by_criteria(layout, config.SORT_BY, reverse=True)
+            #     decoder = BottomLeftDecoder(layout, container, gravitate_once=config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
+            #     placements = decoder.decode_in_order(sorted_order)
+            #     await self._apply_placements(placements)
+            #     concave_hull_usage = decoder.concave_hull_utilization()
+            #     self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
+            #     self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
+            #     ui.notify('Auto placement completed ', type='positive')
             elif method == "NFP":
                 decoder = NFPDecoder(layout, container, gravitate_once = config.GRAVITATE_ONCE, step=config.GRAVITATE_STEP)
-            elif method == "RandomBL":
-                decoder = RandomDecoder(layout, container, decoder="BL")
-            elif method == "RandomNFP":
-                decoder = RandomDecoder(layout, container, decoder="NFP")
+            # elif method == "RandomBL":
+            #     decoder = RandomDecoder(layout, container, decoder="BL")
+            # elif method == "RandomNFP":
+            #     decoder = RandomDecoder(layout, container, decoder="NFP")
             elif method == "Genetic Algorithm":
                 # Use the parameters that were loaded during pattern loading
                 print("Using design parameters from pattern loading")
@@ -1393,8 +1434,8 @@ class NestingGUI:
 
             # elif method == "BLF":
                 #decoder = BottomLeftFill(layout, container, step=config.GRAVITATE_STEP)
-            elif method == "TOPOS":
-                decoder = TOPOSDecoder(layout, container, eval_terms=("distance",))
+            # elif method == "TOPOS":
+            #     decoder = TOPOSDecoder(layout, container, eval_terms=("distance",))
             else:
                 raise ValueError(f"Unknown placement method: {method}")
             
@@ -1407,10 +1448,7 @@ class NestingGUI:
             #      print(f"Placing {name} at ({dx:.2f}, {dy:.2f}) cm with rotation {rot}")
 
             await self._apply_placements(placements)
-            concave_hull_usage = decoder.concave_hull_utilization()
-            self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
-
-            self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
+            self._update_metrics_from_decoder(decoder)
 
             ui.notify('Auto placement completed ', type='positive')
 
@@ -1571,10 +1609,7 @@ class NestingGUI:
                 
                 # Apply the placements to update piece positions on canvas
                 await self._apply_placements(placements)
-                concave_hull_usage = decoder.concave_hull_utilization()
-                self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
-                
-                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
+                self._update_metrics_from_decoder(decoder)
                 
                 ui.notify(
                     f"Simulated annealing complete! Fitness improved by {improvement:.4f} "
@@ -1589,6 +1624,232 @@ class NestingGUI:
             import traceback
             traceback.print_exc()
             ui.notify(f"Simulated annealing failed: {exc}", type="negative")
+
+    async def _run_two_exchange(self):
+        """Run 2-exchange (local swap) hill-climbing using the current pieces.
+
+        Mirrors the flow of simulated annealing UI integration but uses only
+        deterministic/improving local swap moves within a window (default 3).
+        """
+        if not self.pattern_loaded:
+            ui.notify("Please load a pattern first", type="warning")
+            return
+
+        ui.notify("Starting 2-Exchange local search...", type="info")
+        try:
+            from .two_exchange_search import TwoExchangeSearch
+            # Prepare initial state
+            pieces_list = list(self.pieces.values())
+            if not pieces_list:
+                ui.notify("No pieces available for optimization", type="warning")
+                return
+
+            # Strategy selection: could be made user-configurable later.
+            # For now choose 'best' (steepest ascent) as default.
+            strategy = "best"
+            max_distance = 3
+
+            # Run search
+            search = TwoExchangeSearch(
+                pieces=pieces_list,
+                container=self.container,
+                strategy=strategy,
+                max_distance=max_distance,
+                verbose=True,
+            )
+            initial_fitness = search.best_fitness
+            print(f"[2-Exchange] Initial fitness: {initial_fitness:.4f}")
+            best_pieces, best_fitness = search.run()
+            improvement = best_fitness - initial_fitness
+            print(f"[2-Exchange] Final fitness: {best_fitness:.4f} (improvement {improvement:.4f})")
+
+            # Apply best solution if improved (or even if equal to reflect normalization)
+            if best_pieces and best_fitness >= initial_fitness:
+                self.pieces = {p.id: copy.deepcopy(p) for p in best_pieces}
+                self.layout = Layout(self.pieces)
+                self._rebuild_panel_outlines()
+                self._draw_outlines()
+
+                # Decode placements for visualization
+                view = LayoutView(best_pieces)
+                decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, self.container, step=config.GRAVITATE_STEP)
+                print("[2-Exchange] Decoding best layout...")
+                placements = decoder.decode()
+                print("[2-Exchange] Decode complete")
+                await self._apply_placements(placements)
+                self._update_metrics_from_decoder(decoder)
+
+                ui.notify(
+                    f"2-Exchange complete! Fitness improved by {improvement:.4f} (to {best_fitness:.4f})",
+                    type="positive" if improvement > 0 else "info"
+                )
+            else:
+                ui.notify("2-Exchange search found no improving swap", type="info")
+        except Exception as exc:
+            print(f"2-Exchange error: {exc}")
+            traceback.print_exc()
+            ui.notify(f"2-Exchange failed: {exc}", type="negative")
+
+    async def _run_random_search(self):
+        """Run pure random search over piece order (and optional rotations)."""
+        if not self.pattern_loaded:
+            ui.notify("Please load a pattern first", type="warning")
+            return
+
+        ui.notify("Starting Random Search...", type="info")
+        try:
+            from .random_search import RandomSearch
+
+            pieces_list = list(self.pieces.values())
+            if not pieces_list:
+                ui.notify("No pieces available for optimization", type="warning")
+                return
+
+            # Parameters could be exposed via GUI later
+            num_samples = 300
+            shuffle_order = True
+            randomize_rotations = True  # could tie to config.ENABLE_ROTATIONS
+
+            rs = RandomSearch(
+                pieces=pieces_list,
+                container=self.container,
+                num_samples=num_samples,
+                shuffle_order=shuffle_order,
+                randomize_rotations=randomize_rotations,
+                track_history=False,
+                verbose=True,
+            )
+            initial = rs.metric_fn(pieces_list, config.SELECTED_DECODER, self.container)
+            best_pieces, best_fitness = rs.run()
+            improvement = best_fitness - initial
+            print(f"[RandomSearch] Initial fitness: {initial:.4f}")
+            print(f"[RandomSearch] Best fitness: {best_fitness:.4f} (Δ {improvement:.4f})")
+
+            # Apply best state
+            self.pieces = {p.id: copy.deepcopy(p) for p in best_pieces}
+            self.layout = Layout(self.pieces)
+            self._rebuild_panel_outlines()
+            self._draw_outlines()
+
+            # Decode best layout for placements
+            view = LayoutView(best_pieces)
+            decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, self.container, step=config.GRAVITATE_STEP)
+            placements = decoder.decode()
+            await self._apply_placements(placements)
+            self._update_metrics_from_decoder(decoder)
+
+            ui.notify(
+                f"Random Search complete! Δ {improvement:.4f} (best {best_fitness:.4f})",
+                type="positive" if improvement > 0 else "info"
+            )
+        except Exception as exc:
+            print(f"Random Search error: {exc}")
+            traceback.print_exc()
+            ui.notify(f"Random Search failed: {exc}", type="negative")
+
+    async def _run_random_then_sa(self):
+        """Run Random Search first, then start SA from the best random sample."""
+        if not self.pattern_loaded:
+            ui.notify("Please load a pattern first", type="warning")
+            return
+        ui.notify("Random Search pre-initialization for SA...", type="info")
+        try:
+            from .random_search import RandomSearch
+            pieces_list = list(self.pieces.values())
+            if not pieces_list:
+                ui.notify("No pieces available", type="warning")
+                return
+
+            rs = RandomSearch(
+                pieces=pieces_list,
+                container=self.container,
+                num_samples=200,
+                shuffle_order=True,
+                randomize_rotations=True,
+                track_history=False,
+                verbose=False,
+            )
+            best_pieces, best_fit = rs.run()
+            print(f"[Random→SA] Seed fitness after RS: {best_fit:.4f}")
+
+            # Seed current state with RS result
+            self.pieces = {p.id: copy.deepcopy(p) for p in best_pieces}
+            self.layout = Layout(self.pieces)
+            self._rebuild_panel_outlines()
+            self._draw_outlines()
+
+            # Now run SA using the seeded arrangement
+            await self._run_simulated_annealing()
+        except Exception as exc:
+            print(f"Random→SA chain error: {exc}")
+            traceback.print_exc()
+            ui.notify(f"Random→SA failed: {exc}", type="negative")
+
+    async def _run_random_then_two_exchange(self):
+        """Run Random Search then refine with 2-Exchange local search."""
+        if not self.pattern_loaded:
+            ui.notify("Please load a pattern first", type="warning")
+            return
+        ui.notify("Random Search pre-initialization for 2-Exchange...", type="info")
+        try:
+            from .random_search import RandomSearch
+            from .two_exchange_search import TwoExchangeSearch
+            pieces_list = list(self.pieces.values())
+            if not pieces_list:
+                ui.notify("No pieces available", type="warning")
+                return
+
+            rs = RandomSearch(
+                pieces=pieces_list,
+                container=self.container,
+                num_samples=200,
+                shuffle_order=True,
+                randomize_rotations=True,
+                track_history=False,
+                verbose=False,
+            )
+            base_pieces, base_fit = rs.run()
+            print(f"[Random→2E] Seed fitness after RS: {base_fit:.4f}")
+
+            # Apply RS best state
+            self.pieces = {p.id: copy.deepcopy(p) for p in base_pieces}
+            self.layout = Layout(self.pieces)
+            self._rebuild_panel_outlines()
+            self._draw_outlines()
+
+            # Run 2-Exchange refinement
+            search = TwoExchangeSearch(
+                pieces=base_pieces,
+                container=self.container,
+                strategy="best",
+                max_distance=3,
+                verbose=True,
+            )
+            best_pieces, best_fitness = search.run()
+            improvement = best_fitness - base_fit
+            print(f"[Random→2E] Post-refinement fitness {best_fitness:.4f} (Δ {improvement:.4f})")
+
+            # Apply refined solution
+            self.pieces = {p.id: copy.deepcopy(p) for p in best_pieces}
+            self.layout = Layout(self.pieces)
+            self._rebuild_panel_outlines()
+            self._draw_outlines()
+
+            # Decode for placement
+            view = LayoutView(best_pieces)
+            decoder = DECODER_REGISTRY[config.SELECTED_DECODER](view, self.container, step=config.GRAVITATE_STEP)
+            placements = decoder.decode()
+            await self._apply_placements(placements)
+            self._update_metrics_from_decoder(decoder)
+
+            ui.notify(
+                f"Random→2-Exchange complete Δ {improvement:.4f} (final {best_fitness:.4f})",
+                type="positive" if improvement > 0 else "info"
+            )
+        except Exception as exc:
+            print(f"Random→2E chain error: {exc}")
+            traceback.print_exc()
+            ui.notify(f"Random→2-Exchange failed: {exc}", type="negative")
 
     async def _run_genetic_algorithm(self):
         """Run genetic algorithm with GUI-configured parameters."""
@@ -1680,9 +1941,7 @@ class NestingGUI:
                 await self._apply_placements(placements)
                 
                 # Calculate and display final metrics
-                concave_hull_usage = decoder.concave_hull_utilization()
-                self._draw_alpha_shape(decoder._last_hull, stroke="#ff0000")
-                self.utilization_concave_label.text = f"Concave hull utilization: {concave_hull_usage:.2%}"
+                self._update_metrics_from_decoder(decoder)
                 
                 ui.notify(f"GA completed: {self.ga_num_generations} generations, best fitness: {best_chromosome.fitness:.4f}", type="positive")
                 

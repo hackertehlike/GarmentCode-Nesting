@@ -294,23 +294,23 @@ class SimulatedAnnealing:
         # Define metric characteristics and suggested parameters
         metric_configs = {
             # Percentage-based metrics (0-1 range)
-            "usage_bb": {"scale": "percentage", "temp_factor": 0.1, "cooling": 0.95},
-            "concave_hull": {"scale": "percentage", "temp_factor": 0.1, "cooling": 0.95},
-            "bb_cc": {"scale": "percentage", "temp_factor": 0.1, "cooling": 0.95},
+            "usage_bb": {"scale": "percentage", "temp_factor": 0.1, "cooling": 0.955},
+            "concave_hull": {"scale": "percentage", "temp_factor": 0.1, "cooling": 0.955},
+            "bb_cc": {"scale": "percentage", "temp_factor": 0.1, "cooling": 0.955},
             
             # Area-based metrics (large values, inverted)
-            "concave_hull_area": {"scale": "area_inverted", "temp_factor": 1000, "cooling": 0.98},
-            "bb_area": {"scale": "area_inverted", "temp_factor": 1000, "cooling": 0.98},
-            "bb_cc_area": {"scale": "area_inverted", "temp_factor": 1000, "cooling": 0.98},
+            "concave_hull_area": {"scale": "area_inverted", "temp_factor": 1000, "cooling": 0.955},
+            "bb_area": {"scale": "area_inverted", "temp_factor": 1000, "cooling": 0.955},
+            "bb_cc_area": {"scale": "area_inverted", "temp_factor": 1000, "cooling": 0.955},
             
             # Length-based metrics (cm scale)
-            "rest_length": {"scale": "length", "temp_factor": 10, "cooling": 0.97},
-            "rest_height": {"scale": "length", "temp_factor": 10, "cooling": 0.97},
-            
+            "rest_length": {"scale": "length", "temp_factor": 10, "cooling": 0.955},
+            "rest_height": {"scale": "length", "temp_factor": 10, "cooling": 0.955},
+
             # Combined metrics (mixed scales)
-            "cc_with_rest_height": {"scale": "combined", "temp_factor": 1, "cooling": 0.96},
-            "cc_with_rest_length": {"scale": "combined", "temp_factor": 1, "cooling": 0.96},
-            "bb_with_rest_length": {"scale": "combined", "temp_factor": 1, "cooling": 0.96},
+            "cc_with_rest_height": {"scale": "combined", "temp_factor": 0.2, "cooling": 0.955},
+            "cc_with_rest_length": {"scale": "combined", "temp_factor": 0.2, "cooling": 0.955},
+            "bb_with_rest_length": {"scale": "combined", "temp_factor": 0.2, "cooling": 0.955},
         }
         
         # Get config for current metric or use defaults
@@ -391,124 +391,138 @@ class SimulatedAnnealing:
     # generate a neighboring state
     # analog of mutation
     def neighbor(self):
+        from shapely.errors import GEOSException
+        max_retries = 3
+        for attempt in range(max_retries):
+            start = time.time() if config.LOG_TIME else None
+            start_time = time.time()  # Always track time for CSV logging
 
-        start = time.time() if config.LOG_TIME else None
-        start_time = time.time()  # Always track time for CSV logging
+            chosen_operation = weighted_choice(config.MUTATION_WEIGHTS)
+            self.last_operation = chosen_operation
 
-        chosen_operation = weighted_choice(config.MUTATION_WEIGHTS)
-        self.last_operation = chosen_operation
+            # Save original MetaGarment state before neighbor generation
+            original_design_params = None
+            original_state = copy.deepcopy(self.current_state)
+            if self.meta_garment:
+                original_design_params = copy.deepcopy(self.design_params)
 
-        # Save original MetaGarment state before neighbor generation
-        original_design_params = None
-        if self.meta_garment:
-            original_design_params = copy.deepcopy(self.design_params)
+            handler = {
+                "split": self._split,
+                "rotate": self._rotate,
+                "swap": self._swap,
+                # "local_swap": self._local_swap,
+                "inversion": self._inversion,
+                "insertion": self._insertion,
+                "scramble": self._scramble,
+                "design_params": self._design_params,
+            }.get(chosen_operation)
 
-        handler = {
-            "split": self._split,
-            "rotate": self._rotate,
-            "swap": self._swap,
-            "inversion": self._inversion,
-            "insertion": self._insertion,
-            "scramble": self._scramble,
-            "design_params": self._design_params,
-        }.get(chosen_operation)
+            if handler is None:
+                raise ValueError(f"Unknown operation: {chosen_operation}")
 
-        if handler is None:
-            raise ValueError(f"Unknown operation: {chosen_operation}")
+            try:
+                # All handlers now return tuples (pieces, tracking_changes)
+                generated_neighbor, tracking_changes = handler()
 
-        # All handlers now return tuples (pieces, tracking_changes)
-        generated_neighbor, tracking_changes = handler()
+                # Evaluate fitness and get decoder for potential SVG saving
+                new_fitness, new_decoder = self.fitness(generated_neighbor, return_decoder=True)
+                curr_fitness = self.fitness(self.current_state)
+                acceptance_prob = self._acceptance_probability(curr_fitness, new_fitness)
+                accepted = self.accept(curr_fitness, new_fitness)
 
-        # Evaluate fitness and get decoder for potential SVG saving
-        new_fitness, new_decoder = self.fitness(generated_neighbor, return_decoder=True)
-        curr_fitness = self.fitness(self.current_state)
-        acceptance_prob = self._acceptance_probability(curr_fitness, new_fitness)
-        accepted = self.accept(curr_fitness, new_fitness)
-        
-        # Calculate elapsed time
-        elapsed_time = time.time() - start_time
-        
-        # Log convergence data to CSV
-        self.log_csv_data(
-            operation=chosen_operation,
-            old_fitness=curr_fitness,
-            new_fitness=new_fitness, 
-            acceptance_prob=acceptance_prob,
-            accepted=accepted,
-            time_elapsed=elapsed_time
-        )
-        
-        # Increment iteration counter for tracking
-        self.iteration_count += 1
-        
-        if accepted:
-            self.current_state = generated_neighbor
-            if new_fitness > self.best_fitness:
-                self.best_fitness = new_fitness
-                self.best_state = copy.deepcopy(self.current_state)
-                self.best_split_history = list(self.split_history)
-                self.best_split_set = set(self.split_set)
-                self.best_design_params = copy.deepcopy(self.design_params)
-                self.log(f"[BEST] {self.best_fitness:.4f} with split roots: {sorted(self.best_split_set)}")
-                
-                # Save SVG of new best state (reusing the decoder for efficiency)
-                self._save_state_svg(self.current_state, self.iteration_count, 
-                                   decoder=new_decoder, suffix="_best")
+                # Calculate elapsed time
+                elapsed_time = time.time() - start_time
 
-            # Apply tracking changes only after acceptance
-            self._apply_tracking_changes(tracking_changes)
-        else:
-            # Neighbor rejected - restore original MetaGarment state if it was mutated
-            if original_design_params is not None and self.design_params != original_design_params:
-                self.log(f"[TRACKING DEBUG] Restoring original design params after rejection")
-                self.design_params = original_design_params
-                # Recreate MetaGarment with original parameters and regenerate pieces
-                if self.design_params and self.body_params:
-                    try:
-                        from assets.garment_programs.meta_garment import MetaGarment
-                        from nesting.path_extractor import PatternPathExtractor
-                        from pathlib import Path
-                        import tempfile
+                # Log convergence data to CSV
+                self.log_csv_data(
+                    operation=chosen_operation,
+                    old_fitness=curr_fitness,
+                    new_fitness=new_fitness, 
+                    acceptance_prob=acceptance_prob,
+                    accepted=accepted,
+                    time_elapsed=elapsed_time
+                )
 
-                        self.meta_garment = MetaGarment("sa_restored", self.body_params, self.design_params)
-                        # Reapply accepted splits from split_history
-                        for panel_name, proportion in self.split_history:
+                # Increment iteration counter for tracking
+                self.iteration_count += 1
+
+                if accepted:
+                    self.current_state = generated_neighbor
+                    if new_fitness > self.best_fitness:
+                        self.best_fitness = new_fitness
+                        self.best_state = copy.deepcopy(self.current_state)
+                        self.best_split_history = list(self.split_history)
+                        self.best_split_set = set(self.split_set)
+                        self.best_design_params = copy.deepcopy(self.design_params)
+                        self.log(f"[BEST] {self.best_fitness:.4f} with split roots: {sorted(self.best_split_set)}")
+
+                        # Save SVG of new best state (reusing the decoder for efficiency)
+                        self._save_state_svg(self.current_state, self.iteration_count, 
+                                           decoder=new_decoder, suffix="_best")
+
+                    # Apply tracking changes only after acceptance
+                    self._apply_tracking_changes(tracking_changes)
+                else:
+                    # Neighbor rejected - restore original MetaGarment state if it was mutated
+                    if original_design_params is not None and self.design_params != original_design_params:
+                        self.log(f"[TRACKING DEBUG] Restoring original design params after rejection")
+                        self.design_params = original_design_params
+                        # Recreate MetaGarment with original parameters and regenerate pieces
+                        if self.design_params and self.body_params:
                             try:
-                                self.meta_garment.split_panel(panel_name, proportion)
+                                from assets.garment_programs.meta_garment import MetaGarment
+                                from nesting.path_extractor import PatternPathExtractor
+                                from pathlib import Path
+                                import tempfile
+
+                                self.meta_garment = MetaGarment("sa_restored", self.body_params, self.design_params)
+                                # Reapply accepted splits from split_history
+                                for panel_name, proportion in self.split_history:
+                                    try:
+                                        self.meta_garment.split_panel(panel_name, proportion)
+                                    except Exception as e:
+                                        self.log(f"[TRACKING DEBUG] Warning: Could not restore split {panel_name}: {e}")
+
+                                # Regenerate pieces from the restored MetaGarment so current_state matches
+                                try:
+                                    pattern = self.meta_garment.assembly()
+                                    with tempfile.TemporaryDirectory() as td:
+                                        spec_file = Path(td) / f"{pattern.name}_specification.json"
+                                        pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
+                                                          with_text=False, view_ids=False)
+                                        extractor = PatternPathExtractor(spec_file)
+                                        all_pieces = extractor.get_all_panel_pieces(
+                                            samples_per_edge=getattr(config, 'SAMPLES_PER_EDGE', 10)
+                                        )
+
+                                    regenerated = []
+                                    for piece_id, piece in all_pieces.items():
+                                        if "_split_" in piece_id:
+                                            base = piece_id.split("_split_")[0]
+                                            piece.parent_id = base
+                                            piece.root_id = base
+                                        else:
+                                            piece.parent_id = None
+                                            piece.root_id = piece_id
+                                        regenerated.append(piece)
+
+                                    self.current_state = regenerated
+                                    self.log(f"[TRACKING DEBUG] Regenerated {len(regenerated)} pieces from restored MetaGarment")
+                                except Exception as regen_exc:
+                                    self.log(f"[TRACKING DEBUG] Failed to regenerate pieces after MetaGarment restore: {regen_exc}")
                             except Exception as e:
-                                self.log(f"[TRACKING DEBUG] Warning: Could not restore split {panel_name}: {e}")
-
-                        # CRITICAL: Regenerate pieces from the restored MetaGarment to match its state
-                        pattern = self.meta_garment.assembly()
-                        with tempfile.TemporaryDirectory() as td:
-                            spec_file = Path(td) / f"{pattern.name}_specification.json"
-                            pattern.serialize(Path(td), to_subfolder=False, with_3d=False,
-                                            with_text=False, view_ids=False)
-                            extractor = PatternPathExtractor(spec_file)
-                            all_pieces = extractor.get_all_panel_pieces(
-                                samples_per_edge=getattr(config, 'SAMPLES_PER_EDGE', 10)
-                            )
-
-                        # Update current_state to match the restored MetaGarment
-                        new_pieces = []
-                        for piece_id, piece in all_pieces.items():
-                            # Set parent_id and root_id correctly
-                            if "_split_" in piece_id:
-                                # Split pieces: parent_id = original piece, root_id = root piece
-                                original_root_id = piece_id.split("_split_")[0]
-                                piece.parent_id = original_root_id  # Parent is the original unsplit piece
-                                piece.root_id = original_root_id    # Root is also the original piece
-                            else:
-                                # Original unsplit pieces: no parent, root is self
-                                piece.parent_id = None
-                                piece.root_id = piece_id
-                            new_pieces.append(piece)
-
-                        self.current_state = new_pieces
-                        self.log(f"[TRACKING DEBUG] Restored {len(new_pieces)} pieces to match MetaGarment state")
-
-                    except Exception as exc:
-                        self.log(f"[TRACKING DEBUG] Failed to restore MetaGarment: {exc}")
+                                self.log(f"[TRACKING DEBUG] Could not restore MetaGarment after rejection: {e}")
+                break  # Success, exit retry loop
+            except GEOSException as geo_exc:
+                self.log(f"[ERROR] GEOSException encountered: {geo_exc}. Restoring last state and retrying (attempt {attempt+1}/{max_retries})")
+                self.current_state = copy.deepcopy(original_state)
+                if self.meta_garment:
+                    self.design_params = copy.deepcopy(original_design_params)
+                if attempt == max_retries - 1:
+                    self.log(f"[ERROR] Maximum retries reached for GEOSException. Skipping this neighbor.")
+            except Exception as e:
+                self.log(f"[ERROR] Exception in neighbor(): {e}")
+                break
 
         if config.LOG_TIME:
             end = time.time()
@@ -590,7 +604,7 @@ class SimulatedAnnealing:
         self.log(f"[TRACKING DEBUG] After changes - split_history length: {len(self.split_history)}")
     
     def termination_condition(self):
-        return self.temperature < 1e-3
+        return self.temperature < 1e-2
     
     def cool_down(self):
         old_temp = self.temperature
@@ -797,6 +811,10 @@ class SimulatedAnnealing:
     def _swap(self, k=None) -> tuple[List[Piece], dict]:
         k = k or getattr(config, 'SWAP_MUTATION_K', None)
         return Operators.swap(self.current_state, k), {}
+
+    # def _local_swap(self) -> tuple[List[Piece], dict]:
+    #     """Swap two pieces whose indices differ by at most 3."""
+    #     return Operators.local_swap(self.current_state, max_distance=3), {}
 
     def _inversion(self) -> tuple[List[Piece], dict]:
         return Operators.inversion(self.current_state), {}

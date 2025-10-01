@@ -103,12 +103,12 @@ def no_fit_polygon(stationary, moving):
     """
     
     # Find the top-leftmost vertex to use as reference
-    topleft_idx = find_topleft_vertex(moving)
-    ref_x, ref_y = moving[topleft_idx]
+    # topleft_idx = find_topleft_vertex(moving)
+    # ref_x, ref_y = moving[topleft_idx]
     
-    # Translate moving polygon so that reference vertex is at origin
-    moving_centered = [(x - ref_x, y - ref_y) for x, y in moving]
-    
+    # # Translate moving polygon so that reference vertex is at origin
+    # moving_centered = [(x - ref_x, y - ref_y) for x, y in moving]
+    moving_centered =[(x, y) for x, y in moving]  # no translation, use origin as reference
     A = to_clipper(stationary)
     B = [(-x, -y) for x, y in moving_centered]  # reflect the centered moving part
     B = to_clipper(B)

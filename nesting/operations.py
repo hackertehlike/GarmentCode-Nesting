@@ -44,6 +44,7 @@ def fitness_concave_hull(pieces: List[Piece], decoder: str, container=None):
     return dec.concave_hull_utilization()
 
 @register_metric("concave_hull_area")
+# TODO: change the constant to be the container size
 def fitness_concave_hull_area(pieces: List[Piece], decoder: str, container=None):
     dec = run_decoder(pieces, decoder, container)
     area = dec.concave_hull_area()
@@ -69,7 +70,7 @@ def fitness_cc_height_combined(pieces: List[Piece], decoder: str, container=None
     rest_height = dec.rest_height()
     if cc == 0:
         return 0
-    return cc + config.REST_PENALTY * rest_height
+    return cc + rest_height / config.CONTAINER_HEIGHT_CM
 
 @register_metric("cc_with_rest_length")
 def fitness_cc_length_combined(pieces: List[Piece], decoder: str, container=None):
@@ -79,7 +80,7 @@ def fitness_cc_length_combined(pieces: List[Piece], decoder: str, container=None
     rest_length = dec.rest_length()
     if cc == 0:
         return 0
-    return cc + config.REST_PENALTY * rest_length
+    return cc + rest_length / config.CONTAINER_WIDTH_CM
 
 @register_metric("bb_cc")
 def fitness_bb_cc(pieces: List[Piece], decoder: str, container=None):
@@ -92,6 +93,7 @@ def fitness_bb_cc(pieces: List[Piece], decoder: str, container=None):
     return config.BB_WEIGHT * bb_area + config.CC_WEIGHT * cc_area
 
 @register_metric("bb_area")
+# TODO: change the constant to be the container size
 def fitness_bb_area(pieces: List[Piece], decoder: str, container=None):
     dec = run_decoder(pieces, decoder, container)
     bb_area = dec.bbox_area()
@@ -100,6 +102,7 @@ def fitness_bb_area(pieces: List[Piece], decoder: str, container=None):
     return 10000 / bb_area
 
 @register_metric("bb_cc_area")
+# TODO: change the constant to be the container size
 def fitness_bb_cc_area(pieces: List[Piece], decoder: str, container=None):
     dec = run_decoder(pieces, decoder, container)
     bb_area = dec.bbox_area()
@@ -116,7 +119,7 @@ def fitness_bb_length_combined(pieces: List[Piece], decoder: str, container=None
     rest_length = dec.rest_length()
     if bb == 0:
         return 0
-    return bb + config.REST_PENALTY * rest_length
+    return bb + rest_length / config.CONTAINER_WIDTH_CM
 
 # ---------------------------------- CHROMOSOME-COMPATIBLE WRAPPERS --------------------------------- #
 # These maintain backward compatibility with code that passes Chromosome objects
@@ -156,11 +159,32 @@ class Operators:
     
     @staticmethod
     def rotate(pieces: List[Piece]) -> List[Piece]:
-        """Rotate random pieces by random allowed rotations."""
+        """Rotate a random non-empty subset of pieces ensuring at least one actual rotation change.
+
+        Falls back to forcing a change on one piece if random sampling produces no net change.
+        """
         new_pieces = copy.deepcopy(pieces)
-        for _ in range(random.randint(1, len(new_pieces))):
-            idx = random.randrange(len(new_pieces))
-            new_pieces[idx].rotate(random.choice(config.ALLOWED_ROTATIONS))
+        if len(new_pieces) == 0:
+            return new_pieces
+        count = random.randint(1, len(new_pieces))
+        chosen_indices = random.sample(range(len(new_pieces)), count)
+        changed = False
+        for idx in chosen_indices:
+            piece = new_pieces[idx]
+            current_rot = getattr(piece, 'rotation', 0)
+            possible = [r for r in config.ALLOWED_ROTATIONS if r != current_rot]
+            if not possible:  # all rotations equivalent / only one allowed
+                continue
+            piece.rotate(random.choice(possible))
+            changed = True
+        if not changed:
+            # Force rotate a single piece (if possible)
+            for piece in new_pieces:
+                current_rot = getattr(piece, 'rotation', 0)
+                possible = [r for r in config.ALLOWED_ROTATIONS if r != current_rot]
+                if possible:
+                    piece.rotate(random.choice(possible))
+                    break
         return new_pieces
 
     @staticmethod
@@ -203,41 +227,94 @@ class Operators:
         return pre + B + mid + A + post
 
     @staticmethod
-    def inversion(pieces: List[Piece]) -> List[Piece]:
-        """Reverse a random subsequence."""
+    def local_swap(pieces: List[Piece], max_distance: int = 3) -> List[Piece]:
+        """Swap two individual pieces whose indices differ by at most ``max_distance``.
+
+        Guarantees an order change if at least one valid pair exists. Falls back to
+        the original list copy if n < 2 (no swap possible).
+
+        Args:
+            pieces: Current ordered list of pieces.
+            max_distance: Maximum allowed index gap (inclusive) between the two
+                pieces selected for swapping. Default = 3 per user request.
+        Returns:
+            A new list of pieces with the selected pair swapped (deep copied list).
+        """
         new_pieces = copy.deepcopy(pieces)
-        if len(new_pieces) < 2:
+        n = len(new_pieces)
+        if n < 2:
             return new_pieces
-            
-        i, j = sorted(random.sample(range(len(new_pieces)), 2))
-        new_pieces[i:j + 1] = reversed(new_pieces[i:j + 1])
+
+        # Collect all valid (i, j) pairs with 1 <= j - i <= max_distance
+        pairs: list[tuple[int, int]] = []
+        for i in range(n - 1):
+            upper = min(n - 1, i + max_distance)
+            for j in range(i + 1, upper + 1):
+                pairs.append((i, j))
+
+        if not pairs:
+            return new_pieces
+
+        i, j = random.choice(pairs)
+        new_pieces[i], new_pieces[j] = new_pieces[j], new_pieces[i]
+        return new_pieces
+
+    @staticmethod
+    def inversion(pieces: List[Piece]) -> List[Piece]:
+        """Reverse a random subsequence with length >= 2; retry limited times to ensure change."""
+        new_pieces = copy.deepcopy(pieces)
+        n = len(new_pieces)
+        if n < 2:
+            return new_pieces
+        for _ in range(5):
+            i, j = sorted(random.sample(range(n), 2))
+            if j - i >= 1:  # length at least 2
+                slice_before = [(p.id, getattr(p, 'rotation', None)) for p in new_pieces[i:j+1]]
+                reversed_slice = list(reversed(new_pieces[i:j+1]))
+                slice_after = [(p.id, getattr(p, 'rotation', None)) for p in reversed_slice]
+                if slice_after != slice_before:
+                    new_pieces[i:j+1] = reversed_slice
+                    break
         return new_pieces
 
     @staticmethod
     def insertion(pieces: List[Piece]) -> List[Piece]:
-        """Remove a piece and insert it at a random position."""
+        """Remove a piece and insert it at a different position (guaranteed)."""
         new_pieces = copy.deepcopy(pieces)
-        if len(new_pieces) < 2:
-            return new_pieces
-            
         n = len(new_pieces)
+        if n < 2:
+            return new_pieces
         i = random.randrange(n)
-        insert_at = random.randrange(n)
+        # Choose a different insertion point
+        choices = [pos for pos in range(n) if pos != i and pos != i+1]
+        if not choices:
+            # fallback: any different index
+            choices = [pos for pos in range(n) if pos != i]
+        insert_at = random.choice(choices)
         piece = new_pieces.pop(i)
+        if insert_at > i:
+            insert_at -= 1  # list shrank by one
         new_pieces.insert(insert_at, piece)
         return new_pieces
 
     @staticmethod
     def scramble(pieces: List[Piece]) -> List[Piece]:
-        """Randomly shuffle a subsequence."""
+        """Randomly shuffle a subsequence (length >=2) ensuring an order change or retry."""
         new_pieces = copy.deepcopy(pieces)
-        if len(new_pieces) < 2:
+        n = len(new_pieces)
+        if n < 2:
             return new_pieces
-            
-        i, j = sorted(random.sample(range(len(new_pieces)), 2))
-        subset = new_pieces[i:j + 1]
-        random.shuffle(subset)
-        new_pieces[i:j + 1] = subset
+        for _ in range(5):
+            i, j = sorted(random.sample(range(n), 2))
+            if j - i < 1:
+                continue
+            before = [p.id for p in new_pieces[i:j+1]]
+            subset = new_pieces[i:j+1]
+            random.shuffle(subset)
+            after = [p.id for p in subset]
+            if after != before:
+                new_pieces[i:j+1] = subset
+                break
         return new_pieces
 
     @staticmethod
