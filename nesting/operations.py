@@ -121,6 +121,27 @@ def fitness_bb_length_combined(pieces: List[Piece], decoder: str, container=None
         return 0
     return bb + rest_length / config.CONTAINER_WIDTH_CM
 
+@register_metric("bb_with_rest_height")
+def fitness_bb_height_combined(pieces: List[Piece], decoder: str, container=None):
+    """Combined fitness metric for bounding box height and rest height."""
+    dec = run_decoder(pieces, decoder, container)
+    bb = dec.usage_BB()
+    rest_height = dec.rest_height()
+    if bb == 0:
+        return 0
+    return bb + rest_height / config.CONTAINER_HEIGHT_CM
+
+@register_metric("bb_with_rest_length_and_height")
+def fitness_bb_with_rest_length_and_height(pieces: List[Piece], decoder: str, container=None):
+    """Combined fitness metric for bounding box area, rest length, and rest height."""
+    dec = run_decoder(pieces, decoder, container)
+    bb = dec.usage_BB()
+    rest_length = dec.rest_length()
+    rest_height = dec.rest_height()
+    if bb == 0:
+        return 0
+    return bb + (rest_length / config.CONTAINER_WIDTH_CM) + (rest_height / config.CONTAINER_HEIGHT_CM)
+
 # ---------------------------------- CHROMOSOME-COMPATIBLE WRAPPERS --------------------------------- #
 # These maintain backward compatibility with code that passes Chromosome objects
 

@@ -42,7 +42,7 @@ class ActiveConfig:
     selected_decoder: DecoderName = "NFP"
     selected_fitness_metric: MetricName = "bb_with_rest_length" 
     selected_crossover: CrossoverName = "cross_stitch_oxk"
-    cross_stitch_mode: CrossStitchMode = "sticky"
+    cross_stitch_mode: CrossStitchMode = "lexicographic"
     
     # Container & physical constraints  
     container_width_cm: float = 800
@@ -58,14 +58,16 @@ class ActiveConfig:
 
     # Population composition weights
     population_weights: Dict[str, float] = field(default_factory=lambda: {
-        "elites": 0.25, "offspring": 0, "mutants": 0.50, "randoms": 0.25
+        "elites": 0.25, "offspring": 0, "mutants": 0.5, "randoms": 0.25
     })
     
     # Mutation operation weights
     mutation_weights: Dict[str, float] = field(default_factory=lambda: {
-        "rotate": 0.14, "swap": 0.14, "inversion": 0.14, "insertion": 0.14,
-        "scramble": 0.14, "split": 0.15, "design_params": 0.15
+        "rotate": 0, "swap": 1, "inversion": 1, "insertion": 1,
+        "scramble": 1, "split": 1, "design_params": 1
     })
+
+    zero_gen_rots: bool = False
     
     # Decoder-specific settings
     preserve_holes: bool = True
@@ -107,7 +109,7 @@ class ActiveConfig:
     
     # Rotation settings
     enable_rotations: bool = True
-    allowed_rotations: List[int] = field(default_factory=lambda: [0, 180])
+    allowed_rotations: List[int] = field(default_factory=lambda: [0])
     
     # Parameter exclusions for mutations
     excluded_param_paths: List[str] = field(default_factory=lambda: [
@@ -299,6 +301,7 @@ def _update_backward_compatibility_vars():
     SWAP_MUTATION_K = ACTIVE.swap_mutation_k
     POPULATION_WEIGHTS = ACTIVE.population_weights
     MUTATION_WEIGHTS = ACTIVE.mutation_weights
+    ZERO_GEN_ROTS = ACTIVE.zero_gen_rots
     # NO_DUPLICATES = ACTIVE.no_duplicates
     # MAX_DUPLICATE_RETRIES = ACTIVE.max_duplicate_retries
     
@@ -395,6 +398,7 @@ SYMMETRIC_SPLITS = ACTIVE.symmetric_splits
 ALLOW_RECURSIVE_SPLITS = ACTIVE.allow_recursive_splits
 WEIGHT_BY_BBOX = ACTIVE.weight_by_bbox
 MUTATION_WEIGHTS = ACTIVE.mutation_weights
+ZERO_GEN_ROTS = ACTIVE.zero_gen_rots
 
 ENABLE_DYNAMIC_STOPPING = ACTIVE.enable_dynamic_stopping
 EARLY_STOP_WINDOW = ACTIVE.early_stop_window

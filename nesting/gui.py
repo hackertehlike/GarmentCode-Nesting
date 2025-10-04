@@ -1847,9 +1847,9 @@ class NestingGUI:
                 type="positive" if improvement > 0 else "info"
             )
         except Exception as exc:
-            print(f"Random→2E chain error: {exc}")
+            print(f"Random -> 2E chain error: {exc}")
             traceback.print_exc()
-            ui.notify(f"Random→2-Exchange failed: {exc}", type="negative")
+            ui.notify(f"Random -> 2-Exchange failed: {exc}", type="negative")
 
     async def _run_genetic_algorithm(self):
         """Run genetic algorithm with GUI-configured parameters."""

@@ -849,175 +849,88 @@ class NFPDecoder(PlacementEngine):
                 cleaned_moving
             )
         return self._nfp_cache[key]
-    
 
-@register_decoder("TOPOS")
-class TOPOSDecoder(PlacementEngine):
+
+@register_decoder("NFPwithRots")
+class NFPwithRotsDecoder(PlacementEngine):
     """
-    Based on the TOPOS paper
-    Parameters
-    ----------
-    control : {"local_search","initial_sorting"}
-        Search control (Sect. 2.5): evaluate all remaining piece/orientation options
-        each iteration ("local_search"), or sort pieces first and at each iteration
-        evaluate only orientations of the next piece ("initial_sorting").
-    nesting_strategy : {"min_area","min_length","max_overlap"}
-        Placement-point selection rule (Sect. 2.3): choose candidate (dx,dy) that
-        minimizes area or length of the rectangular enclosure with the partial
-        solution, or maximizes the overlap between the two rectangular enclosures.
-    eval_terms : tuple subset of {"waste","overlap","distance"}
-        Evaluation criteria for comparing alternative partial solutions (Sect. 2.4).
-        Combined as: score = WASTE_rel - OVERLAP_abs + DISTANCE_rel over the
-        selected terms (defaults to all three with unit weights).
-    rotations_on : bool
-        If True, test all orientations in config.ALLOWED_ROTATIONS (e.g., {0,180}).
-    sorting_key : {"length","area","concavity","rectangularity","total_area", None}
-        Initial sorting criterion for "initial_sorting" (Fig. 6). Ignored for
-        "local_search".
-    edge_samples : int
-        # samples per NFP edge for "extended search" along edges (Sect. 2.3).
-        Vertices are always included; edges add (edge_samples-1) interior samples.
+    NFP-based placement that tries all allowed rotations of each piece and
+    chooses the best (rotation, position) pair according to placement_mode.
+
+    Behavior matches NFPDecoder except that candidate evaluation is repeated
+    for each rotation in config.ALLOWED_ROTATIONS when rotations are enabled.
     """
 
-    def __init__(
-        self,
-        layout: Layout,
-        container: Container,
-        *,
-        control: str = "local_search",
-        nesting_strategy: Literal["min_area","min_length","max_overlap"] = "min_area",
-        eval_terms: Tuple[str, ...] = ("waste","overlap","distance"),
-        rotations_on: bool = True,
-        sorting_key: Optional[Literal["length","area","concavity","rectangularity","total_area"]] = None,
-        edge_samples: int = 16,
-        **kwargs
-    ):
-        super().__init__(layout, container, **kwargs)
-        self.control = control
-        self.nesting_strategy = nesting_strategy
-        self.eval_terms = tuple(eval_terms)
-        self.rotations_on = rotations_on
-        self.sorting_key = sorting_key
-        self.edge_samples = max(2, int(edge_samples))
+    def __init__(self, layout: Layout, container: Container, *,
+                 placement_mode: Union[PlacementMode, str] = PlacementMode.MIN_BBOX_AREA,
+                 step=None, **kwargs):
+        super().__init__(layout, container)
+        self._nfp_cache: dict[tuple[str, str], list[tuple[float, float]]] = {}
 
-    # ---------- Public API ----------
+        if isinstance(placement_mode, str):
+            try:
+                self.placement_mode = PlacementMode(placement_mode)
+            except ValueError:
+                raise ValueError(f"Invalid placement mode: {placement_mode}. Valid modes: {[m.value for m in PlacementMode]}")
+        else:
+            self.placement_mode = placement_mode
 
-    def decode(self) -> list[Tuple[str, float, float, float]]:
-        if self.control not in ("local_search","initial_sorting"):
-            raise ValueError(f"TOPOSDecoder: unsupported control '{self.control}'")
+    def decode(self):
+        return self.decode_in_order(list(self.layout.order.keys()))
 
-        # Optionally reorder upfront (initial sorting variant, Sect. 2.5)
-        if self.control == "initial_sorting" and self.sorting_key:
-            self._apply_initial_sorting(self.sorting_key)
+    def decode_in_order(self, piece_order: List[str]) -> list[Tuple[str, float, float, float]]:
+        for piece_id in piece_order:
+            if piece_id not in self.layout.order:
+                continue
+            piece = self.layout.order[piece_id]
 
-        remaining: OrderedDict[str, Piece] = OrderedDict(self.layout.order)
+            best_x, best_y, best_angle = self._find_best_position_with_rotations(piece)
+            if best_x is None:
+                continue
 
-        # Iteratively build the partial solution (Fig. 7)
-        while remaining:
-            if self.control == "local_search":
-                # Evaluate *all* piece/orientation options from S (Sect. 2.5)
-                best = None
-                for pid, piece in list(remaining.items()):
-                    for angle in self._iter_orientations():
-                        cand = self._place_and_score(piece, angle)
-                        if cand is None:
-                            continue
-                        score, dx, dy, chosen_angle = cand
-                        if (best is None) or (score < best[0]):  # minimize
-                            best = (score, pid, piece, dx, dy, chosen_angle)
-                # if best is None:
-                #     # Fallback: nothing feasible — try to BL-place next arbitrary piece
-                #     pid, piece = next(iter(remaining.items()))
-                #     dx, dy = self.anchor(piece)
-                #     dx, dy = self.gravitate(piece, dx, dy)
-                #     piece.translation = (dx, dy)
-                #     self.placed.append(piece)
-                #     self._update_exterior_contour(piece)
-                #     del remaining[pid]
-                #     continue
-
-                _, pid, piece, dx, dy, angle = best
-                self._commit(piece, pid, dx, dy, angle)
-                del remaining[pid]
-
-            else:  # initial_sorting
-                pid, piece = next(iter(remaining.items()))
-                best = None
-                for angle in self._iter_orientations():
-                    cand = self._place_and_score(piece, angle)
-                    if cand is None:
-                        continue
-                    score, dx, dy, chosen_angle = cand
-                    if (best is None) or (score < best[0]):  # minimize
-                        best = (score, dx, dy, chosen_angle)
-                if best is None:
-                    # Fallback: BL-place this piece
-                    dx, dy = self.anchor(piece)
-                    dx, dy = self.gravitate(piece, dx, dy)
-                    piece.translation = (dx, dy)
-                    self.placed.append(piece)
-                    self._update_exterior_contour(piece)
-                    del remaining[pid]
-                    continue
-
-                score, dx, dy, angle = best
-                self._commit(piece, pid, dx, dy, angle)
-                del remaining[pid]
-
-        return [(p.id, p.translation[0], p.translation[1], p.rotation) for p in self.placed]
-
-    # ---------- Core helpers ----------
-
-    def _commit(self, piece: "Piece", pid: str, dx: float, dy: float, angle: float) -> None:
-        orig = piece.rotation
-        try:
-            if self.rotations_on:
-                piece.rotate(angle)
-            piece.translation = (dx, dy)
+            # Commit chosen rotation and placement
+            piece.rotate(best_angle)
+            piece.translation = (best_x, best_y)
             self.placed.append(piece)
             self._update_exterior_contour(piece)
-        finally:
-            # Keep piece at chosen rotation; we won't reuse it after placement
-            pass
 
-    def _iter_orientations(self):
-        if not self.rotations_on:
-            yield 0.0
-            return
-        allowed = getattr(config, "ALLOWED_ROTATIONS", [0.0, 180.0])
-        for a in allowed:
-            yield float(a)
+        return [(p.id, *p.translation, p.rotation) for p in self.placed]
 
-    def _place_and_score(self, piece: "Piece", angle: float):
-        """Rotate piece (temporarily), choose best placement point by the nesting strategy,
-        then evaluate the resulting partial solution by TOPOS criteria."""
+    def _find_best_position_with_rotations(self, piece: Piece, *,
+                                            gravitate_on: bool = config.NFP_GRAVITATE_ON) -> Tuple[Optional[float], Optional[float], float]:
+        """
+        Like NFPDecoder._find_best_position, but evaluates every allowed rotation
+        of `piece` and returns the best (x, y, angle).
+        """
+        allowed_angles = config.ALLOWED_ROTATIONS if config.ENABLE_ROTATIONS else [piece.rotation]
         orig_rot = piece.rotation
-        try:
-            if self.rotations_on:
-                piece.rotate(angle)
-            dx, dy = self._select_placement_point(piece)
-            if dx is None:
-                return None
-            score = self._evaluate_partial_solution(piece, dx, dy)
-            return (score, dx, dy, angle)
-        finally:
-            # restore orientation
-            if self.rotations_on:
-                piece.rotate(orig_rot)
 
-    # ---------- Nesting strategy (Sect. 2.3) ----------
-
-    def _select_placement_point(self, piece: "Piece") -> Tuple[Optional[float], Optional[float]]:
-        # First piece: put it bottom-left (to match our y-down convention)
+        # If nothing is placed yet, choose rotation that optimizes placement_mode
         if not self.placed:
-            return 0.0, self.container.height - piece.height
+            best_score = None
+            best_xy = (None, None)
+            best_angle = orig_rot
+            for angle in allowed_angles:
+                try:
+                    piece.rotate(angle)
+                    # Start from BL-like initial position; mirror NFP behaviour
+                    x0, y0 = 0.0, self.container.height - piece.height
+                    if gravitate_on:
+                        x0, y0 = self.gravitate(piece, x0, y0)
+                    # Score according to placement mode
+                    score = self._score_with_current_rotation(piece, x0, y0)
+                    if (best_score is None) or (score < best_score):
+                        best_score = score
+                        best_xy = (x0, y0)
+                        best_angle = angle
+                finally:
+                    # restore for next trial
+                    piece.rotate(orig_rot)
+            return best_xy[0], best_xy[1], best_angle
 
-        # Gather NFP candidate points (vertices + extended-search samples on edges)
-        candidates: list[Tuple[float, float]] = []
-        moving_path = utils.clean_polygon_coordinates(piece.get_outer_path())
-
+        # Build exterior rings once (unchanged across rotations)
         contour = self._exterior_contour
-        rings: list[list[Tuple[float, float]]] = []
+        rings: List[List[Tuple[float, float]]] = []
         if isinstance(contour, Polygon):
             rings.append(list(contour.exterior.coords))
         elif contour is not None:
@@ -1025,206 +938,564 @@ class TOPOSDecoder(PlacementEngine):
                 if isinstance(geom, Polygon):
                     rings.append(list(geom.exterior.coords))
 
-        # Build candidates from each exterior ring
-        for ring in rings:
-            ring = utils.clean_polygon_coordinates(ring)
-            for nfp_path in self._nfp_polygons(ring, moving_path):
-                if len(nfp_path) < 2:
-                    continue
-                # vertices
-                candidates.extend(nfp_path[:-1])  # exclude closing duplicate
-                # extended-search samples (uniform along edges)
-                for (x0, y0), (x1, y1) in zip(nfp_path, nfp_path[1:]):
-                    for t in range(1, self.edge_samples):
-                        tt = t / self.edge_samples
-                        candidates.append((x0 + tt * (x1 - x0), y0 + tt * (y1 - y0)))
+        global_best_score = None
+        global_best = (None, None, orig_rot)  # x, y, angle
 
-        if not candidates:
-            # Fallback to BL gravity relative to anchor
-            ax, ay = self.anchor(piece)
-            return self.gravitate(piece, ax, ay)
+        for angle in allowed_angles:
+            try:
+                piece.rotate(angle)
+                moving_path = piece.get_outer_path()
+                cleaned_moving = utils.clean_polygon_coordinates(moving_path)
 
-        # Evaluate objective for each feasible candidate
-        best_val = float("inf")
-        best_xy = (None, None)
+                # Candidates from NFP against each exterior ring
+                all_nfp_pts: List[Tuple[float, float]] = []
+                for ring_coords in rings:
+                    cleaned_ring = utils.clean_polygon_coordinates(ring_coords)
+                    pts = utils.no_fit_polygon(cleaned_ring, cleaned_moving)
+                    all_nfp_pts.extend(pts)
 
-        ps_rect = self._partial_solution_rect()
-        for (cx, cy) in candidates:
-            if not self._fits(piece, cx, cy):
-                continue
-            val = self._location_objective(piece, cx, cy, ps_rect)
-            if val < best_val:
-                best_val = val
-                best_xy = (cx, cy)
+                # Score candidates for this rotation
+                local_best_score = None
+                local_best_xy = (None, None)
 
-        if best_xy[0] is None:
-            # Fallback to gravity
-            ax, ay = self.anchor(piece)
-            return self.gravitate(piece, ax, ay)
+                # Precompute current placed bbox for MAX_OVERLAP scoring
+                flattened = [
+                    (x + p.translation[0], y + p.translation[1])
+                    for p in self.placed
+                    for x, y in p.get_outer_path()
+                ]
+                xs_placed = [v[0] for v in flattened]
+                ys_placed = [v[1] for v in flattened]
+                min_px, max_px = min(xs_placed), max(xs_placed)
+                min_py, max_py = min(ys_placed), max(ys_placed)
 
-        # Optional: light gravity polish (keeps “tightness”)
-        # if getattr(config, "NFP_GRAVITATE_ON", True):
-        #     gx, gy = self.gravitate(piece, best_xy[0], best_xy[1])
-        #     if self._fits(piece, gx, gy):
-        #         return gx, gy
-        return best_xy
+                # Initialize comparator baseline depending on mode
+                if self.placement_mode == PlacementMode.MAX_OVERLAP:
+                    baseline = -1.0  # maximize
+                elif self.placement_mode == PlacementMode.BOTTOM_LEFT:
+                    baseline = (float('inf'), float('inf'))  # minimize tuple
+                else:
+                    baseline = float('inf')  # minimize scalar
 
-    def _location_objective(self, piece: "Piece", dx: float, dy: float, ps_rect: Tuple[float,float,float,float]) -> float:
-        """Min-area / min-length / max-overlap between rectangular enclosures."""
-        p_rect = self._piece_rect_at(piece, dx, dy)
-        if self.nesting_strategy == "min_area":
-            rect = self._rect_union(ps_rect, p_rect)
-            return self._rect_area(rect)
-        elif self.nesting_strategy == "min_length":
-            rect = self._rect_union(ps_rect, p_rect)
-            return rect[2] - rect[0]  # width (x-extent)
-        elif self.nesting_strategy == "max_overlap":
-            # Maximize overlap ⇒ minimize negative overlap
-            return -self._rect_overlap_area(ps_rect, p_rect)
-        else:
-            raise ValueError(f"Unknown nesting_strategy: {self.nesting_strategy}")
+                for dx_rel, dy_rel in all_nfp_pts:
+                    x_cand = dx_rel
+                    y_cand = dy_rel
 
-    # ---------- Evaluation criteria (Sect. 2.4) ----------
+                    # Quick bounds check using rotated polygon
+                    candidate_vertices = [(x + x_cand, y + y_cand) for x, y in moving_path]
+                    xs_cand = [v[0] for v in candidate_vertices]
+                    ys_cand = [v[1] for v in candidate_vertices]
+                    if (
+                        min(xs_cand) < 0
+                        or max(xs_cand) > self.container.width
+                        or min(ys_cand) < 0
+                        or max(ys_cand) > self.container.height
+                    ):
+                        continue
 
-    def _evaluate_partial_solution(self, piece: "Piece", dx: float, dy: float) -> float:
-        """Return WASTE_rel - OVERLAP_abs + DISTANCE_rel across selected terms."""
-        # Rectangles
-        ps_rect_before = self._partial_solution_rect()
-        p_rect = self._piece_rect_at(piece, dx, dy)
-        union_rect = self._rect_union(ps_rect_before, p_rect)
+                    if not self._fits(piece, x_cand, y_cand):
+                        continue
 
-        # Areas
-        union_area = self._rect_area(union_rect)
-        total_piece_area = sum(utils.polygon_area(p.get_outer_path()) for p in self.placed) + \
-                           utils.polygon_area(piece.get_outer_path())
+                    if self.placement_mode == PlacementMode.MAX_OVERLAP:
+                        # Overlap between candidate rect and current placed bbox
+                        cand_min_x = min(xs_cand)
+                        cand_max_x = max(xs_cand)
+                        cand_min_y = min(ys_cand)
+                        cand_max_y = max(ys_cand)
+                        overlap_w = min(max_px, cand_max_x) - max(min_px, cand_min_x)
+                        overlap_h = min(max_py, cand_max_y) - max(min_py, cand_min_y)
+                        score = 0.0 if (overlap_w <= 0 or overlap_h <= 0) else overlap_w * overlap_h
+                        better = (local_best_score is None) or (score > local_best_score)
+                    elif self.placement_mode == PlacementMode.BOTTOM_LEFT:
+                        score = (y_cand, x_cand)
+                        better = (local_best_score is None) or (score < local_best_score)
+                    elif self.placement_mode == PlacementMode.MIN_BBOX_LENGTH:
+                        xs, ys = [], []
+                        for p in self.placed:
+                            for x, y in p.get_outer_path():
+                                xs.append(x + p.translation[0])
+                                ys.append(y + p.translation[1])
+                        for x, y in moving_path:
+                            xs.append(x + x_cand)
+                            ys.append(y + y_cand)
+                        score = max(xs) - min(xs)
+                        better = (local_best_score is None) or (score < local_best_score)
+                    else:  # MIN_BBOX_AREA
+                        xs, ys = [], []
+                        for p in self.placed:
+                            for x, y in p.get_outer_path():
+                                xs.append(x + p.translation[0])
+                                ys.append(y + p.translation[1])
+                        for x, y in moving_path:
+                            xs.append(x + x_cand)
+                            ys.append(y + y_cand)
+                        score = (max(xs) - min(xs)) * (max(ys) - min(ys))
+                        better = (local_best_score is None) or (score < local_best_score)
 
-        # Terms
-        waste_rel = 0.0
-        if "waste" in self.eval_terms:
-            # Waste = rectangular enclosure area minus sum of polygon areas, normalized by piece area
-            piece_area = max(utils.polygon_area(piece.get_outer_path()), 1e-12)
-            waste = union_area - total_piece_area
-            waste_rel = waste / piece_area
+                    if better:
+                        local_best_score = score
+                        local_best_xy = (x_cand, y_cand)
 
-        overlap_abs = 0.0
-        if "overlap" in self.eval_terms:
-            # Sum overlap between p_rect and each placed piece's rectangle
-            for q in self.placed:
-                q_rect = self._piece_rect_at(q, *q.translation)
-                overlap_abs += self._rect_overlap_area(p_rect, q_rect)
+                # If we found a candidate for this angle, compare globally
+                if local_best_xy[0] is not None:
+                    # For MAX_OVERLAP we want to maximize; convert to comparable ordering
+                    cmp_score = local_best_score if self.placement_mode != PlacementMode.MAX_OVERLAP else -local_best_score
+                    if (global_best_score is None) or (cmp_score < global_best_score):
+                        global_best_score = cmp_score
+                        global_best = (local_best_xy[0], local_best_xy[1], angle)
+            finally:
+                # restore rotation before next angle
+                piece.rotate(orig_rot)
 
-        distance_rel = 0.0
-        if "distance" in self.eval_terms:
-            # Distance between centers of p_rect and current partial solution rect (before placement),
-            # normalized by (piece_rect_width + piece_rect_height)
-            pcx, pcy = self._rect_center(p_rect)
-            scx, scy = self._rect_center(ps_rect_before)
-            dist = math.hypot(pcx - scx, pcy - scy)
-            pw = (p_rect[2] - p_rect[0])
-            ph = (p_rect[3] - p_rect[1])
-            denom = max(pw + ph, 1e-9)
-            distance_rel = dist / denom
+        x_best, y_best, ang_best = global_best
+        if x_best is None or y_best is None:
+            # Fallback: try BL gravity for each angle and choose best
+            best_score = None
+            best_xy = (None, None)
+            best_angle = orig_rot
+            for angle in allowed_angles:
+                try:
+                    piece.rotate(angle)
+                    x0, y0 = 0.0, self.container.height - piece.height
+                    if gravitate_on:
+                        x0, y0 = self.gravitate(piece, x0, y0)
+                    score = self._score_with_current_rotation(piece, x0, y0)
+                    if (best_score is None) or (score < best_score):
+                        best_score = score
+                        best_xy = (x0, y0)
+                        best_angle = angle
+                finally:
+                    piece.rotate(orig_rot)
+            return best_xy[0], best_xy[1], best_angle
 
-        # Combine (unit weights)
-        score = 0.0
-        if "waste" in self.eval_terms:
-            score += waste_rel
-        if "overlap" in self.eval_terms:
-            score -= overlap_abs
-        if "distance" in self.eval_terms:
-            score += distance_rel
-        return score
+        if gravitate_on:
+            # Polish with gravity; keep angle
+            try:
+                piece.rotate(ang_best)
+                gx, gy = self.gravitate(piece, x_best, y_best)
+                return gx, gy, ang_best
+            finally:
+                piece.rotate(orig_rot)
+        return x_best, y_best, ang_best
 
-    # ---------- Initial sorting (Sect. 2.5, Fig. 6) ----------
-
-    def _apply_initial_sorting(self, key: str):
-        metrics = {}
-        for pid, p in self.layout.order.items():
-            poly = Polygon(utils.clean_polygon_coordinates(p.get_outer_path()))
-            minx, miny, maxx, maxy = poly.bounds
-            width = maxx - minx
-            height = maxy - miny
-            area = max(poly.area, 0.0)
-            hull_area = max(poly.convex_hull.area, 1e-12)
-            rect_area = max(width * height, 1e-12)
-            rectangularity = area / rect_area
-            concavity = (hull_area - area) / hull_area  # ∈[0,1]
-
-            if key == "length":
-                metrics[pid] = width             # decreasing
-            elif key == "area":
-                metrics[pid] = area              # decreasing
-            elif key == "concavity":
-                metrics[pid] = concavity         # decreasing
-            elif key == "rectangularity":
-                metrics[pid] = rectangularity    # increasing
-            elif key == "total_area":
-                # If quantities are already expanded in Layout, this equals 'area'
-                metrics[pid] = area              # decreasing
-            else:
-                raise ValueError(f"Unknown sorting_key: {key}")
-
-        if key == "rectangularity":
-            sorted_ids = sorted(metrics.keys(), key=lambda pid: metrics[pid])  # increasing
-        else:
-            sorted_ids = sorted(metrics.keys(), key=lambda pid: metrics[pid], reverse=True)
-
-        self.layout = Layout(OrderedDict((pid, self.layout.order[pid]) for pid in sorted_ids))
-
-    # ---------- Geometry utilities ----------
-
-    def _partial_solution_rect(self) -> Tuple[float,float,float,float]:
-        if not self.placed:
-            return (0.0, 0.0, 0.0, 0.0)
+    def _score_with_current_rotation(self, piece: Piece, dx: float, dy: float) -> float:
+        """Return scalar score for current rotation at (dx,dy) consistent with placement_mode.
+        For tuple-comparison mode (BOTTOM_LEFT), return equivalent scalar area-based heuristic.
+        """
+        # Build combined vertices for placed + candidate
         xs, ys = [], []
         for p in self.placed:
-            for (x, y) in utils._translate_polygon(p.get_outer_path(), *p.translation):
-                xs.append(x)
-                ys.append(y)
-        return (min(xs), min(ys), max(xs), max(ys))
+            for x, y in p.get_outer_path():
+                xs.append(x + p.translation[0])
+                ys.append(y + p.translation[1])
+        for x, y in piece.get_outer_path():
+            xs.append(x + dx)
+            ys.append(y + dy)
 
-    def _piece_rect_at(self, piece: "Piece", dx: float, dy: float) -> Tuple[float,float,float,float]:
-        xs, ys = [], []
-        for (x, y) in utils._translate_polygon(piece.get_outer_path(), dx, dy):
-            xs.append(x); ys.append(y)
-        return (min(xs), min(ys), max(xs), max(ys))
+        if self.placement_mode == PlacementMode.MIN_BBOX_LENGTH:
+            return (max(xs) - min(xs))
+        elif self.placement_mode == PlacementMode.MIN_BBOX_AREA or self.placement_mode == PlacementMode.BOTTOM_LEFT:
+            # Use bbox area as a scalar proxy for BL mode when comparing rotations
+            return (max(xs) - min(xs)) * (max(ys) - min(ys))
+        else:  # MAX_OVERLAP → we use negative overlap to convert to minimization
+            # Compute overlap with current placed bbox
+            if not self.placed:
+                return 0.0
+            xs_placed = []
+            ys_placed = []
+            for p in self.placed:
+                for x, y in p.get_outer_path():
+                    xs_placed.append(x + p.translation[0])
+                    ys_placed.append(y + p.translation[1])
+            ps_rect = (min(xs_placed), min(ys_placed), max(xs_placed), max(ys_placed))
+            xs_cand = []
+            ys_cand = []
+            for x, y in piece.get_outer_path():
+                xs_cand.append(x + dx)
+                ys_cand.append(y + dy)
+            p_rect = (min(xs_cand), min(ys_cand), max(xs_cand), max(ys_cand))
+            # overlap area (negative for minimization)
+            dxo = min(ps_rect[2], p_rect[2]) - max(ps_rect[0], p_rect[0])
+            dyo = min(ps_rect[3], p_rect[3]) - max(ps_rect[1], p_rect[1])
+            overlap = max(0.0, dxo) * max(0.0, dyo)
+            return -overlap
+    
 
-    @staticmethod
-    def _rect_union(a, b):
-        if a == (0.0,0.0,0.0,0.0):
-            return b
-        return (min(a[0], b[0]), min(a[1], b[1]), max(a[2], b[2]), max(a[3], b[3]))
 
-    @staticmethod
-    def _rect_area(r):
-        return max(0.0, (r[2] - r[0])) * max(0.0, (r[3] - r[1]))
+# @register_decoder("TOPOS")
+# class TOPOSDecoder(PlacementEngine):
+#     """
+#     Based on the TOPOS paper
+#     Parameters
+#     ----------
+#     control : {"local_search","initial_sorting"}
+#         Search control (Sect. 2.5): evaluate all remaining piece/orientation options
+#         each iteration ("local_search"), or sort pieces first and at each iteration
+#         evaluate only orientations of the next piece ("initial_sorting").
+#     nesting_strategy : {"min_area","min_length","max_overlap"}
+#         Placement-point selection rule (Sect. 2.3): choose candidate (dx,dy) that
+#         minimizes area or length of the rectangular enclosure with the partial
+#         solution, or maximizes the overlap between the two rectangular enclosures.
+#     eval_terms : tuple subset of {"waste","overlap","distance"}
+#         Evaluation criteria for comparing alternative partial solutions (Sect. 2.4).
+#         Combined as: score = WASTE_rel - OVERLAP_abs + DISTANCE_rel over the
+#         selected terms (defaults to all three with unit weights).
+#     rotations_on : bool
+#         If True, test all orientations in config.ALLOWED_ROTATIONS (e.g., {0,180}).
+#     sorting_key : {"length","area","concavity","rectangularity","total_area", None}
+#         Initial sorting criterion for "initial_sorting" (Fig. 6). Ignored for
+#         "local_search".
+#     edge_samples : int
+#         # samples per NFP edge for "extended search" along edges (Sect. 2.3).
+#         Vertices are always included; edges add (edge_samples-1) interior samples.
+#     """
 
-    @staticmethod
-    def _rect_overlap_area(a, b):
-        dx = min(a[2], b[2]) - max(a[0], b[0])
-        dy = min(a[3], b[3]) - max(a[1], b[1])
-        return max(0.0, dx) * max(0.0, dy)
+#     def __init__(
+#         self,
+#         layout: Layout,
+#         container: Container,
+#         *,
+#         control: str = "local_search",
+#         nesting_strategy: Literal["min_area","min_length","max_overlap"] = "min_area",
+#         eval_terms: Tuple[str, ...] = ("waste","overlap","distance"),
+#         rotations_on: bool = True,
+#         sorting_key: Optional[Literal["length","area","concavity","rectangularity","total_area"]] = None,
+#         edge_samples: int = 16,
+#         **kwargs
+#     ):
+#         super().__init__(layout, container, **kwargs)
+#         self.control = control
+#         self.nesting_strategy = nesting_strategy
+#         self.eval_terms = tuple(eval_terms)
+#         self.rotations_on = rotations_on
+#         self.sorting_key = sorting_key
+#         self.edge_samples = max(2, int(edge_samples))
 
-    @staticmethod
-    def _rect_center(r):
-        return ((r[0] + r[2]) * 0.5, (r[1] + r[3]) * 0.5)
+#     # ---------- Public API ----------
 
-    # ---------- NFP with full polygon paths (to enable edge "extended search") ----------
+#     def decode(self) -> list[Tuple[str, float, float, float]]:
+#         if self.control not in ("local_search","initial_sorting"):
+#             raise ValueError(f"TOPOSDecoder: unsupported control '{self.control}'")
 
-    def _nfp_polygons(self, stationary: list[tuple[float,float]], moving: list[tuple[float,float]]) -> list[list[tuple[float,float]]]:
-        """
-        Return list of NFP polygon paths (floats) for moving about stationary.
-        Matches utils.no_fit_polygon but **preserves paths** for edge sampling.
-        """
-        import pyclipper
-        # Reference at the top-leftmost vertex of moving (y grows downward)
-        idx = utils.find_topleft_vertex(moving)
-        rx, ry = moving[idx]
-        moving_centered = [(x - rx, y - ry) for (x, y) in moving]
+#         # Optionally reorder upfront (initial sorting variant, Sect. 2.5)
+#         if self.control == "initial_sorting" and self.sorting_key:
+#             self._apply_initial_sorting(self.sorting_key)
 
-        A = utils.to_clipper(stationary)
-        B = [(-x, -y) for (x, y) in moving_centered]
-        B = utils.to_clipper(B)
+#         remaining: OrderedDict[str, Piece] = OrderedDict(self.layout.order)
 
-        raw = pyclipper.MinkowskiSum(B, A, True)
-        return [utils.from_clipper(p) for p in raw]
+#         # Iteratively build the partial solution (Fig. 7)
+#         while remaining:
+#             if self.control == "local_search":
+#                 # Evaluate *all* piece/orientation options from S (Sect. 2.5)
+#                 best = None
+#                 for pid, piece in list(remaining.items()):
+#                     for angle in self._iter_orientations():
+#                         cand = self._place_and_score(piece, angle)
+#                         if cand is None:
+#                             continue
+#                         score, dx, dy, chosen_angle = cand
+#                         if (best is None) or (score < best[0]):  # minimize
+#                             best = (score, pid, piece, dx, dy, chosen_angle)
+#                 # if best is None:
+#                 #     # Fallback: nothing feasible — try to BL-place next arbitrary piece
+#                 #     pid, piece = next(iter(remaining.items()))
+#                 #     dx, dy = self.anchor(piece)
+#                 #     dx, dy = self.gravitate(piece, dx, dy)
+#                 #     piece.translation = (dx, dy)
+#                 #     self.placed.append(piece)
+#                 #     self._update_exterior_contour(piece)
+#                 #     del remaining[pid]
+#                 #     continue
+
+#                 _, pid, piece, dx, dy, angle = best
+#                 self._commit(piece, pid, dx, dy, angle)
+#                 del remaining[pid]
+
+#             else:  # initial_sorting
+#                 pid, piece = next(iter(remaining.items()))
+#                 best = None
+#                 for angle in self._iter_orientations():
+#                     cand = self._place_and_score(piece, angle)
+#                     if cand is None:
+#                         continue
+#                     score, dx, dy, chosen_angle = cand
+#                     if (best is None) or (score < best[0]):  # minimize
+#                         best = (score, dx, dy, chosen_angle)
+#                 if best is None:
+#                     # Fallback: BL-place this piece
+#                     dx, dy = self.anchor(piece)
+#                     dx, dy = self.gravitate(piece, dx, dy)
+#                     piece.translation = (dx, dy)
+#                     self.placed.append(piece)
+#                     self._update_exterior_contour(piece)
+#                     del remaining[pid]
+#                     continue
+
+#                 score, dx, dy, angle = best
+#                 self._commit(piece, pid, dx, dy, angle)
+#                 del remaining[pid]
+
+#         return [(p.id, p.translation[0], p.translation[1], p.rotation) for p in self.placed]
+
+#     # ---------- Core helpers ----------
+
+#     def _commit(self, piece: "Piece", pid: str, dx: float, dy: float, angle: float) -> None:
+#         orig = piece.rotation
+#         try:
+#             if self.rotations_on:
+#                 piece.rotate(angle)
+#             piece.translation = (dx, dy)
+#             self.placed.append(piece)
+#             self._update_exterior_contour(piece)
+#         finally:
+#             # Keep piece at chosen rotation; we won't reuse it after placement
+#             pass
+
+#     def _iter_orientations(self):
+#         if not self.rotations_on:
+#             yield 0.0
+#             return
+#         allowed = getattr(config, "ALLOWED_ROTATIONS", [0.0, 180.0])
+#         for a in allowed:
+#             yield float(a)
+
+#     def _place_and_score(self, piece: "Piece", angle: float):
+#         """Rotate piece (temporarily), choose best placement point by the nesting strategy,
+#         then evaluate the resulting partial solution by TOPOS criteria."""
+#         orig_rot = piece.rotation
+#         try:
+#             if self.rotations_on:
+#                 piece.rotate(angle)
+#             dx, dy = self._select_placement_point(piece)
+#             if dx is None:
+#                 return None
+#             score = self._evaluate_partial_solution(piece, dx, dy)
+#             return (score, dx, dy, angle)
+#         finally:
+#             # restore orientation
+#             if self.rotations_on:
+#                 piece.rotate(orig_rot)
+
+#     # ---------- Nesting strategy (Sect. 2.3) ----------
+
+#     def _select_placement_point(self, piece: "Piece") -> Tuple[Optional[float], Optional[float]]:
+#         # First piece: put it bottom-left (to match our y-down convention)
+#         if not self.placed:
+#             return 0.0, self.container.height - piece.height
+
+#         # Gather NFP candidate points (vertices + extended-search samples on edges)
+#         candidates: list[Tuple[float, float]] = []
+#         moving_path = utils.clean_polygon_coordinates(piece.get_outer_path())
+
+#         contour = self._exterior_contour
+#         rings: list[list[Tuple[float, float]]] = []
+#         if isinstance(contour, Polygon):
+#             rings.append(list(contour.exterior.coords))
+#         elif contour is not None:
+#             for geom in getattr(contour, "geoms", []):
+#                 if isinstance(geom, Polygon):
+#                     rings.append(list(geom.exterior.coords))
+
+#         # Build candidates from each exterior ring
+#         for ring in rings:
+#             ring = utils.clean_polygon_coordinates(ring)
+#             for nfp_path in self._nfp_polygons(ring, moving_path):
+#                 if len(nfp_path) < 2:
+#                     continue
+#                 # vertices
+#                 candidates.extend(nfp_path[:-1])  # exclude closing duplicate
+#                 # extended-search samples (uniform along edges)
+#                 for (x0, y0), (x1, y1) in zip(nfp_path, nfp_path[1:]):
+#                     for t in range(1, self.edge_samples):
+#                         tt = t / self.edge_samples
+#                         candidates.append((x0 + tt * (x1 - x0), y0 + tt * (y1 - y0)))
+
+#         if not candidates:
+#             # Fallback to BL gravity relative to anchor
+#             ax, ay = self.anchor(piece)
+#             return self.gravitate(piece, ax, ay)
+
+#         # Evaluate objective for each feasible candidate
+#         best_val = float("inf")
+#         best_xy = (None, None)
+
+#         ps_rect = self._partial_solution_rect()
+#         for (cx, cy) in candidates:
+#             if not self._fits(piece, cx, cy):
+#                 continue
+#             val = self._location_objective(piece, cx, cy, ps_rect)
+#             if val < best_val:
+#                 best_val = val
+#                 best_xy = (cx, cy)
+
+#         if best_xy[0] is None:
+#             # Fallback to gravity
+#             ax, ay = self.anchor(piece)
+#             return self.gravitate(piece, ax, ay)
+
+#         # Optional: light gravity polish (keeps “tightness”)
+#         # if getattr(config, "NFP_GRAVITATE_ON", True):
+#         #     gx, gy = self.gravitate(piece, best_xy[0], best_xy[1])
+#         #     if self._fits(piece, gx, gy):
+#         #         return gx, gy
+#         return best_xy
+
+#     def _location_objective(self, piece: "Piece", dx: float, dy: float, ps_rect: Tuple[float,float,float,float]) -> float:
+#         """Min-area / min-length / max-overlap between rectangular enclosures."""
+#         p_rect = self._piece_rect_at(piece, dx, dy)
+#         if self.nesting_strategy == "min_area":
+#             rect = self._rect_union(ps_rect, p_rect)
+#             return self._rect_area(rect)
+#         elif self.nesting_strategy == "min_length":
+#             rect = self._rect_union(ps_rect, p_rect)
+#             return rect[2] - rect[0]  # width (x-extent)
+#         elif self.nesting_strategy == "max_overlap":
+#             # Maximize overlap ⇒ minimize negative overlap
+#             return -self._rect_overlap_area(ps_rect, p_rect)
+#         else:
+#             raise ValueError(f"Unknown nesting_strategy: {self.nesting_strategy}")
+
+#     # ---------- Evaluation criteria (Sect. 2.4) ----------
+
+#     def _evaluate_partial_solution(self, piece: "Piece", dx: float, dy: float) -> float:
+#         """Return WASTE_rel - OVERLAP_abs + DISTANCE_rel across selected terms."""
+#         # Rectangles
+#         ps_rect_before = self._partial_solution_rect()
+#         p_rect = self._piece_rect_at(piece, dx, dy)
+#         union_rect = self._rect_union(ps_rect_before, p_rect)
+
+#         # Areas
+#         union_area = self._rect_area(union_rect)
+#         total_piece_area = sum(utils.polygon_area(p.get_outer_path()) for p in self.placed) + \
+#                            utils.polygon_area(piece.get_outer_path())
+
+#         # Terms
+#         waste_rel = 0.0
+#         if "waste" in self.eval_terms:
+#             # Waste = rectangular enclosure area minus sum of polygon areas, normalized by piece area
+#             piece_area = max(utils.polygon_area(piece.get_outer_path()), 1e-12)
+#             waste = union_area - total_piece_area
+#             waste_rel = waste / piece_area
+
+#         overlap_abs = 0.0
+#         if "overlap" in self.eval_terms:
+#             # Sum overlap between p_rect and each placed piece's rectangle
+#             for q in self.placed:
+#                 q_rect = self._piece_rect_at(q, *q.translation)
+#                 overlap_abs += self._rect_overlap_area(p_rect, q_rect)
+
+#         distance_rel = 0.0
+#         if "distance" in self.eval_terms:
+#             # Distance between centers of p_rect and current partial solution rect (before placement),
+#             # normalized by (piece_rect_width + piece_rect_height)
+#             pcx, pcy = self._rect_center(p_rect)
+#             scx, scy = self._rect_center(ps_rect_before)
+#             dist = math.hypot(pcx - scx, pcy - scy)
+#             pw = (p_rect[2] - p_rect[0])
+#             ph = (p_rect[3] - p_rect[1])
+#             denom = max(pw + ph, 1e-9)
+#             distance_rel = dist / denom
+
+#         # Combine (unit weights)
+#         score = 0.0
+#         if "waste" in self.eval_terms:
+#             score += waste_rel
+#         if "overlap" in self.eval_terms:
+#             score -= overlap_abs
+#         if "distance" in self.eval_terms:
+#             score += distance_rel
+#         return score
+
+#     # ---------- Initial sorting (Sect. 2.5, Fig. 6) ----------
+
+#     def _apply_initial_sorting(self, key: str):
+#         metrics = {}
+#         for pid, p in self.layout.order.items():
+#             poly = Polygon(utils.clean_polygon_coordinates(p.get_outer_path()))
+#             minx, miny, maxx, maxy = poly.bounds
+#             width = maxx - minx
+#             height = maxy - miny
+#             area = max(poly.area, 0.0)
+#             hull_area = max(poly.convex_hull.area, 1e-12)
+#             rect_area = max(width * height, 1e-12)
+#             rectangularity = area / rect_area
+#             concavity = (hull_area - area) / hull_area  # ∈[0,1]
+
+#             if key == "length":
+#                 metrics[pid] = width             # decreasing
+#             elif key == "area":
+#                 metrics[pid] = area              # decreasing
+#             elif key == "concavity":
+#                 metrics[pid] = concavity         # decreasing
+#             elif key == "rectangularity":
+#                 metrics[pid] = rectangularity    # increasing
+#             elif key == "total_area":
+#                 # If quantities are already expanded in Layout, this equals 'area'
+#                 metrics[pid] = area              # decreasing
+#             else:
+#                 raise ValueError(f"Unknown sorting_key: {key}")
+
+#         if key == "rectangularity":
+#             sorted_ids = sorted(metrics.keys(), key=lambda pid: metrics[pid])  # increasing
+#         else:
+#             sorted_ids = sorted(metrics.keys(), key=lambda pid: metrics[pid], reverse=True)
+
+#         self.layout = Layout(OrderedDict((pid, self.layout.order[pid]) for pid in sorted_ids))
+
+#     # ---------- Geometry utilities ----------
+
+#     def _partial_solution_rect(self) -> Tuple[float,float,float,float]:
+#         if not self.placed:
+#             return (0.0, 0.0, 0.0, 0.0)
+#         xs, ys = [], []
+#         for p in self.placed:
+#             for (x, y) in utils._translate_polygon(p.get_outer_path(), *p.translation):
+#                 xs.append(x)
+#                 ys.append(y)
+#         return (min(xs), min(ys), max(xs), max(ys))
+
+#     def _piece_rect_at(self, piece: "Piece", dx: float, dy: float) -> Tuple[float,float,float,float]:
+#         xs, ys = [], []
+#         for (x, y) in utils._translate_polygon(piece.get_outer_path(), dx, dy):
+#             xs.append(x); ys.append(y)
+#         return (min(xs), min(ys), max(xs), max(ys))
+
+#     @staticmethod
+#     def _rect_union(a, b):
+#         if a == (0.0,0.0,0.0,0.0):
+#             return b
+#         return (min(a[0], b[0]), min(a[1], b[1]), max(a[2], b[2]), max(a[3], b[3]))
+
+#     @staticmethod
+#     def _rect_area(r):
+#         return max(0.0, (r[2] - r[0])) * max(0.0, (r[3] - r[1]))
+
+#     @staticmethod
+#     def _rect_overlap_area(a, b):
+#         dx = min(a[2], b[2]) - max(a[0], b[0])
+#         dy = min(a[3], b[3]) - max(a[1], b[1])
+#         return max(0.0, dx) * max(0.0, dy)
+
+#     @staticmethod
+#     def _rect_center(r):
+#         return ((r[0] + r[2]) * 0.5, (r[1] + r[3]) * 0.5)
+
+#     # ---------- NFP with full polygon paths (to enable edge "extended search") ----------
+
+#     def _nfp_polygons(self, stationary: list[tuple[float,float]], moving: list[tuple[float,float]]) -> list[list[tuple[float,float]]]:
+#         """
+#         Return list of NFP polygon paths (floats) for moving about stationary.
+#         Matches utils.no_fit_polygon but **preserves paths** for edge sampling.
+#         """
+#         import pyclipper
+#         # Reference at the top-leftmost vertex of moving (y grows downward)
+#         idx = utils.find_topleft_vertex(moving)
+#         rx, ry = moving[idx]
+#         moving_centered = [(x - rx, y - ry) for (x, y) in moving]
+
+#         A = utils.to_clipper(stationary)
+#         B = [(-x, -y) for (x, y) in moving_centered]
+#         B = utils.to_clipper(B)
+
+#         raw = pyclipper.MinkowskiSum(B, A, True)
+#         return [utils.from_clipper(p) for p in raw]

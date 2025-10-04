@@ -256,12 +256,13 @@ class Evolution:
             body_params=self.body_params
         )
 
-        # ramdomize rotations
-        for piece in chrom.genes:
-            rotation = random.choice(config.ALLOWED_ROTATIONS)
-            # rotation = 90
-            if rotation != 0:
-                piece.rotate(rotation)
+            # ramdomize rotations
+        if config.ZERO_GEN_ROTS:
+            for piece in chrom.genes:
+                rotation = random.choice(config.ALLOWED_ROTATIONS)
+                # rotation = 90
+                if rotation != 0:
+                    piece.rotate(rotation)
         
         #chrom.sync_order()
         chrom.calculate_fitness()
