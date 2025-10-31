@@ -1,4 +1,7 @@
 # split_utils.py
+"""
+Utility functions for per-panel splits
+"""
 from typing import Optional
 import itertools
 import numpy as np

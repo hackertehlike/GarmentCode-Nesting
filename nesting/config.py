@@ -1,12 +1,6 @@
 # nesting/config.py
 """
 Organized configuration system for nesting algorithms.
-
-Key improvements:
-- Stable hashing based only on active configuration
-- Clear separation between algorithmic vs system settings
-- Profile-based configurations
-- Backward compatibility maintained
 """
 
 import math
@@ -45,9 +39,9 @@ class ActiveConfig:
     cross_stitch_mode: CrossStitchMode = "lexicographic"
     
     # Container & physical constraints  
-    container_width_cm: float = 800
-    container_height_cm: float = 140
-    seam_allowance_cm: float = 1.0
+    container_width_cm: float = 400
+    container_height_cm: float = 51
+    seam_allowance_cm: float = 0.001
     samples_per_edge: int = 7
     
     # Genetic algorithm parameters
@@ -63,11 +57,11 @@ class ActiveConfig:
     
     # Mutation operation weights
     mutation_weights: Dict[str, float] = field(default_factory=lambda: {
-        "rotate": 0, "swap": 1, "inversion": 1, "insertion": 1,
-        "scramble": 1, "split": 1, "design_params": 1
+        "rotate": 1, "swap": 1, "inversion": 1, "insertion": 1,
+        "scramble": 1, "split": 0, "design_params": 0
     })
 
-    zero_gen_rots: bool = False
+    zero_gen_rots: bool = True
     
     # Decoder-specific settings
     preserve_holes: bool = True
@@ -109,7 +103,7 @@ class ActiveConfig:
     
     # Rotation settings
     enable_rotations: bool = True
-    allowed_rotations: List[int] = field(default_factory=lambda: [0])
+    allowed_rotations: List[int] = field(default_factory=lambda: [0,180])
     
     # Parameter exclusions for mutations
     excluded_param_paths: List[str] = field(default_factory=lambda: [

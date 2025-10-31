@@ -13,7 +13,7 @@ Features:
 - Configuration comparison across runs
 - Pattern performance analysis  
 - Temporal evolution analysis
-- Comprehensive visualizations
+- Visualizations
 
 Usage:
     python ga_analysis.py [--runs-dir experiments/runs] [--aggregate-file experiments/aggregate/final_metrics.csv] [--output-dir analysis_output] [--config-hash HASH]
