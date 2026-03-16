@@ -66,6 +66,7 @@ class ActiveConfig:
     # Decoder-specific settings
     preserve_holes: bool = True
     nfp_gravitate_on: bool = True
+    nfp_edge_samples: int = 5
     gravitate_once: bool = False
     gravitate_step: int = 1
     sort_by: SortKey = "hull_area"
@@ -261,7 +262,7 @@ def _update_backward_compatibility_vars():
     global POPULATION_SIZE, NUM_GENERATIONS, MUTATION_RATE, FORCE_MUTATION_ON_CROSSOVER
     global SWAP_MUTATION_K, POPULATION_WEIGHTS, MUTATION_WEIGHTS
     global GRAVITATE_ONCE, GRAVITATE_STEP, SORT_BY, REST_PENALTY, BB_WEIGHT, CC_WEIGHT
-    global NFP_GRAVITATE_ON, EXCLUDED_PARAM_PATHS, PARAM_CHANGE_MARGIN
+    global NFP_GRAVITATE_ON, NFP_EDGE_SAMPLES, EXCLUDED_PARAM_PATHS, PARAM_CHANGE_MARGIN
     global SYMMETRIC_SPLITS, ALLOW_RECURSIVE_SPLITS, WEIGHT_BY_BBOX
     global ENABLE_DYNAMIC_STOPPING, EARLY_STOP_WINDOW, EARLY_STOP_TOLERANCE
     global ENABLE_EXTENSION, EXTEND_WINDOW, EXTEND_THRESHOLD, MAX_GENERATIONS
@@ -307,6 +308,7 @@ def _update_backward_compatibility_vars():
     BB_WEIGHT = ACTIVE.bb_weight
     CC_WEIGHT = ACTIVE.cc_weight
     NFP_GRAVITATE_ON = ACTIVE.nfp_gravitate_on
+    NFP_EDGE_SAMPLES = ACTIVE.nfp_edge_samples
     
     # Design parameters
     EXCLUDED_PARAM_PATHS = ACTIVE.excluded_param_paths
@@ -376,6 +378,7 @@ REST_PENALTY = SYSTEM.rest_penalty
 BB_WEIGHT = ACTIVE.bb_weight
 CC_WEIGHT = ACTIVE.cc_weight
 NFP_GRAVITATE_ON = ACTIVE.nfp_gravitate_on
+NFP_EDGE_SAMPLES = ACTIVE.nfp_edge_samples
 
 POPULATION_SIZE = ACTIVE.population_size
 NUM_GENERATIONS = ACTIVE.num_generations

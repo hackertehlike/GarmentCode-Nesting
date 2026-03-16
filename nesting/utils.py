@@ -94,18 +94,60 @@ def _translate_polygon(poly, dx, dy):
     """Return a *new* polygon translated by (dx, dy)."""
     return [(x + dx, y + dy) for (x, y) in poly]
 
-def no_fit_polygon(stationary, moving):
+def sample_polygon_edges(polygon: List[Tuple[float, float]], n_per_edge: int) -> List[Tuple[float, float]]:
+    """
+    Sample interior points along each edge of a polygon, distributing
+    n_per_edge points proportionally to edge length across all edges.
+    Vertices themselves are excluded (already included as NFP candidates).
+    """
+    if n_per_edge <= 0 or len(polygon) < 2:
+        return []
+
+    # Compute edge lengths (polygon is closed: last == first, so skip last segment)
+    coords = polygon[:-1] if (
+        len(polygon) > 1
+        and abs(polygon[0][0] - polygon[-1][0]) < 1e-9
+        and abs(polygon[0][1] - polygon[-1][1]) < 1e-9
+    ) else polygon
+
+    edges = []
+    n = len(coords)
+    for i in range(n):
+        x0, y0 = coords[i]
+        x1, y1 = coords[(i + 1) % n]
+        length = math.hypot(x1 - x0, y1 - y0)
+        if length > 0:
+            edges.append(((x0, y0), (x1, y1), length))
+
+    total_length = sum(e[2] for e in edges)
+    if total_length == 0:
+        return []
+
+    sampled: List[Tuple[float, float]] = []
+    for (x0, y0), (x1, y1), length in edges:
+        k = max(1, round(length / total_length * n_per_edge * len(edges)))
+        for j in range(1, k + 1):
+            t = j / (k + 1)
+            sampled.append((x0 + t * (x1 - x0), y0 + t * (y1 - y0)))
+
+    return sampled
+
+
+def no_fit_polygon(stationary, moving, n_edge_samples: int = 0):
     """
     No-Fit Polygon of *moving* about *stationary*.
     Coordinates returned as floats in the original units.
     Uses the top-leftmost vertex of the moving polygon as reference point.
     (In this coordinate system, top means minimum y since y grows downward)
+
+    n_edge_samples: if > 0, also sample interior points along each NFP edge,
+                    distributed proportionally to edge length.
     """
-    
+
     # Find the top-leftmost vertex to use as reference
     # topleft_idx = find_topleft_vertex(moving)
     # ref_x, ref_y = moving[topleft_idx]
-    
+
     # # Translate moving polygon so that reference vertex is at origin
     # moving_centered = [(x - ref_x, y - ref_y) for x, y in moving]
     moving_centered =[(x, y) for x, y in moving]  # no translation, use origin as reference
@@ -114,9 +156,17 @@ def no_fit_polygon(stationary, moving):
     B = to_clipper(B)
     nfp = pyclipper.MinkowskiSum(B, A, True)
 
-    # 4. Back to floating-point
-    # return [entry for p in nfp for entry in from_clipper(p)] #[from_clipper(p) for p in nfp] 
-    return flatten(nfp)
+    vertices = flatten(nfp)
+
+    if n_edge_samples <= 0:
+        return vertices
+
+    edge_pts: List[Tuple[float, float]] = []
+    for polygon_clipper in nfp:
+        polygon_float = from_clipper(polygon_clipper)
+        edge_pts.extend(sample_polygon_edges(polygon_float, n_edge_samples))
+
+    return vertices + edge_pts
 
 def find_topleft_vertex(polygon):
     """

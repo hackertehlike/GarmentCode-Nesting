@@ -717,7 +717,7 @@ class NFPDecoder(PlacementEngine):
         all_nfp_pts: List[Tuple[float, float]] = []
         for ring_coords in rings:
             cleaned_ring = utils.clean_polygon_coordinates(ring_coords)
-            pts = utils.no_fit_polygon(cleaned_ring, cleaned_moving)
+            pts = utils.no_fit_polygon(cleaned_ring, cleaned_moving, n_edge_samples=config.NFP_EDGE_SAMPLES)
             all_nfp_pts.extend(pts)
 
         # 3) Compute bounding‐box of all placed pieces
@@ -951,7 +951,7 @@ class NFPwithRotsDecoder(PlacementEngine):
                 all_nfp_pts: List[Tuple[float, float]] = []
                 for ring_coords in rings:
                     cleaned_ring = utils.clean_polygon_coordinates(ring_coords)
-                    pts = utils.no_fit_polygon(cleaned_ring, cleaned_moving)
+                    pts = utils.no_fit_polygon(cleaned_ring, cleaned_moving, n_edge_samples=config.NFP_EDGE_SAMPLES)
                     all_nfp_pts.extend(pts)
 
                 # Score candidates for this rotation
