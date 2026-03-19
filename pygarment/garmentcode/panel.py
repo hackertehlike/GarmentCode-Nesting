@@ -473,14 +473,7 @@ class Panel(BaseComponent):
             use_centroid: If True, use polygon centroid x-coordinate; if False, use proportion of bounding box
             epsilon: Geometric tolerance for split line extension
         """
-        import sys
-        import os
-        # Add the nesting module to sys.path if not already there
-        nesting_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'nesting')
-        if nesting_path not in sys.path:
-            sys.path.append(nesting_path)
-        
-        from utils import polygon_split, clean_polygon_coordinates
+        from nesting.core.utils import polygon_split, clean_polygon_coordinates
 
         # Convert current edges into a Shapely polygon using linear approximation
         lin_edges = EdgeSequence([e.linearize() for e in self.edges])

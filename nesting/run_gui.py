@@ -1,27 +1,16 @@
-import sys
-from nicegui import ui
-from pathlib import Path
-import os
-from .gui import NestingGUI
-import nesting.config as config
+"""Backward-compatibility shim — redirects to nesting.gui.run_gui.
 
-def main() -> None:
-    # Check if pattern path is provided
-    use_default = False
-    if len(sys.argv) < 2:
-        print("No pattern specified. Using default pattern.")
-        pattern_path = Path(config.DEFAULT_PATTERN_PATH)
-        use_default = True
-    else:
-        pattern_path = Path(sys.argv[1])
-    
-    # Set port
-    port = int(sys.argv[2]) if len(sys.argv) > 2 else 8082
-    
-    # Initialize with pattern path and use_default flag
-    # This tells NestingGUI whether to load default style/body params
-    NestingGUI(pattern_path, use_default_params=use_default)
-    ui.run(port=port)
+Multiprocessing on macOS (spawn start method) re-imports __main__ by its
+original dotted name when spawning worker processes.  This shim keeps the
+old entry-point nesting.run_gui alive so those workers can resolve the module.
+
+Prefer the canonical entry-point:
+    python -m nesting.gui.run_gui
+"""
+from nesting.gui.run_gui import *  # noqa: F401, F403
 
 if __name__ in {"__main__", "__mp_main__"}:
-    main()
+    import multiprocessing
+    if multiprocessing.parent_process() is None:
+        from nesting.gui.run_gui import main
+        main()

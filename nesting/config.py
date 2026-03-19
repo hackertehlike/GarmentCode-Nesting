@@ -39,9 +39,9 @@ class ActiveConfig:
     cross_stitch_mode: CrossStitchMode = "lexicographic"
     
     # Container & physical constraints  
-    container_width_cm: float = 400
-    container_height_cm: float = 51
-    seam_allowance_cm: float = 0.001
+    container_width_cm: float = 1000
+    container_height_cm: float = 140
+    seam_allowance_cm: float = 1.0
     samples_per_edge: int = 7
     
     # Genetic algorithm parameters
